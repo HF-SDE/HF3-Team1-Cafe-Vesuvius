@@ -4,6 +4,7 @@ config/environment-variables/*dev.env
 
 packages/*/dist
 **/node_modules
+**/package-lock.json
 packages/*/.env
 # packages/*/.env.production -- This is allowed as it does not contain any actual data.
 packages/*/.env.local
