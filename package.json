@@ -1,0 +1,11 @@
+{
+  "name": "cafe-vesuvius",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "cd backend && npm install"
+  },
+  "keywords": [],
+  "author": "Vesuvius",
+  "description": "World best Cafe management system"
+}

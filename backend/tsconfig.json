@@ -1,0 +1,27 @@
+{
+    "compilerOptions": {
+        "module": "Node16",
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "target": "ES2023",
+        "noImplicitAny": true,
+        "moduleResolution": "NodeNext",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "sourceMap": true,
+        "outDir": "./dist",
+        "baseUrl": "./src",
+        "paths": {
+            "*": ["node_modules/*"],
+            "@routers/*": ["api/routers/*"],
+            "@controllers/*": ["api/controllers/*"],
+            "@services/*": ["api/service/*"],
+            "@api-types/*": ["api/types/*"],
+            "@config": ["config"],
+            "@prisma-instance": ["prisma"],
+            "@middlewares/*": ["middleware/*"],
+        },
+        "allowJs": true,
+    },
+    "include": ["*","src/index.ts", "src/config.ts", "src/**/*", ".eslintrc.js"],
+}
