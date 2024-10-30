@@ -2,11 +2,10 @@ config/environment-variables/*prod.env
 config/environment-variables/*test.env
 config/environment-variables/*dev.env
 
-packages/*/dist
+*/dist
 **/node_modules
 packages/*/.env
-# packages/*/.env.production -- This is allowed as it does not contain any actual data.
-packages/*/.env.local
+*/.env.local
 .vs
 
 *.zip

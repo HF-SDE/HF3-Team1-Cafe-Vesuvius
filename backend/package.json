@@ -2,10 +2,12 @@
   "name": "cafe-vesuvius-backend",
   "version": "0.0.0",
   "private": true,
-  "main": "index.js",
+  "main": "./src/index.ts",
   "scripts": {
     "build:tsc": "tsc",
-    "lint": "eslint src/**"
+    "lint": "eslint src/**",
+    "start": "TS_NODE_PROJECT='./dist' node -r tsconfig-paths/register ./dist",
+    "dev": "ts-node -r tsconfig-paths/register ./src/index.ts"
   },
   "prisma": {
     "seed": "ts-node ./src/seed.ts"
@@ -33,6 +35,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/morgan": "^1.9.9",
+    "@types/node": "^22.8.4",
     "@types/passport": "^1.0.17",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
@@ -43,6 +46,7 @@
     "eslint-plugin-tsdoc": "^0.3.0",
     "globals": "^15.11.0",
     "prisma": "^5.21.1",
+    "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.12.2"
