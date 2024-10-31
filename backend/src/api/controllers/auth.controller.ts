@@ -9,6 +9,30 @@ import * as authService from '../services/auth.service';
 const prisma = new PrismaClient();
 
 export const signUp = async (req: Request, res: Response) => {
+  try {
+    const username = "";
+
+    const password = "";
+    // Hash the password before saving
+    const hashedPassword = password //await argon2.hash(password);
+
+    // Extract additional fields from req.body
+    const { initials, email, name } = req.body;
+
+    const user = await prisma.user.create({
+      data: {
+        username,
+        password: hashedPassword, // Store the hashed password
+        initials: initials || "", // Default to empty string if not provided
+        email: email || "",       // Default to empty string if not provided
+        name: name || ""          // Default to empty string if not provided
+      },
+    });
+
+    //return done(null, user);
+  } catch (error) {
+    //return done(error);
+  }
   res.json({ message: 'Signup successful' });
 };
 
@@ -33,13 +57,16 @@ export const login = async (
         status: 'InvalidCredentials',
         message: 'Username or Password was not correct',
       });
+      return;
     }
 
     const decodedPassword = Buffer.from(password, 'base64').toString();
     req.body.password = decodedPassword;
 
+
+
     // Change user back to type User
-    passport.authenticate('login', async (err: any, user: any | false) => {
+    passport.authenticate('local', async (err: any, user: any | false) => {
       if (err || !user) {
         res.status(401).json({
           status: 'InvalidCredentials',

@@ -8,6 +8,8 @@ import passport from 'passport';
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
 
+import './passport';
+
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
   limit: 500, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
@@ -28,8 +30,7 @@ app.use(limiter);
 app.use('/', authRoutes);
 
 app.get('/ping', (req, res) => {
-  console.log('Log route accessed');
-  res.send('Check the console for a log message!');
+  res.send("Server is running");
 });
 
 app.listen(config.PORT, () => {
