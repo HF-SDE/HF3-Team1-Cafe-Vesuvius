@@ -4,12 +4,9 @@
   "private": true,
   "scripts": {
     "install": "cd backend && npm install && cd ../app && npm install",
-    "dev": "docker compose -f ./docker/docker-compose.yml up --watch",
+    "dev": "docker compose -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh",
     "build:dev": "docker compose -f ./docker/docker-compose.yml build"
   },
   "author": "Vesuvius",
-  "description": "World best Cafe management system",
-  "dependencies": {
-    "ts-node": "^10.9.2"
-  }
+  "description": "World best Cafe management system"
 }
