@@ -1,7 +1,5 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import bodyParser from 'body-parser';
-import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
