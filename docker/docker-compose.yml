@@ -21,16 +21,31 @@ services:
       - db
     env_file:
       - ../config/environment-variables/backend.dev.env
+    volumes:
+      - ../backend/src:/usr/app/src
 
   db:
     container_name: db
     build:
-      context: ../db/
-      dockerfile: Dockerfile
-    restart: always
-    command: ["--replSet", "rs0", "--bind_ip_all", "--port", "27017", "--keyFile", "/etc/mongo-keyfile"]
+      context: .
+      dockerfile: db.Dockerfile
     ports:
       - "27017:27017"
+    command:
+      [
+        "--quiet",
+        "--logpath",
+        "/dev/null",
+        "--keyFile",
+        "/data/keyfile.pem",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--port",
+        "27017",
+      ]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - ../config/environment-variables/db.dev.env
     volumes:
