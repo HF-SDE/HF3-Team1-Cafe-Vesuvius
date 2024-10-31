@@ -9,7 +9,7 @@ until mongosh --port $MONGO_PORT --eval "print(\"Waiting for MongoDB connection.
 done
 
 # Authenticate and initiate the replica set
-sleep 10
+sleep 30
 mongosh --port $MONGO_PORT <<EOF
   print("Authenticating root user...");
   use admin;

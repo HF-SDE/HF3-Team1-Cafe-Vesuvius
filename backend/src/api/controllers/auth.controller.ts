@@ -6,15 +6,17 @@ import { PrismaClient } from '@prisma/client';
 
 import * as authService from '../services/auth.service';
 
+import argon2 from 'argon2';
+
 const prisma = new PrismaClient();
 
 export const signUp = async (req: Request, res: Response) => {
   try {
-    const username = "";
+    const username = "admin";
 
-    const password = "";
+    const password = "admin";
     // Hash the password before saving
-    const hashedPassword = password //await argon2.hash(password);
+    const hashedPassword = await argon2.hash(password);
 
     // Extract additional fields from req.body
     const { initials, email, name } = req.body;
@@ -28,12 +30,17 @@ export const signUp = async (req: Request, res: Response) => {
         name: name || ""          // Default to empty string if not provided
       },
     });
+    console.log(user);
+
+    res.json({ message: 'Signup successful', userData: user });
 
     //return done(null, user);
   } catch (error) {
     //return done(error);
+    console.log(error);
+    res.json({ message: 'Signup error', errorMess: error});
   }
-  res.json({ message: 'Signup successful' });
+  
 };
 
 export const login = async (
