@@ -7,7 +7,7 @@
     "build:tsc": "tsc",
     "lint": "eslint src/**",
     "start": "TS_NODE_PROJECT='./dist' node -r tsconfig-paths/register ./dist",
-    "dev": "ts-node -r tsconfig-paths/register ./src/index.ts"
+    "dev": "nodemon -L"
   },
   "prisma": {
     "seed": "ts-node ./src/seed.ts"
@@ -25,6 +25,7 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0",
+    "nodemon": "^3.1.7",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0"

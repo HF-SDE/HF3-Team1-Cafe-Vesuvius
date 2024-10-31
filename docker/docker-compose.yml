@@ -10,19 +10,13 @@ services:
     ports:
       - "3001:3001"
     command: npm run dev
-    develop: 
-       watch:
-        - action: sync
-          path: ../backend/src
-          target: /usr/app/src
-
-        - action: rebuild
-          path: ../backend/package.json
-          target: /usr/app
     depends_on:
       - db
     env_file:
       - ../config/environment-variables/backend.dev.env
+    volumes:
+     -  ../backend/src:/usr/src/app/src
+     - ../backend/nodemon.json:/usr/src/app/nodemon.json
 
   db:
     container_name: db
