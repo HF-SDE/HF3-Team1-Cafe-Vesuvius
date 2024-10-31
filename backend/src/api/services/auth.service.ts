@@ -184,11 +184,3 @@ export const isBase64 = (str: string) => {
     return false;
   }
 };
-
-export default {
-  generateUserTokens,
-  invalidateRefreshToken,
-  getRefreshToken: getRefreshToken,
-  refreshUserTokens,
-  isBase64,
-};
