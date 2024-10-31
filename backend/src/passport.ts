@@ -37,8 +37,6 @@ passwordField: "password",
 async (username: string, password: string, done: Function) => {
   try {
     // Return success for now to test
-    return done(null, null, { message: "Logged in Successfully" });
-
       const user = await prisma.user.findUnique({ where: { username } });
       if (!user) {
           return done(null, false, { message: "User not found" });
