@@ -4,7 +4,7 @@ import passport from 'passport';
 
 import { PrismaClient } from '@prisma/client';
 
-import authService from '../services/auth.service';
+import * as authService from '../services/auth.service';
 
 const prisma = new PrismaClient();
 
