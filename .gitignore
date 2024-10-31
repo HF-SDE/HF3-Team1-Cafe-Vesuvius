@@ -12,15 +12,15 @@ packages/*/.env.local
 
 *.zip
 
-app/.expo/
-app/npm-debug.*
-app/*.jks
-app/*.p8
-app/*.p12
-app/*.key
-app/*.mobileprovision
-app/*.orig.*
-app/web-build/
+# app/.expo/
+# app/npm-debug.*
+# app/*.jks
+# app/*.p8
+# app/*.p12
+# app/*.key
+# app/*.mobileprovision
+# app/*.orig.*
+# app/web-build/
 
-# macOS
-app/.DS_Store
+# # macOS
+# app/.DS_Store
