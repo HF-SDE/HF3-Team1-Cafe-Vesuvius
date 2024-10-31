@@ -1,5 +1,4 @@
 import jsdoc from 'eslint-plugin-jsdoc';
-import tsdoc from 'eslint-plugin-tsdoc';
 import globals from 'globals';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -35,7 +34,6 @@ export default [
   ),
   {
     plugins: {
-      tsdoc,
       jsdoc,
       '@typescript-eslint': typescriptEslint,
     },
@@ -59,8 +57,6 @@ export default [
     },
 
     rules: {
-      'tsdoc/syntax': 'error',
-
       'jsdoc/require-jsdoc': [
         'error',
         {
