@@ -28,8 +28,7 @@ app.use(limiter);
 app.use('/', authRoutes);
 
 app.get('/ping', (req, res) => {
-  console.log('Log route accessed');
-  res.send('Check the console for a log message!');
+  res.send("Server is running");
 });
 
 app.listen(config.PORT, () => {

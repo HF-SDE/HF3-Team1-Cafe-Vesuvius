@@ -30,45 +30,15 @@ passport.use(
   }),
 );
 
-
-// Temp for now
-passport.use("signup", new LocalStrategy(
-  {
-    usernameField: "username",
-    passwordField: "password",
-    passReqToCallback: true,
-  },
-  async (req: Request, username: string, password: string, done: Function) => {
-    try {
-      // Hash the password before saving
-      const hashedPassword = await argon2.hash(password);
-
-      // Extract additional fields from req.body
-      const { initials, email, name } = req.body;
-
-      const user = await prisma.user.create({
-        data: {
-          username,
-          password: hashedPassword, // Store the hashed password
-          initials: initials || "", // Default to empty string if not provided
-          email: email || "",       // Default to empty string if not provided
-          name: name || ""          // Default to empty string if not provided
-        },
-      });
-
-      return done(null, user);
-    } catch (error) {
-      return done(error);
-    }
-  }
-));
-
-passport.use("login", new LocalStrategy({
+passport.use(new LocalStrategy({
 usernameField: "username",
 passwordField: "password",
 }, 
 async (username: string, password: string, done: Function) => {
   try {
+    // Return success for now to test
+    return done(null, null, { message: "Logged in Successfully" });
+
       const user = await prisma.user.findUnique({ where: { username } });
       if (!user) {
           return done(null, false, { message: "User not found" });
