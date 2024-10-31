@@ -4,7 +4,7 @@ export interface IAPIResponse {
 }
 
 export enum Status {
-    Unauthorized = 'Unauthorized',
+    UnAuthorized = 'Unauthorized',
     Forbidden = 'Forbidden',
     Success = 'Success',
     Failed = 'Failed',
@@ -15,7 +15,7 @@ export enum Status {
     Deleted = 'Deleted',
     DeleteFailed = 'DeletionFailed',
     Updated = 'Updated',
-    UpdateFaild = 'UpdateFailed',
+    UpdateFailed = 'UpdateFailed',
     MissingDetails = 'MissingDetails',
     InvalidDetails = 'InvalidDetails',
     MissingCredentials = 'MissingCredentials',
