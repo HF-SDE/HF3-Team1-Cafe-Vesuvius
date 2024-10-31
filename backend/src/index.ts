@@ -25,7 +25,12 @@ app.use(passport.initialize());
 app.use(limiter);
 
 //Insert all routes here
-//app.use('/', authRoutes);
+app.use('/', authRoutes);
+
+app.get('/ping', (req, res) => {
+  console.log('Log route accessed');
+  res.send('Check the console for a log message!');
+});
 
 app.listen(config.PORT, () => {
   console.log(`Server is running on ${config.PORT}`);
