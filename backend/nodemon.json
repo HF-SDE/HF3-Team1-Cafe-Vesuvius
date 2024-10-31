@@ -2,8 +2,5 @@
     "watch": ["src"],
     "ext": "ts,json",
     "ignore": ["src/**/*.spec.ts"],
-    "exec": "npx ts-node -r tsconfig-paths/register ./src/index.ts",
-    "events": {
-      "restart": "npm run prebuild"
-    }
+    "exec": "npx ts-node -T -r tsconfig-paths/register ./src/index.ts"
 }

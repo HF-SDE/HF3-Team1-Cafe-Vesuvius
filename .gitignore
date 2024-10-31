@@ -5,7 +5,7 @@ config/environment-variables/*dev.env
 */dist
 **/node_modules
 **/package-lock.json
-packages/*/.env
+*/.env
 */.env.local
 .vs
 

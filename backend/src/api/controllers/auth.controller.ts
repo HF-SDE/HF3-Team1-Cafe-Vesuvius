@@ -1,3 +1,4 @@
+import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
 //import { StatusCodes, ReasonPhrases } from 'http-status-codes';
 import passport from 'passport';
@@ -6,15 +7,13 @@ import { PrismaClient } from '@prisma/client';
 
 import * as authService from '../services/auth.service';
 
-import argon2 from 'argon2';
-
 const prisma = new PrismaClient();
 
 export const signUp = async (req: Request, res: Response) => {
   try {
-    const username = "admin";
+    const username = 'admin';
 
-    const password = "admin";
+    const password = 'admin';
     // Hash the password before saving
     const hashedPassword = await argon2.hash(password);
 
@@ -25,9 +24,9 @@ export const signUp = async (req: Request, res: Response) => {
       data: {
         username,
         password: hashedPassword, // Store the hashed password
-        initials: initials || "", // Default to empty string if not provided
-        email: email || "",       // Default to empty string if not provided
-        name: name || ""          // Default to empty string if not provided
+        initials,
+        email,
+        name
       },
     });
     console.log(user);
@@ -38,9 +37,8 @@ export const signUp = async (req: Request, res: Response) => {
   } catch (error) {
     //return done(error);
     console.log(error);
-    res.json({ message: 'Signup error', errorMess: error});
+    res.json({ message: 'Signup error', errorMess: error });
   }
-  
 };
 
 export const login = async (
@@ -69,8 +67,6 @@ export const login = async (
 
     const decodedPassword = Buffer.from(password, 'base64').toString();
     req.body.password = decodedPassword;
-
-
 
     // Change user back to type User
     passport.authenticate('local', async (err: any, user: any | false) => {

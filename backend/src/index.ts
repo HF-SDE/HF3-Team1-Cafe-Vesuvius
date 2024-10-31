@@ -30,9 +30,11 @@ app.use(limiter);
 app.use('/', authRoutes);
 
 app.get('/ping', (req, res) => {
-  res.send("Server is running");
+  res.send('Server is running');
 });
 
-app.listen(config.PORT, () => {
+const port = config.PORT || 3001;
+
+app.listen(port, () => {
   console.log(`Server is running on ${config.PORT}`);
 });
