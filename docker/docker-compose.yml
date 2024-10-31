@@ -31,14 +31,19 @@ services:
       dockerfile: db.Dockerfile
     ports:
       - "27017:27017"
-    command: >
-      bash -c "
-        mongod --keyFile /data/keyfile.pem --replSet rs0 --bind_ip_all --port 27017 &
-        until mongosh --host localhost --port 27017 --eval 'print(\"Waiting for MongoDB to be ready...\")'; do
-          sleep 5;
-        done;
-        ./docker-entrypoint-initdb.d/init.sh
-      "
+    command:
+      [
+        "mongod",
+        "--keyFile",
+        "/data/keyfile.pem",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--port",
+        "27017",
+      ]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - ../config/environment-variables/db.dev.env
     volumes:
