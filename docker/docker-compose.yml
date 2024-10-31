@@ -4,27 +4,46 @@ services:
     build:
       context: ../backend/
       dockerfile: Dockerfile
-      target: base,
-    volumes:
-      - ../backend/src:/usr/app/src
+      target: base
     expose:
+      - "3001:3001"
+    ports:
       - "3001:3001"
     command: npm run dev
     depends_on:
       - db
     env_file:
       - ../config/environment-variables/backend.dev.env
+    volumes:
+     -  ../backend/src:/usr/src/app/src
+     - ../backend/nodemon.json:/usr/src/app/nodemon.json
 
   db:
     container_name: db
-    image: mongo
-    restart: always
+    build:
+      context: .
+      dockerfile: db.Dockerfile
     ports:
       - "27017:27017"
+    command:
+      [
+        "mongod",
+        "--keyFile",
+        "/data/keyfile.pem",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--port",
+        "27017",
+      ]
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     env_file:
       - ../config/environment-variables/db.dev.env
     volumes:
-      - db-data:/data/db
+      - "mongo1_data:/data/db"
+      - "mongo1_config:/data/configdb"
 
 volumes:
-  db-data: {}
+  mongo1_data: {}
+  mongo1_config: {}

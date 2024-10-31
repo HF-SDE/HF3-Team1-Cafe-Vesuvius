@@ -193,6 +193,8 @@ export default [
           lib: 'always',
         },
       ],
+
+      "func-style": ["error", "declaration", { "allowArrowFunctions": false }]
     },
   },
 ];
