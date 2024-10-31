@@ -1,8 +1,11 @@
 {
   "compilerOptions": {
     "module": "Node16",
+    "strict": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
     "target": "ES2023",
     "noImplicitAny": true,
     "moduleResolution": "NodeNext",
