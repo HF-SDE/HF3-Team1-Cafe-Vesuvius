@@ -21,8 +21,6 @@ services:
       - db
     env_file:
       - ../config/environment-variables/backend.dev.env
-    volumes:
-      - ../backend/src:/usr/app/src
 
   db:
     container_name: db
