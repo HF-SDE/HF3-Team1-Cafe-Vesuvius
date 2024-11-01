@@ -12,7 +12,7 @@ sleep 30
 # Check the replica set status
 echo "Checking replica set status..."
 REPLICA_SET_STATUS=$(mongosh --port $MONGO_PORT --eval "use admin; db.auth("$MONGO_INITDB_ROOT_USERNAME", "$MONGO_INITDB_ROOT_PASSWORD"); rs.status()" --quiet)
-if [[ $REPLICA_SET_STATUS == { ok: 1 } ]]; then
+if [[ $REPLICA_SET_STATUS == *"\"ok\" : 1"* ]]; then
   echo "Replica set is up and running."
 else
   # Authenticate and initiate the replica set
