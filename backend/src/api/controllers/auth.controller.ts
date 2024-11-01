@@ -20,9 +20,6 @@ export const signUp = async (req: Request, res: Response) => {
     // Extract additional fields from req.body
     const { initials, email, name } = req.body;
 
-    console.log('====================================');
-    console.log(hashedPassword);
-    console.log('====================================');
 
     const user = await prisma.user.create({
       data: {
@@ -155,6 +152,7 @@ export const accessToken = async (
 
     res.json(newTokens);
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       status: 'ServerError',
       message: 'Something went wrong on our end',
@@ -207,6 +205,7 @@ export const refreshToken = async (
 
     res.json({ token: refreshToken });
   } catch (error) {
+    console.log(error);
     res.status(500).json({
       status: 'ServerError',
       message: 'Something went wrong on our end',
