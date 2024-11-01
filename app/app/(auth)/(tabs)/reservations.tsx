@@ -1,11 +1,18 @@
 import { StyleSheet } from "react-native";
 
 import { Text, View } from "react-native";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function TabTwoScreen() {
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab Two</Text>
+      <Text style={styles.title}>Reservrations</Text>
       <View
         style={styles.separator}
         // lightColor="#eee"

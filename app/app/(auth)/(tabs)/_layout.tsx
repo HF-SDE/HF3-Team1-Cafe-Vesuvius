@@ -23,10 +23,16 @@ export default function TabLayout() {
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: { backgroundColor: PrimaryColor },
+        tabBarStyle: {
+          backgroundColor: PrimaryColor,
+          height: 88,
+          paddingTop: 10,
+        },
         headerStyle: { backgroundColor: PrimaryColor },
         headerTintColor: BackgroundColor,
         tabBarShowLabel: false,
+        headerTitleAlign: "center",
+        headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
       }}
@@ -35,12 +41,13 @@ export default function TabLayout() {
         name="order"
         options={{
           title: "",
-          tabBarIcon: (
-            {
-              // color
-            }
-          ) => (
-            <Entypo name="list" size={30} style={{ color: SecondaryColor }} />
+          headerTitle: "Order",
+          tabBarIcon: ({ focused }) => (
+            <Entypo
+              name="list"
+              size={42}
+              style={{ color: focused ? AccentColor : SecondaryColor }}
+            />
           ),
           // headerRight: () => (
           //   <Link href="/modal" asChild>
@@ -61,11 +68,12 @@ export default function TabLayout() {
         name="reservations"
         options={{
           title: "",
-          tabBarIcon: ({ color }) => (
+          headerTitle: "Reservartions",
+          tabBarIcon: ({ focused }) => (
             <Entypo
               name="calendar"
-              size={30}
-              style={{ color: SecondaryColor }}
+              size={38}
+              style={{ color: focused ? AccentColor : SecondaryColor }}
             />
           ),
         }}
@@ -74,11 +82,12 @@ export default function TabLayout() {
         name="managment"
         options={{
           title: "",
-          tabBarIcon: ({ color }) => (
+          headerTitle: "Management",
+          tabBarIcon: ({ focused }) => (
             <Entypo
               name="info-with-circle"
-              size={30}
-              style={{ color: SecondaryColor }}
+              size={38}
+              style={{ color: focused ? AccentColor : SecondaryColor }}
             />
           ),
         }}
@@ -87,11 +96,12 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "",
-          tabBarIcon: ({ color }) => (
+          headerTitle: "Profile",
+          tabBarIcon: ({ focused }) => (
             <FontAwesome
               name="user"
-              size={30}
-              style={{ color: SecondaryColor }}
+              size={38}
+              style={{ color: focused ? AccentColor : SecondaryColor }}
             />
           ),
         }}

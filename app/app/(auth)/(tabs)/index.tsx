@@ -2,12 +2,19 @@ import { Button, StyleSheet } from "react-native";
 
 import { Text, View } from "react-native";
 import { useSession } from "../../ctx";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function TabOneScreen() {
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   const { signOut, session } = useSession();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <Text style={styles.title}>Profile</Text>
       <Text>Welcome, {session}</Text>
       <View
         style={styles.separator}
