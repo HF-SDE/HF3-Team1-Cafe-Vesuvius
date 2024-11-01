@@ -1,25 +1,15 @@
-import { Button, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 import { Text, View } from "react-native";
-import { useSession } from "../../ctx";
 
-export default function TabOneScreen() {
-  const { signOut, session } = useSession();
+export default function TabTwoScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
-      <Text>Welcome, {session}</Text>
+      <Text style={styles.title}>Tab Two</Text>
       <View
         style={styles.separator}
         // lightColor="#eee"
         // darkColor="rgba(255,255,255,0.1)"
-      />
-      <Button
-        title="Sign Out"
-        onPress={() => {
-          // The `app/(app)/_layout.tsx` will redirect to the sign-in screen.
-          signOut();
-        }}
       />
     </View>
   );
