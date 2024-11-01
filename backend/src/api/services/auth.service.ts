@@ -18,6 +18,9 @@ const generateToken = (
 // Change user type back to User
 export const generateUserTokens = async (user: any, req: Request) => {
   const ip = req.socket.remoteAddress;
+
+  if (!ip) return '';
+
   const newAccessToken = generateToken(
     { id: user.id, username: user.username },
     ip,
@@ -117,6 +120,8 @@ export const getRefreshToken = async (accessToken: string, req: Request) => {
 
 export const refreshUserTokens = async (refreshToken: string, req: Request) => {
   const ip = req.socket.remoteAddress;
+
+  if (!ip) return '';
 
   const user = jwt.verify(
     refreshToken,
