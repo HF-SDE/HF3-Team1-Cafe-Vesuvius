@@ -143,7 +143,7 @@ model MenuItems {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  Orders               Order_Menu[]
+  Orders                Order_Menu[]
   PendingMenuItems      PendingMenuItem[]
   RawMaterial_MenuItems RawMaterial_MenuItem[]
 }
@@ -168,7 +168,7 @@ model RawMaterial_MenuItem {
 
 model RawMaterials {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
+  name      String   @unique
   quantity  Int      @default(0)
   unit      String
   createdAt DateTime @default(now())
