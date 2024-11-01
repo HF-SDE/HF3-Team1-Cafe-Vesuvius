@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import { accessToken } from '@controllers/auth.controller';
 import { PrismaClient } from '@prisma/client';
 
+import { JwtPayload } from 'jsonwebtoken';
+
+
 const prisma = new PrismaClient();
 
 const generateToken = (
@@ -123,11 +126,17 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
 
   if (!ip) return '';
 
-  const user = jwt.verify(
+  const userTemp = jwt.verify(
     refreshToken,
     (process.env.REFRESH_TOKEN_SECRET as string) + ip,
   );
-  if (!user) return null;
+  if (!userTemp) return null;
+
+  let user: { id: string; username: string } | null = null;
+
+  if (typeof userTemp === 'object' && 'user' in userTemp) {
+    user = (userTemp as JwtPayload).user as { id: string; username: string };
+  }
 
   const refreshTokenInDb = await prisma.refreshToken.findUnique({
     where: { token: refreshToken },
