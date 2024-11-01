@@ -9,8 +9,21 @@ import {
 } from "react-native";
 import Logo from "../components/icons/CaféVesuviusLogo2.svg";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { router } from "expo-router";
+import { useSession } from "./ctx";
+
 
 export default function Index() {
+
+  const { signIn } = useSession();
+  const handleLogin = () => {
+    //Adicione sua lógica de login aqui
+    signIn();
+    //Antes de navegar, tenha certeza de que o usuário está autenticado
+    router.replace("/");
+  };
+
+
   // Theme colors
   const SecondaryColor = useThemeColor({}, "secondary");
   const BackgroundColor = useThemeColor({}, "background");
@@ -68,7 +81,7 @@ export default function Index() {
         />
         <TouchableOpacity
           style={[styles.button, { backgroundColor: PrimaryColor }]}
-          onPress={() => {}}
+          onPress={handleLogin}
         >
           <Text style={{ color: BackgroundColor, textAlign: "center" }}>
             Sign In
