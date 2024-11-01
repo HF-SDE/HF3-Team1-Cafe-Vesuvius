@@ -1,6 +1,5 @@
 import { Status } from '@api-types/general.types';
 
-
 /**
  * Returns the HTTP status code for a given Status
  * This allows for easy and quick conversion between the Status enum and HTTP status codes
@@ -10,7 +9,7 @@ import { Status } from '@api-types/general.types';
  */
 export function getHttpStatusCode(status: Status): number {
   switch (status) {
-    case Status.UnAuthorized:
+    case Status.Unauthorized:
       return 401;
     case Status.Forbidden:
       return 403;

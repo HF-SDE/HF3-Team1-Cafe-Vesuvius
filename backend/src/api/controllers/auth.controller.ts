@@ -26,7 +26,7 @@ export const signUp = async (req: Request, res: Response) => {
         password: hashedPassword, // Store the hashed password
         initials,
         email,
-        name
+        name,
       },
     });
     console.log(user);
