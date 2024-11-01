@@ -6,12 +6,12 @@ import Entypo from "@expo/vector-icons/Entypo";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-function TabBarIcon(props: {
-  name: React.ComponentProps<typeof FontAwesome>["name"];
-  color: string;
-}) {
-  return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-}
+// function TabBarIcon(props: {
+//   name: React.ComponentProps<typeof FontAwesome>["name"];
+//   color: string;
+// }) {
+//   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
+// }
 
 export default function TabLayout() {
   const BackgroundColor = useThemeColor({}, "background");
@@ -28,11 +28,13 @@ export default function TabLayout() {
           height: 88,
           paddingTop: 10,
         },
+
         headerStyle: { backgroundColor: PrimaryColor },
         headerTintColor: BackgroundColor,
         tabBarShowLabel: false,
         headerTitleAlign: "center",
         headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
+
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
       }}

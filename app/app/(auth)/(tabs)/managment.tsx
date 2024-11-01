@@ -11,7 +11,16 @@ export default function TabTwoScreen() {
   const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <View style={(styles.container, { backgroundColor: SecondaryColor })}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: SecondaryColor,
+          borderColor: SecondaryColor,
+          borderWidth: 2,
+        },
+      ]}
+    >
       <Text style={styles.title}>Management</Text>
       <View
         style={styles.separator}
