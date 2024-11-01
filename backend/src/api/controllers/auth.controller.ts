@@ -20,13 +20,17 @@ export const signUp = async (req: Request, res: Response) => {
     // Extract additional fields from req.body
     const { initials, email, name } = req.body;
 
+    console.log('====================================');
+    console.log(hashedPassword);
+    console.log('====================================');
+
     const user = await prisma.user.create({
       data: {
-        username,
+        username: "admin",
         password: hashedPassword, // Store the hashed password
-        initials,
-        email,
-        name,
+        initials: "Adm",
+        email: "admin@admin.com",
+        name: "Admin",
       },
     });
     console.log(user);
