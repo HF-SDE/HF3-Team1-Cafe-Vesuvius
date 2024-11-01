@@ -190,7 +190,7 @@ export default [
         },
       ],
 
-      "func-style": ["error", "declaration", { "allowArrowFunctions": false }]
+      'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
     },
   },
 ];
