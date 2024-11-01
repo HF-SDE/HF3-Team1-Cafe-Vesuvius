@@ -23,3 +23,5 @@ app/web-build/
 
 # macOS
 app/.DS_Store
+
+dbml

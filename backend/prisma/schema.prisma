@@ -8,6 +8,10 @@ generator client {
   provider = "prisma-client-js"
 }
 
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
@@ -126,17 +130,17 @@ model Order {
 }
 
 model Order_Menu {
-  id         String @id @default(auto()) @map("_id") @db.ObjectId
-  quantity   Int    @default(1)
-  menuPrice  Float  @default(1)
-  orderId    String @db.ObjectId
-  menuItemId String @db.ObjectId
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  quantity      Int    @default(1)
+  menuItemPrice Float  @default(1)
+  orderId       String @db.ObjectId
+  menuItemId    String @db.ObjectId
 
-  Order Order     @relation(fields: [orderId], references: [id])
-  Menu  MenuItems @relation(fields: [menuItemId], references: [id])
+  Order Order    @relation(fields: [orderId], references: [id])
+  Menu  MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
-model MenuItems {
+model MenuItem {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String
   price     Float
@@ -153,7 +157,7 @@ model PendingMenuItem {
   quantity   Int
   menuItemId String @db.ObjectId
 
-  Menu MenuItems @relation(fields: [menuItemId], references: [id])
+  Menu MenuItem @relation(fields: [menuItemId], references: [id])
 }
 
 model RawMaterial_MenuItem {
@@ -162,11 +166,11 @@ model RawMaterial_MenuItem {
   rawMaterialId String @db.ObjectId
   menuItemId    String @db.ObjectId
 
-  RawMaterial RawMaterials @relation(fields: [rawMaterialId], references: [id])
-  MenuItem    MenuItems    @relation(fields: [menuItemId], references: [id])
+  RawMaterial RawMaterial @relation(fields: [rawMaterialId], references: [id])
+  MenuItem    MenuItem    @relation(fields: [menuItemId], references: [id])
 }
 
-model RawMaterials {
+model RawMaterial {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String   @unique
   quantity  Int      @default(0)
