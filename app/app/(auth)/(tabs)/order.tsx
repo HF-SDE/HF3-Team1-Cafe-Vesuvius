@@ -11,7 +11,16 @@ export default function TabTwoScreen() {
   const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: SecondaryColor,
+          borderColor: SecondaryColor,
+          borderWidth: 2,
+        },
+      ]}
+    >
       <Text style={styles.title}>Order</Text>
       <View
         style={styles.separator}
@@ -24,9 +33,8 @@ export default function TabTwoScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
+    height: "100%",
+    width: "100%",
   },
   title: {
     fontSize: 20,

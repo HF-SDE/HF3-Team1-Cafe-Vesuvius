@@ -13,7 +13,16 @@ export default function TabOneScreen() {
 
   const { signOut, session } = useSession();
   return (
-    <View style={styles.container}>
+    <View 
+      style={[
+        styles.container,
+        {
+          backgroundColor: SecondaryColor,
+          borderColor: SecondaryColor,
+          borderWidth: 2,
+        },
+      ]}
+    >
       <Text style={styles.title}>Profile</Text>
       <Text>Welcome, {session}</Text>
       <View
@@ -37,6 +46,8 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
+    height: "100%",
+    width: "100%",
   },
   title: {
     fontSize: 20,

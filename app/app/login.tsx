@@ -13,10 +13,7 @@ import Logo from "../components/icons/CaféVesuviusLogo2.svg";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useSession } from "./ctx";
-//  import { TextInput } from 'react-native-paper';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-
-
 
 export default function Index() {
   const { signIn } = useSession();
@@ -26,13 +23,11 @@ export default function Index() {
   const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [rightIcon, setRightIcon] = useState("eye");
-
 
   const handleLogin = () => {
     const isUsernameValid = username.trim() !== "";
     const isPasswordValid = password.trim() !== "";
-    
+
     setIsUsernameEmpty(!isUsernameValid);
     setIsPasswordEmpty(!isPasswordValid);
 
@@ -62,79 +57,56 @@ export default function Index() {
   const PrimaryColor = useThemeColor({}, "primary");
 
   return (
-    <SafeAreaView
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: SecondaryColor,
-        gap: 50,
-      }}
-    >
-      <Logo width={300} height={300} />
+    <SafeAreaView style={[styles.container, { backgroundColor: SecondaryColor }]}>
+      <View style={styles.logoContainer}>
+              <Logo width={300} height={300} />
+      </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{
-          width: "100%",
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
+        style={styles.formContainer}
       >
-        <TextInput
-          style={[
-            styles.input,
-            {
-              borderColor: isUsernameEmpty
-              ? "red" // Change border color on focus
-              : PrimaryColor,
-              color: PrimaryColor,
-              backgroundColor: BackgroundColor,
-            },
-          ]}
-          placeholder="Username"
-          value={username}
-          onChangeText={(text) => {
-            setUsername(text);
-            setIsUsernameEmpty(false);
-          }}
-          autoCorrect={false}
-          autoCapitalize="none"
-        />
-        <TextInput
-          style={[
-            styles.input,
-            {
-              borderColor: isPasswordEmpty
-              ? "red" // Change border color on focus
-              : PrimaryColor,
-              color: PrimaryColor,
-              backgroundColor: BackgroundColor,
-            },
-          ]}
-          placeholder="Password"
-          value={password}
-          onChangeText={(text) => {
-            setPassword(text);
-            setIsPasswordEmpty(false);
-          }}
-          secureTextEntry={!showPassword}
-          autoCorrect={false}
-          autoCapitalize="none"
-          
-
-        />
+        <View style={styles.input_block}>
+          <TextInput
+            style={[styles.input, { borderColor: isUsernameEmpty ? "red" : PrimaryColor, color: PrimaryColor, backgroundColor: BackgroundColor}]}
+            placeholder="Username"
+            placeholderTextColor='gray'
+            autoCorrect={false}
+            autoCapitalize='none'
+            value={username}
+            onChangeText={setUsername}
+          />
+        </View>
+        <View style={[styles.input_block]}>
+          <TextInput
+            style={[styles.input, { borderColor: isPasswordEmpty ? "red" : PrimaryColor, color: PrimaryColor, backgroundColor: BackgroundColor, paddingRight: 45 }]}
+            placeholder="Password"
+            placeholderTextColor='gray'
+            autoCorrect={false}
+            secureTextEntry={!showPassword}
+            autoCapitalize='none'
+            value={password}
+            onChangeText={setPassword}
+          />
+          <TouchableOpacity
+            onPress={() => setShowPassword(previous => !previous)}
+            style={styles.icon_container}
+          >
+            <MaterialCommunityIcons
+              name={showPassword ? "eye-off" : "eye"}
+              size={24}
+              color="gray"
+            />
+          </TouchableOpacity>
+        </View>
 
         {errorMessage ? (
-          <Text style={{ color: "red", fontWeight: "bold", fontSize: 16 }}>{errorMessage}</Text>
+          <Text style={styles.errorText}>{errorMessage}</Text>
         ) : null}
         <TouchableOpacity
           style={[styles.button, { backgroundColor: PrimaryColor }]}
           onPress={handleLogin}
         >
-          <Text style={{ color: BackgroundColor, textAlign: "center" }}>
-            Sign In
-          </Text>
+          <Text style={[styles.buttonText, {color: BackgroundColor}]}>Sign In</Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -142,20 +114,55 @@ export default function Index() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  logoContainer: {
+    marginBottom: 40,
+    alignItems: "center",
+  },
+  formContainer: {
+    width: "90%",
+    maxWidth: 400,
+    padding: 20,
+  },
   input: {
-    height: 40,
-    width: "80%",
-    maxWidth: 300,
+    height: 50,
+    width: "100%",
     borderWidth: 2,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
   },
   button: {
-    width: "80%",
-    maxWidth: 300,
-    paddingVertical: 10,
+    height: 50,
     borderRadius: 5,
+    justifyContent: "center",
+    alignItems: "center",
     marginVertical: 10,
+  },
+  buttonText: {
+    fontWeight: "bold",
+    fontSize: 16,
+  },
+  input_block: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    position: 'relative'
+  },
+  icon_container: {
+    padding: 5,
+    position: 'absolute',
+    right: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  errorText: {
+    color: "red",
+    fontWeight: "bold",
+    fontSize: 16,
+    textAlign: "center",
   },
 });
