@@ -1,3 +1,5 @@
+name: Cafe Vesuvius
+
 services:
   backend:
     container_name: backend
