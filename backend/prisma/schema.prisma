@@ -24,7 +24,7 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  AccessTokens AccessToken[]
+  AccessTokens    AccessToken[]
   RefreshToken    RefreshToken[]
   UserPermissions UserPermissions[]
 }
@@ -34,25 +34,23 @@ model RefreshToken {
   token     String   @unique
   userId    String   @db.ObjectId
   createdAt DateTime @default(now())
-  sessionId String @default(uuid())
-  accessToken AccessToken[]
+  sessionId String   @default(uuid())
 
+  AccessToken AccessToken[]
 
-  user User @relation(fields: [userId], references: [id])
+  User User @relation(fields: [userId], references: [id])
 }
 
 model AccessToken {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  token     String   @unique
-  userId    String   @map("userId") @db.ObjectId
-  refreshTokenId    String   @map("refreshTokenId") @db.ObjectId
-  createdAt DateTime @default(now())
-  sessionId String 
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  token          String   @unique
+  userId         String   @map("userId") @db.ObjectId
+  refreshTokenId String   @map("refreshTokenId") @db.ObjectId
+  createdAt      DateTime @default(now())
+  sessionId      String
 
-
-  user      User     @relation(fields: [userId], references: [id]) 
-
-  refreshToken      RefreshToken     @relation(fields: [refreshTokenId], references: [id]) 
+  User         User         @relation(fields: [userId], references: [id])
+  RefreshToken RefreshToken @relation(fields: [refreshTokenId], references: [id])
 }
 
 model UserPermissions {
@@ -62,8 +60,8 @@ model UserPermissions {
   assignedAt   DateTime @default(now())
   assignedBy   String
 
-  permission Permission @relation(fields: [permissionId], references: [id])
-  user       User       @relation(fields: [userId], references: [id])
+  Permission Permission @relation(fields: [permissionId], references: [id])
+  User       User       @relation(fields: [userId], references: [id])
 }
 
 model PermissionGroup {
@@ -72,7 +70,7 @@ model PermissionGroup {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  permissions Permission[]
+  Permissions Permission[]
 }
 
 model Permission {
@@ -98,7 +96,7 @@ model Reservation {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  tables Table[]
+  Tables Table[]
 }
 
 model Table {
@@ -110,7 +108,7 @@ model Table {
   updatedAt     DateTime @updatedAt
   reservationId String   @db.ObjectId
 
-  orders Order[]
+  Orders Order[]
 
   Reservation Reservation @relation(fields: [reservationId], references: [id])
 }
@@ -124,7 +122,7 @@ model Order {
 
   Order_Menu Order_Menu[]
 
-  table Table @relation(fields: [tableId], references: [id])
+  Table Table @relation(fields: [tableId], references: [id])
 }
 
 model Order_Menu {
@@ -134,8 +132,8 @@ model Order_Menu {
   orderId    String @db.ObjectId
   menuItemId String @db.ObjectId
 
-  order Order     @relation(fields: [orderId], references: [id])
-  menu  MenuItems @relation(fields: [menuItemId], references: [id])
+  Order Order     @relation(fields: [orderId], references: [id])
+  Menu  MenuItems @relation(fields: [menuItemId], references: [id])
 }
 
 model MenuItems {
@@ -145,7 +143,7 @@ model MenuItems {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  orders               Order_Menu[]
+  Orders               Order_Menu[]
   PendingMenuItem      PendingMenuItem[]
   RawMaterial_MenuItem RawMaterial_MenuItem[]
 }
@@ -155,7 +153,7 @@ model PendingMenuItem {
   quantity   Int
   menuItemId String @db.ObjectId
 
-  menu MenuItems @relation(fields: [menuItemId], references: [id])
+  Menu MenuItems @relation(fields: [menuItemId], references: [id])
 }
 
 model RawMaterial_MenuItem {
@@ -164,8 +162,8 @@ model RawMaterial_MenuItem {
   rawMaterialId String @db.ObjectId
   menuItemId    String @db.ObjectId
 
-  rawMaterial RawMaterials @relation(fields: [rawMaterialId], references: [id])
-  menuItem    MenuItems    @relation(fields: [menuItemId], references: [id])
+  RawMaterial RawMaterials @relation(fields: [rawMaterialId], references: [id])
+  MenuItem    MenuItems    @relation(fields: [menuItemId], references: [id])
 }
 
 model RawMaterials {
