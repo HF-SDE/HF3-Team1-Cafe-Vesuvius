@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
+import { Pressable  } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -27,6 +27,11 @@ export default function TabLayout() {
           backgroundColor: PrimaryColor,
           height: 88,
           paddingTop: 10,
+          borderTopWidth: 0,
+          borderBottomWidth: 0,
+          elevation: 0,
+          shadowOpacity: 0,
+          overflow: 'hidden',
         },
 
         headerStyle: { backgroundColor: PrimaryColor },
@@ -34,6 +39,7 @@ export default function TabLayout() {
         tabBarShowLabel: false,
         headerTitleAlign: "center",
         headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
+        headerShadowVisible: false,
 
         // Disable the static render of the header on web
         // to prevent a hydration error in React Navigation v6.
@@ -44,6 +50,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Order",
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <Entypo
               name="list"
@@ -71,6 +78,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Reservartions",
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <Entypo
               name="calendar"
@@ -85,6 +93,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Management",
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <Entypo
               name="info-with-circle"
@@ -99,6 +108,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Profile",
+          headerShown: false,
           tabBarIcon: ({ focused }) => (
             <FontAwesome
               name="user"
