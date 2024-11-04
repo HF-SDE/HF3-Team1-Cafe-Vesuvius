@@ -36,5 +36,5 @@ app.get('/ping', (req, res) => {
 const port = config.PORT || 3001;
 
 app.listen(port, () => {
-  console.log(`Server is running on ${config.PORT}`);
+  console.log(`Server is running on ${config.PORT} ${config.WHITELISTED_ORIGINS}`);
 });
