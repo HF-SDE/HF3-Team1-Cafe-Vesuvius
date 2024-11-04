@@ -55,13 +55,15 @@ export function SessionProvider(props: React.PropsWithChildren) {
               headers: {
                 'Content-Type': 'application/json',
               },
+              validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+
             });
             // const response = {
             //   status: 200,
             //   data: {
             //     token: "GG"
             //   }
-            // };
+            // };            
 
             if (!response) {
               throw new Error("No response");
@@ -73,15 +75,15 @@ export function SessionProvider(props: React.PropsWithChildren) {
 
             const result = response.data;
 
-            if (!result || !result.token) {
+            if (!result || !result.accessToken || !result.accessToken.token) {
               throw new Error("No token found in response");
             }
 
-            console.log(result.token);
-            setSession(result.token);
+            console.log(result.accessToken.token);
+            setSession(result.accessToken.token);
             return "authenticated";
           } catch (error) {
-            console.error(error);
+            console.error(error + "HELLO");
             setSession(null);
             return "Something went wrong on our end. Please contact support";
           }

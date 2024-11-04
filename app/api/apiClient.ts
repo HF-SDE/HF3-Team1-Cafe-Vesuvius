@@ -3,7 +3,8 @@ import axios from 'axios';
 import { useStorageState } from '../storage/useStorageState';
 
 const apiClient = axios.create({
-  baseURL: "http://localhost:3001",
+  baseURL: "http://10.130.65.255:3001",
+  withCredentials: true,
 });
 
 // Function to check if the access token is expired

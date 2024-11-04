@@ -23,6 +23,7 @@ export default function Index() {
   const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false); // New state variable
 
   const handleLogin = async () => {
     const isUsernameValid = username.trim() !== "";
@@ -32,6 +33,7 @@ export default function Index() {
     setIsPasswordEmpty(!isPasswordValid);
 
     if (isUsernameValid && isPasswordValid) {
+      setIsLoading(true); // Start loading
       const signInResult = await signIn(username, password);
       console.log(signInResult);
       
@@ -41,10 +43,10 @@ export default function Index() {
       } else {
         setErrorMessage(signInResult);
       }
+      setIsLoading(false); // End loading
     } else {
       setErrorMessage("Please fill out username and password");
     }
-
   };
 
   // Clear error message once both fields are filled
@@ -62,7 +64,7 @@ export default function Index() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: SecondaryColor }]}>
       <View style={styles.logoContainer}>
-              <Logo width={300} height={300} />
+        <Logo width={300} height={300} />
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -106,8 +108,9 @@ export default function Index() {
           <Text style={styles.errorText}>{errorMessage}</Text>
         ) : null}
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: PrimaryColor }]}
+          style={[styles.button, { backgroundColor: PrimaryColor, opacity: isLoading ? 0.5 : 1 }]} // Adjust opacity
           onPress={handleLogin}
+          disabled={isLoading}
         >
           <Text style={[styles.buttonText, {color: BackgroundColor}]}>Sign In</Text>
         </TouchableOpacity>
