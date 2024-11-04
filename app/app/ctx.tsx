@@ -1,13 +1,16 @@
 import React from "react";
-import { useStorageState } from "./useStorageState";
+import { useStorageState } from "../storage/useStorageState";
+import { Buffer } from 'buffer';
+import apiClient from "../api/apiClient";
+
 
 const AuthContext = React.createContext<{
-  signIn: (username: string, password: string) => boolean;
+  signIn: (username: string, password: string) => Promise<string>;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
 }>({
-  signIn: () => false,
+  signIn: async () => "false",
   signOut: () => null,
   session: null,
   isLoading: false,
@@ -30,12 +33,59 @@ export function SessionProvider(props: React.PropsWithChildren) {
   return (
     <AuthContext.Provider
       value={{
-        signIn: (username, password) => {
-          // Add your login logic here
-          // For example purposes, we'll just set a fake session in storage
-          //This likely would be a JWT token or other session data
-          setSession(username + " - " + password);
-          return true
+        signIn: async (username, password) => {
+          const isUsernameValid = username.trim() !== "";
+          const isPasswordValid = password.trim() !== "";
+
+          if (!isUsernameValid || !isPasswordValid) {
+            setSession(null);
+            return "Please fill out username and password";
+          }
+
+          const encodedPassword = Buffer.from(password).toString("base64");
+
+          const loginData = {
+            username: username,
+            password: encodedPassword,
+          };
+          setSession("null")
+          try {
+
+            const response = await apiClient.post('/login', loginData, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+            });
+            // const response = {
+            //   status: 200,
+            //   data: {
+            //     token: "GG"
+            //   }
+            // };
+
+            if (!response) {
+              throw new Error("No response");
+            }
+
+            if (response.status !== 200) {
+              return "Wrong username or password";
+            }
+
+            const result = response.data;
+
+            if (!result || !result.token) {
+              throw new Error("No token found in response");
+            }
+
+            console.log(result.token);
+            setSession(result.token);
+            return "authenticated";
+          } catch (error) {
+            console.error(error);
+            setSession(null);
+            return "Something went wrong on our end. Please contact support";
+          }
+        
         },
         signOut: () => {
           setSession(null);

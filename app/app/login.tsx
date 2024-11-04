@@ -24,7 +24,7 @@ export default function Index() {
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     const isUsernameValid = username.trim() !== "";
     const isPasswordValid = password.trim() !== "";
 
@@ -32,16 +32,19 @@ export default function Index() {
     setIsPasswordEmpty(!isPasswordValid);
 
     if (isUsernameValid && isPasswordValid) {
-      const signInResult = signIn(username, password);
-      if (signInResult) {
+      const signInResult = await signIn(username, password);
+      console.log(signInResult);
+      
+      if (signInResult === "authenticated") {
         setErrorMessage("");
         router.replace("/");
       } else {
-        setErrorMessage("Wrong username or password");
+        setErrorMessage(signInResult);
       }
     } else {
       setErrorMessage("Please fill out username and password");
     }
+
   };
 
   // Clear error message once both fields are filled
