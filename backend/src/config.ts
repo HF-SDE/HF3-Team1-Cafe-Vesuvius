@@ -10,6 +10,7 @@ const config = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'secret2',
   WHITELISTED_ORIGINS:
     process.env.WHITELISTED_ORIGINS || 'localhost:3000 localhost:3001',
+  PRISMA_API_KEY: process.env.PRISMA_API_KEY || 'secret',
 };
 
 export default config;
