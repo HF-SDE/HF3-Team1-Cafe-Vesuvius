@@ -17,6 +17,7 @@ const compat = new FlatCompat({
 });
 
 export default [
+  jsdoc.configs['flat/recommended'],
   {
     ignores: [
       '**/*.json',
