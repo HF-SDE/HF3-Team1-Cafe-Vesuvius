@@ -22,7 +22,6 @@ model User {
   initials  String
   name      String
   email     String   @unique
-  phone     String   @unique
   username  String   @unique
   password  String
   active    Boolean  @default(true)
@@ -143,6 +142,7 @@ model Order_Menu {
 
 model MenuItem {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  category  String[]
   name      String
   price     Float
   createdAt DateTime @default(now())
