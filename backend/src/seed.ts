@@ -1,8 +1,13 @@
 import { hash } from 'argon2';
+import { ErrorCallback } from 'typescript';
 
+import config from '@config';
 import { PrismaClient } from '@prisma/client';
+import { withOptimize } from '@prisma/extension-optimize';
 
-const prisma = new PrismaClient();
+const prisma = new PrismaClient().$extends(
+  withOptimize({ apiKey: config.PRISMA_API_KEY }),
+);
 
 /**
  * Used for generating test data to the database
@@ -345,10 +350,10 @@ async function main() {
   }
 
   // Stock
-  await prisma.rawMaterials.createMany({
+  await prisma.rawMaterial.createMany({
     data: [
       {
-        name: 'jalapeno',
+        name: 'Jalapeno',
         quantity: 100,
         unit: 'kg',
       },
@@ -393,7 +398,7 @@ async function main() {
         unit: 'kg',
       },
       {
-        name: 'cream fresh',
+        name: 'Sour cream',
         quantity: 100,
         unit: 'l',
       },
@@ -413,27 +418,27 @@ async function main() {
         unit: 'kg',
       },
       {
-        name: 'cesar dressing',
+        name: 'Cesar dressing',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'croutons',
+        name: 'Croutons',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'parmesan',
+        name: 'Parmesan',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'chicken breast',
+        name: 'Chicken breast',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'heart salad',
+        name: 'Heart salad',
         quantity: 100,
         unit: 'kg',
       },
@@ -443,97 +448,97 @@ async function main() {
         unit: 'kg',
       },
       {
-        name: 'cabbage salad',
+        name: 'Coleslaw',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'avocado',
+        name: 'Avocado',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'nudler',
+        name: 'Noodles',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'cucumber',
+        name: 'Cucumber',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'carrot',
+        name: 'Carrot',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'edamame beans',
+        name: 'Edamame beans',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'mint',
+        name: 'Mint',
         quantity: 100,
         unit: 'leaf',
       },
       {
-        name: 'cashew nuts',
+        name: 'Cashew nuts',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'gomadressing',
+        name: 'Gomadressing',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'sweet potato',
+        name: 'Sweet potato',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'falafel',
+        name: 'Falafel',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'baby spinach',
+        name: 'Baby spinach',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'pomegranate',
+        name: 'Pomegranate',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'bulgur',
+        name: 'Bulgur',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'feta',
+        name: 'Feta',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'basil pesto',
+        name: 'Basil pesto',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'pumpkin seeds',
+        name: 'Pumpkin seeds',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'curry mayonnaise',
+        name: 'Curry mayonnaise',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'salat',
+        name: 'Salad',
         quantity: 100,
         unit: 'kg',
       },
@@ -543,212 +548,563 @@ async function main() {
         unit: 'kg',
       },
       {
-        name: 'mayonnaise',
+        name: 'Mayonnaise',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'smoked salmon',
+        name: 'Smoked salmon',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'sandwich bread',
+        name: 'Sandwich bread',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'pickled red onion',
+        name: 'Pickled red onion',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'spicy chill mayo',
+        name: 'Spicy chill mayo',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'chill mayo',
+        name: 'Chill mayo',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'tune moussé',
+        name: 'Rune moussé',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'brioche bun',
+        name: 'Brioche bun',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'minced beef',
+        name: 'Minced beef',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'pickled',
+        name: 'Pickled',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'burger dressing',
+        name: 'Burger dressing',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'fresh basil',
+        name: 'Fresh basil',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'butter',
+        name: 'Butter',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'bread',
+        name: 'Bread',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'pasta',
+        name: 'Pasta',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'mushrooms',
+        name: 'Mushrooms',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'tomato sauce',
+        name: 'Tomato sauce',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'basil',
+        name: 'Basil',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'aperol',
+        name: 'Aperol',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'prosecco',
+        name: 'Prosecco',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'sparkling water',
+        name: 'Sparkling water',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'orange',
+        name: 'Orange',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'vodka',
+        name: 'Vodka',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'tequila',
+        name: 'Tequila',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'expresso',
+        name: 'Espresso',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'vanilla syrup',
+        name: 'Vanilla syrup',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'dark rum',
+        name: 'Dark rum',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'kahlua',
+        name: 'Kahlua',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'ginger beer',
+        name: 'Ginger beer',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'lime',
+        name: 'Lime',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'gum syrup',
+        name: 'Gum syrup',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'rom',
+        name: 'Rom',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'cane sugar',
+        name: 'Cane sugar',
         quantity: 100,
         unit: 'kg',
       },
       {
-        name: 'lime juice',
+        name: 'Lime juice',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'gin',
+        name: 'Gin',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'tonic',
+        name: 'Tonic',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'citrus',
+        name: 'Citrus',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'lemon',
+        name: 'Lemon',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'white rom',
+        name: 'White rom',
         quantity: 100,
         unit: 'l',
       },
       {
-        name: 'strawberry',
+        name: 'Strawberry',
         quantity: 100,
         unit: 'pcs',
       },
       {
-        name: 'mongo juice',
+        name: 'Mongo juice',
         quantity: 100,
         unit: 'l',
-      }
+      },
     ],
   });
+
+  // Menu
+  await prisma.menuItem.createMany({
+    data: [
+      {
+        name: 'Nachos Supreme',
+        price: 129,
+        category: ['Food'],
+      },
+      {
+        name: 'Caesar Salad',
+        price: 139,
+        category: ['Food'],
+      },
+      {
+        name: "Tiger's Prawn Salad",
+        price: 139,
+        category: ['Food', 'Salad'],
+      },
+      {
+        name: "Vegan's salad",
+        price: 119,
+        category: ['Food', 'Salad'],
+      },
+      {
+        name: 'Club Sandwich',
+        price: 139,
+        category: ['Food', 'Sandwich'],
+      },
+      {
+        name: 'Salmon Sandwich',
+        price: 149,
+        category: ['Food', 'Sandwich'],
+      },
+      {
+        name: 'Spicy Steak Sandwich',
+        price: 149,
+        category: ['Food', 'Sandwich'],
+      },
+      {
+        name: 'Tuna Sandwich',
+        price: 139,
+        category: ['Food', 'Sandwich'],
+      },
+      {
+        name: 'Vesuvius Burger',
+        price: 139,
+        category: ['Food', 'Burger'],
+      },
+      {
+        name: 'Spicy Burger',
+        price: 139,
+        category: ['Food', 'Burger'],
+      },
+      {
+        name: 'Crispy Chicken Burger',
+        price: 139,
+        category: ['Food', 'Burger'],
+      },
+      {
+        name: 'Tomato Soup',
+        price: 99,
+        category: ['Food', 'Soup'],
+      },
+      {
+        name: 'Pasta with Chicken',
+        price: 169,
+        category: ['Food', 'Pasta'],
+      },
+      {
+        name: 'Pasta with beef tenderloin',
+        price: 179,
+        category: ['Food', 'Pasta'],
+      },
+      {
+        name: 'Pasta with tiger prawn',
+        price: 179,
+        category: ['Food', 'Pasta'],
+      },
+      {
+        name: 'Aperol Spritzz',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Espresso Martini',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Dark & Stormy',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Mojito',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Gin Tonic',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Moscow Mule',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Strawberry Daiquiri',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+      {
+        name: 'Gin Hass',
+        price: 85,
+        category: ['Drink', 'Alcohol'],
+      },
+    ],
+  });
+
+  // RawMaterial_MenuItem
+  await prisma.rawMaterial_MenuItem.createMany({
+    data: [
+      // Nachos Supreme
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('TortillaChip'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('Chicken'),
+        quantity: 0.3,
+      },
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('Jalapeno'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('Cheese'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('Salsa'),
+        quantity: 0.08,
+      },
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('guacamole'),
+        quantity: 0.08,
+      },
+      {
+        menuItemId: await findMenuItem('Nachos Supreme'),
+        rawMaterialId: await findRawMaterialItem('Sour cream'),
+        quantity: 0.04,
+      },
+      // Caesar Salad
+      {
+        menuItemId: await findMenuItem('Caesar Salad'),
+        rawMaterialId: await findRawMaterialItem('Chicken breast'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Caesar Salad'),
+        rawMaterialId: await findRawMaterialItem('Heart salad'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Caesar Salad'),
+        rawMaterialId: await findRawMaterialItem('Cesar dressing'),
+        quantity: 0.3,
+      },
+      {
+        menuItemId: await findMenuItem('Caesar Salad'),
+        rawMaterialId: await findRawMaterialItem('Parmesan'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem('Caesar Salad'),
+        rawMaterialId: await findRawMaterialItem('Croutons'),
+        quantity: 0.05,
+      },
+      // Tiger's Prawn Salad
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Tiger prawn'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Coleslaw'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Avocado'),
+        quantity: 1,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('noodles'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Cucumber'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Carrot'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Edamame beans'),
+        quantity: 0.03,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Mint'),
+        quantity: 2,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Cashew nuts'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem("Tiger's Prawn Salad"),
+        rawMaterialId: await findRawMaterialItem('Gomadressing'),
+        quantity: 0.1,
+      },
+      // Vegan's salad
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Sweet potato'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Falafel'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Baby spinach'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Pomegranate'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Bulgur'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Bulgur'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Feta'),
+        quantity: 0.04,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Tomato'),
+        quantity: 0.3,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Edamame beans'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Basil pesto'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Pumpkin seeds'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem("Vegan's salad"),
+        rawMaterialId: await findRawMaterialItem('Mint'),
+        quantity: 2,
+      },
+    ],
+  });
+}
+
+/**
+ * Find menu item id by name
+ * @async
+ * @param {string} name Menu item name
+ * @returns {Promise<string>} Menu item id
+ */
+async function findMenuItem(name: string): Promise<string> {
+  try {
+    const result = await prisma.menuItem.findFirst({
+      where: {
+        name,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (result) {
+      return result.id;
+    }
+    throw new Error('Menu item not found');
+  } catch (error: unknown) {
+    return (error as Error).message;
+  }
+}
+
+/**
+ * Find RawMaterial item id by name
+ * @async
+ * @param {string} name RawMaterial item name
+ * @returns {Promise<string>} RawMaterial item id
+ */
+async function findRawMaterialItem(name: string): Promise<string> {
+  try {
+    const result = await prisma.rawMaterial.findFirst({
+      where: {
+        name,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (result) {
+      return result.id;
+    }
+    throw new Error('Menu item not found');
+  } catch (error: unknown) {
+    return (error as Error).message;
+  }
 }
 
 main()
