@@ -106,9 +106,9 @@ export const login = async (
 
 export const logout = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { token: refreshToken } = req.body;
+    const { token } = req.body;
 
-    if (!refreshToken) {
+    if (!token) {
       res.status(400).json({
         status: 'MissingData',
         message: 'Missing refresh token',
@@ -116,7 +116,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    await authService.invalidateRefreshToken(refreshToken);
+    await authService.invalidateRefreshToken(token);
     res.status(200).json({ message: 'Logout successful' });
   } catch (error) {
     res.status(500).json({

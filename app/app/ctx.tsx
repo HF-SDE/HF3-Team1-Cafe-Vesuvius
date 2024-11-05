@@ -11,7 +11,7 @@ const AuthContext = React.createContext<{
   isLoading: boolean;
 }>({
   signIn: async () => "false",
-  signOut: () => null,
+  signOut: async () => null,
   session: null,
   isLoading: false,
 });
@@ -34,22 +34,22 @@ export function SessionProvider(props: React.PropsWithChildren) {
     <AuthContext.Provider
       value={{
         signIn: async (username, password) => {
-          const isUsernameValid = username.trim() !== "";
-          const isPasswordValid = password.trim() !== "";
-
-          if (!isUsernameValid || !isPasswordValid) {
-            setSession(null);
-            return "Please fill out username and password";
-          }
-
-          const encodedPassword = Buffer.from(password).toString("base64");
-
-          const loginData = {
-            username: username,
-            password: encodedPassword,
-          };
-          setSession("null")
           try {
+            const isUsernameValid = username.trim() !== "";
+            const isPasswordValid = password.trim() !== "";
+  
+            if (!isUsernameValid || !isPasswordValid) {
+              setSession(null);
+              return "Please fill out username and password";
+            }
+  
+            const encodedPassword = Buffer.from(password).toString("base64");
+  
+            const loginData = {
+              username: username,
+              password: encodedPassword,
+            };
+            //setSession("null")
 
             const response = await apiClient.post('/login', loginData, {
               headers: {
@@ -83,13 +83,30 @@ export function SessionProvider(props: React.PropsWithChildren) {
             setSession(result.accessToken.token);
             return "authenticated";
           } catch (error) {
-            console.error(error + "HELLO");
+            console.error(error);
             setSession(null);
             return "Something went wrong on our end. Please contact support";
           }
         
         },
-        signOut: () => {
+        signOut: async () => {
+          try {
+
+            const logoutData = {
+              token: session,
+            };
+
+            const response = await apiClient.post('/logout', logoutData, {
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+
+            });
+
+          } catch (error) {
+            console.error(error);
+          }
           setSession(null);
         },
         session,

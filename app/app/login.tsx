@@ -64,7 +64,7 @@ export default function Index() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: SecondaryColor }]}>
       <View style={styles.logoContainer}>
-        <Logo width={300} height={300} />
+        <Logo width={340} height={340} />
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
@@ -78,8 +78,10 @@ export default function Index() {
             autoCorrect={false}
             autoCapitalize='none'
             value={username}
-            onChangeText={setUsername}
-          />
+            onChangeText={(text) => {
+              setUsername(text);
+              setIsUsernameEmpty(false);
+            }}          />
         </View>
         <View style={[styles.input_block]}>
           <TextInput
@@ -90,7 +92,10 @@ export default function Index() {
             secureTextEntry={!showPassword}
             autoCapitalize='none'
             value={password}
-            onChangeText={setPassword}
+            onChangeText={(text) => {
+              setPassword(text);
+              setIsPasswordEmpty(false);
+            }}
           />
           <TouchableOpacity
             onPress={() => setShowPassword(previous => !previous)}
