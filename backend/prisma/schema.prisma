@@ -5,7 +5,7 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["tracing"]
 }
 
@@ -96,28 +96,27 @@ model Permission {
 model Reservation {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   reservationTime DateTime
-  name            String
-  email           String
-  phone           String
+  name            String?
+  email           String?
+  phone           String?
   amount          Int      @default(2)
+  tableIds        String[] @db.ObjectId
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  Tables Table[]
+  Table Table @relation(fields: [tableIds], references: [id])
 }
 
 model Table {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  number        Int      @unique
-  location      Int
-  capacity      Int      @default(2)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  reservationId String   @db.ObjectId
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  number    Int      @unique
+  location  String?
+  capacity  Int      @default(2)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  Orders Order[]
-
-  Reservation Reservation @relation(fields: [reservationId], references: [id])
+  Orders      Order[]
+  Reservation Reservation[]
 }
 
 model Order {
@@ -151,6 +150,8 @@ model MenuItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([name])
+
   Orders                Order_Menu[]
   PendingMenuItems      PendingMenuItem[]
   RawMaterial_MenuItems RawMaterial_MenuItem[]
@@ -166,7 +167,7 @@ model PendingMenuItem {
 
 model RawMaterial_MenuItem {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
-  quantity      Int    @default(1)
+  quantity      Float    @default(1)
   rawMaterialId String @db.ObjectId
   menuItemId    String @db.ObjectId
 
@@ -177,7 +178,7 @@ model RawMaterial_MenuItem {
 model RawMaterial {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String   @unique
-  quantity  Int      @default(0)
+  quantity  Float      @default(0)
   unit      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
