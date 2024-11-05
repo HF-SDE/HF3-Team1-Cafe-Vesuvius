@@ -55,14 +55,24 @@ export const generateUserTokens = async (user: any, req: Request) => {
 };
 
 // Reomove the tokens for the session in the DB
-export const invalidateRefreshToken = async (refreshToken: string) => {
+export const invalidateRefreshToken = async (token: string) => {
   const refreshTokenInDb = await prisma.refreshToken.findUnique({
-    where: { token: refreshToken },
+    where: { token: token },
   });
-  await prisma.accessToken.deleteMany({
-    where: { refreshTokenId: refreshTokenInDb?.id },
+  const accessTokenInDb = await prisma.accessToken.findUnique({
+    where: { token: token },
   });
-  await prisma.refreshToken.deleteMany({ where: { token: refreshToken } });
+  let session = refreshTokenInDb?.sessionId || accessTokenInDb?.sessionId;
+
+  if (session) {    
+    await prisma.accessToken.deleteMany({
+      where: { sessionId: session },
+    });
+    await prisma.refreshToken.deleteMany({ 
+      where: { sessionId: session } 
+    });
+  }
+  
 };
 
 export const invalidateAllTokensForUser = async (userId: string) => {
