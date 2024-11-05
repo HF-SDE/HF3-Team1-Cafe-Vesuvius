@@ -64,7 +64,7 @@ export default function Index() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: SecondaryColor }]}>
       <View style={styles.logoContainer}>
-        <Logo width={300} height={300} />
+        <Logo width={340} height={340} />
       </View>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
