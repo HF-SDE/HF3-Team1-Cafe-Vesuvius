@@ -6,6 +6,8 @@ import { PrismaClient } from '@prisma/client';
 
 import { JwtPayload } from 'jsonwebtoken';
 
+import config from '@config';
+
 
 const prisma = new PrismaClient();
 
@@ -19,7 +21,7 @@ const generateToken = (
 };
 
 // Change user type back to User
-export const generateUserTokens = async (user: any, req: Request) => {
+export const generateUserTokens = async (user: any, req: Request, sessionId?: string | undefined) => {
   const ip = req.socket.remoteAddress;
 
   if (!ip) return '';
@@ -27,24 +29,52 @@ export const generateUserTokens = async (user: any, req: Request) => {
   const newAccessToken = generateToken(
     { id: user.id, username: user.username },
     ip,
-    process.env.ACCESS_TOKEN_EXPIRATION || '5m',
-    process.env.ACCESS_TOKEN_SECRET as string,
+    config.ACCESS_TOKEN_EXPIRATION,
+    config.ACCESS_TOKEN_SECRET,
   );
   const newRefreshToken = generateToken(
     { id: user.id, username: user.username },
     ip,
-    process.env.REFRESH_TOKEN_EXPIRATION || '3d',
-    process.env.REFRESH_TOKEN_SECRET as string,
+    config.REFRESH_TOKEN_EXPIRATION,
+    config.REFRESH_TOKEN_SECRET,
   );
 
+  //sconst databaseEntryExpiresAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
+
+  const databaseEntryExpiresAt = new Date(Date.now() + 1 * 60 * 1000); // 1 minute from now
+
+  if (sessionId) {
+    const updateOldRefreshForSession = await prisma.refreshToken.updateMany({
+      where: { sessionId: sessionId },
+      data: {
+        expiresAt: databaseEntryExpiresAt,
+      },
+    });
+    const updateOldAccessForSession = await prisma.accessToken.updateMany({
+      where: { sessionId: sessionId },
+      data: {
+        expiresAt: databaseEntryExpiresAt,
+      },
+    });
+  }
+  
+
+
+
   const newRefreshTokenInDB = await prisma.refreshToken.create({
-    data: { token: newRefreshToken, userId: user.id },
+    data: { 
+      token: newRefreshToken, 
+      userId: user.id,
+      sessionId: sessionId || undefined,
+      expiresAt: databaseEntryExpiresAt,
+    },
   });
   await prisma.accessToken.create({
     data: {
       token: newAccessToken,
       userId: user.id,
       refreshTokenId: newRefreshTokenInDB.id,
+      expiresAt: databaseEntryExpiresAt,
       sessionId: newRefreshTokenInDB.sessionId,
     },
   });
@@ -54,8 +84,10 @@ export const generateUserTokens = async (user: any, req: Request) => {
   };
 };
 
+
 // Reomove the tokens for the session in the DB
 export const invalidateRefreshToken = async (token: string) => {
+  // Se if the token is a refresh token in the DB
   const refreshTokenInDb = await prisma.refreshToken.findUnique({
     where: { token: token },
   });
@@ -86,7 +118,7 @@ export const getRefreshToken = async (accessToken: string, req: Request) => {
 
   const user = jwt.verify(
     accessToken,
-    (process.env.ACCESS_TOKEN_SECRET as string) + ip,
+    (config.ACCESS_TOKEN_SECRET + ip),
     { ignoreExpiration: true },
   );
   if (!user) return null;
@@ -138,7 +170,7 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
 
   const userTemp = jwt.verify(
     refreshToken,
-    (process.env.REFRESH_TOKEN_SECRET as string) + ip,
+    (config.REFRESH_TOKEN_SECRET + ip),
   );
   if (!userTemp) return null;
 
@@ -157,38 +189,50 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
   });
 
   if (newestRefreshToken && newestRefreshToken.token === refreshToken) {
-    const newAccessToken = generateToken(
-      user as object,
-      ip,
-      process.env.ACCESS_TOKEN_EXPIRATION || '5m',
-      process.env.ACCESS_TOKEN_SECRET as string,
-    );
-    const newRefreshToken = generateToken(
-      user as object,
-      ip,
-      process.env.REFRESH_TOKEN_EXPIRATION || '3d',
-      process.env.REFRESH_TOKEN_SECRET as string,
-    );
+    const result = generateUserTokens(user, req, refreshTokenInDb?.sessionId);
 
-    const newRefreshEntry = await prisma.refreshToken.create({
-      data: {
-        token: newRefreshToken,
-        userId: (user as any).id,
-        sessionId: refreshTokenInDb?.sessionId,
-      },
-    });
-    await prisma.accessToken.create({
-      data: {
-        token: newAccessToken,
-        userId: (user as any).id,
-        refreshTokenId: newRefreshEntry.id,
-        sessionId: newRefreshEntry.sessionId,
-      },
-    });
 
-    return {
-      accessToken: { token: newAccessToken, authType: 'bearer' },
-    };
+
+
+
+
+
+
+
+
+    // const newAccessToken = generateToken(
+    //   user as object,
+    //   ip,
+    //   config.ACCESS_TOKEN_EXPIRATION,
+    //   config.ACCESS_TOKEN_SECRET,
+    // );
+    // const newRefreshToken = generateToken(
+    //   user as object,
+    //   ip,
+    //   config.REFRESH_TOKEN_EXPIRATION,
+    //   config.REFRESH_TOKEN_SECRET,
+    // );
+
+    // const newRefreshEntry = await prisma.refreshToken.create({
+    //   data: {
+    //     token: newRefreshToken,
+    //     userId: (user as any).id,
+    //     sessionId: refreshTokenInDb?.sessionId,
+    //   },
+    // });
+    // await prisma.accessToken.create({
+    //   data: {
+    //     token: newAccessToken,
+    //     userId: (user as any).id,
+    //     refreshTokenId: newRefreshEntry.id,
+    //     sessionId: newRefreshEntry.sessionId,
+    //   },
+    // });
+
+    // return {
+    //   accessToken: { token: newAccessToken, authType: 'bearer' },
+    // };
+    return result;
   }
 
   await prisma.accessToken.deleteMany({

@@ -10,6 +10,7 @@ import authRoutes from '@routes/auth.routes';
 
 import './passport';
 
+
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
   limit: 500, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
@@ -18,6 +19,7 @@ const limiter = rateLimit({
 });
 
 const app = express();
+
 app.use(
   cors({ credentials: true, origin: config.WHITELISTED_ORIGINS.split(' ') }),
 );
@@ -36,5 +38,5 @@ app.get('/ping', (req, res) => {
 const port = config.PORT || 3001;
 
 app.listen(port, () => {
-  console.log(`Server is running on ${config.PORT} ${config.WHITELISTED_ORIGINS}`);
+  console.log(`Server is running on ${config.PORT}`);
 });

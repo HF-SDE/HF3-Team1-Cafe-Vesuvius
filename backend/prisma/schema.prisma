@@ -39,6 +39,7 @@ model RefreshToken {
   token     String   @unique
   userId    String   @db.ObjectId
   createdAt DateTime @default(now())
+  expiresAt DateTime
   sessionId String   @default(uuid())
 
   AccessTokens AccessToken[]
@@ -52,6 +53,7 @@ model AccessToken {
   userId         String   @map("userId") @db.ObjectId
   refreshTokenId String   @map("refreshTokenId") @db.ObjectId
   createdAt      DateTime @default(now())
+  expiresAt DateTime
   sessionId      String
 
   User         User         @relation(fields: [userId], references: [id])

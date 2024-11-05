@@ -8,6 +8,9 @@ const config = {
   PORT: Number(process.env.PORT) || 3001,
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || 'secret',
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'secret2',
+  ACCESS_TOKEN_EXPIRATION: process.env.ACCESS_TOKEN_EXPIRATION || '5m',
+  REFRESH_TOKEN_EXPIRATION: process.env.REFRESH_TOKEN_EXPIRATION || '3d',
+
   WHITELISTED_ORIGINS:
   process.env.WHITELISTED_ORIGINS || "http://localhost:3000 http://localhost:3001 http://localhost:8081",
   PRISMA_API_KEY: process.env.PRISMA_API_KEY || 'secret',
