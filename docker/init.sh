@@ -21,15 +21,14 @@ mongosh --port $MONGO_PORT <<EOF
 
     print("Replica set initiated.");
 
-    // Switch to CafeVesuvius database
     use CafeVesuvius;
 
     // Set TTL for AccessToken
-    db.getCollection('AccessToken').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+    db.collection('AccessToken').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
     print("TTL index created for AccessToken.");
 
     // Set TTL for RefreshToken
-    db.getCollection('RefreshToken').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
+    db.collection('RefreshToken').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
     print("TTL index created for RefreshToken.");
 EOF
 

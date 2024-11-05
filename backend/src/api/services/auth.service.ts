@@ -39,9 +39,9 @@ export const generateUserTokens = async (user: any, req: Request, sessionId?: st
     config.REFRESH_TOKEN_SECRET,
   );
 
-  //sconst databaseEntryExpiresAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
+  const databaseEntryExpiresAt = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
 
-  const databaseEntryExpiresAt = new Date(Date.now() + 1 * 60 * 1000); // 1 minute from now
+  //const databaseEntryExpiresAt = new Date(Date.now() + 1 * 60 * 1000); // 1 minute from now
 
   if (sessionId) {
     const updateOldRefreshForSession = await prisma.refreshToken.updateMany({
