@@ -19,14 +19,23 @@ export const Colors = {
     accent: '#d18e61'
   },
   dark: {
-    text: '#f8f7f7',
-    background: '#030302',
-    tint: tintColorDark,
-    icon: '#6a442a',
-    tabIconDefault: '#6a442a',
-    tabIconSelected: tintColorDark,
-    primary: '#c8a592',  
-    secondary: '#6a442a', 
-    accent: '#9e5b2e'
+    // text: '#f8f7f7',
+    // background: '#030302',
+    // tint: tintColorDark,
+    // icon: '#6a442a',
+    // tabIconDefault: '#6a442a',
+    // tabIconSelected: tintColorDark,
+    // primary: '#c8a592',  
+    // secondary: '#302c2a', 
+    // accent: '#9e5b2e'
+    text: '#090808',
+    background: '#FCFCFB',
+    tint: tintColorLight,
+    icon: '#D5AF95',
+    tabIconDefault: '#D5AF95',
+    tabIconSelected: tintColorLight,
+    primary: '#6d4a37',  
+    secondary: '#272523', 
+    accent: '#d18e61'
   },
 };

@@ -7,13 +7,15 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TextInput
+  TextInput,
 } from "react-native";
-import Logo from "../components/icons/CaféVesuviusLogo2.svg";
+import LogoLight from "../components/icons/CaféVesuviusLogo2.svg";
+import LogoDark from "../components/icons/CaféVesuviusLogo3.svg";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useSession } from "./ctx";
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useColorScheme } from "react-native";
 
 export default function Index() {
   const { signIn } = useSession();
@@ -23,7 +25,10 @@ export default function Index() {
   const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false); // New state variable
+  const [isLoading, setIsLoading] = useState(false);
+
+  const colorScheme = useColorScheme(); // Detect light or dark mode
+  const Logo = colorScheme === "dark" ? LogoDark : LogoLight; // Choose logo based on theme
 
   const handleLogin = async () => {
     const isUsernameValid = username.trim() !== "";
@@ -33,36 +38,36 @@ export default function Index() {
     setIsPasswordEmpty(!isPasswordValid);
 
     if (isUsernameValid && isPasswordValid) {
-      setIsLoading(true); // Start loading
+      setIsLoading(true);
       const signInResult = await signIn(username, password);
       console.log(signInResult);
-      
+
       if (signInResult === "authenticated") {
         setErrorMessage("");
         router.replace("/");
       } else {
         setErrorMessage(signInResult);
       }
-      setIsLoading(false); // End loading
+      setIsLoading(false);
     } else {
       setErrorMessage("Please fill out username and password");
     }
   };
 
-  // Clear error message once both fields are filled
   useEffect(() => {
     if (username.trim() && password.trim()) {
       setErrorMessage("");
     }
   }, [username, password]);
 
-  // Theme colors
   const SecondaryColor = useThemeColor({}, "secondary");
   const BackgroundColor = useThemeColor({}, "background");
   const PrimaryColor = useThemeColor({}, "primary");
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: SecondaryColor }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: SecondaryColor }]}
+    >
       <View style={styles.logoContainer}>
         <Logo width={340} height={340} />
       </View>
@@ -72,25 +77,41 @@ export default function Index() {
       >
         <View style={styles.input_block}>
           <TextInput
-            style={[styles.input, { borderColor: isUsernameEmpty ? "red" : PrimaryColor, color: PrimaryColor, backgroundColor: BackgroundColor}]}
+            style={[
+              styles.input,
+              {
+                borderColor: isUsernameEmpty ? "red" : PrimaryColor,
+                color: PrimaryColor,
+                backgroundColor: BackgroundColor,
+              },
+            ]}
             placeholder="Username"
-            placeholderTextColor='gray'
+            placeholderTextColor="gray"
             autoCorrect={false}
-            autoCapitalize='none'
+            autoCapitalize="none"
             value={username}
             onChangeText={(text) => {
               setUsername(text);
               setIsUsernameEmpty(false);
-            }}          />
+            }}
+          />
         </View>
         <View style={[styles.input_block]}>
           <TextInput
-            style={[styles.input, { borderColor: isPasswordEmpty ? "red" : PrimaryColor, color: PrimaryColor, backgroundColor: BackgroundColor, paddingRight: 45 }]}
+            style={[
+              styles.input,
+              {
+                borderColor: isPasswordEmpty ? "red" : PrimaryColor,
+                color: PrimaryColor,
+                backgroundColor: BackgroundColor,
+                paddingRight: 45,
+              },
+            ]}
             placeholder="Password"
-            placeholderTextColor='gray'
+            placeholderTextColor="gray"
             autoCorrect={false}
             secureTextEntry={!showPassword}
-            autoCapitalize='none'
+            autoCapitalize="none"
             value={password}
             onChangeText={(text) => {
               setPassword(text);
@@ -98,7 +119,7 @@ export default function Index() {
             }}
           />
           <TouchableOpacity
-            onPress={() => setShowPassword(previous => !previous)}
+            onPress={() => setShowPassword((previous) => !previous)}
             style={styles.icon_container}
           >
             <MaterialCommunityIcons
@@ -113,11 +134,16 @@ export default function Index() {
           <Text style={styles.errorText}>{errorMessage}</Text>
         ) : null}
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: PrimaryColor, opacity: isLoading ? 0.5 : 1 }]} // Adjust opacity
+          style={[
+            styles.button,
+            { backgroundColor: PrimaryColor, opacity: isLoading ? 0.5 : 1 },
+          ]}
           onPress={handleLogin}
           disabled={isLoading}
         >
-          <Text style={[styles.buttonText, {color: BackgroundColor}]}>Sign In</Text>
+          <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+            Sign In
+          </Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -159,16 +185,16 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   input_block: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    position: 'relative'
+    flexDirection: "row",
+    alignItems: "center",
+    position: "relative",
   },
   icon_container: {
     padding: 5,
-    position: 'absolute',
+    position: "absolute",
     right: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     color: "red",
