@@ -1,5 +1,4 @@
 import argon2 from 'argon2';
-import { Request } from 'express';
 import passport from 'passport';
 import {
   ExtractJwt,
@@ -9,11 +8,10 @@ import {
 import { Strategy as LocalStrategy } from 'passport-local';
 
 import config from '@config';
-import { PrismaClient } from '@prisma/client';
+import prisma from '@prisma-instance';
 
-const prisma = new PrismaClient();
 
-let opts: StrategyOptionsWithoutRequest = {
+const opts: StrategyOptionsWithoutRequest = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: config.ACCESS_TOKEN_SECRET,
 };
