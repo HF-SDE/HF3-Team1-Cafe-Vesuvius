@@ -27,6 +27,8 @@ passport.use(
   }),
 );
 
+export const authenticateJwt = passport.authenticate('jwt', { session: false });
+
 passport.use(
   new LocalStrategy(
     {
