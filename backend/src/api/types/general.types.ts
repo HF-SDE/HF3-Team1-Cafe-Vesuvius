@@ -27,3 +27,18 @@ export interface APIResponse<T> {
   message?: string;
   data: T | null;
 }
+
+export interface IEXRequestUser {
+  user?: {
+    id?: string;
+    initials?: string;
+  };
+}
+
+export interface ControllerRequest<T = any> extends IEXRequestUser { 
+  body: T;
+  cookies: {
+    refreshToken: string;
+    accessToken: string;
+  }
+}
