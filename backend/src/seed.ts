@@ -1,13 +1,8 @@
 import { hash } from 'argon2';
-import { ErrorCallback } from 'typescript';
 
-import config from '@config';
 import { PrismaClient } from '@prisma/client';
-import { withOptimize } from '@prisma/extension-optimize';
 
-const prisma = new PrismaClient().$extends(
-  withOptimize({ apiKey: config.PRISMA_API_KEY }),
-);
+const prisma = new PrismaClient();
 
 /**
  * Used for generating test data to the database
@@ -30,127 +25,127 @@ async function main() {
     data: [
       {
         code: 'administrator:stats:view',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'See Stat',
       },
       {
         code: 'administrator:users:view',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'See users information',
       },
       {
         code: 'administrator:users:update',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'Update users information',
       },
       {
         code: 'administrator:users:create',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'Create new users',
       },
       {
         code: 'administrator:users:management',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'Give user permissions',
       },
       {
         code: 'administrator:permission:create',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'Create new permission',
       },
       {
         code: 'administrator:permission:view',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'View permissions and their groups',
       },
       {
         code: 'administrator:permissiongroup:create',
-        permissionGroupId: '1',
+        permissionGroupId: await findPermissionGroup('Administrator'),
         description: 'Create new permission group',
       },
       {
         code: 'order:view',
-        permissionGroupId: '2',
+        permissionGroupId: await findPermissionGroup('Order'),
         description: 'View order',
       },
       {
         code: 'order:create',
-        permissionGroupId: '2',
+        permissionGroupId: await findPermissionGroup('Order'),
         description: 'Create order',
       },
       {
         code: 'order:status:update:completed',
-        permissionGroupId: '2',
+        permissionGroupId: await findPermissionGroup('Order'),
         description: 'Update order status to completed',
       },
       {
         code: 'order:status:update:deliver',
-        permissionGroupId: '2',
+        permissionGroupId: await findPermissionGroup('Order'),
         description: 'Update order status to deliver',
       },
       {
         code: 'menu:update',
-        permissionGroupId: '3',
+        permissionGroupId: await findPermissionGroup('Menu'),
         description: 'Update menu',
       },
       {
         code: 'menu:create',
-        permissionGroupId: '3',
+        permissionGroupId: await findPermissionGroup('Menu'),
         description: 'Update menu',
       },
       {
         code: 'menu:delete',
-        permissionGroupId: '3',
+        permissionGroupId: await findPermissionGroup('Menu'),
         description: 'Delete menu',
       },
       {
         code: 'stock:view',
-        permissionGroupId: '4',
+        permissionGroupId: await findPermissionGroup('Stock'),
         description: 'View what it is in stock',
       },
       {
         code: 'stock:update',
-        permissionGroupId: '4',
+        permissionGroupId: await findPermissionGroup('Stock'),
         description: 'Update stock',
       },
       {
         code: 'stock:create',
-        permissionGroupId: '4',
+        permissionGroupId: await findPermissionGroup('Stock'),
         description: 'Create stock',
       },
       {
         code: 'table:view',
-        permissionGroupId: '6',
+        permissionGroupId: await findPermissionGroup('Table'),
         description: 'View tables',
       },
       {
         code: 'table:create',
-        permissionGroupId: '6',
+        permissionGroupId: await findPermissionGroup('Table'),
         description: 'Create table',
       },
       {
         code: 'table:delete',
-        permissionGroupId: '6',
+        permissionGroupId: await findPermissionGroup('Table'),
         description: 'Delete table',
       },
       {
         code: 'reservation:view',
-        permissionGroupId: '7',
+        permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'View reservation',
       },
       {
         code: 'reservation:update',
-        permissionGroupId: '7',
+        permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'Update reservation',
       },
       {
         code: 'reservation:create',
-        permissionGroupId: '7',
+        permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'Create reservation',
       },
       {
         code: 'reservation:delete',
-        permissionGroupId: '7',
+        permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'Delete reservation',
       },
     ],
@@ -192,7 +187,7 @@ async function main() {
   // Create administration user
   const administrationUser = await prisma.user.create({
     data: {
-      initials: 'TU',
+      initials: 'ADMINI',
       username: 'administration',
       password: await hash('administration'),
       name: 'administration User',
@@ -270,7 +265,7 @@ async function main() {
       await prisma.userPermissions.create({
         data: {
           userId: kokUser.id,
-          assignedBy: kokUser.id,
+          assignedBy: superAdminUser.id,
           permissionId: permission.id,
         },
       });
@@ -306,7 +301,7 @@ async function main() {
       await prisma.userPermissions.create({
         data: {
           userId: tjenerUser.id,
-          assignedBy: tjenerUser.id,
+          assignedBy: superAdminUser.id,
           permissionId: permission.id,
         },
       });
@@ -342,7 +337,7 @@ async function main() {
       await prisma.userPermissions.create({
         data: {
           userId: administrationUser.id,
-          assignedBy: administrationUser.id,
+          assignedBy: superAdminUser.id,
           permissionId: permission.id,
         },
       });
@@ -578,7 +573,7 @@ async function main() {
         unit: 'l',
       },
       {
-        name: 'Rune moussé',
+        name: 'Tune moussé',
         quantity: 100,
         unit: 'kg',
       },
@@ -588,7 +583,7 @@ async function main() {
         unit: 'pcs',
       },
       {
-        name: 'Minced beef',
+        name: 'Minced Beef',
         quantity: 100,
         unit: 'kg',
       },
@@ -748,7 +743,7 @@ async function main() {
         unit: 'pcs',
       },
       {
-        name: 'Mongo juice',
+        name: 'Mango juice',
         quantity: 100,
         unit: 'l',
       },
@@ -824,7 +819,7 @@ async function main() {
         category: ['Food', 'Pasta'],
       },
       {
-        name: 'Pasta with beef tenderloin',
+        name: 'Pasta with Beef tenderloin',
         price: 179,
         category: ['Food', 'Pasta'],
       },
@@ -834,7 +829,7 @@ async function main() {
         category: ['Food', 'Pasta'],
       },
       {
-        name: 'Aperol Spritzz',
+        name: 'Aperol Spritz',
         price: 85,
         category: ['Drink', 'Alcohol'],
       },
@@ -907,7 +902,7 @@ async function main() {
       },
       {
         menuItemId: await findMenuItem('Nachos Supreme'),
-        rawMaterialId: await findRawMaterialItem('guacamole'),
+        rawMaterialId: await findRawMaterialItem('Guacamole'),
         quantity: 0.08,
       },
       {
@@ -959,7 +954,7 @@ async function main() {
       },
       {
         menuItemId: await findMenuItem("Tiger's Prawn Salad"),
-        rawMaterialId: await findRawMaterialItem('noodles'),
+        rawMaterialId: await findRawMaterialItem('Noodles'),
         quantity: 0.1,
       },
       {
@@ -1053,8 +1048,682 @@ async function main() {
         rawMaterialId: await findRawMaterialItem('Mint'),
         quantity: 2,
       },
+
+      // Club Sandwich
+      {
+        menuItemId: await findMenuItem('Club Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Chicken breast'),
+        quantity: 0.065,
+      },
+      {
+        menuItemId: await findMenuItem('Club Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Bacon'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem('Club Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Curry mayonnaise'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Club Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Tomato'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Club Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+
+      // Salmon Sandwich
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Smoked salmon'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Basil pesto'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Avocado'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Pickled red onion'),
+        quantity: 0.07,
+      },
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Mayonnaise'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Salmon Sandwich'),
+        rawMaterialId: await findRawMaterialItem('French fries'),
+        quantity: 0.2,
+      },
+
+      // Spicy Steak Sandwich
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Beef'),
+        quantity: 0.08,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Guacamole'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Jalapeno'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Pickled red onion'),
+        quantity: 0.07,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Spicy chill mayo'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Mayonnaise'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Steak Sandwich'),
+        rawMaterialId: await findRawMaterialItem('French fries'),
+        quantity: 0.2,
+      },
+
+      // Tuna Sandwich
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Tune moussé'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Avocado'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Pickled red onion'),
+        quantity: 0.07,
+      },
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Basil pesto'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('Mayonnaise'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Tuna Sandwich'),
+        rawMaterialId: await findRawMaterialItem('French fries'),
+        quantity: 0.2,
+      },
+
+      // Vesuvius Burger
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Minced Beef'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Brioche bun'),
+        quantity: 1,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Pickled'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Tomato'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Pickled red onion'),
+        quantity: 0.07,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Burger dressing'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('French fries'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Vesuvius Burger'),
+        rawMaterialId: await findRawMaterialItem('Mayonnaise'),
+        quantity: 0.5,
+      },
+
+      // Spicy Burger
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Minced Beef'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Brioche bun'),
+        quantity: 1,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Tomato'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Jalapeno'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Pickled red onion'),
+        quantity: 0.07,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Spicy chill mayo'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('French fries'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Spicy Burger'),
+        rawMaterialId: await findRawMaterialItem('Mayonnaise'),
+        quantity: 0.5,
+      },
+
+      // Crispy Chicken Burger
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Chicken'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Brioche bun'),
+        quantity: 1,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Salad'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Tomato'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Pickled red onion'),
+        quantity: 0.07,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Spicy chill mayo'),
+        quantity: 0.02,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Jalapeno'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Guacamole'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('Mayonnaise'),
+        quantity: 0.5,
+      },
+      {
+        menuItemId: await findMenuItem('Crispy Chicken Burger'),
+        rawMaterialId: await findRawMaterialItem('French fries'),
+        quantity: 0.2,
+      },
+
+      // Tomato Soup
+      {
+        menuItemId: await findMenuItem('Tomato Soup'),
+        rawMaterialId: await findRawMaterialItem('Tomato'),
+        quantity: 1,
+      },
+      {
+        menuItemId: await findMenuItem('Tomato Soup'),
+        rawMaterialId: await findRawMaterialItem('Sour cream'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Tomato Soup'),
+        rawMaterialId: await findRawMaterialItem('Basil'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem('Tomato Soup'),
+        rawMaterialId: await findRawMaterialItem('Bread'),
+        quantity: 1,
+      },
+      {
+        menuItemId: await findMenuItem('Tomato Soup'),
+        rawMaterialId: await findRawMaterialItem('Butter'),
+        quantity: 0.01,
+      },
+
+      // Pasta with Chicken
+      {
+        menuItemId: await findMenuItem('Pasta with Chicken'),
+        rawMaterialId: await findRawMaterialItem('Pasta'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with Chicken'),
+        rawMaterialId: await findRawMaterialItem('Chicken'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with Chicken'),
+        rawMaterialId: await findRawMaterialItem('Mushrooms'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with Chicken'),
+        rawMaterialId: await findRawMaterialItem('Parmesan'),
+        quantity: 0.01,
+      },
+
+      // Pasta with Beef tenderloin
+      {
+        menuItemId: await findMenuItem('Pasta with Beef tenderloin'),
+        rawMaterialId: await findRawMaterialItem('Pasta'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with Beef tenderloin'),
+        rawMaterialId: await findRawMaterialItem('Beef'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with Beef tenderloin'),
+        rawMaterialId: await findRawMaterialItem('Mushrooms'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with Beef tenderloin'),
+        rawMaterialId: await findRawMaterialItem('Parmesan'),
+        quantity: 0.01,
+      },
+
+      // Pasta with tiger prawn
+      {
+        menuItemId: await findMenuItem('Pasta with tiger prawn'),
+        rawMaterialId: await findRawMaterialItem('Pasta'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with tiger prawn'),
+        rawMaterialId: await findRawMaterialItem('Tiger prawn'),
+        quantity: 0.2,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with tiger prawn'),
+        rawMaterialId: await findRawMaterialItem('Tomato sauce'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with tiger prawn'),
+        rawMaterialId: await findRawMaterialItem('Parmesan'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem('Pasta with tiger prawn'),
+        rawMaterialId: await findRawMaterialItem('Basil'),
+        quantity: 0.01,
+      },
+
+      // Aperol Spritz
+      {
+        menuItemId: await findMenuItem('Aperol Spritz'),
+        rawMaterialId: await findRawMaterialItem('Aperol'),
+        quantity: 0.04,
+      },
+      {
+        menuItemId: await findMenuItem('Aperol Spritz'),
+        rawMaterialId: await findRawMaterialItem('Prosecco'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Aperol Spritz'),
+        rawMaterialId: await findRawMaterialItem('Sparkling water'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Aperol Spritz'),
+        rawMaterialId: await findRawMaterialItem('Orange'),
+        quantity: 0.1,
+      },
+
+      // Espresso Martini
+      {
+        menuItemId: await findMenuItem('Espresso Martini'),
+        rawMaterialId: await findRawMaterialItem('Espresso'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Espresso Martini'),
+        rawMaterialId: await findRawMaterialItem('Kahlua'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Espresso Martini'),
+        rawMaterialId: await findRawMaterialItem('Vodka'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Espresso Martini'),
+        rawMaterialId: await findRawMaterialItem('Vanilla syrup'),
+        quantity: 0.02,
+      },
+
+      // Dark & Stormy
+      {
+        menuItemId: await findMenuItem('Dark & Stormy'),
+        rawMaterialId: await findRawMaterialItem('Dark rum'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Dark & Stormy'),
+        rawMaterialId: await findRawMaterialItem('Ginger beer'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Dark & Stormy'),
+        rawMaterialId: await findRawMaterialItem('Lime juice'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Dark & Stormy'),
+        rawMaterialId: await findRawMaterialItem('Gum syrup'),
+        quantity: 0.1,
+      },
+
+      // Mojito
+      {
+        menuItemId: await findMenuItem('Mojito'),
+        rawMaterialId: await findRawMaterialItem('Rom'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Mojito'),
+        rawMaterialId: await findRawMaterialItem('Lime juice'),
+        quantity: 0.1,
+      },
+
+      {
+        menuItemId: await findMenuItem('Mojito'),
+        rawMaterialId: await findRawMaterialItem('Lime'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Mojito'),
+        rawMaterialId: await findRawMaterialItem('Cane sugar'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Mojito'),
+        rawMaterialId: await findRawMaterialItem('Mint'),
+        quantity: 2,
+      },
+
+      // Gin Tonic
+      {
+        menuItemId: await findMenuItem('Gin Tonic'),
+        rawMaterialId: await findRawMaterialItem('Gin'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Gin Tonic'),
+        rawMaterialId: await findRawMaterialItem('Tonic'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Gin Tonic'),
+        rawMaterialId: await findRawMaterialItem('Citrus'),
+        quantity: 0.1,
+      },
+
+      // Moscow Mule
+      {
+        menuItemId: await findMenuItem('Moscow Mule'),
+        rawMaterialId: await findRawMaterialItem('Vodka'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Moscow Mule'),
+        rawMaterialId: await findRawMaterialItem('Ginger beer'),
+        quantity: 0.01,
+      },
+      {
+        menuItemId: await findMenuItem('Moscow Mule'),
+        rawMaterialId: await findRawMaterialItem('Lime juice'),
+        quantity: 0.05,
+      },
+
+      // Strawberry Daiquiri
+      {
+        menuItemId: await findMenuItem('Strawberry Daiquiri'),
+        rawMaterialId: await findRawMaterialItem('White rom'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Strawberry Daiquiri'),
+        rawMaterialId: await findRawMaterialItem('Strawberry'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Strawberry Daiquiri'),
+        rawMaterialId: await findRawMaterialItem('Lime juice'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Strawberry Daiquiri'),
+        rawMaterialId: await findRawMaterialItem('Gum syrup'),
+        quantity: 0.05,
+      },
+
+      // Gin Hass
+      {
+        menuItemId: await findMenuItem('Gin Hass'),
+        rawMaterialId: await findRawMaterialItem('Gin'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Gin Hass'),
+        rawMaterialId: await findRawMaterialItem('Mango juice'),
+        quantity: 0.1,
+      },
+      {
+        menuItemId: await findMenuItem('Gin Hass'),
+        rawMaterialId: await findRawMaterialItem('Lime juice'),
+        quantity: 0.05,
+      },
+      {
+        menuItemId: await findMenuItem('Gin Hass'),
+        rawMaterialId: await findRawMaterialItem('Lemon'),
+        quantity: 0.1,
+      },
     ],
   });
+
+  // Table
+  await prisma.table.createMany({
+    data: [
+      {
+        number: 1,
+      },
+      {
+        number: 2,
+      },
+      {
+        number: 3,
+      },
+      {
+        number: 4,
+      },
+      {
+        number: 5,
+      },
+      {
+        number: 6,
+      },
+      {
+        number: 7,
+      },
+      {
+        number: 8,
+      },
+      {
+        number: 9,
+      },
+      {
+        number: 10,
+      },
+      {
+        number: 11,
+      },
+      {
+        number: 12,
+      },
+      {
+        number: 13,
+      },
+      {
+        number: 14,
+      },
+      {
+        number: 15,
+      },
+      {
+        number: 16,
+      },
+      {
+        number: 17,
+      },
+      {
+        number: 18,
+      },
+      {
+        number: 19,
+      },
+      {
+        number: 20,
+      },
+      {
+        number: 21,
+      },
+      {
+        number: 22,
+      },
+      {
+        number: 23,
+      },
+      {
+        number: 24,
+      },
+      {
+        number: 25,
+      },
+      {
+        number: 26,
+      },
+      {
+        number: 27,
+      },
+      {
+        number: 28,
+      },
+    ],
+  });
+}
+
+/**
+ * Find permission group id by name
+ * @async
+ * @param {string} name Permission group name
+ * @returns {Promise<string>} Permission group id
+ */
+async function findPermissionGroup(name: string): Promise<string> {
+  try {
+    const result = await prisma.permissionGroup.findFirst({
+      where: {
+        name,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (result) {
+      return result.id;
+    }
+    throw new Error('Permission group not found');
+  } catch (error: unknown) {
+    return (error as Error).message;
+  }
 }
 
 /**
@@ -1076,7 +1745,7 @@ async function findMenuItem(name: string): Promise<string> {
     if (result) {
       return result.id;
     }
-    throw new Error('Menu item not found');
+    throw new Error(`Menu item not found ${name}`);
   } catch (error: unknown) {
     return (error as Error).message;
   }
@@ -1101,7 +1770,7 @@ async function findRawMaterialItem(name: string): Promise<string> {
     if (result) {
       return result.id;
     }
-    throw new Error('Menu item not found');
+    throw new Error(`Row item not found ${name}`);
   } catch (error: unknown) {
     return (error as Error).message;
   }
