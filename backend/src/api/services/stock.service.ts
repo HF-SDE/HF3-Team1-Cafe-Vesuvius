@@ -1,5 +1,5 @@
-import { Status } from '@api-types/general.types';
-import { IStockResponse, StockResult } from '@api-types/stock.types';
+import { APIResponse, Status } from '@api-types/general.types';
+import { StockResult } from '@api-types/stock.types';
 import prisma from '@prisma-instance';
 import { UuidSchema } from '@schemas/general.schemas';
 
@@ -7,21 +7,23 @@ import { UuidSchema } from '@schemas/general.schemas';
  * Service to get all stocks items
  * @async
  * @param {string} id - The id of the stock item to get.
- * @returns {Promise<IStockResponse>} A promise that resolves to an object containing the stock data, status, and message.
+ * @returns {Promise<APIResponse<StockResult>>} A promise that resolves to an object containing the stock data, status, and message.
  */
-export async function getStock(id?: string): Promise<IStockResponse> {
+export async function getStock(id?: string): Promise<APIResponse<StockResult>> {
   try {
-    let result: StockResult;
+    let result: StockResult | null;
     if (id) {
       // Validate the id
       const validate = UuidSchema.validate(id);
       if (validate.error) {
         return {
-          data: null,
+          data: undefined,
           status: Status.Failed,
           message: validate.error.message,
         };
       }
+
+      // Find the stock item by id
       result = await prisma.rawMaterial.findUnique({
         where: {
           id,
@@ -31,6 +33,14 @@ export async function getStock(id?: string): Promise<IStockResponse> {
       result = await prisma.rawMaterial.findMany();
     }
 
+    if (!result) {
+      return {
+        data: undefined,
+        status: Status.NotFound,
+        message: 'Stocks item(s) not found',
+      };
+    }
+
     return {
       data: result,
       status: Status.Found,
@@ -38,7 +48,7 @@ export async function getStock(id?: string): Promise<IStockResponse> {
     };
   } catch {
     return {
-      data: null,
+      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
