@@ -60,13 +60,15 @@ export default function Index() {
     }
   }, [username, password]);
 
-  const SecondaryColor = useThemeColor({}, "secondary");
   const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: SecondaryColor }]}
+      style={[styles.container, { backgroundColor: BackgroundColor }]}
     >
       <View style={styles.logoContainer}>
         <Logo width={340} height={340} />
@@ -125,7 +127,8 @@ export default function Index() {
             <MaterialCommunityIcons
               name={showPassword ? "eye-off" : "eye"}
               size={24}
-              color="gray"
+              // color="gray"
+              style={{ color: SecondaryColor }}
             />
           </TouchableOpacity>
         </View>
