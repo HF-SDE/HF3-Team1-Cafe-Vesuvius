@@ -31,6 +31,8 @@ app.use(limiter);
 
 //Insert all routes here
 app.use('/', authRoutes);
+app.use('/stock', stockRoutes);
+app.use('/table', tableRoutes);
 
 app.get('/ping', (req, res) => {
   res.send('Server is running');

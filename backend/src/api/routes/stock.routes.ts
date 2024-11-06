@@ -5,6 +5,6 @@ import { authenticateJwt } from 'passport';
 
 const router = Router();
 
-router.get('/stock', authenticateJwt, , StockController.getStock);
+router.get('/', authenticateJwt , StockController.getStock);
 
 export default router;
