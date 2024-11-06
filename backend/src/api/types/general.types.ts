@@ -1,8 +1,3 @@
-export interface IAPIResponse {
-  status: Status;
-  message?: string;
-}
-
 export enum Status {
   Unauthorized = 'Unauthorized',
   Forbidden = 'Forbidden',
@@ -25,7 +20,7 @@ export enum Status {
 export interface APIResponse<T> {
   status: Status;
   message?: string;
-  data: T | null;
+  data: T | undefined | null;
 }
 
 export interface IEXRequestUser {
@@ -35,10 +30,10 @@ export interface IEXRequestUser {
   };
 }
 
-export interface ControllerRequest<T = any> extends IEXRequestUser { 
+export interface ControllerRequest<T = any> extends IEXRequestUser {
   body: T;
   cookies: {
     refreshToken: string;
     accessToken: string;
-  }
+  };
 }
