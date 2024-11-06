@@ -12,7 +12,8 @@ const config = {
   REFRESH_TOKEN_EXPIRATION: process.env.REFRESH_TOKEN_EXPIRATION || '3d',
 
   WHITELISTED_ORIGINS:
-  process.env.WHITELISTED_ORIGINS || "http://localhost:3000 http://localhost:3001 http://localhost:8081",
+    process.env.WHITELISTED_ORIGINS ||
+    'http://localhost:3000 http://localhost:3001 http://localhost:8081',
 };
 
 export default config;

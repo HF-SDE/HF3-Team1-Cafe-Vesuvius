@@ -53,11 +53,10 @@ export default [
       parserOptions: {
         project: './tsconfig.eslint.json',
         sourceTypo: 'module',
-        tsconfigRootDir:
-          __dirname,
+        tsconfigRootDir: __dirname,
         projectService: {
-          defaultProject: "./tsconfig.eslint.json",
-        }
+          defaultProject: './tsconfig.eslint.json',
+        },
       },
     },
 
