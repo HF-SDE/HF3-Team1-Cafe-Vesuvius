@@ -22,11 +22,20 @@
       "@api-types/*": ["api/types/*"],
       "@utils/*": ["api/utils/*"],
       "@config": ["config"],
+      "@passport": ["passport"],
       "@prisma-instance": ["prisma"],
       "@middlewares/*": ["middleware/*"],
       "@schemas/*": ["../schemas/*"]
     },
-    "allowJs": true,
+    "allowJs": true
   },
-  "include": ["*", "src/index.ts", "src/config.ts", "src/**/*", "schemas", "eslint.config.mjs"],
+  "include": [
+    "*",
+    "src/index.ts",
+    "src/config.ts",
+    "src/**/*",
+    "schemas",
+    "src/passport.ts",
+    "eslint.config.mjs"
+  ]
 }

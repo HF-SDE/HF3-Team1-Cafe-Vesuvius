@@ -27,7 +27,15 @@
       "@middlewares/*": ["middleware/*"],
       "@schemas/*": ["../../schemas/*"]
     },
-    "allowJs": true,
+    "allowJs": true
   },
-  "include": ["*", "src/index.ts", "src/config.ts", "src/**/*", "../schemas", "eslint.config.mjs"],
+  "include": [
+    "*",
+    "src/index.ts",
+    "src/config.ts",
+    "src/passport.ts",
+    "src/**/*",
+    "../schemas",
+    "eslint.config.mjs"
+  ]
 }
