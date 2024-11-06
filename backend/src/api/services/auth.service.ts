@@ -194,14 +194,6 @@ export async function getRefreshToken(accessToken: string, req: Request) {
   }
 }
 
-// Define the expected shape of the decoded JWT payload
-interface MyJwtPayload {
-  user: {
-    id: string;
-    username: string;
-  };
-}
-
 /**
  * Refreshes the user's tokens by verifying the provided refresh token, checking the latest token in the database,
  * and generating new tokens if the refresh token is valid.
@@ -220,22 +212,22 @@ export async function refreshUserTokens(
   if (!ip) return null; // If no IP is found, return null
 
   // Verify the refresh token with the user's IP address as a secret key
-  let userTemp: MyJwtPayload | null = null;
+  let userTemp: TokenUser | null = null;
   try {
     userTemp = jwt.verify(
       refreshToken,
       config.REFRESH_TOKEN_SECRET + ip,
-    ) as MyJwtPayload;
+    ) as TokenUser;
   } catch {
     // Handle the verification failure gracefully
     return null;
   }
 
   // If the userTemp is valid and contains 'user', assign it to user
-  let user: { id: string; username: string } | null = null;
+  let user: TokenUser | null = null;
 
-  if (userTemp && userTemp.user) {
-    user = userTemp.user; // Directly access the user property now that TypeScript knows the structure
+  if (userTemp) {
+    user = userTemp; // Directly access the user property now that TypeScript knows the structure
   }
 
   if (!user) {
@@ -263,7 +255,7 @@ export async function refreshUserTokens(
   if (newestRefreshToken && newestRefreshToken.refreshToken === refreshToken) {
     const result = generateUserTokens(
       {
-        sub: user?.id || '',
+        sub: user?.sub || '',
         username: user?.username || '',
       },
       req,
