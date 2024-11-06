@@ -155,9 +155,11 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "80%",
+    width: "100%",
+    maxWidth: 400,
+    height: "50%",
     // backgroundColor: "white",
-    padding: 20,
+    padding: 10,
     borderRadius: 10,
   },
 });

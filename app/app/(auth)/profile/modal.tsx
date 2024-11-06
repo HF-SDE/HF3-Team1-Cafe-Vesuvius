@@ -11,7 +11,7 @@ import {
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface ModalScreenProps {
-  onClose: () => void; // Specify that onClose is a function with no parameters and no return value
+  onClose: () => void;
 }
 
 export default function ModalScreen({ onClose }: ModalScreenProps) {
@@ -22,8 +22,6 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
 
   const handleReset = () => {
     if (newPassword !== confirmPassword) {
@@ -31,40 +29,49 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
       return;
     }
     alert("Password reset successfully!");
-    onClose(); // Close the modal after successful reset
+    onClose();
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Reset Password</Text>
+    <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+      <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
 
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: PrimaryColor }]}
         placeholder="Old Password"
+        placeholderTextColor={TextColor}
         secureTextEntry
         value={oldPassword}
         onChangeText={setOldPassword}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: PrimaryColor }]}
         placeholder="New Password"
+        placeholderTextColor={TextColor}
         secureTextEntry
         value={newPassword}
         onChangeText={setNewPassword}
       />
       <TextInput
-        style={styles.input}
+        style={[styles.input, { borderColor: PrimaryColor }]}
         placeholder="Confirm New Password"
+        placeholderTextColor={TextColor}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
       />
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+        <TouchableOpacity
+          style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
+          onPress={handleReset}
+        >
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.cancelButton} onPress={onClose}>
+        <TouchableOpacity
+          style={[styles.cancelButton, { backgroundColor: "#ccc" }]}
+          onPress={onClose}
+        >
           <Text style={styles.buttonText}>Cancel</Text>
         </TouchableOpacity>
       </View>
@@ -89,8 +96,7 @@ const styles = StyleSheet.create({
   input: {
     width: "100%",
     padding: 10,
-    borderWidth: 3,
-    borderColor: "#ccc",
+    borderWidth: 1,
     borderRadius: 5,
     marginVertical: 10,
   },
@@ -102,7 +108,6 @@ const styles = StyleSheet.create({
   },
   resetButton: {
     flex: 1,
-    backgroundColor: "#4CAF50",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
@@ -110,7 +115,6 @@ const styles = StyleSheet.create({
   },
   cancelButton: {
     flex: 1,
-    backgroundColor: "#f44336",
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
