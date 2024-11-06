@@ -22,6 +22,7 @@
       "@api-types/*": ["api/types/*"],
       "@utils/*": ["api/utils/*"],
       "@config": ["config"],
+      "@passport": ["passport"],
       "@prisma-instance": ["prisma"],
       "@middlewares/*": ["middleware/*"],
       "@schemas/*": ["../../schemas/*"]
