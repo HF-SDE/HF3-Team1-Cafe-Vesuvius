@@ -83,7 +83,7 @@ export default function UserProfileScreen() {
           <View
             style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
           >
-            <ModalScreen onClose={() => setModalVisible(false)} />{" "}
+            <ModalScreen onClose={() => setModalVisible(false)} />
           </View>
         </View>
       </Modal>
