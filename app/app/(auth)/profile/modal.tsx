@@ -7,6 +7,7 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  SectionList,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -22,6 +23,8 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   const handleReset = () => {
     if (newPassword !== confirmPassword) {
@@ -37,25 +40,25 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
       <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
 
       <TextInput
-        style={[styles.input, { borderColor: PrimaryColor }]}
+        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
         placeholder="Old Password"
-        placeholderTextColor={TextColor}
+        placeholderTextColor={SecondaryColor}
         secureTextEntry
         value={oldPassword}
         onChangeText={setOldPassword}
       />
       <TextInput
-        style={[styles.input, { borderColor: PrimaryColor }]}
+        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
         placeholder="New Password"
-        placeholderTextColor={TextColor}
+        placeholderTextColor={SecondaryColor}
         secureTextEntry
         value={newPassword}
         onChangeText={setNewPassword}
       />
       <TextInput
-        style={[styles.input, { borderColor: PrimaryColor }]}
+        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
         placeholder="Confirm New Password"
-        placeholderTextColor={TextColor}
+        placeholderTextColor={SecondaryColor}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
