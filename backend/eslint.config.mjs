@@ -27,6 +27,7 @@ export default [
       '**/*.sql',
       '**/*.prisma',
       '**/*.toml',
+      'eslint.config.mjs',
     ],
   },
   ...compat.extends(
@@ -53,7 +54,10 @@ export default [
         project: './tsconfig.eslint.json',
         sourceTypo: 'module',
         tsconfigRootDir:
-          'C:\\Users\\HFGF\\Documents\\HF3-Team1-Cafe-Vesuvius\\backend',
+          __dirname,
+        projectService: {
+          defaultProject: "./tsconfig.eslint.json",
+        }
       },
     },
 
@@ -144,7 +148,7 @@ export default [
         'error',
         {
           selector: 'variable',
-          format: ['camelCase', 'UPPER_CASE', 'PascalCase'],
+          format: ['camelCase', 'UPPER_CASE', 'PascalCase', 'snake_case'],
           leadingUnderscore: 'allow',
           trailingUnderscore: 'forbid',
         },
