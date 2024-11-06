@@ -3,8 +3,8 @@ import { Status } from '@api-types/general.types';
 /**
  * Returns the HTTP status code for a given Status
  * This allows for easy and quick conversion between the Status enum and HTTP status codes
- * @param {Status} status
- * @returns {number}
+ * @param {Status} status - The Status enum to convert to an HTTP status code
+ * @returns {number} The HTTP status code for the given Status
  */
 export function getHttpStatusCode(status: Status): number {
   switch (status) {
