@@ -28,16 +28,16 @@ export function isAllowed(permissions: string[]): ExpressFunction {
       return;
     }
 
-    const userPermissions = await prisma.user.findUnique({
-      where: { id: user.id },
-      include: {
-        UserPermissions: {
-          where: { Permission: { code: { in: permissions } } },
+    const Permissions = await prisma.userPermissions.findMany({
+      where: {
+        AND: {
+          userId: user.id,
+          Permission: { code: { in: permissions } },
         },
       },
     });
 
-    if (userPermissions) return next();
+    if (Permissions.length) return next();
 
     res.status(getHttpStatusCode(Status.Forbidden)).json({
       status: 'Forbidden',
