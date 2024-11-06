@@ -1,14 +1,11 @@
 import { Request } from 'express';
+import { Session } from 'inspector/promises';
 import jwt from 'jsonwebtoken';
-
-import { accessToken } from '@controllers/auth.controller';
-import { PrismaClient } from '@prisma/client';
-
 import { JwtPayload } from 'jsonwebtoken';
 
 import config from '@config';
-import { Session } from 'inspector/promises';
-
+import { accessToken } from '@controllers/auth.controller';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -22,7 +19,11 @@ const generateToken = (
 };
 
 // Change user type back to User
-export const generateUserTokens = async (user: any, req: Request, session?: any) => {
+export const generateUserTokens = async (
+  user: any,
+  req: Request,
+  session?: any,
+) => {
   const ip = req.socket.remoteAddress;
 
   if (!ip) return '';
@@ -60,18 +61,15 @@ export const generateUserTokens = async (user: any, req: Request, session?: any)
   // }
   if (!session) {
     // Create a session
-    console.log("Creating new session");
+    console.log('Creating new session');
 
-    
     session = await prisma.session.create({
       data: {
         userId: user.id,
         expiresAt: databaseEntryExpiresAt,
-      }
-    })
+      },
+    });
     console.log(session);
-
-
   }
 
   if (session) {
@@ -79,26 +77,21 @@ export const generateUserTokens = async (user: any, req: Request, session?: any)
       data: {
         sessionId: session.id,
         accessToken: newAccessToken,
-        refreshToken: newRefreshToken
-      }
-    })
+        refreshToken: newRefreshToken,
+      },
+    });
   }
-
 
   return {
     accessToken: { token: newAccessToken, authType: 'bearer' },
   };
 };
 
-
 // Reomove the tokens for the session in the DB
 export const invalidateSession = async (token: string) => {
   const foundToken = await prisma.token.findFirst({
     where: {
-      OR: [
-        { accessToken: token },
-        { refreshToken: token },
-      ],
+      OR: [{ accessToken: token }, { refreshToken: token }],
     },
     include: {
       session: true,
@@ -123,11 +116,9 @@ export const invalidateAllTokensForUser = async (userId: string) => {
 export const getRefreshToken = async (accessToken: string, req: Request) => {
   const ip = req.socket.remoteAddress;
 
-  const user = jwt.verify(
-    accessToken,
-    (config.ACCESS_TOKEN_SECRET + ip),
-    { ignoreExpiration: true },
-  );
+  const user = jwt.verify(accessToken, config.ACCESS_TOKEN_SECRET + ip, {
+    ignoreExpiration: true,
+  });
   if (!user) return null;
 
   const tokensInDb = await prisma.token.findUnique({
@@ -174,10 +165,7 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
 
   if (!ip) return '';
 
-  const userTemp = jwt.verify(
-    refreshToken,
-    (config.REFRESH_TOKEN_SECRET + ip),
-  );
+  const userTemp = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET + ip);
   if (!userTemp) return null;
 
   let user: { id: string; username: string } | null = null;
@@ -193,7 +181,6 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
     },
   });
 
-
   const newestRefreshToken = await prisma.token.findFirst({
     where: { sessionId: tokensInDb?.sessionId },
     orderBy: { createdAt: 'desc' },
@@ -201,15 +188,6 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
 
   if (newestRefreshToken && newestRefreshToken.refreshToken === refreshToken) {
     const result = generateUserTokens(user, req, tokensInDb?.session);
-
-
-
-
-
-
-
-
-
 
     // const newAccessToken = generateToken(
     //   user as object,
