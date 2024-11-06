@@ -23,13 +23,11 @@ mongosh --port $MONGO_PORT <<EOF
 
     use CafeVesuvius;
 
+    db.Session.createIndex({ "expireAt": 1 }, { expireAfterSeconds: 0 });
 
-    db.createCollection("Session");
+    print("TTL index created.");
 
 
-    // Set TTL for Session
-    db.getCollection("Session").createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-    print("TTL index created for Session.");
 
 EOF
 
