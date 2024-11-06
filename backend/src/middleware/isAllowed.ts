@@ -4,7 +4,18 @@ import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { getHttpStatusCode } from '@utils/Utils';
 
-export function isAllowed(permissions: string[]) {
+type ExpressFunction = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => Promise<void>;
+
+/**
+ * Middleware to check if the user has the required permissions to access a route.
+ * @param {string[]} permissions - The permissions required to access the route.
+ * @returns {ExpressFunction} The middleware function to check permissions.
+ */
+export function isAllowed(permissions: string[]): ExpressFunction {
   return async (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
 
