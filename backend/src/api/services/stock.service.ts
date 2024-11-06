@@ -1,7 +1,7 @@
 import { Status } from '@api-types/general.types';
 import { IStockResponse, StockResult } from '@api-types/stock.types';
 import prisma from '@prisma-instance';
-import { UuidSchema } from '@schemas/uuid.schema';
+import { UuidSchema } from '@schemas/general.schemas';
 
 /**
  * Service to get all stocks items
@@ -11,24 +11,24 @@ import { UuidSchema } from '@schemas/uuid.schema';
  */
 export async function getStock(id?: string): Promise<IStockResponse> {
   try {
-    const validationId = UuidSchema.validate(id);
-    if (validationId.error) {
-      return {
-        data: null,
-        status: Status.Failed,
-        message: '',
-      };
-    }
-
     let result: StockResult;
     if (id) {
-      result = await prisma.rawMaterial.findMany();
-    } else {
+      // Validate the id
+      const validate = UuidSchema.validate(id);
+      if (validate.error) {
+        return {
+          data: null,
+          status: Status.Failed,
+          message: validate.error.message,
+        };
+      }
       result = await prisma.rawMaterial.findUnique({
         where: {
           id,
         },
       });
+    } else {
+      result = await prisma.rawMaterial.findMany();
     }
 
     return {

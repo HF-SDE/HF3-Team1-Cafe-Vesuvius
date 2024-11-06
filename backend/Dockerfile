@@ -15,6 +15,9 @@ WORKDIR /usr/src/app
 # Copy our package.json to the /usr/src/app
 COPY package.json ./
 
+# Copy our tsconfig.build.json to the /usr/src/app
+COPY tsconfig.build.json ./
+
 # Run NPM install
 RUN npm install
 

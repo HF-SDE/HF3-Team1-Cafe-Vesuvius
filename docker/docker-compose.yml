@@ -17,7 +17,8 @@ services:
     env_file:
       - ../config/environment-variables/backend.dev.env
     volumes:
-     -  ../backend/src:/usr/src/app/src
+     - ../backend/src:/usr/src/app/src
+     - ../schemas:/usr/src/app/schemas
      - ../backend/nodemon.json:/usr/src/app/nodemon.json
 
   db:

@@ -1,12 +1,10 @@
 import { Router } from 'express';
-import passport from 'passport';
 
 import * as StockController from '@controllers/stock.controller';
+import { authenticateJwt } from 'passport';
 
 const router = Router();
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-const accessToken = passport.authenticate('jwt', { session: false });
+router.get('/stock', authenticateJwt, , StockController.getStock);
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-router.get('/stock', accessToken, StockController.getStock);
+export default router;
