@@ -6,17 +6,18 @@ export async function verifyJWT(
   res: Response,
   next: NextFunction,
 ) {
-  const { err, user } = await passport.authenticate('jwt', { session: false });
+  passport.authenticate(
+    'jwt',
+    { session: false },
+    (err: any, user: Express.User) => {
+      if (err || !user) {
+        return res.status(401).json({
+          status: 'Unauthorized',
+          message: 'Unauthorized',
+        });
+      }
 
-  if (err) return next(err);
-
-  if (!user) {
-    return res.status(401).json({
-      status: 'Unauthorized',
-      message: 'Unauthorized',
-    });
-  }
-
-  req.user = user;
-  return next();
+      next();
+    },
+  )(req, res, next);
 }
