@@ -1,9 +1,11 @@
 import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
-import passport from 'passport';
-import { PrismaClient } from '@prisma/client';
-import * as authService from '../services/auth.service';
 import { token } from 'morgan';
+import passport from 'passport';
+
+import { PrismaClient } from '@prisma/client';
+
+import * as authService from '../services/auth.service';
 
 const prisma = new PrismaClient();
 
@@ -18,14 +20,13 @@ export const signUp = async (req: Request, res: Response) => {
     // Extract additional fields from req.body
     const { initials, email, name } = req.body;
 
-
     const user = await prisma.user.create({
       data: {
-        username: "admin",
+        username: 'admin',
         password: hashedPassword, // Store the hashed password
-        initials: "Adm",
-        email: "admin@admin.com",
-        name: "Admin",
+        initials: 'Adm',
+        email: 'admin@admin.com',
+        name: 'Admin',
       },
     });
     console.log(user);
@@ -71,30 +72,39 @@ export const login = async (
     req.body.password = decodedPassword;
 
     // Authenticate the user using passport
-    passport.authenticate('local', async (err: any, user: Express.User | false) => {
-      // Makes sure that theire was no errors in the authentication and that the user is valid
-      if (err || !user) {
-        res.status(401).json({
-          status: 'InvalidCredentials',
-          message: 'Username or Password was not correct',
-        });
-        return;
-      }
-
-      req.login(user, { session: false }, async (error) => {
-        if (error) {
-          next(error);
+    passport.authenticate(
+      'local',
+      async (err: any, user: Express.User | false) => {
+        // Makes sure that theire was no errors in the authentication and that the user is valid
+        if (err || !user) {
+          res.status(401).json({
+            status: 'InvalidCredentials',
+            message: 'Username or Password was not correct',
+          });
           return;
         }
 
-        try {
-          const tokens = await authService.generateUserTokens(user, req);
-          res.json(tokens);
-        } catch (tokenError) {
-          throw new Error("Failed to generate tokens");
-        }
-      });
-    })(req, res, next);
+        req.login(user, { session: false }, async (error) => {
+          if (error) {
+            next(error);
+            return;
+          }
+
+          try {
+            const tokens = await authService.generateUserTokens(
+              {
+                sub: user.id,
+                username: user.username,
+              },
+              req,
+            );
+            res.json(tokens);
+          } catch (tokenError) {
+            throw new Error('Failed to generate tokens');
+          }
+        });
+      },
+    )(req, res, next);
   } catch (error) {
     res.status(500).json({
       status: 'ServerError',

@@ -9,18 +9,23 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
+interface TokenUser {
+  sub: string;
+  username: string;
+}
+
 const generateToken = (
-  user: object,
+  user: TokenUser,
   ip: string | null,
   expiration: string,
   secret: string,
 ): string => {
-  return jwt.sign({ user }, secret + ip, { expiresIn: expiration });
+  return jwt.sign(user, secret + ip, { expiresIn: expiration });
 };
 
 // Change user type back to User
 export const generateUserTokens = async (
-  user: any,
+  user: TokenUser,
   req: Request,
   session?: any,
 ) => {
@@ -29,13 +34,13 @@ export const generateUserTokens = async (
   if (!ip) return '';
 
   const newAccessToken = generateToken(
-    { id: user.id, username: user.username },
+    { sub: user.sub, username: user.username },
     ip,
     config.ACCESS_TOKEN_EXPIRATION,
     config.ACCESS_TOKEN_SECRET,
   );
   const newRefreshToken = generateToken(
-    { id: user.id, username: user.username },
+    { sub: user.sub, username: user.username },
     ip,
     config.REFRESH_TOKEN_EXPIRATION,
     config.REFRESH_TOKEN_SECRET,
@@ -65,7 +70,7 @@ export const generateUserTokens = async (
 
     session = await prisma.session.create({
       data: {
-        userId: user.id,
+        userId: user.sub,
         expiresAt: databaseEntryExpiresAt,
       },
     });
@@ -187,7 +192,14 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
   });
 
   if (newestRefreshToken && newestRefreshToken.refreshToken === refreshToken) {
-    const result = generateUserTokens(user, req, tokensInDb?.session);
+    const result = generateUserTokens(
+      {
+        sub: user?.id || '',
+        username: user?.username || '',
+      },
+      req,
+      tokensInDb?.session,
+    );
 
     // const newAccessToken = generateToken(
     //   user as object,
