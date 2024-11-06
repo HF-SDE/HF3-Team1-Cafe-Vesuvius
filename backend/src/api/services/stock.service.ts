@@ -1,6 +1,7 @@
 import { Status } from '@api-types/general.types';
 import { IStockResponse, StockResult } from '@api-types/stock.types';
 import prisma from '@prisma-instance';
+import { UuidSchema } from '@schemas/uuid.schema';
 
 /**
  * Service to get all stocks items
@@ -10,6 +11,15 @@ import prisma from '@prisma-instance';
  */
 export async function getStock(id?: string): Promise<IStockResponse> {
   try {
+    const validationId = UuidSchema.validate(id);
+    if (validationId.error) {
+      return {
+        data: null,
+        status: Status.Failed,
+        message: '',
+      };
+    }
+
     let result: StockResult;
     if (id) {
       result = await prisma.rawMaterial.findMany();

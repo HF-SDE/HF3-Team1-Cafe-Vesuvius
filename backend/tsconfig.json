@@ -23,7 +23,8 @@
       "@utils/*": ["api/utils/*"],
       "@config": ["config"],
       "@prisma-instance": ["prisma"],
-      "@middlewares/*": ["middleware/*"]
+      "@middlewares/*": ["middleware/*"],
+      "@schemas": ["../schemas/*"]
     },
     "allowJs": true
   },
