@@ -1,16 +1,12 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 
+import { UserToken } from '@api-types/JWTToken';
 //import { JwtPayload } from 'jsonwebtoken';
 import config from '@config';
 import { PrismaClient, Session } from '@prisma/client';
 
 const prisma = new PrismaClient();
-
-interface TokenUser {
-  sub: string;
-  username: string;
-}
 
 /**
  * Generates a JSON Web Token (JWT) for the given user.
@@ -21,7 +17,7 @@ interface TokenUser {
  * @returns {string} The generated JWT token.
  */
 function generateToken(
-  user: TokenUser,
+  user: UserToken,
   ip: string | null,
   expiration: string,
   secret: string,
@@ -44,7 +40,7 @@ interface User {
  * @returns {Promise<{ accessToken: { token: string, authType: string } }>} An object containing the new access token.
  */
 export async function generateUserTokens(
-  user: TokenUser,
+  user: UserToken,
   req: Request,
   session?: Session,
 ): Promise<{ accessToken: { token: string; authType: string } }> {
@@ -206,19 +202,19 @@ export async function refreshUserTokens(
   if (!ip) return null; // If no IP is found, return null
 
   // Verify the refresh token with the user's IP address as a secret key
-  let userTemp: TokenUser | null = null;
+  let userTemp: UserToken | null = null;
   try {
     userTemp = jwt.verify(
       refreshToken,
       config.REFRESH_TOKEN_SECRET + ip,
-    ) as TokenUser;
+    ) as UserToken;
   } catch {
     // Handle the verification failure gracefully
     return null;
   }
 
   // If the userTemp is valid and contains 'user', assign it to user
-  let user: TokenUser | null = null;
+  let user: UserToken | null = null;
 
   if (userTemp) {
     user = userTemp; // Directly access the user property now that TypeScript knows the structure
