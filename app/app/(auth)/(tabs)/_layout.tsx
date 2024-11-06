@@ -1,7 +1,7 @@
 import React from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Link, Tabs } from "expo-router";
-import { Pressable  } from "react-native";
+import { Pressable } from "react-native";
 import Entypo from "@expo/vector-icons/Entypo";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -31,7 +31,7 @@ export default function TabLayout() {
           borderBottomWidth: 0,
           elevation: 0,
           shadowOpacity: 0,
-          overflow: 'hidden',
+          overflow: "hidden",
         },
 
         headerStyle: { backgroundColor: PrimaryColor },

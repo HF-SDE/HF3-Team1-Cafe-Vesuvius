@@ -1,3 +1,4 @@
+import React, { useState } from "react";
 import {
   Button,
   StyleSheet,
@@ -5,19 +6,23 @@ import {
   Text,
   TouchableOpacity,
   SafeAreaView,
+  Modal,
 } from "react-native";
 import { useSession } from "../../ctx";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import ModalScreen from "../profile/modal"; // Assuming ModalScreen is in the same directory
 
 export default function UserProfileScreen() {
+  const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
+
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   const { signOut, session } = useSession();
 
-  // Get data via api instead
   const userInfo = {
     username: "Ben Dover",
     email: "bendover@gmail.com",
@@ -50,7 +55,7 @@ export default function UserProfileScreen() {
         <View style={styles.buttonContainer}>
           <TouchableOpacity
             style={[styles.button, { backgroundColor: PrimaryColor }]}
-            //onPress={}
+            onPress={() => setModalVisible(true)} // Show modal on press
           >
             <Text style={[styles.buttonText, { color: BackgroundColor }]}>
               Reset Password
@@ -67,6 +72,21 @@ export default function UserProfileScreen() {
           </TouchableOpacity>
         </View>
       </View>
+
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+          >
+            <ModalScreen onClose={() => setModalVisible(false)} />{" "}
+          </View>
+        </View>
+      </Modal>
     </SafeAreaView>
   );
 }
@@ -76,7 +96,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    paddingHorizontal: 20,
   },
   contentContainer: {
     flex: 1,
@@ -128,5 +147,17 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 24,
     fontWeight: "bold",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "80%",
+    // backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
   },
 });
