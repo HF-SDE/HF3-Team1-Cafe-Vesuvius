@@ -2,7 +2,7 @@
 # no verbose
 set +x
 # Automatic deploy to prod database
-npx prisma migrate deploy
+npx prisma db push
 
 # Go forward
 exec "$@"
