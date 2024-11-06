@@ -14,8 +14,7 @@ interface TokenUser {
 
 /**
  * Generates a JSON Web Token (JWT) for the given user.
- *
- * @param {TokenUser} user - The user object to encode in the token payload.
+ * @param {UserToken} user - The user object to encode in the token payload.
  * @param {string | null} ip - The IP address to include in the secret for additional security, or null if not available.
  * @param {string} expiration - The expiration time for the token, e.g., "1h", "30m", etc.
  * @param {string} secret - The secret key used to sign the JWT.
@@ -39,7 +38,6 @@ interface User {
 /**
  * Generates new access and refresh tokens for the user and stores them in the database.
  * If a session is not provided, a new session will be created.
- *
  * @param {User} user - The user for whom tokens are being generated.
  * @param {Request} req - The request object containing the user's IP address.
  * @param {Session} [session] - Optional session to associate the tokens with. If not provided, a new session will be created.
@@ -102,7 +100,6 @@ export async function generateUserTokens(
 
 /**
  * Invalidates the session associated with the provided token by deleting the session and all associated tokens in the database.
- *
  * @param {string} token - The token (either access or refresh) whose associated session should be invalidated.
  * @returns {Promise<void>} A promise that resolves once the session and tokens have been deleted.
  * @throws {Error} If there is an error during the session or token removal process.
@@ -129,7 +126,6 @@ export async function invalidateSession(token: string): Promise<void> {
 
 /**
  * Invalidates all tokens for a user by deleting their associated sessions in the database.
- *
  * @param {string} userId - The unique identifier of the user whose tokens should be invalidated.
  * @returns {Promise<void>} A promise that resolves once the tokens have been invalidated.
  */
@@ -141,7 +137,6 @@ export async function invalidateAllTokensForUser(
 
 /**
  * Retrieves the newest refresh token from the database for the same session as the provided access token.
- *
  * @param {string} accessToken - The access token for which the refresh token is being requested.
  * @param {Request} req - The request object, which includes the IP address for token verification.
  * @returns {Promise<object | null>} A promise that resolves to an object containing the refresh token if valid, or `null` if the access token is invalid or expired.
@@ -197,7 +192,6 @@ export async function getRefreshToken(accessToken: string, req: Request) {
 /**
  * Refreshes the user's tokens by verifying the provided refresh token, checking the latest token in the database,
  * and generating new tokens if the refresh token is valid.
- *
  * @param {string} refreshToken - The refresh token to verify and use to generate new tokens.
  * @param {Request} req - The request object containing information like the user's IP address.
  * @returns {Promise<object | null>} A promise that resolves to an object containing the new tokens if valid, or `null` if the token is invalid or expired.
@@ -303,7 +297,6 @@ export async function refreshUserTokens(
 }
 /**
  * Checks if a given string is Base64 encoded.
- *
  * @param {string} str - The string to check.
  * @returns {boolean} `true` if the string is Base64 encoded, otherwise `false`.
  */

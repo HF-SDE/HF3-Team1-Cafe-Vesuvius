@@ -1,6 +1,5 @@
 import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
-import { token } from 'morgan';
 import passport from 'passport';
 import { PrismaClient } from '@prisma/client';
 import * as authService from '../services/auth.service';
@@ -9,7 +8,6 @@ const prisma = new PrismaClient();
 
 /**
  * Handles user signup by creating a new user with a hashed password.
- *
  * @param {Request} req - The request object (unused here for data).
  * @param {Response} res - The response object to send the result of the signup operation.
  * @returns {Promise<void>} Resolves with a success or error message.
@@ -51,7 +49,6 @@ interface LoginRequestBody {
 
 /**
  * Handles user login, authenticates with passport, and returns tokens on successful login.
- *
  * @param {Request<unknown, unknown, LoginRequestBody>} req - The request object containing `username` and `password` in the body.
  * @param {Response} res - The response object to send authentication results.
  * @param {NextFunction} next - The next middleware function in the chain.
@@ -141,7 +138,6 @@ interface LogoutRequestBody {
 
 /**
  * Logs out a user by invalidating their session token.
- *
  * @param {Request<unknown, unknown, LogoutRequestBody>} req - The request object, containing the token in the body.
  * @param {Response} res - The response object used to send the response to the client.
  * @returns {Promise<void>} - A promise that resolves when the logout is complete or rejects if an error occurs.
@@ -187,7 +183,6 @@ interface GetAccessTokenRequestBody {
 
 /**
  * Endpoint to refresh user tokens based on the provided refresh token.
- *
  * @param {Request<unknown, unknown, GetAccessTokenRequestBody>} req - The request object containing the refresh token in the body.
  * @param {Response} res - The response object used to send the response to the client.
  * @returns {Promise<void>} - A promise that resolves when the access token is refreshed or rejects if an error occurs.
@@ -252,7 +247,6 @@ interface ErrorResponse {
 
 /**
  * Endpoint to get the refresh token based on the provided access token in the authorization header.
- *
  * @param {Request} req - The request object, containing the Authorization header.
  * @param {Response<RefreshTokenResponse | ErrorResponse>} res - The response object used to send the response to the client.
  * @returns {Promise<void>} - A promise that resolves when the refresh token is retrieved or rejects if an error occurs.
