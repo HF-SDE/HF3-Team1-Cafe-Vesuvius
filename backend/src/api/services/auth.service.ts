@@ -22,7 +22,7 @@ function generateToken(
   expiration: string,
   secret: string,
 ): string {
-  return jwt.sign({ user }, secret + (ip || ''), { expiresIn: expiration });
+  return jwt.sign(user, secret + (ip || ''), { expiresIn: expiration });
 }
 
 // Define the expected structure for the user
