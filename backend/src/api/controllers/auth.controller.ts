@@ -116,7 +116,7 @@ export const logout = async (req: Request, res: Response): Promise<void> => {
     }
 
     // Try to revoke the session
-    await authService.invalidateRefreshToken(token);
+    await authService.invalidateSession(token);
 
     // Return ok every time to avoide exploit
     res.status(200).json({ message: 'Logout successful' });
@@ -211,11 +211,7 @@ export const refreshToken = async (
       return;
     }
 
-    res.json({ 
-      refreshToken: {
-        token: refreshToken
-      } 
-    });
+    res.json(refreshToken);
   } catch (error) {
     console.log(error);
     res.status(500).json({

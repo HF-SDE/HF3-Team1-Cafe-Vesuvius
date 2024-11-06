@@ -1,13 +1,11 @@
 import { Request } from 'express';
+import { Session } from 'inspector/promises';
 import jwt from 'jsonwebtoken';
-
-import { accessToken } from '@controllers/auth.controller';
-import { PrismaClient } from '@prisma/client';
-
 import { JwtPayload } from 'jsonwebtoken';
 
 import config from '@config';
-
+import { accessToken } from '@controllers/auth.controller';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -21,7 +19,11 @@ const generateToken = (
 };
 
 // Change user type back to User
-export const generateUserTokens = async (user: any, req: Request, sessionId?: string | undefined) => {
+export const generateUserTokens = async (
+  user: any,
+  req: Request,
+  session?: any,
+) => {
   const ip = req.socket.remoteAddress;
 
   if (!ip) return '';
@@ -43,113 +45,108 @@ export const generateUserTokens = async (user: any, req: Request, sessionId?: st
 
   //const databaseEntryExpiresAt = new Date(Date.now() + 1 * 60 * 1000); // 1 minute from now
 
-  if (sessionId) {
-    const updateOldRefreshForSession = await prisma.refreshToken.updateMany({
-      where: { sessionId: sessionId },
+  // if (sessionId) {
+  //   const updateOldRefreshForSession = await prisma.refreshToken.updateMany({
+  //     where: { sessionId: sessionId },
+  //     data: {
+  //       expiresAt: databaseEntryExpiresAt,
+  //     },
+  //   });
+  //   const updateOldAccessForSession = await prisma.accessToken.updateMany({
+  //     where: { sessionId: sessionId },
+  //     data: {
+  //       expiresAt: databaseEntryExpiresAt,
+  //     },
+  //   });
+  // }
+  if (!session) {
+    // Create a session
+    console.log('Creating new session');
+
+    session = await prisma.session.create({
       data: {
+        userId: user.id,
         expiresAt: databaseEntryExpiresAt,
       },
     });
-    const updateOldAccessForSession = await prisma.accessToken.updateMany({
-      where: { sessionId: sessionId },
+    console.log(session);
+  }
+
+  if (session) {
+    const newTokens = await prisma.token.create({
       data: {
-        expiresAt: databaseEntryExpiresAt,
+        sessionId: session.id,
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
       },
     });
   }
-  
-
-
-
-  const newRefreshTokenInDB = await prisma.refreshToken.create({
-    data: { 
-      token: newRefreshToken, 
-      userId: user.id,
-      sessionId: sessionId || undefined,
-      expiresAt: databaseEntryExpiresAt,
-    },
-  });
-  await prisma.accessToken.create({
-    data: {
-      token: newAccessToken,
-      userId: user.id,
-      refreshTokenId: newRefreshTokenInDB.id,
-      expiresAt: databaseEntryExpiresAt,
-      sessionId: newRefreshTokenInDB.sessionId,
-    },
-  });
 
   return {
     accessToken: { token: newAccessToken, authType: 'bearer' },
   };
 };
 
-
 // Reomove the tokens for the session in the DB
-export const invalidateRefreshToken = async (token: string) => {
-  // Se if the token is a refresh token in the DB
-  const refreshTokenInDb = await prisma.refreshToken.findUnique({
-    where: { token: token },
+export const invalidateSession = async (token: string) => {
+  const foundToken = await prisma.token.findFirst({
+    where: {
+      OR: [{ accessToken: token }, { refreshToken: token }],
+    },
+    include: {
+      session: true,
+    },
   });
-  const accessTokenInDb = await prisma.accessToken.findUnique({
-    where: { token: token },
-  });
-  let session = refreshTokenInDb?.sessionId || accessTokenInDb?.sessionId;
 
-  if (session) {    
-    await prisma.accessToken.deleteMany({
-      where: { sessionId: session },
-    });
-    await prisma.refreshToken.deleteMany({ 
-      where: { sessionId: session } 
+  if (foundToken && foundToken.sessionId) {
+    // Delete the session and all associated tokens
+    await prisma.session.delete({
+      where: {
+        id: foundToken.sessionId,
+      },
     });
   }
-  
 };
 
 export const invalidateAllTokensForUser = async (userId: string) => {
-  await prisma.accessToken.deleteMany({ where: { userId: userId } });
-  await prisma.refreshToken.deleteMany({ where: { userId: userId } });
+  await prisma.session.deleteMany({ where: { userId: userId } });
 };
 
 // Gets the newest refresh token from the DB with the same sessionId as the access token
 export const getRefreshToken = async (accessToken: string, req: Request) => {
   const ip = req.socket.remoteAddress;
 
-  const user = jwt.verify(
-    accessToken,
-    (config.ACCESS_TOKEN_SECRET + ip),
-    { ignoreExpiration: true },
-  );
+  const user = jwt.verify(accessToken, config.ACCESS_TOKEN_SECRET + ip, {
+    ignoreExpiration: true,
+  });
   if (!user) return null;
 
-  const accesTokenInDb = await prisma.accessToken.findUnique({
-    where: { token: accessToken },
+  const tokensInDb = await prisma.token.findUnique({
+    where: { accessToken: accessToken },
+    include: {
+      session: true,
+    },
   });
 
-  if (!accesTokenInDb) {
+  if (!tokensInDb) {
     // The access token was not found in the DB
     return null;
   }
 
   // Find the newest accessToken
-  const newestAccessToken = await prisma.accessToken.findFirst({
-    where: { sessionId: accesTokenInDb.sessionId },
+  const newestTokens = await prisma.token.findFirst({
+    where: { sessionId: tokensInDb.sessionId },
     orderBy: { createdAt: 'desc' },
   });
 
   // Check if the newest access token matches the provided access token
-  if (newestAccessToken && newestAccessToken.token === accessToken) {
+  if (newestTokens && newestTokens.accessToken === accessToken) {
     // Gets the newest refresh token to return
-    const newestRefreshToken = await prisma.refreshToken.findFirst({
-      where: { sessionId: accesTokenInDb.sessionId },
-      orderBy: { createdAt: 'desc' },
-    });
 
-    if (newestRefreshToken) {
+    if (newestTokens.refreshToken) {
       // Return the new refresh token
       return {
-        refreshToken: { token: newestRefreshToken.token },
+        refreshToken: { token: newestTokens.refreshToken },
       };
     } else {
       // There was no available refresh token for that session
@@ -158,7 +155,7 @@ export const getRefreshToken = async (accessToken: string, req: Request) => {
   } else {
     // The access token was either not found in the DB or not the newest.
     // All tokens for this user have been revoked
-    await invalidateAllTokensForUser(accesTokenInDb.userId);
+    await invalidateAllTokensForUser(tokensInDb.session.userId);
     return null;
   }
 };
@@ -168,10 +165,7 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
 
   if (!ip) return '';
 
-  const userTemp = jwt.verify(
-    refreshToken,
-    (config.REFRESH_TOKEN_SECRET + ip),
-  );
+  const userTemp = jwt.verify(refreshToken, config.REFRESH_TOKEN_SECRET + ip);
   if (!userTemp) return null;
 
   let user: { id: string; username: string } | null = null;
@@ -180,25 +174,20 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
     user = (userTemp as JwtPayload).user as { id: string; username: string };
   }
 
-  const refreshTokenInDb = await prisma.refreshToken.findUnique({
-    where: { token: refreshToken },
+  const tokensInDb = await prisma.token.findUnique({
+    where: { refreshToken: refreshToken },
+    include: {
+      session: true,
+    },
   });
-  const newestRefreshToken = await prisma.refreshToken.findFirst({
-    where: { sessionId: refreshTokenInDb?.sessionId },
+
+  const newestRefreshToken = await prisma.token.findFirst({
+    where: { sessionId: tokensInDb?.sessionId },
     orderBy: { createdAt: 'desc' },
   });
 
-  if (newestRefreshToken && newestRefreshToken.token === refreshToken) {
-    const result = generateUserTokens(user, req, refreshTokenInDb?.sessionId);
-
-
-
-
-
-
-
-
-
+  if (newestRefreshToken && newestRefreshToken.refreshToken === refreshToken) {
+    const result = generateUserTokens(user, req, tokensInDb?.session);
 
     // const newAccessToken = generateToken(
     //   user as object,
@@ -235,12 +224,9 @@ export const refreshUserTokens = async (refreshToken: string, req: Request) => {
     return result;
   }
 
-  await prisma.accessToken.deleteMany({
-    where: { userId: refreshTokenInDb?.userId },
-  });
-  await prisma.refreshToken.deleteMany({
-    where: { userId: refreshTokenInDb?.userId },
-  });
+  if (tokensInDb && tokensInDb.session) {
+    invalidateAllTokensForUser(tokensInDb.session.userId);
+  }
   return null;
 };
 

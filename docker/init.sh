@@ -23,13 +23,12 @@ mongosh --port $MONGO_PORT <<EOF
 
     use CafeVesuvius;
 
-    // Set TTL for AccessToken
-    db.collection('AccessToken').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-    print("TTL index created for AccessToken.");
+    db.Session.createIndex({ "expireAt": 1 }, { expireAfterSeconds: 0 });
 
-    // Set TTL for RefreshToken
-    db.collection('RefreshToken').createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-    print("TTL index created for RefreshToken.");
+    print("TTL index created.");
+
+
+
 EOF
 
 echo "MongoDB initialization script completed."
