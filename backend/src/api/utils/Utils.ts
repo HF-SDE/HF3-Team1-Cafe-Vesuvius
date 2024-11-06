@@ -3,7 +3,6 @@ import { Status } from '@api-types/general.types';
 /**
  * Returns the HTTP status code for a given Status
  * This allows for easy and quick conversion between the Status enum and HTTP status codes
- *
  * @param {Status} status
  * @returns {number}
  */
