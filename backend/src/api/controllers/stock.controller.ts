@@ -11,7 +11,7 @@ import { getHttpStatusCode } from '@utils/Utils';
  * @returns {*} The response object
  */
 export async function getStock(req: Request, res: Response) {
-  const id = req.params.id;
+  const id = req.query.id as string | undefined;
   const response = await StockService.getStock(id);
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
