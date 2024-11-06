@@ -74,7 +74,7 @@ export default function UserProfileScreen() {
       </View>
 
       <Modal
-        animationType="slide"
+        animationType="none"
         transparent={true}
         visible={isModalVisible}
         onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
