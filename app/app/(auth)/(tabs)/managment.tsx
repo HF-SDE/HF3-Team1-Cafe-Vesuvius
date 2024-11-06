@@ -1,4 +1,4 @@
-import { StyleSheet, SafeAreaView  } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 
 import { Text, View } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -11,12 +11,12 @@ export default function TabTwoScreen() {
   const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <SafeAreaView 
+    <SafeAreaView
       style={[
         styles.container,
         {
-          backgroundColor: SecondaryColor,
-          borderColor: SecondaryColor,
+          backgroundColor: BackgroundColor,
+          borderColor: BackgroundColor,
           borderWidth: 2,
         },
       ]}

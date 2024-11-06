@@ -1,4 +1,11 @@
-import { Button, StyleSheet, View, Text, TouchableOpacity, SafeAreaView } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import { useSession } from "../../ctx";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -15,11 +22,13 @@ export default function UserProfileScreen() {
     username: "Ben Dover",
     email: "bendover@gmail.com",
     initials: "BD",
-    phone: "+4512345678"
-  }
+    phone: "+4512345678",
+  };
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: SecondaryColor }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: BackgroundColor }]}
+    >
       <View style={styles.contentContainer}>
         <View style={styles.topContainer}>
           <View style={[styles.avatar, { backgroundColor: PrimaryColor }]}>
@@ -27,9 +36,15 @@ export default function UserProfileScreen() {
               {userInfo.initials}
             </Text>
           </View>
-          <Text style={[styles.nameText, { color: TextColor }]}>Hi, {userInfo.username}</Text>
-          <Text style={[styles.infoText, { color: TextColor }]}>Mail: {userInfo.email}</Text>
-          <Text style={[styles.infoText, { color: TextColor }]}>Tlf: {userInfo.phone}</Text>
+          <Text style={[styles.nameText, { color: TextColor }]}>
+            Hi, {userInfo.username}
+          </Text>
+          <Text style={[styles.infoText, { color: TextColor }]}>
+            Mail: {userInfo.email}
+          </Text>
+          <Text style={[styles.infoText, { color: TextColor }]}>
+            Tlf: {userInfo.phone}
+          </Text>
         </View>
 
         <View style={styles.buttonContainer}>
