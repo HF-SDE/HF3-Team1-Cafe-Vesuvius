@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install": "npm install && cd backend && npm install && cd ../app && npm install",
-    "dev": "docker compose -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh && cd ../app && npm run start",
+    "install": "cd backend && npm install && cd ../app && npm install",
+    "dev": "docker compose -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh && cd app && npm run start",
     "build:dev": "docker compose -f ./docker/docker-compose.yml build",
     "seed": "cd backend && npx prisma db push && npx prisma db seed"
   },
