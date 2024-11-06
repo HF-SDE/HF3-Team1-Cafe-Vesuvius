@@ -1,5 +1,5 @@
 {
-    "cSpell.words": [
-        "moussé"
-    ]
+  "cSpell.words": ["moussé"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode"
 }
