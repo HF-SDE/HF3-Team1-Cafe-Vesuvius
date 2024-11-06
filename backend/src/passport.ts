@@ -1,33 +1,39 @@
 import argon2 from 'argon2';
+import { Request } from 'express';
 import passport from 'passport';
 import {
   ExtractJwt,
   Strategy as JwtStrategy,
-  StrategyOptionsWithoutRequest,
+  StrategyOptionsWithRequest,
 } from 'passport-jwt';
 import { Strategy as LocalStrategy } from 'passport-local';
 
+import { UserToken } from '@api-types/JWTToken';
 import config from '@config';
 import prisma from '@prisma-instance';
 
-
-const opts: StrategyOptionsWithoutRequest = {
+const opts: StrategyOptionsWithRequest = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: config.ACCESS_TOKEN_SECRET,
+  passReqToCallback: true,
+  secretOrKeyProvider: (req: Request, rawJwtToken, done) => {
+    done(null, config.ACCESS_TOKEN_SECRET + req.ip);
+  },
 };
 
 passport.use(
-  new JwtStrategy(opts, async (jwt_payload, done) => {
+  new JwtStrategy(opts, async (req, jwt_payload: UserToken, done) => {
     const user = await prisma.user.findUnique({
       where: { id: jwt_payload.sub },
     });
 
     if (user) return done(null, user);
-    else return done(null, false);
+    else
+      return done(401, undefined, {
+        stats: 'Unauthorized',
+        message: 'Unauthorized',
+      });
   }),
 );
-
-export const authenticateJwt = passport.authenticate('jwt', { session: false });
 
 passport.use(
   new LocalStrategy(
