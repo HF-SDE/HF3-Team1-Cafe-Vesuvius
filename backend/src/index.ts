@@ -7,9 +7,9 @@ import passport from 'passport';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
+import tableRoutes from '@routes/table.routes';
 
 import './passport';
-
 
 const limiter = rateLimit({
   windowMs: 60 * 60 * 1000, // 60 minutes
@@ -30,6 +30,8 @@ app.use(limiter);
 
 //Insert all routes here
 app.use('/', authRoutes);
+
+app.use('/table', tableRoutes);
 
 app.get('/ping', (req, res) => {
   res.send('Server is running');

@@ -35,7 +35,7 @@ passport.use(
       usernameField: 'username',
       passwordField: 'password',
     },
-    async (username: string, password: string, done: Function) => {
+    async (username, password, done) => {
       try {
         // Return success for now to test
         const user = await prisma.user.findUnique({ where: { username } });
