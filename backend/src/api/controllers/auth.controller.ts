@@ -1,8 +1,9 @@
 import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
-import { token } from 'morgan';
 import passport from 'passport';
+
 import { PrismaClient } from '@prisma/client';
+
 import * as authService from '../services/auth.service';
 
 const prisma = new PrismaClient();
@@ -110,21 +111,22 @@ export async function login(
             return;
           }
 
-        try {
-          const tokens = await authService.generateUserTokens(
-            {
-              sub: user.id,
-              username: user.username,
-            },
-            req as Request,
-          )
-          res.json(tokens);
-        } catch (tokenError) {
-          console.error('Generate token: ' + tokenError);
-          throw new Error("Failed to generate tokens");
-        }
-      });
-    })(req, res, next);
+          try {
+            const tokens = await authService.generateUserTokens(
+              {
+                sub: user.id,
+                username: user.username,
+              },
+              req as Request,
+            );
+            res.json(tokens);
+          } catch (tokenError) {
+            console.error('Generate token: ' + tokenError);
+            throw new Error('Failed to generate tokens');
+          }
+        });
+      },
+    )(req, res, next);
   } catch (error) {
     console.error('Login error: ' + error);
     res.status(500).json({
