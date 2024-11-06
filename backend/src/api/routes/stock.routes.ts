@@ -1,7 +1,7 @@
 import { Router } from 'express';
 
 import * as StockController from '@controllers/stock.controller';
-import { authenticateJwt } from '@passport';
+import { authenticateJwt } from '../../passport';
 
 const router = Router();
 
