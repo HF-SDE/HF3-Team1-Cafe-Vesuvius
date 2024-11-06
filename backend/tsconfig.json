@@ -24,9 +24,9 @@
       "@config": ["config"],
       "@prisma-instance": ["prisma"],
       "@middlewares/*": ["middleware/*"],
-      "@schemas": ["../schemas/*"]
+      "@schemas/*": ["../../schemas/*"]
     },
-    "allowJs": true
+    "allowJs": true,
   },
-  "include": ["*", "src/index.ts", "src/config.ts", "src/**/*", ".eslintrc.js"]
+  "include": ["*", "src/index.ts", "src/config.ts", "src/**/*", "../schemas", "eslint.config.mjs"],
 }
