@@ -71,7 +71,7 @@ export const login = async (
     req.body.password = decodedPassword;
 
     // Authenticate the user using passport
-    passport.authenticate('local', async (err: any, user: any | false) => {
+    passport.authenticate('local', async (err: any, user: Express.User | false) => {
       // Makes sure that theire was no errors in the authentication and that the user is valid
       if (err || !user) {
         res.status(401).json({
