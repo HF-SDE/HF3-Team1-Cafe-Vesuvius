@@ -1,10 +1,19 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
+import passport from 'passport';
 
 import { UserToken } from '@api-types/JWTToken';
+import {
+  AccessResult,
+  LoginRequestBody,
+  RefreshResult,
+  TokenRequestBody,
+} from '@api-types/auth.types';
+import { APIResponse, Status } from '@api-types/general.types';
 //import { JwtPayload } from 'jsonwebtoken';
 import config from '@config';
 import { PrismaClient, Session } from '@prisma/client';
+import { LoginSchema, TokenSchema } from '@schemas/auth.schemas';
 
 const prisma = new PrismaClient();
 
@@ -41,15 +50,9 @@ interface User {
  */
 export async function generateUserTokens(
   user: UserToken,
-  req: Request,
+  ip: string,
   session?: Session,
-): Promise<{ accessToken: { token: string; authType: string } }> {
-  const ip = req.socket.remoteAddress;
-
-  if (!ip) {
-    throw new Error('IP address is missing');
-  }
-
+): Promise<AccessResult> {
   const newAccessToken = generateToken(
     { sub: user.sub, username: user.username },
     ip,
@@ -133,21 +136,23 @@ export async function invalidateAllTokensForUser(
 
 /**
  * Retrieves the newest refresh token from the database for the same session as the provided access token.
- * @param {string} accessToken - The access token for which the refresh token is being requested.
+ * @param {string} tokenBody - The access token for which the refresh token is being requested.
  * @param {Request} req - The request object, which includes the IP address for token verification.
  * @returns {Promise<object | null>} A promise that resolves to an object containing the refresh token if valid, or `null` if the access token is invalid or expired.
  * @throws {Error} If there is an error during token verification or database operations.
  */
-export async function getRefreshToken(accessToken: string, req: Request) {
-  const ip = req.socket.remoteAddress;
-
-  const user = jwt.verify(accessToken, config.ACCESS_TOKEN_SECRET + ip, {
-    ignoreExpiration: true,
-  });
+export async function getRefreshToken(tokenBody: TokenRequestBody) {
+  const user = jwt.verify(
+    tokenBody.token,
+    config.ACCESS_TOKEN_SECRET + tokenBody.ip,
+    {
+      ignoreExpiration: true,
+    },
+  );
   if (!user) return null;
 
   const tokensInDb = await prisma.token.findUnique({
-    where: { accessToken: accessToken },
+    where: { accessToken: tokenBody.token },
     include: {
       session: true,
     },
@@ -165,7 +170,7 @@ export async function getRefreshToken(accessToken: string, req: Request) {
   });
 
   // Check if the newest access token matches the provided access token
-  if (newestTokens && newestTokens.accessToken === accessToken) {
+  if (newestTokens && newestTokens.accessToken === tokenBody.token) {
     // Gets the newest refresh token to return
 
     if (newestTokens.refreshToken) {
@@ -188,25 +193,20 @@ export async function getRefreshToken(accessToken: string, req: Request) {
 /**
  * Refreshes the user's tokens by verifying the provided refresh token, checking the latest token in the database,
  * and generating new tokens if the refresh token is valid.
- * @param {string} refreshToken - The refresh token to verify and use to generate new tokens.
+ * @param {string} tokenBody - The refresh token to verify and use to generate new tokens.
  * @param {Request} req - The request object containing information like the user's IP address.
  * @returns {Promise<object | null>} A promise that resolves to an object containing the new tokens if valid, or `null` if the token is invalid or expired.
  * @throws {Error} If there is an error during the token verification or database operations.
  */
 export async function refreshUserTokens(
-  refreshToken: string,
-  req: Request, // Type the `req` as an Express Request
-): Promise<object | null> {
-  const ip = req.socket.remoteAddress; // TypeScript now recognizes `req.socket`
-
-  if (!ip) return null; // If no IP is found, return null
-
+  tokenBody: TokenRequestBody,
+): Promise<AccessResult | null> {
   // Verify the refresh token with the user's IP address as a secret key
   let userTemp: UserToken | null = null;
   try {
     userTemp = jwt.verify(
-      refreshToken,
-      config.REFRESH_TOKEN_SECRET + ip,
+      tokenBody.token,
+      config.REFRESH_TOKEN_SECRET + tokenBody.ip,
     ) as UserToken;
   } catch {
     // Handle the verification failure gracefully
@@ -226,7 +226,7 @@ export async function refreshUserTokens(
 
   // Fetch the tokens from the database based on the refresh token
   const tokensInDb = await prisma.token.findUnique({
-    where: { refreshToken: refreshToken },
+    where: { refreshToken: tokenBody.token },
     include: {
       session: true,
     },
@@ -242,48 +242,18 @@ export async function refreshUserTokens(
   });
 
   // Check if the refresh token in the database matches the provided one
-  if (newestRefreshToken && newestRefreshToken.refreshToken === refreshToken) {
+  if (
+    newestRefreshToken &&
+    newestRefreshToken.refreshToken === tokenBody.token
+  ) {
     const result = generateUserTokens(
       {
         sub: user?.sub || '',
         username: user?.username || '',
       },
-      req,
+      tokenBody.ip,
       tokensInDb?.session,
     );
-
-    // const newAccessToken = generateToken(
-    //   user as object,
-    //   ip,
-    //   config.ACCESS_TOKEN_EXPIRATION,
-    //   config.ACCESS_TOKEN_SECRET,
-    // );
-    // const newRefreshToken = generateToken(
-    //   user as object,
-    //   ip,
-    //   config.REFRESH_TOKEN_EXPIRATION,
-    //   config.REFRESH_TOKEN_SECRET,
-    // );
-
-    // const newRefreshEntry = await prisma.refreshToken.create({
-    //   data: {
-    //     token: newRefreshToken,
-    //     userId: (user as any).id,
-    //     sessionId: refreshTokenInDb?.sessionId,
-    //   },
-    // });
-    // await prisma.accessToken.create({
-    //   data: {
-    //     token: newAccessToken,
-    //     userId: (user as any).id,
-    //     refreshTokenId: newRefreshEntry.id,
-    //     sessionId: newRefreshEntry.sessionId,
-    //   },
-    // });
-
-    // return {
-    //   accessToken: { token: newAccessToken, authType: 'bearer' },
-    // };
     return result;
   }
 
@@ -291,15 +261,232 @@ export async function refreshUserTokens(
   await invalidateAllTokensForUser(tokensInDb.session.userId);
   return null;
 }
+
 /**
- * Checks if a given string is Base64 encoded.
- * @param {string} str - The string to check.
- * @returns {boolean} `true` if the string is Base64 encoded, otherwise `false`.
+ * Authenticates a user with a username and password.
+ * The password is expected to be Base64-encoded, which is decoded during authentication.
+ *
+ * @param {LoginRequestBody} userData - The user data containing the username and Base64-encoded password.
+ * @returns {Promise<APIResponse<AccessResult>>} A promise that resolves with an API response containing
+ * either authentication tokens upon success, or an error message if authentication fails.
+ *
+ * @throws {Error} If an unexpected error occurs during the authentication process.
  */
-export function isBase64(str: string): boolean {
+export async function login(
+  userData: LoginRequestBody,
+): Promise<APIResponse<AccessResult>> {
   try {
-    return Buffer.from(str, 'base64').toString('base64') === str;
-  } catch {
-    return false;
+    const validate = LoginSchema.validate(userData);
+    if (validate.error) {
+      return {
+        data: undefined,
+        status: Status.MissingCredentials,
+        message: 'Some credentials are missing',
+      };
+    }
+
+    // Decode password from Base64
+    const decodedPassword = Buffer.from(userData.password, 'base64').toString();
+    userData.password = decodedPassword;
+
+    // Wrap passport authentication in a Promise to return an APIResponse
+    return new Promise((resolve) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      passport.authenticate(
+        'local',
+        async (err: any, user: Express.User | false) => {
+          if (err || !user) {
+            return resolve({
+              data: undefined,
+              status: Status.InvalidCredentials,
+              message: 'Username or Password was not correct',
+            });
+          }
+
+          // Proceed with login and token generation
+          try {
+            const result: AccessResult = await generateUserTokens(
+              {
+                sub: user.id,
+                username: user.username,
+              },
+              userData.ip,
+            );
+
+            resolve({
+              data: result,
+              status: Status.Success,
+              message: 'Login successful',
+            });
+          } catch (tokenError) {
+            console.error('Token generation error: ' + tokenError);
+            resolve({
+              data: undefined,
+              status: Status.Failed,
+              message: 'Failed to generate tokens',
+            });
+          }
+        },
+      )({ body: { username: userData.username, password: decodedPassword } });
+    });
+  } catch (error) {
+    console.error('Login error: ' + error);
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: 'Something went wrong on our end',
+    };
+  }
+}
+
+/**
+ * Logs out a user by invalidating their session with the provided token.
+ *
+ * @param {string} token - The authentication token provided by the user.
+ *
+ * @returns {Promise<APIResponse<undefined>>} A promise that resolves to an API response object containing the result of the logout operation.
+ *
+ * @throws {Error} Throws an error if something goes wrong during the process, logging the issue and returning a generic error message.
+ */
+export async function logout(token: string): Promise<APIResponse<undefined>> {
+  try {
+    // Validate the token using TokenSchema
+    const validate = TokenSchema.validate(token);
+
+    // If validation fails, return an error response
+    if (validate.error) {
+      return {
+        data: undefined,
+        status: Status.MissingCredentials,
+        message: 'Some credentials are missing',
+      };
+    }
+
+    // Proceed with the session invalidation process (e.g., invalidating the token)
+    await invalidateSession(token);
+
+    // Return a successful response
+    return {
+      data: undefined, // Assuming the data is not needed here
+      status: Status.Success,
+      message: 'Logout successful',
+    };
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Logout error:', error);
+
+    // Return a generic error message
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: 'Something went wrong on our end',
+    };
+  }
+}
+
+/**
+ * Logs out a user by invalidating their session with the provided token.
+ *
+ * @param {string} token - The authentication token provided by the user.
+ *
+ * @returns {Promise<APIResponse<AccessResult>>} A promise that resolves to an API response object containing the result of the logout operation.
+ *
+ * @throws {Error} Throws an error if something goes wrong during the process, logging the issue and returning a generic error message.
+ */
+export async function accessToken(
+  token: TokenRequestBody,
+): Promise<APIResponse<AccessResult>> {
+  try {
+    // Validate the token using TokenSchema
+    const validate = TokenSchema.validate(token);
+
+    // If validation fails, return an error response
+    if (validate.error) {
+      return {
+        data: undefined,
+        status: Status.MissingCredentials,
+        message: 'Some credentials are missing',
+      };
+    }
+    // Attempt to refresh tokens (replace this with the actual token refresh logic)
+    const newTokens = await refreshUserTokens(token);
+
+    // Check if new tokens were not returned (authorization failure)
+    if (!newTokens) {
+      return {
+        data: undefined,
+        status: Status.Unauthorized,
+        message: 'Not authorized',
+      };
+    }
+
+    // Successfully refreshed tokens, return them in the response
+    return {
+      data: newTokens,
+      status: Status.Success,
+      message: 'Tokens refreshed successfully',
+    };
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Access token error:', error);
+
+    // Return a generic error message
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: 'Something went wrong on our end',
+    };
+  }
+}
+
+/**
+ * Logs out a user by invalidating their session with the provided token.
+ *
+ * @param {string} token - The authentication token provided by the user.
+ *
+ * @returns {Promise<APIResponse<RefreshResult>>} A promise that resolves to an API response object containing the result of the logout operation.
+ *
+ * @throws {Error} Throws an error if something goes wrong during the process, logging the issue and returning a generic error message.
+ */
+export async function refreshToken(
+  token: TokenRequestBody,
+): Promise<APIResponse<RefreshResult>> {
+  try {
+    // Validate the token using TokenSchema
+    const validate = TokenSchema.validate(token);
+
+    // If validation fails, return an error response
+    if (validate.error) {
+      return {
+        data: undefined,
+        status: Status.MissingCredentials,
+        message: 'Some credentials are missing' + validate.error.message,
+      };
+    }
+    const tokens = await getRefreshToken(token);
+    if (!tokens) {
+      return {
+        data: undefined,
+        status: Status.Unauthorized,
+        message: 'Not authorized',
+      };
+    }
+
+    // Successfully refreshed tokens, return them in the response
+    return {
+      data: tokens,
+      status: Status.Found,
+      message: 'Token found',
+    };
+  } catch (error) {
+    // Log the error for debugging purposes
+    console.error('Refresh token error:', error);
+
+    // Return a generic error message
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: 'Something went wrong on our end',
+    };
   }
 }

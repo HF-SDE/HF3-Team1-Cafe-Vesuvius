@@ -35,7 +35,9 @@ app.use('/stock', stockRoutes);
 app.use('/table', tableRoutes);
 
 app.get('/ping', (req, res) => {
-  res.send('Server is running');
+  res.json({
+    status: 'Server is running',
+  });
 });
 
 const port = config.PORT || 3001;

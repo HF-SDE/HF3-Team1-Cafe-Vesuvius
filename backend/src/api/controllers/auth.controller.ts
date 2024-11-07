@@ -1,10 +1,12 @@
 import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
-import passport from 'passport';
 
+import { LoginRequestBody } from '@api-types/auth.types';
 import { PrismaClient } from '@prisma/client';
+//import passport from 'passport';
+import { getHttpStatusCode } from '@utils/Utils';
 
-import * as authService from '../services/auth.service';
+import * as AuthService from '../services/auth.service';
 
 const prisma = new PrismaClient();
 
@@ -43,95 +45,32 @@ export async function signUp(req: Request, res: Response) {
   }
 }
 
-/** Interface for the login request body */
-interface LoginRequestBody {
-  username: string;
-  password: string;
-}
-
 /**
  * Handles user login, authenticates with passport, and returns tokens on successful login.
- * @param {Request<unknown, unknown, LoginRequestBody>} req - The request object containing `username` and `password` in the body.
+ * @param {Request} req - The request object containing `username` and `password` in the body.
  * @param {Response} res - The response object to send authentication results.
  * @param {NextFunction} next - The next middleware function in the chain.
  * @returns {Promise<void>} Resolves with tokens on success or an error response.
  */
 export async function login(
-  req: Request<unknown, unknown, LoginRequestBody>,
+  req: Request,
   res: Response,
-  next: NextFunction,
+  //next: NextFunction,
 ): Promise<void> {
-  try {
-    // Make sure a username and password is passed in the body
-    const { username, password } = req.body as {
-      username: string;
-      password: string;
-    };
+  const { username, password } = req.body as {
+    username: string;
+    password: string;
+  };
 
-    if (!username?.trim() || !password?.trim()) {
-      res.status(400).json({
-        status: 'MissingCredentials',
-        message: 'Some credentials missing',
-      });
-      return;
-    }
+  const userObject: LoginRequestBody = {
+    username: username ?? undefined,
+    password: password ?? undefined,
+    ip: req.socket.remoteAddress as string,
+  };
 
-    // Makes sure that the password is encoded to base64
-    if (!authService.isBase64(password)) {
-      res.status(401).json({
-        status: 'InvalidCredentials',
-        message: 'Username or Password was not correct',
-      });
-      return;
-    }
+  const response = await AuthService.login(userObject);
 
-    // Decode the password from base64
-    const decodedPassword = Buffer.from(password, 'base64').toString();
-    req.body.password = decodedPassword;
-
-    // Authenticate the user using passport
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    passport.authenticate(
-      'local',
-      async (err: any, user: Express.User | false) => {
-        // Makes sure that theire was no errors in the authentication and that the user is valid
-        if (err || !user) {
-          res.status(401).json({
-            status: 'InvalidCredentials',
-            message: 'Username or Password was not correct',
-          });
-          return;
-        }
-
-        req.login(user, { session: false }, async (error) => {
-          if (error) {
-            next(error);
-            return;
-          }
-
-          try {
-            const tokens = await authService.generateUserTokens(
-              {
-                sub: user.id,
-                username: user.username,
-              },
-              req as Request,
-            );
-            res.json(tokens);
-          } catch (tokenError) {
-            console.error('Generate token: ' + tokenError);
-            throw new Error('Failed to generate tokens');
-          }
-        });
-      },
-    )(req, res, next);
-  } catch (error) {
-    console.error('Login error: ' + error);
-    res.status(500).json({
-      status: 'ServerError',
-      message: 'Something went wrong on our end',
-    });
-  }
+  res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
 // Define the interface for the request body
@@ -145,43 +84,11 @@ interface LogoutRequestBody {
  * @param {Response} res - The response object used to send the response to the client.
  * @returns {Promise<void>} - A promise that resolves when the logout is complete or rejects if an error occurs.
  */
-export async function logout(
-  req: Request<unknown, unknown, LogoutRequestBody>,
-  res: Response,
-): Promise<void> {
-  try {
-    // Destructure the token from the request body
-    const { token } = req.body;
+export async function logout(req: Request, res: Response): Promise<void> {
+  const { token } = req.body as { token: string };
+  const response = await AuthService.logout(token);
 
-    // Check if the token is missing
-    if (!token) {
-      res.status(400).json({
-        status: 'MissingData',
-        message: 'Missing authentication token',
-      });
-      return;
-    }
-
-    // Try to revoke the session with the given token
-    await authService.invalidateSession(token);
-
-    // Return a successful response
-    res.status(200).json({ message: 'Logout successful' });
-  } catch (error) {
-    // Log the error (avoid exposing sensitive information)
-    console.error('Logout error:', error);
-
-    // Return a generic error message to avoid exposing sensitive information
-    res.status(500).json({
-      status: 'ServerError',
-      message: 'Something went wrong on our end',
-    });
-  }
-}
-
-// Define the interface for the request body
-interface GetAccessTokenRequestBody {
-  token: string;
+  res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
 /**
@@ -191,61 +98,16 @@ interface GetAccessTokenRequestBody {
  * @returns {Promise<void>} - A promise that resolves when the access token is refreshed or rejects if an error occurs.
  */
 export async function getAccessToken(
-  req: Request<unknown, unknown, GetAccessTokenRequestBody>,
+  req: Request,
   res: Response,
 ): Promise<void> {
-  try {
-    // Destructure the refresh token from the request body
-    const { token: refreshToken } = req.body;
+  const { token } = req.body as { token: string };
+  const response = await AuthService.accessToken({
+    token,
+    ip: req.socket.remoteAddress as string,
+  });
 
-    // Check if the refresh token is missing
-    if (!refreshToken) {
-      res.status(400).json({
-        status: 'MissingData',
-        message: 'Missing authentication token',
-      });
-      return;
-    }
-
-    // Attempt to refresh tokens
-    const newTokens = await authService.refreshUserTokens(
-      refreshToken,
-      req as Request,
-    );
-
-    // Check if new tokens were not returned (authorization failure)
-    if (!newTokens) {
-      res.status(403).json({
-        status: 'Unauthorized',
-        message: 'Not authorized',
-      });
-      return;
-    }
-
-    // Successfully refreshed tokens, return them in the response
-    res.json(newTokens);
-  } catch (error) {
-    // Log the error (avoid exposing sensitive information)
-    console.error('Access token error:', error);
-
-    // Return a generic error message to avoid exposing sensitive information
-    res.status(500).json({
-      status: 'ServerError',
-      message: 'Something went wrong on our end',
-    });
-  }
-}
-
-// Interface for the successful response containing the refresh token
-interface RefreshTokenResponse {
-  refreshToken: {
-    token: string;
-  };
-}
-// Interface for error responses
-interface ErrorResponse {
-  status: string;
-  message: string;
+  res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
 /**
@@ -256,59 +118,32 @@ interface ErrorResponse {
  */
 export async function getRefreshToken(
   req: Request,
-  res: Response<RefreshTokenResponse | ErrorResponse>,
+  res: Response,
 ): Promise<void> {
-  try {
-    // Get the authorization header from the request
-    const authHeader = req.headers.authorization;
-    if (!authHeader) {
-      res.status(400).json({
-        status: 'MissingData',
-        message: 'Missing authentication',
-      });
-      return;
-    }
-
-    // Ensure it is a bearer token
-    const tokenParts = authHeader.split(' ');
-    if (tokenParts.length !== 2 || tokenParts[0].toLowerCase() !== 'bearer') {
-      res.status(400).json({
-        status: 'MissingData',
-        message: 'Missing authentication',
-      });
-      return;
-    }
-
-    // Ensure the token is not empty
-    const accessToken = tokenParts[1];
-    if (!accessToken) {
-      res.status(400).json({
-        status: 'MissingData',
-        message: 'Missing authentication',
-      });
-      return;
-    }
-
-    // Get the refresh token from the DB using the access token
-    const tokens = await authService.getRefreshToken(accessToken, req);
-    if (!tokens) {
-      res.status(403).json({
-        status: 'Unauthorized',
-        message: 'Not authorized',
-      });
-      return;
-    }
-
-    // Return the refresh token as the response
-    res.json(tokens);
-  } catch (error) {
-    // Log the error (avoid exposing sensitive information)
-    console.error('Refresh token error:', error);
-
-    // Return a generic error message
-    res.status(500).json({
-      status: 'ServerError',
-      message: 'Something went wrong on our end',
+  const authHeader = req.headers.authorization;
+  if (!authHeader) {
+    res.status(400).json({
+      status: 'MissingData',
+      message: 'Missing authentication',
     });
+    return;
   }
+
+  // Ensure it is a bearer token
+  const tokenParts = authHeader.split(' ');
+  if (tokenParts.length !== 2 || tokenParts[0].toLowerCase() !== 'bearer') {
+    res.status(400).json({
+      status: 'MissingData',
+      message: 'Missing authentication',
+    });
+    return;
+  }
+  const token = tokenParts[1];
+
+  const response = await AuthService.refreshToken({
+    token,
+    ip: req.socket.remoteAddress as string,
+  });
+
+  res.status(getHttpStatusCode(response.status)).json(response).end();
 }
