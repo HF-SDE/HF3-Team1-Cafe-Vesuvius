@@ -1,3 +1,5 @@
+import { NextFunction, Request, Response } from 'express';
+
 export enum Status {
   Unauthorized = 'Unauthorized',
   Forbidden = 'Forbidden',
@@ -23,7 +25,6 @@ export interface APIResponse<T> {
   data: T | undefined | null;
 }
 
-
 export interface IAPIResponse {
   status: Status;
   message?: string;
@@ -43,3 +44,9 @@ export interface ControllerRequest<T = any> extends IEXRequestUser {
     accessToken: string;
   };
 }
+
+export type ExpressFunction = (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => Promise<void> | void;
