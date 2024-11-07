@@ -4,11 +4,7 @@ import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { getHttpStatusCode } from '@utils/Utils';
 
-type ExpressFunction = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => Promise<void>;
+type ExpressFunction = (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
 /**
  * Middleware to check if the user has the required permissions to access a route.
