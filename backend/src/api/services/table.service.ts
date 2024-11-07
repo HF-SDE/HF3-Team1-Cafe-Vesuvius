@@ -26,7 +26,10 @@ export async function getTables(
 
   const where = id ? { id } : undefined;
 
-  const tables = await prisma.table.findMany({ where });
+  const tables = await prisma.table.findMany({
+    where,
+    include: { Orders: true, Reservation: true },
+  });
 
   return {
     data: tables,
