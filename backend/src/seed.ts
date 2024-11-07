@@ -106,7 +106,7 @@ async function main() {
       {
         code: 'stock:update',
         permissionGroupId: await findPermissionGroup('Stock'),
-        description: 'Delete stock',
+        description: 'Update stock',
       },
       {
         code: 'stock:create',
