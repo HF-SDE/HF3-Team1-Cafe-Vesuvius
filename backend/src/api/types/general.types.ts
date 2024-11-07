@@ -23,6 +23,12 @@ export interface APIResponse<T> {
   data: T | undefined | null;
 }
 
+
+export interface IAPIResponse {
+  status: Status;
+  message?: string;
+}
+
 export interface IEXRequestUser {
   user?: {
     id?: string;
