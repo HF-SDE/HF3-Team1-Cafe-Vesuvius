@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 
+import { StockUpdate } from '@api-types/stock.types';
 import { Prisma } from '@prisma/client';
 import * as StockService from '@services/stock.service';
 import { getHttpStatusCode } from '@utils/Utils';
-import { StockUpdate } from '@api-types/stock.types';
 
 /**
  * Controller to get stock items
@@ -13,7 +13,7 @@ import { StockUpdate } from '@api-types/stock.types';
  */
 export async function getStock(req: Request, res: Response): Promise<void> {
   const id = req.query.id as string | undefined;
-  const response = await StockService.getStock(id);
+  const response = await StockService.get(id);
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }

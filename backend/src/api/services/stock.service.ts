@@ -11,7 +11,7 @@ import { StockCreateSchema, StockUpdateSchema } from '@schemas/stock.schemas';
  * @param {string} id - The id of the stock item to get.
  * @returns {Promise<APIResponse<StockResult>>} A promise that resolves to an object containing the stock data, status, and message.
  */
-export async function getStock(id?: string): Promise<APIResponse<StockResult>> {
+export async function get(id?: string): Promise<APIResponse<StockResult>> {
   try {
     let result: StockResult | null;
     if (id) {
@@ -117,18 +117,18 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
       };
     }
 
-    const transaction = data.map(({quantity, unit, id}) => {
+    const transaction = data.map(({ quantity, unit, id }) => {
       return prisma.rawMaterial.update({
         where: {
           id,
         },
         data: {
           quantity,
-          unit
+          unit,
         },
       });
     });
-    
+
     const result = await prisma.$transaction(transaction);
 
     if (!result) {
