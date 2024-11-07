@@ -34,7 +34,10 @@ export default function TabLayout() {
           overflow: "hidden",
         },
 
-        headerStyle: { backgroundColor: PrimaryColor },
+        headerStyle: {
+          backgroundColor: PrimaryColor,
+          elevation: 0,
+        },
         headerTintColor: BackgroundColor,
         tabBarShowLabel: false,
         headerTitleAlign: "center",
@@ -50,7 +53,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Order",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ focused }) => (
             <Entypo
               name="list"
@@ -78,7 +81,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Reservartions",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ focused }) => (
             <Entypo
               name="calendar"
@@ -93,7 +96,7 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Management",
-          headerShown: false,
+          headerShown: true,
           tabBarIcon: ({ focused }) => (
             <Entypo
               name="info-with-circle"
@@ -108,7 +111,8 @@ export default function TabLayout() {
         options={{
           title: "",
           headerTitle: "Profile",
-          headerShown: false,
+          headerShown: true,
+
           tabBarIcon: ({ focused }) => (
             <FontAwesome
               name="user"

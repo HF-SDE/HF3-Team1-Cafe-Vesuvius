@@ -6,7 +6,9 @@ import { isAllowed } from '@middlewares/isAllowed';
 
 const router = Router();
 
-router.get('/', verifyJWT, isAllowed([]), TableController.getTables);
-router.get('/:id', verifyJWT, isAllowed([]), TableController.getTable);
+const perms = ['table:view'];
+
+router.get('/', verifyJWT, isAllowed(perms), TableController.getTables);
+router.get('/:id', verifyJWT, isAllowed(perms), TableController.getTable);
 
 export default router;
