@@ -7,6 +7,7 @@ import passport from 'passport';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
+import manageRoutes from '@routes/manage.routes';
 import stockRoutes from '@routes/stock.routes';
 import tableRoutes from '@routes/table.routes';
 
@@ -33,6 +34,7 @@ app.use(limiter);
 app.use('/', authRoutes);
 app.use('/stock', stockRoutes);
 app.use('/table', tableRoutes);
+app.use('/manage', manageRoutes);
 
 app.get('/ping', (req, res) => {
   res.send('Server is running');
