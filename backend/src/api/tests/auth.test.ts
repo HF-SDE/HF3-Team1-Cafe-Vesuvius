@@ -1,3 +1,5 @@
+/* eslint-disable func-style */
+
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
@@ -6,223 +8,145 @@
 import axios from 'axios';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
-const BASE_URL = 'http://localhost:3001'; // Replace with your actual base URL for the API
-
+const BASE_URL = 'http://localhost:3001';
 const axiosInstance = axios.create({
-  baseURL: 'http://localhost:3001', // Your base URL here
-  validateStatus: () => true, // Allow all status codes
+  baseURL: BASE_URL,
+  validateStatus: () => true,
 });
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Helper function for login request
+const loginUser = async (username: string, password: string) => {
+  return await axiosInstance.post('/login', { username, password });
+};
+
+// Helper function for checking login success response structure
+const validateLoginSuccess = (response: any) => {
+  expect(response.status).toBe(200);
+  expect(response.data).toHaveProperty('data');
+  expect(response.data.data).toHaveProperty('accessToken');
+  expect(response.data.data.accessToken).toHaveProperty('token');
+  expect(response.data.data.accessToken).toHaveProperty('authType');
+};
+
+// Helper function for refreshing token
+const refreshToken = async (accessToken: string) => {
+  return await axiosInstance.get('/refreshToken', {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+};
+
+// Helper function for requesting new access token using refresh token
+const getNewAccessToken = async (refreshToken: string) => {
+  return await axiosInstance.post('/accessToken', { token: refreshToken });
+};
 
 describe('Auth API Endpoints', () => {
   beforeAll(() => {
-    // Any setup needed before tests run (e.g., ensuring server is running)
+    // Any setup needed before tests run
   });
 
   afterAll(() => {
-    // Any cleanup needed after tests finish (e.g., shutting down the server)
+    // Any cleanup needed after tests finish
   });
+
   it('should respond to /ping endpoint', async () => {
-    const response = await axiosInstance.get(`${BASE_URL}/ping`);
-    expect(response.status).toBe(200); // Ensure status is 200 OK
+    const response = await axiosInstance.get('/ping');
+    expect(response.status).toBe(200);
   });
 
   it('should login a user successfully', async () => {
-    const response = await axiosInstance.post(`${BASE_URL}/login`, {
-      username: 'admin',
-      password: 'YWRtaW4=',
-    });
-
-    expect(response.status).toBe(200); // Validate successful login status
-    expect(response.data).toHaveProperty('data');
-    expect(response.data.data).toHaveProperty('accessToken');
-    expect(response.data.data.accessToken).toHaveProperty('token');
-    expect(response.data.data.accessToken).toHaveProperty('authType');
+    const response = await loginUser('admin', 'YWRtaW4=');
+    validateLoginSuccess(response);
   });
 
-  it('should return error for invalid login credentials', async () => {
-    const response = await axiosInstance.post(`${BASE_URL}/login`, {
-      username: 'admin',
-      password: 'd3JvbmdwYXNzd29yZA==',
-    });
-
-    expect(response.status).toBe(401); // Validate unauthorized status
+  it('should return error for invalid login credentials (valid Base64, wrong password)', async () => {
+    const response = await loginUser('admin', 'd3JvbmdwYXNzd29yZA==');
+    expect(response.status).toBe(401); // Unauthorized
   });
 
-  it('should return error for wrong password format', async () => {
-    const response = await axiosInstance.post(`${BASE_URL}/login`, {
-      username: 'admin',
-      password: 'admin',
-    });
-
-    expect(response.status).toBe(400); // Validate unauthorized status
+  it('should return error for wrong password format (not Base64)', async () => {
+    const response = await loginUser('admin', 'admin');
+    expect(response.status).toBe(400); // Bad Request due to wrong format
+  });
+  it('should return error for wrong password', async () => {
+    const response = await loginUser('admin', 'd3JvbmdwYXNzd29yZA==');
+    expect(response.status).toBe(401); // Bad Request due to wrong format
   });
 
-  it('should login a user successfully and refresh tokens', async () => {
-    // First, login to get the initial tokens
-    const loginResponse = await axiosInstance.post(`${BASE_URL}/login`, {
-      username: 'admin',
-      password: 'YWRtaW4=', // Base64 encoded password (admin)
-    });
+  it('should login a user, refresh tokens, and obtain new access token', async () => {
+    const loginResponse = await loginUser('admin', 'YWRtaW4=');
+    validateLoginSuccess(loginResponse);
 
-    expect(loginResponse.status).toBe(200); // Validate successful login status
-    expect(loginResponse.data).toHaveProperty('data');
-    expect(loginResponse.data.data).toHaveProperty('accessToken');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('token');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('authType');
-
-    const accessToken = loginResponse.data.data.accessToken.token;
-
-    // Now call /refreshToken with the accessToken as a Bearer token in the Authorization header
-    const refreshResponse = await axiosInstance.get(
-      `${BASE_URL}/refreshToken`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`, // Pass the access token as Bearer token
-        },
-      },
-    );
-
-    expect(refreshResponse.status).toBe(200); // Validate successful refresh response
-    expect(refreshResponse.data).toHaveProperty('data');
+    const initialAccessToken = loginResponse.data.data.accessToken.token;
+    const refreshResponse = await refreshToken(initialAccessToken);
+    expect(refreshResponse.status).toBe(200);
     expect(refreshResponse.data.data).toHaveProperty('refreshToken');
-    expect(refreshResponse.data.data.refreshToken).toHaveProperty('token');
 
     const newRefreshToken = refreshResponse.data.data.refreshToken.token;
-
-    // Finally, call /accessToken with the new refresh token to get a new access token
-    const accessTokenResponse = await axiosInstance.post(
-      `${BASE_URL}/accessToken`,
-      {
-        token: newRefreshToken, // Pass the new refresh token to get a new access token
-      },
-    );
-
-    expect(accessTokenResponse.status).toBe(200); // Validate successful access token response
-    expect(loginResponse.data).toHaveProperty('data');
-    expect(loginResponse.data.data).toHaveProperty('accessToken');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('token');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('authType');
+    const accessTokenResponse = await getNewAccessToken(newRefreshToken);
+    expect(accessTokenResponse.status).toBe(200);
+    validateLoginSuccess(accessTokenResponse);
   });
 
-  it('should login a user successfully and refresh tokens multiple times', async () => {
-    // First, login to get the initial tokens
-    const loginResponse = await axiosInstance.post(`${BASE_URL}/login`, {
-      username: 'admin',
-      password: 'YWRtaW4=', // Base64 encoded password (admin)
-    });
-
-    expect(loginResponse.status).toBe(200); // Validate successful login status
-    expect(loginResponse.data).toHaveProperty('data');
-    expect(loginResponse.data.data).toHaveProperty('accessToken');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('token');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('authType');
+  it('should login a user, refresh tokens multiple times', async () => {
+    const loginResponse = await loginUser('admin', 'YWRtaW4=');
+    validateLoginSuccess(loginResponse);
 
     let accessToken = loginResponse.data.data.accessToken.token;
-
-    // Loop to refresh and obtain new access tokens multiple times
-    const iterations = 5; // Adjust the number of iterations as needed
+    const iterations = 5;
     for (let i = 0; i < iterations; i++) {
-      // Now call /refreshToken with the accessToken as a Bearer token in the Authorization header
-      const refreshResponse = await axiosInstance.get(
-        `${BASE_URL}/refreshToken`,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`, // Pass the access token as Bearer token
-          },
-        },
-      );
-
-      expect(refreshResponse.status).toBe(200); // Validate successful refresh response
-      expect(refreshResponse.data).toHaveProperty('data');
-      expect(refreshResponse.data.data).toHaveProperty('refreshToken');
-      expect(refreshResponse.data.data.refreshToken).toHaveProperty('token');
-
+      const refreshResponse = await refreshToken(accessToken);
+      expect(refreshResponse.status).toBe(200);
       const newRefreshToken = refreshResponse.data.data.refreshToken.token;
 
-      // Call /accessToken with the new refresh token to get a new access token
-      const accessTokenResponse = await axiosInstance.post(
-        `${BASE_URL}/accessToken`,
-        {
-          token: newRefreshToken, // Pass the new refresh token to get a new access token
-        },
-      );
-
-      expect(accessTokenResponse.status).toBe(200); // Validate successful access token response
-      expect(accessTokenResponse.data).toHaveProperty('data');
-      expect(accessTokenResponse.data.data).toHaveProperty('accessToken');
-      expect(accessTokenResponse.data.data.accessToken).toHaveProperty('token');
-      expect(accessTokenResponse.data.data.accessToken).toHaveProperty(
-        'authType',
-      );
-
-      // Update accessToken for the next iteration
+      const accessTokenResponse = await getNewAccessToken(newRefreshToken);
+      expect(accessTokenResponse.status).toBe(200);
       accessToken = accessTokenResponse.data.data.accessToken.token;
     }
   });
 
-  it('should login a user successfully, use an expired access token to get a refresh token, and session should be removed', async () => {
-    // Step 1: Login to get the initial tokens
-    const loginResponse = await axiosInstance.post(`${BASE_URL}/login`, {
-      username: 'admin',
-      password: 'YWRtaW4=', // Base64 encoded password (admin)
-    });
-
-    expect(loginResponse.status).toBe(200); // Validate successful login status
-    expect(loginResponse.data).toHaveProperty('data');
-    expect(loginResponse.data.data).toHaveProperty('accessToken');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('token');
-    expect(loginResponse.data.data.accessToken).toHaveProperty('authType');
-
+  it('should expire initial access token after refresh and invalidate session', async () => {
+    const loginResponse = await loginUser('admin', 'YWRtaW4=');
+    await sleep(500);
+    validateLoginSuccess(loginResponse);
     const initialAccessToken = loginResponse.data.data.accessToken.token;
 
-    console.log(initialAccessToken);
-
-    // Step 2: Call /refreshToken using the initial access token
-    const refreshResponse = await axiosInstance.get(
-      `${BASE_URL}/refreshToken`,
-      {
-        headers: {
-          Authorization: `Bearer ${initialAccessToken}`, // Use the initial access token
-        },
-      },
-    );
-
-    expect(refreshResponse.status).toBe(200); // Validate successful refresh response
-    expect(refreshResponse.data).toHaveProperty('data');
-    expect(refreshResponse.data.data).toHaveProperty('refreshToken');
-    expect(refreshResponse.data.data.refreshToken).toHaveProperty('token');
-
+    const refreshResponse = await refreshToken(initialAccessToken);
+    await sleep(500);
+    expect(refreshResponse.status).toBe(200);
     const newRefreshToken = refreshResponse.data.data.refreshToken.token;
 
-    console.log(newRefreshToken);
+    const accessTokenResponse = await getNewAccessToken(newRefreshToken);
+    await sleep(500);
+    expect(accessTokenResponse.status).toBe(200);
 
-    // Step 3: Use the new refresh token to obtain a new access token
-    const accessTokenResponse = await axiosInstance.post(
-      `${BASE_URL}/accessToken`,
-      {
-        token: newRefreshToken, // Pass the new refresh token to get a new access token
-      },
-    );
+    const retryRefresh = await refreshToken(initialAccessToken);
+    await sleep(500);
+    expect(retryRefresh.status).toBe(401); // Initial token expired, unauthorized
+  });
 
-    expect(accessTokenResponse.status).toBe(200); // Validate successful access token response
+  it('should fail to use expired refresh token for access token', async () => {
+    const loginResponse = await loginUser('admin', 'YWRtaW4=');
+    await sleep(500);
+    validateLoginSuccess(loginResponse);
 
-    const newAccessToken = accessTokenResponse.data.data.accessToken.token;
+    const initialAccessToken = loginResponse.data.data.accessToken.token;
+    const refreshResponse = await refreshToken(initialAccessToken);
+    await sleep(500);
+    expect(refreshResponse.status).toBe(200);
+    const newRefreshToken = refreshResponse.data.data.refreshToken.token;
 
-    console.log(initialAccessToken);
+    const accessTokenResponse = await getNewAccessToken(newRefreshToken);
+    await sleep(500);
+    expect(accessTokenResponse.status).toBe(200);
 
-    await sleep(2000); // wait for 1 second
-
-    // Step 4: Attempt to use the initial access token with /refreshToken, expecting it to fail
-    const refreshResponse2 = await axiosInstance
-      .get(`${BASE_URL}/refreshToken`, {
-        headers: {
-          Authorization: `Bearer ${initialAccessToken}`, // Use the old access token
-        },
-      })
-      .catch((error) => error.response);
-
-    expect(refreshResponse2.status).toBe(401); // Validate 401 Unauthorized response
+    // Attempt to reuse the expired refresh token
+    const retryAccessTokenResponse = await getNewAccessToken(newRefreshToken);
+    await sleep(500);
+    expect(retryAccessTokenResponse.status).toBe(401); // Unauthorized due to expired token
   });
 });
