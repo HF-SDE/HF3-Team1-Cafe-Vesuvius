@@ -1,14 +1,6 @@
-import { NextFunction, Request, Response } from 'express';
-
-import { Status } from '@api-types/general.types';
+import { ExpressFunction, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { getHttpStatusCode } from '@utils/Utils';
-
-type ExpressFunction = (
-  req: Request,
-  res: Response,
-  next: NextFunction,
-) => Promise<void>;
 
 /**
  * Middleware to check if the user has the required permissions to access a route.
@@ -16,7 +8,7 @@ type ExpressFunction = (
  * @returns {ExpressFunction} The middleware function to check permissions.
  */
 export function isAllowed(permissions: string[]): ExpressFunction {
-  return async (req: Request, res: Response, next: NextFunction) => {
+  return async (req, res, next) => {
     const user = req.user;
 
     if (!user) {

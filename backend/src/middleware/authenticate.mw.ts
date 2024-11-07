@@ -10,28 +10,20 @@ import '../passport';
  * @param {NextFunction} next - The next middleware function in the chain.
  * @returns {Promise<void>} Resolves with the user data if the token is valid.
  */
-export async function verifyJWT(
-  req: Request,
-  res: Response,
-  next: NextFunction,
-): Promise<void> {
+export async function verifyJWT(req: Request, res: Response, next: NextFunction): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  passport.authenticate(
-    'jwt',
-    { session: false },
-    (err: number, user: Express.User, info: any) => {
-      if (err) return res.status(err).json(info);
+  passport.authenticate('jwt', { session: false }, (err: number, user: Express.User, info: any) => {
+    if (err) return res.status(err).json(info);
 
-      if (!user) {
-        return res.status(401).json({
-          status: 'Unauthorized',
-          message: 'Unauthorized',
-        });
-      }
+    if (!user) {
+      return res.status(401).json({
+        status: 'Unauthorized',
+        message: 'Unauthorized',
+      });
+    }
 
-      req.user = user;
+    req.user = user;
 
-      next();
-    },
-  )(req, res, next);
+    next();
+  })(req, res, next);
 }

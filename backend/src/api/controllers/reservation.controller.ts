@@ -1,48 +1,51 @@
 import { Request, Response } from 'express';
 
 import { Prisma } from '@prisma/client';
-import * as TableService from '@services/table.service';
+import * as ReservationService from '@services/reservation.service';
 import { getHttpStatusCode } from '@utils/Utils';
 
 /**
- * Controller to get all tables
+ * Controller to get all reservations
  * @async
  * @param {Request} req - The request object
  * @param {Response} res - The response object
  * @returns {Promise<void>} The response object
  */
-export async function getTables(req: Request, res: Response): Promise<void> {
+export async function getReservations(
+  req: Request,
+  res: Response,
+): Promise<void> {
   const id = (req.query.id || req.params.id) as string | undefined;
-  const response = await TableService.getTables(id);
+  const response = await ReservationService.getReservations(id);
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
 /**
- * Controller to create a table
+ * Controller to create a reservation
  * @async
  * @param {Request} req - The request object
  * @param {Response} res - The response object
  * @returns {Promise<void>} The response object
  */
-export async function createTable(req: Request, res: Response): Promise<void> {
-  const response = await TableService.createTable(
-    req.body as Prisma.TableCreateInput,
+export async function createReservation(req: Request, res: Response): Promise<void> {
+  const response = await ReservationService.createReservation(
+    req.body as Prisma.ReservationCreateInput,
   );
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
 /**
- * Controller to delete a table
+ * Controller to delete a reservation
  * @async
  * @param {Request} req - The request object
  * @param {Response} res - The response object
  * @returns {Promise<void>} The response object
  */
-export async function deleteTable(req: Request, res: Response): Promise<void> {
+export async function deleteReservation(req: Request, res: Response): Promise<void> {
   const { id } = req.params;
-  const response = await TableService.deleteTable(id);
+  const response = await ReservationService.deleteReservation(id);
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
