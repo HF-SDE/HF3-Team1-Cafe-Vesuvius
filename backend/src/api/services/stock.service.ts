@@ -142,8 +142,7 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
       status: Status.Updated,
       message: 'Item(s) updated',
     };
-  } catch (e: any) {
-    console.log(e);
+  } catch {
     return {
       status: Status.Failed,
       message: 'Something went wrong on our end',
