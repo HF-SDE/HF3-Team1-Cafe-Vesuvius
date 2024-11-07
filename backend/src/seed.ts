@@ -104,7 +104,7 @@ async function main() {
         description: 'View what it is in stock',
       },
       {
-        code: 'stock:delete',
+        code: 'stock:update',
         permissionGroupId: await findPermissionGroup('Stock'),
         description: 'Delete stock',
       },
