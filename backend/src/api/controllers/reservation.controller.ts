@@ -37,6 +37,23 @@ export async function createReservation(req: Request, res: Response): Promise<vo
 }
 
 /**
+ * Controller to update a reservation
+ * @async
+ * @param {Request} req - The request object
+ * @param {Response} res - The response object
+ * @returns {Promise<void>} The response object
+ */
+export async function updateReservation(req: Request, res: Response): Promise<void> {
+  const { id } = req.params;
+  const response = await ReservationService.updateReservation(
+    id,
+    req.body as Prisma.ReservationUpdateInput,
+  );
+
+  res.status(getHttpStatusCode(response.status)).json(response).end();
+}
+
+/**
  * Controller to delete a reservation
  * @async
  * @param {Request} req - The request object

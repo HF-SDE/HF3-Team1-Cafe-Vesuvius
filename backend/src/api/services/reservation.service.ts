@@ -47,8 +47,6 @@ export async function getReservations(
 export async function createReservation(
   data: Prisma.ReservationCreateInput,
 ): Promise<APIResponse<ReservationResult>> {
-  data.reservationTime = new Date(data.reservationTime);
-
   const reservation = await prisma.reservation.create({
     data,
   });
@@ -57,6 +55,29 @@ export async function createReservation(
     data: reservation,
     status: Status.Created,
     message: 'Reservation created',
+  };
+}
+
+/**
+ * Service to update a reservation
+ * @async
+ * @param {string} id - The id of the reservation to update.
+ * @param {any} data - The data to update the reservation with.
+ * @returns {Promise<APIResponse<ReservationResult>>} A promise that resolves to an object containing the reservation data, status, and message.
+ */
+export async function updateReservation(
+  id: string,
+  data: Prisma.ReservationUpdateInput,
+): Promise<APIResponse<ReservationResult>> {
+  const reservation = await prisma.reservation.update({
+    where: { id },
+    data,
+  });
+
+  return {
+    data: reservation,
+    status: Status.Success,
+    message: 'Reservation updated',
   };
 }
 

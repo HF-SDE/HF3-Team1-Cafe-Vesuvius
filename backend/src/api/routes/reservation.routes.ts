@@ -4,6 +4,7 @@ import {
   createReservation,
   deleteReservation,
   getReservations,
+  updateReservation,
 } from '@controllers/reservation.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
@@ -17,7 +18,7 @@ router.use('/', verifyJWT);
 router.use('/:id', validateParams);
 
 router.get(['/', '/:id'], isAllowed(['reservation:view']), getReservations);
-router.put('/:id', isAllowed(['reservation:update']), createReservation);
+router.put('/:id', isAllowed(['reservation:update']), updateReservation);
 router.delete('/:id', isAllowed(['reservation:delete']), deleteReservation);
 
 export default router;
