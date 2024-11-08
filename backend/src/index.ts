@@ -15,8 +15,8 @@ import tableRoutes from '@routes/table.routes';
 import './passport';
 
 const limiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 60 minutes
-  limit: 500, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
+  windowMs: config.RATE_LIMIT_RESET_MINUTES * 60 * 1000, // 60 minutes
+  limit: config.RATE_LIMIT_COUNT, // Limit each IP to 100 requests per `window` (here, per 15 minutes).
   standardHeaders: 'draft-7', // draft-6: `RateLimit-*` headers; draft-7: combined `RateLimit` header
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
@@ -44,8 +44,6 @@ app.get('/ping', (req, res) => {
   });
 });
 
-const port = config.PORT || 3001;
-
-app.listen(port, () => {
+app.listen(config.PORT, () => {
   console.log(`Server is running on ${config.PORT}`);
 });

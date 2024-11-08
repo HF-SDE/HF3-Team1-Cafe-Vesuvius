@@ -23,8 +23,8 @@ export async function login(
   };
 
   const userObject: LoginRequestBody = {
-    username: username ?? undefined,
-    password: password ?? undefined,
+    username,
+    password,
     ip: req.socket.remoteAddress as string,
   };
 
