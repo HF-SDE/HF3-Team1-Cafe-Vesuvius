@@ -17,6 +17,7 @@ export enum Status {
   InvalidDetails = 'InvalidDetails',
   MissingCredentials = 'MissingCredentials',
   InvalidCredentials = 'InvalidCredentials',
+  TooManyRequests = 'TooManyRequests',
 }
 
 export interface APIResponse<T> {

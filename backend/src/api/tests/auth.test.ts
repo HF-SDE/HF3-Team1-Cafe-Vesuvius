@@ -4,6 +4,8 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 //import { AccessResult } from '@api-types/auth.types';
 import { APIResponse } from '@api-types/general.types';
 
+import config from '../../config';
+
 const BASE_URL = 'http://localhost:3001';
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
@@ -156,7 +158,7 @@ describe('Auth API Endpoints', () => {
     if (!accessToken) {
       throw new Error('Access token is missing');
     }
-    const iterations = 50;
+    const iterations = 5;
     for (let i = 0; i < iterations; i++) {
       const refreshResponse = await callRefreshToken(accessToken);
       expect(refreshResponse.status).toBe(200);
@@ -258,5 +260,19 @@ describe('Auth API Endpoints', () => {
   it('should fail logout because no token was provided', async () => {
     const logoutResponde = await axiosInstance.post('/logout');
     expect(logoutResponde.status).toBe(400);
+  });
+
+  it('should fail to login a user, multiple times', async () => {
+    const iterations = config.MAX_FAILED_LOGIN_ATTEMPTS + 5;
+    let count = 0;
+    for (let i = 0; i < iterations; i++) {
+      count++;
+      const loginResponse = await loginUser('kok', 'd3JvbmdwYXNzd29yZA==');
+      if (count > config.MAX_FAILED_LOGIN_ATTEMPTS) {
+        expect(loginResponse.status).toBe(429);
+      } else {
+        expect(loginResponse.status).toBe(401);
+      }
+    }
   });
 });

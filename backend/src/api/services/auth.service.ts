@@ -260,6 +260,73 @@ export async function refreshUserTokens(
   return null;
 }
 
+// In-memory store for login attempts
+type LoginAttemptsCache = {
+  [key: string]: Date[];
+};
+const loginAttempts: LoginAttemptsCache = {};
+
+/**
+ * Generates a cache key based on the username and IP address.
+ * @param {string} username - The username of the user attempting to log in.
+ * @param {string} ipAddress - The IP address from which the login attempt is made.
+ * @returns {string} The generated cache key in the format "username-ipAddress".
+ */
+function getCacheKey(username: string, ipAddress: string): string {
+  return `${username}-${ipAddress}`;
+}
+
+/**
+ * Adds a failed login attempt for a given username and IP address.
+ * Tracks the time of the failed attempt and manages the attempt window.
+ * @param {string} username - The username of the user attempting to log in.
+ * @param {string} ipAddress - The IP address from which the login attempt is made.
+ * @returns {void}
+ */
+function addFailedAttempt(username: string, ipAddress: string): void {
+  const key = getCacheKey(username, ipAddress);
+  const now = new Date();
+
+  // Initialize the array if it doesn't exist
+  if (!loginAttempts[key]) {
+    loginAttempts[key] = [];
+  }
+
+  // Remove old attempts outside the time window
+  loginAttempts[key] = loginAttempts[key].filter(
+    (attemptTime) =>
+      now.getTime() - attemptTime.getTime() <
+      config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+  );
+
+  // Add the new failed attempt
+  loginAttempts[key].push(now);
+}
+
+/**
+ * Checks if an account is locked due to too many failed login attempts.
+ * @param {string} username - The username of the user attempting to log in.
+ * @param {string} ipAddress - The IP address from which the login attempt is made.
+ * @returns {boolean} Returns true if the account is locked, otherwise false.
+ */
+function isAccountLocked(username: string, ipAddress: string): boolean {
+  const key = getCacheKey(username, ipAddress);
+  if (!loginAttempts[key]) {
+    return false;
+  }
+
+  // Remove old attempts outside of the time window
+  const now = new Date();
+  loginAttempts[key] = loginAttempts[key].filter(
+    (attemptTime) =>
+      now.getTime() - attemptTime.getTime() <
+      config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+  );
+
+  // Check if the number of recent failed attempts exceeds the limit
+  return loginAttempts[key].length >= config.MAX_FAILED_LOGIN_ATTEMPTS;
+}
+
 /**
  * Authenticates a user with a username and password.
  * The password is expected to be Base64-encoded, which is decoded during authentication.
@@ -283,6 +350,15 @@ export async function login(
       };
     }
 
+    // Check if the account should be locked due to too many failed attempts
+    if (isAccountLocked(userData.username, userData.ip)) {
+      return {
+        data: undefined,
+        status: Status.TooManyRequests,
+        message: 'Too many failed login attempts. Please try again later.',
+      };
+    }
+
     // Decode password from Base64
     const decodedPassword = Buffer.from(userData.password, 'base64').toString();
     userData.password = decodedPassword;
@@ -294,6 +370,7 @@ export async function login(
         'local',
         async (err: any, user: Express.User | false) => {
           if (err || !user) {
+            addFailedAttempt(userData.username, userData.ip);
             return resolve({
               data: undefined,
               status: Status.InvalidCredentials,

@@ -40,5 +40,7 @@ export function getHttpStatusCode(status: Status): number {
       return 400;
     case Status.InvalidCredentials:
       return 401;
+    case Status.TooManyRequests:
+      return 429;
   }
 }
