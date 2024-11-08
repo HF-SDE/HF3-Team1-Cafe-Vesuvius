@@ -2,6 +2,8 @@ import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 
 import '../passport';
+import { getHttpStatusCode } from '@utils/Utils';
+import { Status } from '@api-types/general.types';
 
 /**
  * Verifies the JWT token in the request header.
@@ -16,7 +18,7 @@ export async function verifyJWT(req: Request, res: Response, next: NextFunction)
     if (err) return res.status(err).json(info);
 
     if (!user) {
-      return res.status(401).json({
+      return res.status(getHttpStatusCode(Status.Unauthorized)).json({
         status: 'Unauthorized',
         message: 'Unauthorized',
       });
