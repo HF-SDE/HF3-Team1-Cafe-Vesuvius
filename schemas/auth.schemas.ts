@@ -7,6 +7,8 @@ export const LoginSchema = Joi.object({
 });
 
 export const TokenSchema = Joi.object({
-  token: Joi.string().required(),
+  token: Joi.string()
+    .regex(/^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-+/=]*)$/)
+    .required(),
   ip: Joi.string().ip().required(),
 });

@@ -33,14 +33,13 @@ export async function signUp(req: Request, res: Response) {
         name: 'Admin',
       },
     });
-    console.log(user);
 
     res.json({ message: 'Signup successful', userData: user });
 
     //return done(null, user);
   } catch (error) {
     //return done(error);
-    console.log(error);
+    console.error(error);
     res.json({ message: 'Signup error', errorMess: error });
   }
 }
@@ -86,7 +85,10 @@ interface LogoutRequestBody {
  */
 export async function logout(req: Request, res: Response): Promise<void> {
   const { token } = req.body as { token: string };
-  const response = await AuthService.logout(token);
+  const response = await AuthService.logout({
+    token,
+    ip: req.socket.remoteAddress as string,
+  });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }

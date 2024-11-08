@@ -70,14 +70,12 @@ export async function generateUserTokens(
 
   if (!session) {
     // Create a session if not provided
-    console.log('Creating new session');
     session = await prisma.session.create({
       data: {
         userId: user.sub,
         expiresAt: databaseEntryExpiresAt,
       },
     });
-    console.log(session);
   }
 
   // Create the new tokens in the database
@@ -348,7 +346,9 @@ export async function login(
  *
  * @throws {Error} Throws an error if something goes wrong during the process, logging the issue and returning a generic error message.
  */
-export async function logout(token: string): Promise<APIResponse<undefined>> {
+export async function logout(
+  token: TokenRequestBody,
+): Promise<APIResponse<undefined>> {
   try {
     // Validate the token using TokenSchema
     const validate = TokenSchema.validate(token);
@@ -363,7 +363,7 @@ export async function logout(token: string): Promise<APIResponse<undefined>> {
     }
 
     // Proceed with the session invalidation process (e.g., invalidating the token)
-    await invalidateSession(token);
+    await invalidateSession(token.token);
 
     // Return a successful response
     return {
