@@ -1,48 +1,9 @@
-import argon2 from 'argon2';
 import { NextFunction, Request, Response } from 'express';
 
 import { LoginRequestBody } from '@api-types/auth.types';
-import { PrismaClient } from '@prisma/client';
-//import passport from 'passport';
 import { getHttpStatusCode } from '@utils/Utils';
 
 import * as AuthService from '../services/auth.service';
-
-const prisma = new PrismaClient();
-
-/**
- * Handles user signup by creating a new user with a hashed password.
- * @param {Request} req - The request object (unused here for data).
- * @param {Response} res - The response object to send the result of the signup operation.
- * @returns {Promise<void>} Resolves with a success or error message.
- */
-export async function signUp(req: Request, res: Response) {
-  try {
-    const username = 'admin';
-
-    const password = 'admin';
-    // Hash the password before saving
-    const hashedPassword = await argon2.hash(password);
-
-    const user = await prisma.user.create({
-      data: {
-        username: username,
-        password: hashedPassword, // Store the hashed password
-        initials: 'Adm',
-        email: 'admin@admin.com',
-        name: 'Admin',
-      },
-    });
-
-    res.json({ message: 'Signup successful', userData: user });
-
-    //return done(null, user);
-  } catch (error) {
-    //return done(error);
-    console.error(error);
-    res.json({ message: 'Signup error', errorMess: error });
-  }
-}
 
 /**
  * Handles user login, authenticates with passport, and returns tokens on successful login.
