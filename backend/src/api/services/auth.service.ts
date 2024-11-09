@@ -374,7 +374,7 @@ export async function login(
             return resolve({
               data: undefined,
               status: Status.InvalidCredentials,
-              message: 'Username or Password was not correct',
+              message: 'Wrong username or password',
             });
           }
 

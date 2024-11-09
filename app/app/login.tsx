@@ -96,6 +96,7 @@ export default function Index() {
               setUsername(text);
               setIsUsernameEmpty(false);
             }}
+            onSubmitEditing={handleLogin}
           />
         </View>
         <View style={[styles.input_block]}>
@@ -119,6 +120,7 @@ export default function Index() {
               setPassword(text);
               setIsPasswordEmpty(false);
             }}
+            onSubmitEditing={handleLogin}
           />
           <TouchableOpacity
             onPress={() => setShowPassword((previous) => !previous)}
@@ -127,7 +129,6 @@ export default function Index() {
             <MaterialCommunityIcons
               name={showPassword ? "eye-off" : "eye"}
               size={24}
-              // color="gray"
               style={{ color: SecondaryColor }}
             />
           </TouchableOpacity>

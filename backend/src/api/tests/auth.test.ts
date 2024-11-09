@@ -1,4 +1,5 @@
 import axios from 'axios';
+import https from 'https';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 //import { AccessResult } from '@api-types/auth.types';
@@ -6,10 +7,17 @@ import { APIResponse } from '@api-types/general.types';
 
 import config from '../../config';
 
-const BASE_URL = 'http://localhost:3001';
+const BASE_URL = 'https://localhost:3001'; // HTTPS URL
+
+// Create an HTTPS agent with 'rejectUnauthorized' set to false to allow self-signed certificates
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false, // Allow self-signed certificates
+});
+
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   validateStatus: () => true,
+  httpsAgent, // Pass the agent to Axios
 });
 
 /** Interface for the login response structure */
