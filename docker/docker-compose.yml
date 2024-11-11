@@ -7,6 +7,8 @@ services:
       context: ../backend/
       dockerfile: Dockerfile
       target: base
+    expose:
+      - "3001:3001"
     ports:
       - "3001:3001"
     command: npm run dev
