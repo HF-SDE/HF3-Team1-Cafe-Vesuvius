@@ -1,9 +1,8 @@
 # syntax=docker/dockerfile:1
-# "base" is targeted if we run docker compose on our "default" docker compose file, it's defined in the "target" value.
-# "production" is targeted if we run docker-componse on our prod version of the file.
-# That means all the steps are individual depending on the environment running them.
-
 FROM node:22.9-alpine AS base
+
+# Install OpenSSL to generate certificates
+RUN apk add --no-cache openssl
 
 # Setting the timezone
 RUN apk add -U tzdata
@@ -17,26 +16,30 @@ RUN cp /mongosh-2.3.3-linux-arm64/bin/mongosh /usr/bin/mongosh
 RUN rm -rf mongosh-2.3.3-linux-arm64.tgz
 RUN rm -rf /mongosh-2.3.3-linux-arm64
 
-
-# Set our working directory on the virutal machine
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copy our package.json to the /usr/src/app
+# Copy package.json and install dependencies
 COPY package.json ./
-
-# Run NPM install
 RUN npm install
 
-# Copy all files from our local machine to the virutal machine (uses .dockerignore!)
+# Copy other application files
 COPY . .
 
-# Generate prisma types
+# Generate Prisma types
 RUN npx prisma generate
 
-# Deploy Prisma changes to prod
-RUN ["chmod", "+x", "./entrypoint.sh"]
+# Generate SSL certificates if they do not exist
+RUN mkdir -p /usr/src/app/cert && \
+    openssl genrsa -out /usr/src/app/cert/key.pem 2048 && \
+    openssl req -new -key /usr/src/app/cert/key.pem -out /usr/src/app/cert/csr.pem -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost" && \
+    openssl x509 -req -days 365 -in /usr/src/app/cert/csr.pem -signkey /usr/src/app/cert/key.pem -out /usr/src/app/cert/cert.pem
 
-# Fix the file format from windows CRLF to linux LF
-RUN sed -i -e 's/\r$//' ./entrypoint.sh
+# Ensure entrypoint.sh is executable
+RUN chmod +x ./entrypoint.sh
 
+# Expose port 3001 for HTTPS
+EXPOSE 3001
+
+# Command to start the application (using HTTPS on port 3001)
 ENTRYPOINT ["./entrypoint.sh"]

@@ -12,10 +12,14 @@ const config = {
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'secret2',
   ACCESS_TOKEN_EXPIRATION: process.env.ACCESS_TOKEN_EXPIRATION || '5m',
   REFRESH_TOKEN_EXPIRATION: process.env.REFRESH_TOKEN_EXPIRATION || '3d',
+  MAX_FAILED_LOGIN_ATTEMPTS: Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 5,
+  ATTEMPT_WINDOW_MINUTES: Number(process.env.ATTEMPT_WINDOW_MINUTES) || 15,
+  SSL_KEY_PATH: process.env.SSL_KEY_PATH || '/usr/src/app/cert/key.pem',
+  SSL_CERT_PATH: process.env.SSL_CERT_PATH || '/usr/src/app/cert/cert.pem',
 
   WHITELISTED_ORIGINS:
     process.env.WHITELISTED_ORIGINS ||
-    'http://localhost:3000 http://localhost:3001 http://localhost:8081',
+    'http://localhost:3000 http://localhost:3001 http://localhost:8081 https://localhost:3000 https://localhost:3001 https://localhost:8081',
 };
 
 export default config;

@@ -56,19 +56,13 @@ export function SessionProvider(props: React.PropsWithChildren) {
               },
               validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
             });
-            // const response = {
-            //   status: 200,
-            //   data: {
-            //     token: "GG"
-            //   }
-            // };
 
             if (!response) {
               throw new Error("No response");
             }
 
             if (response.status !== 200) {
-              return "Wrong username or password";
+              return response.data.message;
             }
 
             const result = response.data;

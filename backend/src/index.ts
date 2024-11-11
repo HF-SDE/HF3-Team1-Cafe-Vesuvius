@@ -2,7 +2,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
+import fs from 'fs';
 import helmet from 'helmet';
+import https from 'https';
 import passport from 'passport';
 
 import config from '@config';
@@ -44,6 +46,17 @@ app.get('/ping', (req, res) => {
   });
 });
 
-app.listen(config.PORT, () => {
-  console.log(`Server is running on ${config.PORT}`);
+// app.listen(config.PORT, () => {
+//   console.log(`Server is running on ${config.PORT}`);
+// });
+
+// Load trusted SSL certificate and key
+const sslOptions = {
+  key: fs.readFileSync(config.SSL_KEY_PATH),
+  cert: fs.readFileSync(config.SSL_CERT_PATH),
+};
+
+// Create HTTPS server with trusted SSL certificate
+https.createServer(sslOptions, app).listen(config.PORT, () => {
+  console.log(`Secure server is running on port ${config.PORT}`);
 });

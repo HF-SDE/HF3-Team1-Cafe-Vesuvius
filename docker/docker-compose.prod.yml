@@ -4,29 +4,43 @@ services:
     build:
       context: ../backend/
       dockerfile: Dockerfile
-      target: base,
+      target: base
+    ports:
+      - "3001:3001" # Expose HTTPS on port 3001
     volumes:
-      - ../backend/src:/usr/app/src
-    expose:
-      - "3001:3001"
+      - ../backend/src:/usr/src/app/src
+      - ../schemas:/usr/src/app/schemas
+      - ../backend/nodemon.json:/usr/src/app/nodemon.json
     command: npm run dev
     depends_on:
       - db
+    env_file:
+      - ../config/environment-variables/backend.dev.env
     networks:
       - public
       - private
-    env_file:
-      - ../config/environment-variables/backend.dev.env
 
   db:
     container_name: db
     image: mongo:4.4
     ports:
       - "27017:27017"
+    command:
+      [
+        "mongod",
+        "--keyFile",
+        "/data/keyfile.pem",
+        "--replSet",
+        "rs0",
+        "--bind_ip_all",
+        "--port",
+        "27017",
+      ]
     networks:
       - private
     volumes:
-      - db-data:/data/db
+      - mongo1_data:/data/db
+      - mongo1_config:/data/configdb
 
 networks:
   public:
@@ -35,6 +49,7 @@ networks:
   private:
     internal: true
     driver: bridge
-    
+
 volumes:
-  db-data: {}
+  mongo1_data: {}
+  mongo1_config: {}
