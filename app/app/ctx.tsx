@@ -28,7 +28,7 @@ export function useSession() {
 }
 
 export function SessionProvider(props: React.PropsWithChildren) {
-  const [[isLoading, session], setSession] = useStorageState("session");
+  const [[isLoading, token], setToken] = useStorageState("token");
   return (
     <AuthContext.Provider
       value={{
@@ -38,7 +38,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
             const isPasswordValid = password.trim() !== "";
 
             if (!isUsernameValid || !isPasswordValid) {
-              setSession(null);
+              setToken(null);
               return "Please fill out username and password";
             }
 
@@ -77,18 +77,18 @@ export function SessionProvider(props: React.PropsWithChildren) {
             }
 
             console.log(result.data.accessToken.token);
-            setSession(result.data.accessToken.token);
+            setToken(result.data.accessToken.token);
             return "authenticated";
           } catch (error) {
             console.error(error);
-            setSession(null);
+            setToken(null);
             return "Something went wrong on our end. Please contact support";
           }
         },
         signOut: async () => {
           try {
             const logoutData = {
-              token: session,
+              token: token,
             };
 
             const response = await apiClient.post("/logout", logoutData, {
@@ -100,9 +100,9 @@ export function SessionProvider(props: React.PropsWithChildren) {
           } catch (error) {
             console.error(error);
           }
-          setSession(null);
+          setToken(null);
         },
-        session,
+        session: token,
         isLoading,
       }}
     >
