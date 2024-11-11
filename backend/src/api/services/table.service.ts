@@ -47,15 +47,33 @@ export async function getTables(
 export async function createTable(
   data: Prisma.TableCreateInput,
 ): Promise<APIResponse<TableResult>> {
-  const table = await prisma.table.create({
-    data,
-  });
+  try {
+    const table = await prisma.table.create({
+      data,
+    });
 
-  return {
-    data: table,
-    status: Status.Created,
-    message: 'Table created',
-  };
+    return {
+      data: table,
+      status: Status.Created,
+      message: 'Table created',
+    };
+  } catch (error) {
+    const prismaError = error as Prisma.PrismaClientUnknownRequestError;
+
+    if (prismaError.name == 'PrismaClientValidationError') {
+      return {
+        data: undefined,
+        status: Status.MissingDetails,
+        message: 'Invalid data',
+      };
+    }
+
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: 'Error creating table',
+    };
+  }
 }
 
 /**

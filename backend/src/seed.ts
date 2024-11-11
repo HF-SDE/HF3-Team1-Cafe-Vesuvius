@@ -198,34 +198,14 @@ async function main() {
   // Assign permissions to super admin user
   const adminPermission = await prisma.permission.findMany({
     where: {
-      code: {
-        startsWith: 'administrator',
-      },
-      AND: {
-        code: {
-          startsWith: 'order',
-        },
-        AND: {
-          code: {
-            startsWith: 'menu',
-          },
-          AND: {
-            code: {
-              startsWith: 'stock',
-            },
-            AND: {
-              code: {
-                startsWith: 'table',
-              },
-              AND: {
-                code: {
-                  startsWith: 'reservation',
-                },
-              },
-            },
-          },
-        },
-      },
+      OR: [
+        { code: { startsWith: 'administrator' } },
+        { code: { startsWith: 'order' } },
+        { code: { startsWith: 'menu' } },
+        { code: { startsWith: 'stock' } },
+        { code: { startsWith: 'table' } },
+        { code: { startsWith: 'reservation' } },
+      ],
     },
   });
 

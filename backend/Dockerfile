@@ -29,12 +29,6 @@ COPY . .
 # Generate Prisma types
 RUN npx prisma generate
 
-# Generate SSL certificates if they do not exist
-RUN mkdir -p /usr/src/app/cert && \
-    openssl genrsa -out /usr/src/app/cert/key.pem 2048 && \
-    openssl req -new -key /usr/src/app/cert/key.pem -out /usr/src/app/cert/csr.pem -subj "/C=US/ST=State/L=City/O=Organization/CN=localhost" && \
-    openssl x509 -req -days 365 -in /usr/src/app/cert/csr.pem -signkey /usr/src/app/cert/key.pem -out /usr/src/app/cert/cert.pem
-
 # Ensure entrypoint.sh is executable
 RUN chmod +x ./entrypoint.sh
 
