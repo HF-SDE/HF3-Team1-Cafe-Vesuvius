@@ -17,9 +17,12 @@ services:
     env_file:
       - ../config/environment-variables/backend.dev.env
     volumes:
-     - ../backend/src:/usr/src/app/src
-     - ../schemas:/usr/src/app/schemas
-     - ../backend/nodemon.json:/usr/src/app/nodemon.json
+      - ../backend/src:/usr/src/app/src
+      - ../schemas:/usr/src/app/schemas
+      - ../backend/nodemon.json:/usr/src/app/nodemon.json
+    networks:
+      - public
+      - internal
 
   db:
     container_name: db
@@ -46,6 +49,35 @@ services:
     volumes:
       - "mongo1_data:/data/db"
       - "mongo1_config:/data/configdb"
+    networks:
+      - public
+      - internal
+
+  reverse-proxy:
+    container_name: reverse-proxy
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    ports:
+      - 443:443
+    expose:
+      - "443"
+    depends_on:
+      - backend
+    volumes:
+      - "../config/nginx.conf:/etc/nginx/conf.d/default.conf"
+    networks:
+      - public
+      - internal
+
+networks:
+  public:
+    driver: bridge
+    driver_opts:
+      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
+  internal:
+    name: internal
+    internal: true
 
 volumes:
   mongo1_data: {}
