@@ -16,7 +16,7 @@ const opts: StrategyOptionsWithRequest = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   passReqToCallback: true,
   secretOrKeyProvider: (req: Request, rawJwtToken, done) => {
-    done(null, config.ACCESS_TOKEN_SECRET + req.ip);
+    done(null, config.ACCESS_TOKEN_SECRET + req.socket.remoteAddress);
   },
 };
 
