@@ -22,7 +22,10 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
 
+
 const app = express();
+
+app.set('trust proxy', 1);
 
 app.use(
   cors({ credentials: true, origin: config.WHITELISTED_ORIGINS.split(' ') }),
