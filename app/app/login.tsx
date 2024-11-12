@@ -40,7 +40,6 @@ export default function Index() {
     if (isUsernameValid && isPasswordValid) {
       setIsLoading(true);
       const signInResult = await signIn(username, password);
-      console.log(signInResult);
 
       if (signInResult === "authenticated") {
         setErrorMessage("");

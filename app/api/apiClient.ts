@@ -1,118 +1,115 @@
-// src/apiClient.ts
 import axios from "axios";
-import { useStorageState } from "../storage/useStorageState";
+import {
+  getStorageItemAsync,
+  setStorageItemAsync,
+} from "../storage/useStorageState";
 
 const apiClient = axios.create({
-  baseURL: "https://localhost:3001",
+  baseURL: "https://localhost/api",
   withCredentials: true,
 });
 
-// Function to check if the access token is expired
-const isTokenExpired = (token: string | null): boolean => {
-  if (!token) return true;
+// Function to set the Authorization header
+async function getAuthHeader(): Promise<string | undefined> {
+  let token = await getStorageItemAsync("token");
 
-  try {
-    const payload = JSON.parse(atob(token.split(".")[1]));
-    return Date.now() >= payload.exp * 1000;
-  } catch (error) {
-    console.error("Error decoding token:", error);
-    return true;
-  }
-};
-
-// Function to refresh the token
-export const getNewToken = async (
-  session: string,
-  setSession: any
-): Promise<void> => {
-  try {
-    const response = await apiClient.get("/refreshToken", {
-      headers: { Authorization: `Bearer ${session}` },
-    });
-
-    if (response.status !== 200) {
-      throw new Error("Failed to refresh token, status: " + response.status);
-    }
-
-    const { newRefreshToken } = response.data;
-
-    const accessTokenResponse = await apiClient.post("/accessToken", {
-      refreshToken: newRefreshToken,
-    });
-
-    if (accessTokenResponse.status !== 200) {
-      throw new Error(
-        "Failed to get access token, status: " + accessTokenResponse.status
-      );
-    }
-
-    const { accessToken } = accessTokenResponse.data;
-
-    // Save the new access token via setSession
-    setSession(accessToken);
-  } catch (error: any) {
-    console.error("Error in getNewToken:", error.message || error);
-    throw error;
-  }
-};
-
-// Create a custom hook for using the apiClient
-export const useApiClient = () => {
-  const [[isLoading, session], setSession] = useStorageState("session");
-
-  // Axios request interceptor
-  apiClient.interceptors.request.use(async (config) => {
-    if (isTokenExpired(session)) {
-      console.log("Access token is expired");
-
-      try {
-        if (!session) {
-          throw new Error("No session");
-        }
-        await getNewToken(session, setSession);
-        config.headers["Authorization"] = `Bearer ${session}`;
-      } catch (refreshError) {
-        console.error("Failed to refresh token", refreshError);
-        return Promise.reject(refreshError);
-      }
+  if (token) {
+    if (isTokenExpired(token)) {
+      const newToken = await getNewAccessToken(token); // Await the token
+      return getAuthHeaderFormat(newToken);
     } else {
-      config.headers["Authorization"] = `Bearer ${session}`;
+      return getAuthHeaderFormat(token);
+    }
+  } else {
+    return undefined;
+  }
+}
+
+// Axios request interceptor
+apiClient.interceptors.request.use(
+  async (config) => {
+    // Skip adding Authorization header for token refresh requests
+    console.log(config.url);
+
+    if (config.url === "/refreshToken" || config.url === "/accessToken") {
+      return config;
     }
 
+    // Set the Authorization header before the request is sent
+    const authHeader = await getAuthHeader();
+    config.headers.Authorization = authHeader;
     return config;
-  });
+  },
+  (error) => {
+    // Handle errors in request setup
+    return Promise.reject(error);
+  }
+);
 
-  // Axios response interceptor
-  apiClient.interceptors.response.use(
-    (response) => response,
-    async (error) => {
-      const originalRequest = error.config;
+// Function to check if the access token is expired
+const isTokenExpired = (token: string): boolean => {
+  try {
+    // Split the token to get the payload
+    const payloadBase64 = token.split(".")[1];
+    const decodedPayload = JSON.parse(atob(payloadBase64));
 
-      if (
-        error.response &&
-        error.response.status === 401 &&
-        !originalRequest._retry
-      ) {
-        originalRequest._retry = true;
-
-        try {
-          if (!session) {
-            throw new Error("No session");
-          }
-          await getNewToken(session, setSession);
-          apiClient.defaults.headers["Authorization"] = `Bearer ${session}`;
-          originalRequest.headers["Authorization"] = `Bearer ${session}`;
-          return apiClient(originalRequest);
-        } catch (refreshError) {
-          console.error("Failed to refresh token", refreshError);
-          return Promise.reject(refreshError);
-        }
-      }
-
-      return Promise.reject(error);
+    // Check if the `exp` field exists
+    if (!decodedPayload.exp) {
+      throw new Error("Token does not have an exp field");
     }
-  );
 
-  return apiClient;
+    // Compare `exp` with the current time (in seconds)
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decodedPayload.exp < currentTime;
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return true; // Treat as expired if token is invalid
+  }
 };
+
+const getNewAccessToken = async (
+  expiredToken: string
+): Promise<string | undefined> => {
+  try {
+    // Step 1: Call /refreshToken with the expired token in the Authorization header
+    const refreshResponse = await apiClient.get("/refreshToken", {
+      headers: {
+        Authorization: getAuthHeaderFormat(expiredToken),
+      },
+    });
+
+    // Check if the response contains the refresh token
+    const refreshToken = refreshResponse.data?.data?.refreshToken?.token;
+    if (!refreshToken) {
+      console.error("Failed to retrieve refresh token");
+      return undefined;
+    }
+
+    // Step 2: Call /accessToken with the refresh token in the body
+    const accessResponse = await apiClient.post("/accessToken", {
+      token: refreshToken,
+    });
+
+    // Check if the response contains the access token
+    const accessToken = accessResponse.data?.data?.accessToken?.token;
+    if (!accessToken) {
+      console.error("Failed to retrieve access token");
+      return undefined;
+    }
+
+    // Step 3: Save the new access token using setStorageItemAsync
+    await setStorageItemAsync("token", accessToken);
+
+    // Step 4: Return the new access token
+    return accessToken;
+  } catch (error) {
+    console.error("Error while refreshing access token:", error);
+    return undefined;
+  }
+};
+
+const getAuthHeaderFormat = (token: string | undefined): string | undefined => {
+  return token ? `Bearer ${token}` : undefined;
+};
+
 export default apiClient;
