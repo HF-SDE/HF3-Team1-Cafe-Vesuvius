@@ -136,16 +136,22 @@ export async function invalidateAllTokensForUser(
  * @returns {Promise<RefreshResult | null>} A promise that resolves to an object containing the refresh token if valid, or `null` if the access token is invalid or expired.
  * @throws {Error} If there is an error during token verification or database operations.
  */
-export async function getRefreshToken(
-  tokenBody: TokenRequestBody,
-): Promise<RefreshResult | null> {
-  const user = jwt.verify(
-    tokenBody.token,
-    config.ACCESS_TOKEN_SECRET + tokenBody.ip,
-    {
-      ignoreExpiration: true,
-    },
-  );
+export async function getRefreshToken(tokenBody: TokenRequestBody) {
+  let user;
+
+  try {
+    user = jwt.verify(
+      tokenBody.token,
+      config.ACCESS_TOKEN_SECRET + tokenBody.ip,
+      {
+        ignoreExpiration: true,
+      },
+    );
+  } catch (error) {
+    // If there's an error in the token verification (e.g., invalid signature), return null
+    console.error('Invalid token signature or other error:', error);
+    return null;
+  }
   if (!user) return null;
 
   const tokensInDb = await prisma.token.findUnique({
