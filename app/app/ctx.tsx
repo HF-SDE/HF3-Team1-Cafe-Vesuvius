@@ -76,7 +76,6 @@ export function SessionProvider(props: React.PropsWithChildren) {
               throw new Error("No token found in response");
             }
 
-            console.log(result.data.accessToken.token);
             setToken(result.data.accessToken.token);
             return "authenticated";
           } catch (error) {

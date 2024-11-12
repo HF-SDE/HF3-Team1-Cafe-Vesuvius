@@ -2,9 +2,9 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
-import fs from 'fs';
+//import fs from 'fs';
 import helmet from 'helmet';
-import https from 'https';
+//import https from 'https';
 import passport from 'passport';
 
 import config from '@config';
@@ -28,6 +28,7 @@ const app = express();
 app.use(
   cors({ credentials: true, origin: config.WHITELISTED_ORIGINS.split(' ') }),
 );
+
 app.use(helmet());
 app.use(bodyParser.json({}));
 app.use(passport.initialize());
