@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
 
-import '../passport';
-import { getHttpStatusCode } from '@utils/Utils';
 import { Status } from '@api-types/general.types';
+import { defaultResponse, getHttpStatusCode } from '@utils/Utils';
+
+import '../passport';
 
 /**
  * Verifies the JWT token in the request header.
@@ -12,20 +13,29 @@ import { Status } from '@api-types/general.types';
  * @param {NextFunction} next - The next middleware function in the chain.
  * @returns {Promise<void>} Resolves with the user data if the token is valid.
  */
-export async function verifyJWT(req: Request, res: Response, next: NextFunction): Promise<void> {
+export async function verifyJWT(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-  passport.authenticate('jwt', { session: false }, (err: number, user: Express.User, info: any) => {
-    if (err) return res.status(err).json(info);
+  passport.authenticate(
+    'jwt',
+    { session: false },
+    (err: number, user: Express.User) => {
+      const errResponse = defaultResponse(err);
 
-    if (!user) {
-      return res.status(getHttpStatusCode(Status.Unauthorized)).json({
-        status: 'Unauthorized',
-        message: 'Unauthorized',
-      });
-    }
+      if (errResponse) return res.status(err).json(errResponse);
 
-    req.user = user;
+      if (!user) {
+        return res
+          .status(getHttpStatusCode(Status.Unauthorized))
+          .json(defaultResponse(401));
+      }
 
-    next();
-  })(req, res, next);
+      req.user = user;
+
+      next();
+    },
+  )(req, res, next);
 }

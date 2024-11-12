@@ -26,12 +26,12 @@ passport.use(
       where: { id: jwt_payload.sub },
     });
 
-    if (user) return done(null, user);
-    else
-      return done(401, undefined, {
-        stats: 'Unauthorized',
-        message: 'Unauthorized',
-      });
+    const accessToken = await prisma.token.findFirst({
+      where: { id: jwt_payload.jti.toString() || '' },
+    });
+
+    if (user && accessToken) return done(null, user);
+    else return done(401);
   }),
 );
 
