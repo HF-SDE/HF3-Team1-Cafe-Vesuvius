@@ -224,19 +224,11 @@ async function main() {
   // Assign permissions to kok user
   const kokPermission = await prisma.permission.findMany({
     where: {
-      code: {
-        equals: 'order:status:update:deliver',
-      },
-      AND: {
-        code: {
-          startsWith: 'menu',
-        },
-        AND: {
-          code: {
-            startsWith: 'stock',
-          },
-        },
-      },
+      OR: [
+        { code: { startsWith: 'menu' } },
+        { code: { startsWith: 'stock' } },
+        { code: { equals: 'order:status:update:deliver' } },
+      ],
     },
   });
 
@@ -255,24 +247,12 @@ async function main() {
   // Assign permissions to tjener user
   const tjenerPermission = await prisma.permission.findMany({
     where: {
-      code: {
-        equals: 'order:status:update:deliver',
-      },
-      AND: {
-        code: {
-          equals: 'order:status:update:completed',
-        },
-        AND: {
-          code: {
-            equals: 'table:view',
-          },
-          AND: {
-            code: {
-              startsWith: 'reservation',
-            },
-          },
-        },
-      },
+      OR: [
+        { code: { equals: 'order:status:update:deliver' } },
+        { code: { equals: 'order:status:update:completed' } },
+        { code: { equals: 'table:view' } },
+        { code: { startsWith: 'reservation' } },
+      ]
     },
   });
 
@@ -291,24 +271,12 @@ async function main() {
   // Assign permissions to administration user
   const administrationPermission = await prisma.permission.findMany({
     where: {
-      code: {
-        startsWith: 'administrator',
-      },
-      AND: {
-        code: {
-          startsWith: 'menu',
-        },
-        AND: {
-          code: {
-            startsWith: 'stock',
-          },
-          AND: {
-            code: {
-              startsWith: 'table',
-            },
-          },
-        },
-      },
+      OR: [
+        { code: { startsWith: 'administrator' } },
+        { code: { startsWith: 'menu' } },
+        { code: { startsWith: 'stock' } },
+        { code: { startsWith: 'table' } },
+      ]
     },
   });
 
