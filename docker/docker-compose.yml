@@ -60,8 +60,6 @@ services:
       dockerfile: nginx.Dockerfile
     ports:
       - 443:443
-    expose:
-      - "443"
     depends_on:
       - backend
     volumes:
@@ -73,8 +71,6 @@ services:
 networks:
   public:
     driver: bridge
-    driver_opts:
-      com.docker.network.bridge.host_binding_ipv4: "127.0.0.1"
   internal:
     name: internal
     internal: true
