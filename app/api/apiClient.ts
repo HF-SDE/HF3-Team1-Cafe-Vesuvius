@@ -5,7 +5,7 @@ import {
 } from "../storage/useStorageState";
 
 const apiClient = axios.create({
-  baseURL: "https://localhost",
+  baseURL: "https://localhost/api",
   withCredentials: true,
 });
 
