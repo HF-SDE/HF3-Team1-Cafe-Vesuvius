@@ -44,3 +44,18 @@ export function getHttpStatusCode(status: Status): number {
       return 429;
   }
 }
+
+// eslint-disable-next-line jsdoc/require-returns
+/**
+ *
+ * @param {number} code - Response code
+ */
+export function defaultResponse(code: number | string) {
+  switch (code) {
+    case Status.Unauthorized || getHttpStatusCode(Status.Unauthorized):
+      return {
+        stats: 'Unauthorized',
+        message: 'Unauthorized',
+      };
+  }
+}
