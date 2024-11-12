@@ -2,13 +2,12 @@ import bodyParser from 'body-parser';
 import cors from 'cors';
 import express from 'express';
 import { rateLimit } from 'express-rate-limit';
-//import fs from 'fs';
 import helmet from 'helmet';
-//import https from 'https';
 import passport from 'passport';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
+import orderRouters from '@routes/order.routes';
 import reservationRoutes from '@routes/reservation.routes';
 import resetRoutes from '@routes/reset.routes';
 import stockRoutes from '@routes/stock.routes';
@@ -25,6 +24,8 @@ const limiter = rateLimit({
 
 const app = express();
 
+app.set('trust proxy', 1);
+
 app.use(
   cors({ credentials: true, origin: config.WHITELISTED_ORIGINS.split(' ') }),
 );
@@ -34,12 +35,14 @@ app.use(bodyParser.json({}));
 app.use(passport.initialize());
 app.use(limiter);
 
+const baseRoute = '/api';
 //Insert all routes here
-app.use('/', authRoutes);
-app.use('/stock', stockRoutes);
-app.use('/table', tableRoutes);
-app.use('/reset', resetRoutes);
-app.use('/reservation', reservationRoutes);
+app.use(`${baseRoute}/`, authRoutes);
+app.use(`${baseRoute}/stock`, stockRoutes);
+app.use(`${baseRoute}/table`, tableRoutes);
+app.use(`${baseRoute}/reset`, resetRoutes);
+app.use(`${baseRoute}/reservation`, reservationRoutes);
+app.use(`${baseRoute}/order`, orderRouters);
 
 app.get('/ping', (req, res) => {
   res.json({

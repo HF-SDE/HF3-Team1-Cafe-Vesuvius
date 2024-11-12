@@ -1,4 +1,4 @@
-FROM nginx:1.19.0-alpine
+FROM nginx:alpine
 
 # Generate SSL certificates if they do not exist
 RUN mkdir -p /usr/src/app/cert
