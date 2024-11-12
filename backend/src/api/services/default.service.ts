@@ -36,6 +36,13 @@ export async function getAll(
 
   const prismaType = prisma[prismaModel] as any;
 
+  if (!prismaType)
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: `Database collection not found`,
+    };
+
   const results = (await prismaType.findMany({
     where,
   })) as any[];
@@ -71,7 +78,9 @@ export async function create(
       message: 'Record created',
     };
   } catch (error) {
-    const prismaError = error as Prisma.PrismaClientUnknownRequestError;
+    const prismaError = error as
+      | Prisma.PrismaClientUnknownRequestError
+      | Prisma.PrismaClientKnownRequestError;
 
     if (prismaError.name == 'PrismaClientValidationError') {
       return {
@@ -81,9 +90,18 @@ export async function create(
       };
     }
 
+    if (prismaError instanceof Prisma.PrismaClientKnownRequestError) {
+      if (prismaError.code === 'P2002')
+        return {
+          data: undefined,
+          status: Status.CreationFailed,
+          message: 'Table with that number already exists',
+        };
+    }
+
     return {
       data: undefined,
-      status: Status.Failed,
+      status: Status.CreationFailed,
       message: 'Error creating record',
     };
   }
@@ -104,16 +122,42 @@ export async function update(
 ): Promise<APIResponse<Result>> {
   const prismaType = prisma[prismaModel] as any;
 
-  const record = await prismaType.update({
-    where: { id },
-    data,
-  });
+  try {
+    const record = await prismaType.update({
+      where: { id },
+      data,
+    });
 
-  return {
-    data: record,
-    status: Status.Success,
-    message: 'Record updated',
-  };
+    return {
+      data: record,
+      status: Status.Success,
+      message: 'Record updated',
+    };
+  } catch (error) {
+    const prismaError = error as Prisma.PrismaClientKnownRequestError;
+
+    if (prismaError.name === 'PrismaClientValidationError') {
+      return {
+        data: undefined,
+        status: Status.MissingDetails,
+        message: 'Invalid data',
+      };
+    }
+
+    if (prismaError.code === 'P2025') {
+      return {
+        data: undefined,
+        status: Status.UpdateFailed,
+        message: 'Record not found',
+      };
+    }
+
+    return {
+      data: undefined,
+      status: Status.UpdateFailed,
+      message: 'Error updating record',
+    };
+  }
 }
 
 /**
@@ -129,11 +173,29 @@ export async function deleteRecord(
 ): Promise<APIResponse<Result>> {
   const prismaType = prisma[prismaModel] as any;
 
-  const deletedRow = await prismaType.delete({ where: { id } });
+  try {
+    const deletedRow = await prismaType.delete({ where: { id } });
 
-  return {
-    data: deletedRow,
-    status: Status.Success,
-    message: 'Record deleted',
-  };
+    return {
+      data: deletedRow,
+      status: Status.Success,
+      message: 'Record deleted',
+    };
+  } catch (error) {
+    const prismaError = error as Prisma.PrismaClientKnownRequestError;
+
+    if (prismaError.code === 'P2025') {
+      return {
+        data: undefined,
+        status: Status.DeleteFailed,
+        message: 'Record not found',
+      };
+    }
+
+    return {
+      data: undefined,
+      status: Status.DeleteFailed,
+      message: 'Error deleting record',
+    };
+  }
 }

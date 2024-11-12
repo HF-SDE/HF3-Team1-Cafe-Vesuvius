@@ -14,7 +14,7 @@ type prismaModels = Uncapitalize<Prisma.ModelName>;
  * @returns {Promise<void>} The response object
  */
 export async function getAll(req: Request, res: Response): Promise<void> {
-  const model = req.baseUrl.replace('/', '') as prismaModels;
+  const model = req.baseUrl.replace('/api/', '') as prismaModels;
   const id = (req.query.id || req.params.id) as string | undefined;
 
   const response = await DefaultService.getAll(model, id);
@@ -30,7 +30,7 @@ export async function getAll(req: Request, res: Response): Promise<void> {
  * @returns {Promise<void>} The response object
  */
 export async function create(req: Request, res: Response): Promise<void> {
-  const model = req.baseUrl.replace('/', '') as prismaModels;
+  const model = req.baseUrl.replace('/api/', '') as prismaModels;
 
   const response = await DefaultService.create(model, req.body);
 
@@ -45,7 +45,7 @@ export async function create(req: Request, res: Response): Promise<void> {
  * @returns {Promise<void>} The response object
  */
 export async function update(req: Request, res: Response): Promise<void> {
-  const model = req.baseUrl.replace('/', '') as prismaModels;
+  const model = req.baseUrl.replace('/api/', '') as prismaModels;
   const { id } = req.params;
 
   const response = await DefaultService.update(model, id, req.body);
@@ -61,7 +61,7 @@ export async function update(req: Request, res: Response): Promise<void> {
  * @returns {Promise<void>} The response object
  */
 export async function deleteRecord(req: Request, res: Response): Promise<void> {
-  const model = req.baseUrl.replace('/', '') as prismaModels;
+  const model = req.baseUrl.replace('/api/', '') as prismaModels;
   const { id } = req.params;
 
   const response = await DefaultService.deleteRecord(model, id);
