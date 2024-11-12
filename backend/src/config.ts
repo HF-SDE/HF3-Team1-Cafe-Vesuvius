@@ -19,7 +19,7 @@ const config = {
 
   WHITELISTED_ORIGINS:
     process.env.WHITELISTED_ORIGINS ||
-    'http://localhost:3001 https://localhost:3001',
+    'http://localhost:3001 https://localhost:3001 http://localhost:8081 https://localhost:8081',
 };
 
 export default config;
