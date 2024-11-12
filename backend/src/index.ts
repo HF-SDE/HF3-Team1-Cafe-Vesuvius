@@ -7,6 +7,7 @@ import passport from 'passport';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
+import orderRouters from '@routes/order.routes';
 import reservationRoutes from '@routes/reservation.routes';
 import resetRoutes from '@routes/reset.routes';
 import stockRoutes from '@routes/stock.routes';
@@ -38,6 +39,7 @@ app.use(`${baseRoute}/stock`, stockRoutes);
 app.use(`${baseRoute}/table`, tableRoutes);
 app.use(`${baseRoute}/reset`, resetRoutes);
 app.use(`${baseRoute}/reservation`, reservationRoutes);
+app.use(`${baseRoute}/order`, orderRouters);
 
 app.get('/ping', (req, res) => {
   res.json({
