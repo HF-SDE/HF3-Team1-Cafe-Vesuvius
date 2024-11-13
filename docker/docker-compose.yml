@@ -53,16 +53,19 @@ services:
       - internal
 
   reverse-proxy:
+    container_name: reverse-proxy
     build:
       context: ..
       dockerfile: docker/nginx.Dockerfile
+    network_mode: "host"
     ports:
-      - 443:443
+      - "80:80"
+      - "443:443"
     depends_on:
       - backend
-    networks:
-      - public
-      - internal
+    # networks:
+    #   - public
+    #   - internal
 
 networks:
   public:
