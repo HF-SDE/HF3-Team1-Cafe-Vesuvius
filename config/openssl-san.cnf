@@ -1,0 +1,22 @@
+[req]
+default_bits = 2048
+prompt = no
+default_md = sha256
+distinguished_name = dn
+req_extensions = req_ext
+
+[dn]
+C = US
+ST = State
+L = City
+O = Organization
+CN = reverse-proxy
+
+[req_ext]
+subjectAltName = @alt_names
+
+[alt_names]
+DNS.1 = reverse-proxy
+DNS.2 = localhost
+IP.1 = 10.130.54.94
+IP.2 = 127.0.0.1
