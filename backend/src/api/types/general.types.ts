@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import { Query } from "express-serve-static-core";
 
 export enum Status {
   Unauthorized = 'Unauthorized',
@@ -31,23 +32,11 @@ export interface IAPIResponse {
   message?: string;
 }
 
-export interface IEXRequestUser {
-  user?: {
-    id?: string;
-    initials?: string;
-  };
-}
-
-export interface ControllerRequest<T = any> extends IEXRequestUser {
-  body: T;
-  cookies: {
-    refreshToken: string;
-    accessToken: string;
-  };
-}
 
 export type ExpressFunction = (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => Promise<void> | void;
+
+export type TypedQuery<T> = Partial<T> & Query;
