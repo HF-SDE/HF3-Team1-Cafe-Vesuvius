@@ -1,20 +1,9 @@
 # syntax=docker/dockerfile:1
 FROM node:22.9-alpine AS base
 
-# Install OpenSSL to generate certificates
-RUN apk add --no-cache openssl
-
 # Setting the timezone
 RUN apk add -U tzdata
 RUN cp /usr/share/zoneinfo/Europe/Copenhagen /etc/localtime
-
-# Add MongoDB Shell
-RUN wget https://downloads.mongodb.com/compass/mongosh-2.3.3-linux-arm64.tgz
-RUN tar -xvzf mongosh-2.3.3-linux-arm64.tgz
-RUN cp /mongosh-2.3.3-linux-arm64/bin/mongosh /usr/bin/mongosh
-# Clean up
-RUN rm -rf mongosh-2.3.3-linux-arm64.tgz
-RUN rm -rf /mongosh-2.3.3-linux-arm64
 
 # Set working directory
 WORKDIR /usr/src/app
