@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 
-import { APIResponse, IAPIResponse } from '@api-types/general.types';
+import { APIResponse, IAPIResponse, TypedQuery } from '@api-types/general.types';
 import { User } from '@api-types/user.types';
 import { Prisma } from '@prisma/client';
 import * as ManageService from '@services/manage.service';
@@ -39,7 +39,7 @@ export async function changePassword(
 /**
  * Controller to get all users
  * @async
- * @param {Request<Record<string, any>, APIResponse<Prisma.UserUpdateManyMutationInput[]>>} req - The request object
+ * @param {Request<Record<string, any>, APIResponse<Prisma.UserUpdateManyMutationInput[], Record<string, any>, TypedQuery<User>>>} req - The request object
  * @param {Response<APIResponse<Prisma.UserUpdateManyMutationInput[]>>} res - The response object
  * @returns {*} The response object
  */
@@ -48,7 +48,7 @@ export async function getUsers(
     Record<string, any>,
     APIResponse<Prisma.UserUpdateManyMutationInput[]>,
     Record<string, any>,
-    User
+    TypedQuery<User>
   >,
   res: Response<APIResponse<Prisma.UserUpdateManyMutationInput[]>>,
 ): Promise<void> {
