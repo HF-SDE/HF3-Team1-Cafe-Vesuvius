@@ -53,7 +53,6 @@ services:
       - internal
 
   reverse-proxy:
-    container_name: reverse-proxy
     build:
       context: ..
       dockerfile: docker/nginx.Dockerfile
