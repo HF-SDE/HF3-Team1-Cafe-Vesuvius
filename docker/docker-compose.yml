@@ -8,9 +8,7 @@ services:
       dockerfile: Dockerfile
       target: base
     expose:
-      - "3001:3001"
-    ports:
-      - "3001:3001"
+      - "3001"
     command: npm run dev
     depends_on:
       - db
@@ -21,7 +19,6 @@ services:
       - ../schemas:/usr/src/app/schemas
       - ../backend/nodemon.json:/usr/src/app/nodemon.json
     networks:
-      - public
       - internal
 
   db:
@@ -29,6 +26,8 @@ services:
     build:
       context: .
       dockerfile: db.Dockerfile
+    expose:
+      - "27017"
     ports:
       - "27017:27017"
     command:
@@ -56,14 +55,12 @@ services:
   reverse-proxy:
     container_name: reverse-proxy
     build:
-      context: .
-      dockerfile: nginx.Dockerfile
+      context: ..
+      dockerfile: docker/nginx.Dockerfile
     ports:
       - 443:443
     depends_on:
       - backend
-    volumes:
-      - "../config/nginx.conf:/etc/nginx/conf.d/default.conf"
     networks:
       - public
       - internal
