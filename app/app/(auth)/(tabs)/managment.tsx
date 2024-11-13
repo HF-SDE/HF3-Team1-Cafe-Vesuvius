@@ -1,14 +1,11 @@
 import React from "react";
-import { StyleSheet, SafeAreaView, Text, View, Button } from "react-native";
-import axiosClient from "../../../api/apiClient"; // Import your Axios client
+import { Text, Button, StyleSheet, View } from "react-native";
+import TemplateLayout from "@/components/TemplateLayout";
+import axiosClient from "../../../api/apiClient"; // Adjust the path as necessary
 import { useThemeColor } from "@/hooks/useThemeColor";
 
-export default function TabTwoScreen() {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
+export default function ManagmentScreen() {
   const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
 
   // Function to handle the API call
   const handleApiCall = async () => {
@@ -21,42 +18,27 @@ export default function TabTwoScreen() {
   };
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: BackgroundColor,
-          borderColor: BackgroundColor,
-          borderWidth: 2,
-        },
-      ]}
-    >
-      <Text style={[styles.title, { color: TextColor }]}>Management</Text>
-      <View style={styles.separator} />
-
-      <Button
-        title="Call API"
-        color={PrimaryColor} // You can use your theme color here
-        onPress={handleApiCall}
-      />
-    </SafeAreaView>
+    <TemplateLayout pageName="ManagmentPage">
+      <View style={styles.content}>
+        <Text style={styles.text}>Welcome to the Management Screen!</Text>
+        <Button
+          title="Call API"
+          color={PrimaryColor} // Themed color for the button
+          onPress={handleApiCall}
+        />
+      </View>
+    </TemplateLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: "100%",
-    width: "100%",
-    justifyContent: "center",
+  content: {
     alignItems: "center",
+    justifyContent: "center",
   },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
+  text: {
+    marginBottom: 20,
+    fontSize: 16,
+    fontWeight: "500",
   },
 });

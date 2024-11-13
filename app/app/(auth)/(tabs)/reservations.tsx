@@ -1,48 +1,33 @@
-import { StyleSheet, SafeAreaView } from "react-native";
-
-import { Text, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Text } from "react-native";
+import TemplateLayout from "@/components/TemplateLayout";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 export default function TabTwoScreen() {
-  const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        {
-          backgroundColor: BackgroundColor,
-          borderColor: BackgroundColor,
-          borderWidth: 2,
-        },
-      ]}
-    >
-      <Text style={styles.title}>Reservation</Text>
-      <View
-        style={styles.separator}
-        // lightColor="#eee"
-        // darkColor="rgba(255,255,255,0.1)"
-      />
-    </SafeAreaView>
+    <TemplateLayout pageName="ReservationPage">
+      <View style={styles.separator} />
+      <Text style={[styles.title, { color: TextColor }]}>
+        This is the Reservation screen.
+      </Text>
+    </TemplateLayout>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    height: "100%",
-    width: "100%",
-  },
   title: {
     fontSize: 20,
     fontWeight: "bold",
+    textAlign: "center",
+    marginTop: 20,
   },
   separator: {
     marginVertical: 30,
     height: 1,
     width: "80%",
+    alignSelf: "center",
+    backgroundColor: "#eee", // Can be customized based on theme
   },
 });

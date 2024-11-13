@@ -84,6 +84,11 @@ async function main() {
         description: 'Update order status to deliver',
       },
       {
+        code: 'menu:view',
+        permissionGroupId: await findPermissionGroup('Menu'),
+        description: 'View menu',
+      },
+      {
         code: 'menu:update',
         permissionGroupId: await findPermissionGroup('Menu'),
         description: 'Update menu',
@@ -250,9 +255,10 @@ async function main() {
       OR: [
         { code: { equals: 'order:status:update:deliver' } },
         { code: { equals: 'order:status:update:completed' } },
+        { code: { equals: 'order:create' } },
         { code: { equals: 'table:view' } },
         { code: { startsWith: 'reservation' } },
-      ]
+      ],
     },
   });
 
@@ -276,7 +282,7 @@ async function main() {
         { code: { startsWith: 'menu' } },
         { code: { startsWith: 'stock' } },
         { code: { startsWith: 'table' } },
-      ]
+      ],
     },
   });
 
