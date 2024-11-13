@@ -41,3 +41,17 @@ export async function changePassword(
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
+
+/**
+ * Controller to get all users
+ * @async
+ * @param {Request} req - The request object
+ * @param {Response} res - The response object
+ * @returns {*} The response object
+ */
+export async function getUsers(req: Request, res: Response): Promise<void> {
+  const { id, username, email } = req.query as {id: string, username: string, email: string };
+  const response = await ManageService.getUsers(id, username, email);
+
+  res.status(getHttpStatusCode(response.status)).json(response).end();
+}
