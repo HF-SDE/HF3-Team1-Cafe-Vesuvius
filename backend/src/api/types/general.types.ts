@@ -23,7 +23,7 @@ export enum Status {
 export interface APIResponse<T> {
   status: Status;
   message?: string;
-  data: T | undefined | null;
+  data?: T | null;
 }
 
 export interface IAPIResponse {

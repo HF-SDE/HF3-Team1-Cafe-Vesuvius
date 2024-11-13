@@ -1,21 +1,34 @@
-[req]
+# General settings for certificate requests
+[ req ]
 default_bits = 2048
-prompt = no
 default_md = sha256
+prompt = no
 distinguished_name = dn
-req_extensions = req_ext
+req_extensions = req_ext   # Extensions for end-entity CSR
+x509_extensions = v3_ca    # Extensions for root CA
 
-[dn]
+# Distinguished name for the end-entity certificate (the subject)
+[ dn ]
 C = US
 ST = State
 L = City
 O = Organization
 CN = reverse-proxy
 
-[req_ext]
+# Extensions for the root CA certificate
+[ v3_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = CA:true
+
+# Extensions for the end-entity certificate
+[ req_ext ]
+basicConstraints = CA:false
+keyUsage = digitalSignature, keyEncipherment
 subjectAltName = @alt_names
 
-[alt_names]
+# SAN entries for the end-entity certificate
+[ alt_names ]
 DNS.1 = reverse-proxy
 DNS.2 = localhost
 IP.1 = 10.130.54.94
