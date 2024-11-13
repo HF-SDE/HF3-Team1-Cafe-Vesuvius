@@ -1,17 +1,9 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { Link, Tabs } from "expo-router";
-import { Pressable } from "react-native";
-import Entypo from "@expo/vector-icons/Entypo";
+import { Tabs } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
-
-// You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
-// function TabBarIcon(props: {
-//   name: React.ComponentProps<typeof FontAwesome>["name"];
-//   color: string;
-// }) {
-//   return <FontAwesome size={28} style={{ marginBottom: -3 }} {...props} />;
-// }
+import Entypo from "@expo/vector-icons/Entypo";
+import { PermissionManager } from "@/permission/permissionManager"; // Assuming the PermissionManager is saved in utils
 
 export default function TabLayout() {
   const BackgroundColor = useThemeColor({}, "background");
@@ -19,6 +11,33 @@ export default function TabLayout() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
   const AccentColor = useThemeColor({}, "accent");
+
+  const [hasOrderPermission, setHasOrderPermission] = useState(false);
+  const [hasReservationPermission, setHasReservationPermission] =
+    useState(false);
+  const [hasManagementPermission, setHasManagementPermission] = useState(false);
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      const permissionMan = new PermissionManager();
+      await permissionMan.init();
+
+      const orderPermission = await permissionMan.hasPageAccess("OrderPage");
+      setHasOrderPermission(orderPermission);
+
+      const reservationPermission = await permissionMan.hasPageAccess(
+        "ReservationPage"
+      );
+      setHasReservationPermission(reservationPermission);
+
+      const managementPermission = await permissionMan.hasPageAccess(
+        "ManagmentPage"
+      );
+      setHasManagementPermission(managementPermission);
+    };
+
+    checkPermissions();
+  }, []);
 
   return (
     <Tabs
@@ -33,7 +52,6 @@ export default function TabLayout() {
           shadowOpacity: 0,
           overflow: "hidden",
         },
-
         headerStyle: {
           backgroundColor: PrimaryColor,
           elevation: 0,
@@ -43,76 +61,70 @@ export default function TabLayout() {
         headerTitleAlign: "center",
         headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
         headerShadowVisible: false,
-
-        // Disable the static render of the header on web
-        // to prevent a hydration error in React Navigation v6.
+        tabBarItemStyle: { display: "none" },
       }}
     >
-      <Tabs.Screen
-        name="order"
-        options={{
-          title: "",
-          headerTitle: "Order",
-          headerShown: true,
-          tabBarIcon: ({ focused }) => (
-            <Entypo
-              name="list"
-              size={42}
-              style={{ color: focused ? AccentColor : SecondaryColor }}
-            />
-          ),
-          // headerRight: () => (
-          //   <Link href="/modal" asChild>
-          //     <Pressable>
-          //       {({ pressed }) => (
-          //         <FontAwesome
-          //           name="info-circle"
-          //           size={24}
-          //           style={{ marginRight: 15, opacity: pressed ? 0.5 : 1 }}
-          //         />
-          //       )}
-          //     </Pressable>
-          //   </Link>
-          // ),
-        }}
-      />
-      <Tabs.Screen
-        name="reservations"
-        options={{
-          title: "",
-          headerTitle: "Reservartions",
-          headerShown: true,
-          tabBarIcon: ({ focused }) => (
-            <Entypo
-              name="calendar"
-              size={38}
-              style={{ color: focused ? AccentColor : SecondaryColor }}
-            />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="managment"
-        options={{
-          title: "",
-          headerTitle: "Management",
-          headerShown: true,
-          tabBarIcon: ({ focused }) => (
-            <Entypo
-              name="info-with-circle"
-              size={38}
-              style={{ color: focused ? AccentColor : SecondaryColor }}
-            />
-          ),
-        }}
-      />
+      {hasOrderPermission && (
+        <Tabs.Screen
+          name="order"
+          options={{
+            title: "",
+            headerTitle: "Order",
+            headerShown: true,
+            tabBarItemStyle: { display: "flex" },
+            tabBarIcon: ({ focused }) => (
+              <Entypo
+                name="list"
+                size={42}
+                style={{ color: focused ? AccentColor : SecondaryColor }}
+              />
+            ),
+          }}
+        />
+      )}
+      {hasReservationPermission && (
+        <Tabs.Screen
+          name="reservations"
+          options={{
+            title: "",
+            headerTitle: "Reservations",
+            headerShown: true,
+            tabBarItemStyle: { display: "flex" },
+            tabBarIcon: ({ focused }) => (
+              <Entypo
+                name="calendar"
+                size={38}
+                style={{ color: focused ? AccentColor : SecondaryColor }}
+              />
+            ),
+          }}
+        />
+      )}
+      {hasManagementPermission && (
+        <Tabs.Screen
+          name="managment"
+          options={{
+            title: "",
+            headerTitle: "Management",
+            headerShown: true,
+            tabBarItemStyle: { display: "flex" },
+            tabBarIcon: ({ focused }) => (
+              <Entypo
+                name="info-with-circle"
+                size={38}
+                style={{ color: focused ? AccentColor : SecondaryColor }}
+              />
+            ),
+          }}
+        />
+      )}
       <Tabs.Screen
         name="index"
         options={{
           title: "",
           headerTitle: "Profile",
           headerShown: true,
-
+          tabBarItemStyle: { display: "flex" },
           tabBarIcon: ({ focused }) => (
             <FontAwesome
               name="user"

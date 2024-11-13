@@ -90,7 +90,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
               token: token,
             };
 
-            const response = await apiClient.post("/logout", logoutData, {
+            const response = apiClient.post("/logout", logoutData, {
               headers: {
                 "Content-Type": "application/json",
               },
