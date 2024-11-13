@@ -5,7 +5,7 @@ import {
 } from "../storage/useStorageState";
 import { router } from "expo-router";
 
-const baseURL = "https://localhost/api";
+const baseURL = process.env.EXPO_PUBLIC_API_URL;
 const apiClient = axios.create({
   baseURL: baseURL,
   withCredentials: true,
