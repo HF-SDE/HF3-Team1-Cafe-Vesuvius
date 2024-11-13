@@ -50,14 +50,38 @@ export async function generateUserTokens(
 ): Promise<AccessResult> {
   const newId = new ObjectId();
 
+  const userPermissions = await prisma.userPermissions.findMany({
+    where: {
+      userId: user.sub,
+    },
+    select: {
+      Permission: {
+        select: {
+          code: true,
+        },
+      },
+    },
+  });
+
+  const permissionCodes = userPermissions.map((perm) => perm.Permission.code);
+
   const newAccessToken = generateToken(
-    { jti: newId, sub: user.sub, username: user.username },
+    {
+      jti: newId,
+      sub: user.sub,
+      username: user.username,
+      permissions: permissionCodes,
+    },
     ip,
     config.ACCESS_TOKEN_EXPIRATION,
     config.ACCESS_TOKEN_SECRET,
   );
   const newRefreshToken = generateToken(
-    { jti: newId, sub: user.sub, username: user.username },
+    {
+      jti: newId,
+      sub: user.sub,
+      username: user.username,
+    },
     ip,
     config.REFRESH_TOKEN_EXPIRATION,
     config.REFRESH_TOKEN_SECRET,
