@@ -1,3 +1,4 @@
+# syntax=docker/dockerfile:1
 FROM nginx:alpine
 
 # Copy the SAN configuration file into the container
