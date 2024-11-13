@@ -17,6 +17,7 @@ import { getUser } from '@schemas/user.schemas';
 export async function changePassword(
   id: string,
   newPassword: string,
+  oldPassword: string,
 ): Promise<APIResponse<null>> {
   try {
     // Validate the user ID
