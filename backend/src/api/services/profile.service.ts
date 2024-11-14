@@ -39,7 +39,7 @@ export async function changePassword(
     const passwordValidation = PasswordSchema.validate(newPassword);
     if (passwordValidation.error) {
       return {
-        status: Status.InvalidCredentials,
+        status: Status.InvalidDetails,
         message: passwordValidation.error.message,
       };
     }
@@ -53,7 +53,7 @@ export async function changePassword(
 
     if (!exist) {
       return {
-        status: Status.InvalidCredentials,
+        status: Status.InvalidDetails,
         message: 'Old password is incorrect',
       };
     }
