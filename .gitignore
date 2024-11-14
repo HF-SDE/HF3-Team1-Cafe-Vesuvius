@@ -20,6 +20,8 @@ app/*.key
 app/*.mobileprovision
 app/*.orig.*
 app/web-build/
+# app android build 
+app/android/
 
 # macOS
 app/.DS_Store

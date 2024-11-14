@@ -1,25 +1,27 @@
-import { hash } from 'argon2';
+import { hash, verify } from 'argon2';
 
-import { APIResponse, Status } from '@api-types/general.types';
+import { IAPIResponse, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
-import { PasswordSchema } from '@schemas/password.schemas';
-import { changePasswordSchema } from '@schemas/profile.schemas';
+import {
+  ChangePasswordBase64Schema,
+  ChangePasswordSchema,
+} from '@schemas/profile.schemas';
 
 /**
  * Service to change a user's password
  * @param {string} id - The id of the user to change the password for.
  * @param {string} newPassword - The new password for the user.
  * @param {string} oldPassword - The old password for the user.
- * @returns {Promise<APIResponse<undefined>>} A promise that resolves to an object containing the status and message of the password change.
+ * @returns {Promise<IAPIResponse>} A promise that resolves to an object containing the status and message of the password change.
  */
 export async function changePassword(
   id: string,
   newPassword: string,
   oldPassword: string,
-): Promise<APIResponse<undefined>> {
+): Promise<IAPIResponse> {
   try {
     // Validate
-    const idValidation = changePasswordSchema.validate({
+    const idValidation = ChangePasswordBase64Schema.validate({
       newPassword,
       oldPassword,
     });
@@ -35,7 +37,10 @@ export async function changePassword(
     oldPassword = Buffer.from(oldPassword, 'base64').toString();
 
     // Validate the password
-    const passwordValidation = PasswordSchema.validate(newPassword);
+    const passwordValidation = ChangePasswordSchema.validate({
+      newPassword,
+      oldPassword,
+    });
     if (passwordValidation.error) {
       return {
         status: Status.InvalidCredentials,
@@ -48,13 +53,16 @@ export async function changePassword(
       where: { id },
     });
 
-    // const OldPasswordCorrect = await argon2.(oldPassword);
-
-    if (!exist) {
-      return {
-        status: Status.InvalidCredentials,
-        message: 'Old password is incorrect',
-      };
+    if (exist) {
+      const OldPasswordCorrect = await verify(exist.password, oldPassword);
+      if (!OldPasswordCorrect) {
+        return {
+          status: Status.Failed,
+          message: 'Failed to update password',
+        };
+      }
+    } else {
+      new Error('User not found');
     }
 
     // Hash the new password
@@ -79,7 +87,6 @@ export async function changePassword(
     };
   } catch {
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };

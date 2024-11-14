@@ -29,7 +29,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(
-  cors({ credentials: true, origin: config.WHITELISTED_ORIGINS.split(' ') }),
+  cors({ credentials: true }),
 );
 
 app.use(helmet());
