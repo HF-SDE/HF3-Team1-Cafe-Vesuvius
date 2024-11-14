@@ -1,26 +1,33 @@
 import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Modal } from "react-native";
+import {
+  Button,
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  SafeAreaView,
+  Modal,
+} from "react-native";
+import { useSession } from "../../ctx";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useUserProfile } from "@/hooks/useUserProfile";
-import TemplateLayout from "@/components/TemplateLayout";
 import ModalScreen from "../profile/modal";
+import TemplateLayout from "@/components/TemplateLayout";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function UserProfileScreen() {
   const { userProfile, isLoading, error } = useUserProfile();
-  const [isModalVisible, setModalVisible] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
+  const { signOut, session } = useSession();
 
   if (isLoading) {
-    return (
-      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-        <Text style={[styles.infoText, { color: TextColor }]}>
-          Loading user data...
-        </Text>
-      </View>
-    );
+    // Add loading screen
   }
 
   if (error) {
@@ -38,29 +45,40 @@ export default function UserProfileScreen() {
       <View style={[styles.container]}>
         <View style={styles.contentContainer}>
           <View style={styles.topContainer}>
-            <View style={[styles.avatar, { backgroundColor: PrimaryColor }]}>
+            <View
+              style={[
+                styles.avatar,
+                { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+              ]}
+            >
               <Text style={[styles.avatarText, { color: BackgroundColor }]}>
                 {userProfile?.initials || "?"}
               </Text>
             </View>
             <Text style={[styles.nameText, { color: TextColor }]}>
-              Hi, {userProfile?.username}
+              Hi, {userProfile?.name || "N/A"}
             </Text>
             <Text style={[styles.infoText, { color: TextColor }]}>
-              Mail: {userProfile?.email}
-            </Text>
-            <Text style={[styles.infoText, { color: TextColor }]}>
-              Tlf: {userProfile?.phone}
+              Email: {userProfile?.email || "N/A"}
             </Text>
           </View>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: PrimaryColor }]}
-              onPress={() => setModalVisible(true)}
+              onPress={() => setModalVisible(true)} // Show modal on press
             >
               <Text style={[styles.buttonText, { color: BackgroundColor }]}>
                 Reset Password
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              onPress={signOut}
+            >
+              <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+                Log Out
               </Text>
             </TouchableOpacity>
           </View>
@@ -70,7 +88,7 @@ export default function UserProfileScreen() {
           animationType="none"
           transparent={true}
           visible={isModalVisible}
-          onRequestClose={() => setModalVisible(false)}
+          onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
         >
           <View style={styles.modalOverlay}>
             <View
@@ -88,7 +106,7 @@ export default function UserProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "center",
+    justifyContent: "space-between",
     alignItems: "center",
   },
   contentContainer: {
@@ -109,6 +127,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
+    borderWidth: 8,
   },
   avatarText: {
     fontSize: 52,
@@ -128,6 +147,9 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingBottom: 20,
+  },
+  spacer: {
+    height: 10,
   },
   button: {
     paddingVertical: 10,
@@ -150,6 +172,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     height: "50%",
     minHeight: 400,
+    // backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
   },

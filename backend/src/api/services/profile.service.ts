@@ -1,9 +1,10 @@
 import { hash } from 'argon2';
 
+//import { token } from 'morgan';
 import { APIResponse, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { PasswordSchema } from '@schemas/password.schemas';
-import { changePasswordSchema } from '@schemas/profile.schemas';
+import { changePasswordSchema, jwtTokenSchema } from '@schemas/profile.schemas';
 
 /**
  * Service to change a user's password
@@ -76,6 +77,66 @@ export async function changePassword(
     return {
       status: Status.Success,
       message: 'Password updated successfully',
+    };
+  } catch {
+    return {
+      data: undefined,
+      status: Status.Failed,
+      message: 'Something went wrong on our end',
+    };
+  }
+}
+
+/**
+ * Service to change a user's password
+ * @param {string} id - The id of the user to change the password for.
+ * @param {string} newPassword - The new password for the user.
+ * @param {string} oldPassword - The old password for the user.
+ * @returns {Promise<APIResponse<undefined>>} A promise that resolves to an object containing the status and message of the password change.
+ */
+export async function getProfile(
+  accessToken: string,
+): Promise<APIResponse<any>> {
+  try {
+    // Validate
+    const tokenValidation = jwtTokenSchema.validate(accessToken);
+    if (tokenValidation.error) {
+      return {
+        status: Status.InvalidDetails,
+        message: tokenValidation.error.message,
+      };
+    }
+    const tokenData = await prisma.token.findUnique({
+      where: {
+        accessToken: accessToken, // Query using the access token
+      },
+      include: {
+        session: {
+          include: {
+            user: {
+              select: {
+                initials: true,
+                name: true,
+                email: true,
+                username: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!tokenData) {
+      return {
+        status: Status.NotFound,
+        message: 'Token not found or invalid.',
+      };
+    }
+
+    return {
+      status: Status.Found,
+      message: 'Profile found',
+      data: tokenData.session.user,
     };
   } catch {
     return {

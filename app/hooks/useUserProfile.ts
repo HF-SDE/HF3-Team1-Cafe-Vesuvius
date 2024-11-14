@@ -4,8 +4,8 @@ import apiClient from "../utils/apiClient";
 interface UserProfile {
   username: string;
   email: string;
-  phone: string;
   initials: string;
+  name: string;
 }
 
 export function useUserProfile() {
@@ -21,15 +21,7 @@ export function useUserProfile() {
 
         const response = await apiClient.get("/profile");
 
-        // Demo data
-        const demoData = {
-          username: "John Doe",
-          email: "john.doe@example.com",
-          phone: "+123456789",
-          initials: "JD",
-        };
-
-        setUserProfile(demoData);
+        setUserProfile(response.data.data);
       } catch (err: any) {
         setError("Failed to load profile data");
       } finally {
