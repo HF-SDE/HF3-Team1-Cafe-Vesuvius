@@ -29,18 +29,17 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  sessions  Session[]
+  sessions        Session[]
   UserPermissions UserPermissions[]
 }
 
 model Session {
-  id         String  @id @default(auto()) @map("_id") @db.ObjectId
-  userId     String  @db.ObjectId
-  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-  token      Token[]
-  expiresAt  DateTime
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     Token[]
+  expiresAt DateTime
 }
-
 
 model Token {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -50,7 +49,6 @@ model Token {
   refreshToken String   @unique
   createdAt    DateTime @default(now())
 }
-
 
 model UserPermissions {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
@@ -124,11 +122,12 @@ model Order {
 }
 
 model Order_Menu {
-  id            String @id @default(auto()) @map("_id") @db.ObjectId
-  quantity      Int    @default(1)
-  menuItemPrice Float  @default(1)
-  orderId       String @db.ObjectId
-  menuItemId    String @db.ObjectId
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  quantity      Int     @default(1)
+  note          String?
+  menuItemPrice Float   @default(1)
+  orderId       String  @db.ObjectId
+  menuItemId    String  @db.ObjectId
 
   Order Order    @relation(fields: [orderId], references: [id])
   Menu  MenuItem @relation(fields: [menuItemId], references: [id])
@@ -142,11 +141,11 @@ model MenuItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([name])
-
   Orders                Order_Menu[]
   PendingMenuItems      PendingMenuItem[]
   RawMaterial_MenuItems RawMaterial_MenuItem[]
+
+  @@index([name])
 }
 
 model PendingMenuItem {
@@ -159,7 +158,7 @@ model PendingMenuItem {
 
 model RawMaterial_MenuItem {
   id            String @id @default(auto()) @map("_id") @db.ObjectId
-  quantity      Float    @default(1)
+  quantity      Float  @default(1)
   rawMaterialId String @db.ObjectId
   menuItemId    String @db.ObjectId
 
@@ -170,7 +169,7 @@ model RawMaterial_MenuItem {
 model RawMaterial {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   name      String   @unique
-  quantity  Float      @default(0)
+  quantity  Float    @default(0)
   unit      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
