@@ -13,6 +13,7 @@ import resetRoutes from '@routes/reset.routes';
 import stockRoutes from '@routes/stock.routes';
 import tableRoutes from '@routes/table.routes';
 import manageRouters from '@routes/manage.routes';
+import profileRouters from '@routes/profile.routes';
 
 import './passport';
 
@@ -44,6 +45,7 @@ app.use(`/reset`, resetRoutes);
 app.use(`/reservation`, reservationRoutes);
 app.use(`/order`, orderRouters);
 app.use(`/`, manageRouters);
+app.use(`/profile`, profileRouters);
 
 app.get('/ping', (req, res) => {
   res.json({
