@@ -27,7 +27,7 @@ export function useSession() {
   return value;
 }
 
-export function SessionProvider(props: React.PropsWithChildren) {
+export default function SessionProvider(props: React.PropsWithChildren) {
   const [[isLoading, token], setToken] = useStorageState("token");
   return (
     <AuthContext.Provider
@@ -56,6 +56,7 @@ export function SessionProvider(props: React.PropsWithChildren) {
               },
               validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
             });
+            console.log(response);
 
             if (!response) {
               throw new Error("No response");

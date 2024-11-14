@@ -5,18 +5,45 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialIcons } from "@expo/vector-icons"; // Replace with your preferred icon library
 import CheckPageAccess from "@/components/CheckPageAccess";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useRouter } from "expo-router";
 
 // Define your button data here
 const buttonList = [
-  { title: "Users", pageName: "UsersPage", route: "", icon: "people" }, // Example MaterialIcons name
-  { title: "Menú", pageName: "MenuPage", route: "", icon: "menu" },
-  { title: "Stats", pageName: "StatsPage", route: "", icon: "bar-chart" },
-  { title: "Storage", pageName: "StockPage", route: "", icon: "inventory" },
+  {
+    title: "Users",
+    pageName: "UsersPage",
+    route: "/order/add-order",
+    icon: "users",
+  }, // Example MaterialIcons name
+  {
+    title: "Menú",
+    pageName: "MenuPage",
+    route: "",
+    icon: "table-list",
+  },
+  {
+    title: "Stats",
+    pageName: "StatsPage",
+    route: "/managment/statistics",
+    icon: "chart-simple",
+  },
+  {
+    title: "Storage",
+    pageName: "StockPage",
+    route: "",
+    icon: "warehouse",
+  },
 ];
 
 export default function ManagmentScreen() {
+  const router = useRouter();
+
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
-  const navigation = useNavigation();
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   return (
     <TemplateLayout pageName="ManagmentPage">
@@ -26,18 +53,20 @@ export default function ManagmentScreen() {
             <TouchableOpacity
               key={index}
               style={[styles.button, { backgroundColor: PrimaryColor }]}
-              //onPress={() => navigation.navigate(button.route)}
+              onPress={() => router.push(button.route)}
             >
               <View style={styles.buttonContent}>
                 {button.icon && (
-                  <MaterialIcons
+                  <FontAwesome6
                     name={button.icon}
-                    size={40}
-                    color="white"
+                    size={50}
+                    color={BackgroundColor}
                     style={styles.icon}
                   />
                 )}
-                <Text style={styles.buttonText}>{button.title}</Text>
+                <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+                  {button.title}
+                </Text>
               </View>
             </TouchableOpacity>
           </CheckPageAccess>
@@ -52,26 +81,30 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "stretch",
     paddingHorizontal: 20,
-    paddingVertical: 10,
+    paddingVertical: 20,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    marginBottom: 10,
+    marginBottom: 20,
     borderRadius: 8,
   },
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
+    width: "100%",
   },
   icon: {
-    marginRight: 10,
+    marginRight: 30,
+    width: 50,
+    justifyContent: "center",
+    alignItems: "center",
   },
   buttonText: {
-    color: "white",
-    fontSize: 40,
-    fontWeight: "600",
+    fontSize: 50,
+    fontWeight: "bold",
+    flex: 1,
   },
 });
