@@ -52,7 +52,8 @@ export function getHttpStatusCode(status: Status): number {
  */
 export function defaultResponse(code: number | string) {
   switch (code) {
-    case Status.Unauthorized || getHttpStatusCode(Status.Unauthorized):
+    case Status.Unauthorized:
+    case getHttpStatusCode(Status.Unauthorized):
       return {
         stats: 'Unauthorized',
         message: 'Unauthorized',

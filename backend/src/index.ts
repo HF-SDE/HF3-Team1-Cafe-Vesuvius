@@ -7,8 +7,9 @@ import passport from 'passport';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
-import manageRouters from '@routes/manage.routes';
-import orderRouters from '@routes/order.routes';
+import manageRoutes from '@routes/manage.routes';
+import orderRoutes from '@routes/order.routes';
+import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
 import resetRoutes from '@routes/reset.routes';
 import stockRoutes from '@routes/stock.routes';
@@ -42,8 +43,9 @@ app.use(`/stock`, stockRoutes);
 app.use(`/table`, tableRoutes);
 app.use(`/reset`, resetRoutes);
 app.use(`/reservation`, reservationRoutes);
-app.use(`/order`, orderRouters);
-app.use(`/`, manageRouters);
+app.use(`/order`, orderRoutes);
+app.use(`/manage`, manageRoutes);
+app.use(`/profile`, profileRoutes);
 
 app.get('/ping', (req, res) => {
   res.json({
