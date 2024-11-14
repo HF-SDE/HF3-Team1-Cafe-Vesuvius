@@ -10,8 +10,8 @@ const router = Router();
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
 
-router.get(['/', '/:id'], isAllowed(['order:view']), getAll);
-router.post('/', isAllowed(['order:create']), create);
-router.put('/:id', isAllowed(['order:update']), update);
+router.get(['/', '/:id'], isAllowed(['order:view']), getAll());
+router.post('/', isAllowed(['order:create']), create());
+router.put('/:id', isAllowed(['order:update']), update());
 
 export default router;

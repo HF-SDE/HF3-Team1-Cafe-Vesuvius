@@ -5,6 +5,7 @@ import {
 } from "../storage/useStorageState";
 import { router } from "expo-router";
 
+// Set up the proxy agent
 const baseURL = process.env.EXPO_PUBLIC_API_URL;
 const apiClient = axios.create({
   baseURL: baseURL,

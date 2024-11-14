@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { PermissionManager } from "@/permission/permissionManager"; // Assuming the PermissionManager is saved in utils
+import { PermissionManager } from "@/utils/permissionManager"; // Assuming the PermissionManager is saved in utils
 
 interface CheckPermissionProps {
   requiredPermission: string[];

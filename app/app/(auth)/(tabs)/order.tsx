@@ -55,9 +55,7 @@ export default function OrderOverview() {
 
   return (
     <TemplateLayout pageName="OrderPage">
-      <SafeAreaView
-        style={[styles.container, { backgroundColor: BackgroundColor }]}
-      >
+      <SafeAreaView style={[styles.container]}>
         <FlatList
           data={orders}
           renderItem={renderOrderItem}

@@ -3,7 +3,7 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Entypo from "@expo/vector-icons/Entypo";
-import { PermissionManager } from "@/permission/permissionManager"; // Assuming the PermissionManager is saved in utils
+import { PermissionManager } from "@/utils/permissionManager"; // Assuming the PermissionManager is saved in utils
 
 export default function TabLayout() {
   const BackgroundColor = useThemeColor({}, "background");

@@ -10,9 +10,12 @@ import {
 } from "react-native";
 import { useSession } from "../../ctx";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import ModalScreen from "../profile/modal"; // Assuming ModalScreen is in the same directory
+import ModalScreen from "../profile/modal";
+import TemplateLayout from "@/components/TemplateLayout";
+import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function UserProfileScreen() {
+  const { userProfile, isLoading, error } = useUserProfile();
   const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -23,71 +26,80 @@ export default function UserProfileScreen() {
 
   const { signOut, session } = useSession();
 
-  const userInfo = {
-    username: "Ben Dover",
-    email: "bendover@gmail.com",
-    initials: "BD",
-    phone: "+4512345678",
-  };
+  if (isLoading) {
+    // Add loading screen
+  }
+
+  if (error) {
+    return (
+      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+        <Text style={[styles.errorText, { color: TextColor }]}>
+          Error: {error}
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <SafeAreaView
-      style={[styles.container, { backgroundColor: BackgroundColor }]}
-    >
-      <View style={styles.contentContainer}>
-        <View style={styles.topContainer}>
-          <View style={[styles.avatar, { backgroundColor: PrimaryColor }]}>
-            <Text style={[styles.avatarText, { color: BackgroundColor }]}>
-              {userInfo.initials}
+    <TemplateLayout pageName="ProfilePage">
+      <View style={[styles.container]}>
+        <View style={styles.contentContainer}>
+          <View style={styles.topContainer}>
+            <View
+              style={[
+                styles.avatar,
+                { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+              ]}
+            >
+              <Text style={[styles.avatarText, { color: BackgroundColor }]}>
+                {userProfile?.initials || "?"}
+              </Text>
+            </View>
+            <Text style={[styles.nameText, { color: TextColor }]}>
+              Hi, {userProfile?.name || "N/A"}
+            </Text>
+            <Text style={[styles.infoText, { color: TextColor }]}>
+              Email: {userProfile?.email || "N/A"}
             </Text>
           </View>
-          <Text style={[styles.nameText, { color: TextColor }]}>
-            Hi, {userInfo.username}
-          </Text>
-          <Text style={[styles.infoText, { color: TextColor }]}>
-            Mail: {userInfo.email}
-          </Text>
-          <Text style={[styles.infoText, { color: TextColor }]}>
-            Tlf: {userInfo.phone}
-          </Text>
+
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              onPress={() => setModalVisible(true)} // Show modal on press
+            >
+              <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+                Reset Password
+              </Text>
+            </TouchableOpacity>
+            <View style={styles.spacer} />
+            <TouchableOpacity
+              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              onPress={signOut}
+            >
+              <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+                Log Out
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => setModalVisible(true)} // Show modal on press
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Reset Password
-            </Text>
-          </TouchableOpacity>
-          <View style={styles.spacer} />
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={signOut}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Log Out
-            </Text>
-          </TouchableOpacity>
-        </View>
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
+        >
+          <View style={styles.modalOverlay}>
+            <View
+              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+            >
+              <ModalScreen onClose={() => setModalVisible(false)} />
+            </View>
+          </View>
+        </Modal>
       </View>
-
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
-      >
-        <View style={styles.modalOverlay}>
-          <View
-            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
-          >
-            <ModalScreen onClose={() => setModalVisible(false)} />
-          </View>
-        </View>
-      </Modal>
-    </SafeAreaView>
+    </TemplateLayout>
   );
 }
 
@@ -115,6 +127,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
+    borderWidth: 8,
   },
   avatarText: {
     fontSize: 52,
@@ -162,5 +175,9 @@ const styles = StyleSheet.create({
     // backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
+  },
+  errorText: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

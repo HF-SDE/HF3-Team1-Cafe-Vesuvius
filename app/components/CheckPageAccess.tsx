@@ -1,5 +1,5 @@
 import React, { ReactNode, useEffect, useState } from "react";
-import { PermissionManager } from "@/permission/permissionManager"; // Assuming PermissionManager is imported correctly
+import { PermissionManager } from "@/utils/permissionManager"; // Assuming PermissionManager is imported correctly
 
 interface CheckPageAccessProps {
   pageName: string;

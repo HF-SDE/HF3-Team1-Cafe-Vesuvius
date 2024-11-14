@@ -10,6 +10,8 @@ import {
   SectionList,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import apiClient from "../../../utils/apiClient"; // Import your API client
+import { Buffer } from "buffer";
 
 interface ModalScreenProps {
   onClose: () => void;
@@ -26,13 +28,30 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
   const SecondaryColor = useThemeColor({}, "secondary");
   const AccentColor = useThemeColor({}, "accent");
 
-  const handleReset = () => {
+  const handleReset = async () => {
     if (newPassword !== confirmPassword) {
       alert("New passwords do not match!");
       return;
     }
-    alert("Password reset successfully!");
-    onClose();
+
+    try {
+      await resetPassword();
+      alert("Password reset successfully!");
+      onClose();
+    } catch (error) {
+      alert("An error occurred while resetting password.");
+    }
+  };
+
+  const resetPassword = async () => {
+    const payload = {
+      oldPassword: Buffer.from(oldPassword).toString("base64"),
+      newPassword: Buffer.from(newPassword).toString("base64"),
+    };
+
+    // Replace `/reset-password` with your actual API endpoint
+    const response = await apiClient.put("/profile/reset", payload);
+    return response.data;
   };
 
   return (

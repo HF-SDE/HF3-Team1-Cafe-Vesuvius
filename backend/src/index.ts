@@ -7,13 +7,13 @@ import passport from 'passport';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
+import manageRoutes from '@routes/manage.routes';
 import orderRoutes from '@routes/order.routes';
+import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
 import resetRoutes from '@routes/reset.routes';
 import stockRoutes from '@routes/stock.routes';
 import tableRoutes from '@routes/table.routes';
-import manageRoutes from '@routes/manage.routes';
-import profileRoutes from '@routes/profile.routes';
 
 import './passport';
 

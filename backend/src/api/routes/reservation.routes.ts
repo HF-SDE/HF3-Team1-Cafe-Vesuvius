@@ -12,13 +12,13 @@ import { validateParams } from '@middlewares/validate.mw';
 
 const router = Router();
 
-router.post('/', create);
+router.post('/', create());
 
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
 
-router.get(['/', '/:id'], isAllowed(['reservation:view']), getAll);
-router.put('/:id', isAllowed(['reservation:update']), update);
-router.delete('/:id', isAllowed(['reservation:delete']), deleteRecord);
+router.get(['/', '/:id'], isAllowed(['reservation:view']), getAll());
+router.put('/:id', isAllowed(['reservation:update']), update());
+router.delete('/:id', isAllowed(['reservation:delete']), deleteRecord());
 
 export default router;

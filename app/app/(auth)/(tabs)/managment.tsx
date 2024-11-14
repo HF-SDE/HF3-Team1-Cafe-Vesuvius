@@ -1,31 +1,76 @@
 import React from "react";
-import { Text, Button, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import TemplateLayout from "@/components/TemplateLayout";
-import axiosClient from "../../../api/apiClient"; // Adjust the path as necessary
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons"; // Replace with your preferred icon library
+import CheckPageAccess from "@/components/CheckPageAccess";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { useRouter } from "expo-router";
+
+// Define your button data here
+const buttonList = [
+  {
+    title: "Users",
+    pageName: "UsersPage",
+    route: "/order/add-order",
+    icon: "users",
+  }, // Example MaterialIcons name
+  {
+    title: "Menú",
+    pageName: "MenuPage",
+    route: "",
+    icon: "table-list",
+  },
+  {
+    title: "Stats",
+    pageName: "StatsPage",
+    route: "/managment/statistics",
+    icon: "chart-simple",
+  },
+  {
+    title: "Storage",
+    pageName: "StockPage",
+    route: "",
+    icon: "warehouse",
+  },
+];
 
 export default function ManagmentScreen() {
-  const PrimaryColor = useThemeColor({}, "primary");
+  const router = useRouter();
 
-  // Function to handle the API call
-  const handleApiCall = async () => {
-    try {
-      const response = await axiosClient.get("/stock"); // Replace with your API endpoint
-      console.log("API Response:", response.data);
-    } catch (error) {
-      console.error("API Error:", error);
-    }
-  };
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   return (
     <TemplateLayout pageName="ManagmentPage">
       <View style={styles.content}>
-        <Text style={styles.text}>Welcome to the Management Screen!</Text>
-        <Button
-          title="Call API"
-          color={PrimaryColor} // Themed color for the button
-          onPress={handleApiCall}
-        />
+        {buttonList.map((button, index) => (
+          <CheckPageAccess pageName={button.pageName}>
+            <TouchableOpacity
+              key={index}
+              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              onPress={() => router.push(button.route)}
+            >
+              <View style={styles.buttonContent}>
+                {button.icon && (
+                  <FontAwesome6
+                    name={button.icon}
+                    size={50}
+                    color={BackgroundColor}
+                    style={styles.icon}
+                  />
+                )}
+                <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+                  {button.title}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          </CheckPageAccess>
+        ))}
       </View>
     </TemplateLayout>
   );
@@ -33,12 +78,33 @@ export default function ManagmentScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
+    alignItems: "stretch",
+    paddingHorizontal: 20,
+    paddingVertical: 20,
   },
-  text: {
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
     marginBottom: 20,
-    fontSize: 16,
-    fontWeight: "500",
+    borderRadius: 8,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    width: "100%",
+  },
+  icon: {
+    marginRight: 30,
+    width: 50,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  buttonText: {
+    fontSize: 50,
+    fontWeight: "bold",
+    flex: 1,
   },
 });

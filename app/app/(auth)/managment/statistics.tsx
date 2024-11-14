@@ -32,7 +32,7 @@ export default function AddOrderScreen() {
 
   useLayoutEffect(() => {
     navigation.setOptions({
-      title: "New Order",
+      title: "Statistics",
       headerBackVisible: false,
       headerLeft: () => null,
       headerTitleAlign: "center",
@@ -53,7 +53,7 @@ export default function AddOrderScreen() {
   );
 
   return (
-    <TemplateLayout pageName="OrderCreatePage">
+    <TemplateLayout pageName="StatsPage">
       <View style={[styles.container]}>
         <View style={styles.spacer} />
 

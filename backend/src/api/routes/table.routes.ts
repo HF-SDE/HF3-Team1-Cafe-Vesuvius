@@ -10,8 +10,8 @@ const router = Router();
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
 
-router.get(['/', '/:id'], isAllowed(['table:view']), getAll);
-router.post('/', isAllowed(['table:create']), create);
-router.delete('/:id', isAllowed(['table:delete']), deleteRecord);
+router.get(['/', '/:id'], isAllowed(['table:view']), getAll());
+router.post('/', isAllowed(['table:create']), create());
+router.delete('/:id', isAllowed(['table:delete']), deleteRecord());
 
 export default router;
