@@ -91,7 +91,7 @@ export class PermissionManager {
   // Method to get the list of pages the user can access
   public getAccessiblePages(): string[] {
     // Loop through the permissions and collect all pages the user has access to
-    let accessiblePages: string[] = [];
+    let accessiblePages: string[] = ["ProfilePage"];
     Object.keys(this.permissionsToPages).forEach((permission) => {
       if (this.permissions.includes(permission)) {
         // Add all pages associated with this permission

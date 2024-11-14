@@ -3,7 +3,7 @@ import { StyleSheet, SafeAreaView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { PermissionManager } from "@/permission/permissionManager";
+import { PermissionManager } from "@/utils/permissionManager";
 
 type TemplateLayoutProps = {
   children: React.ReactNode; // Content to render within the template

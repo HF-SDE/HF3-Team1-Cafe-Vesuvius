@@ -1,31 +1,47 @@
 import React from "react";
-import { Text, Button, StyleSheet, View } from "react-native";
+import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
 import TemplateLayout from "@/components/TemplateLayout";
-import axiosClient from "../../../api/apiClient"; // Adjust the path as necessary
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useNavigation } from "@react-navigation/native";
+import { MaterialIcons } from "@expo/vector-icons"; // Replace with your preferred icon library
+import CheckPageAccess from "@/components/CheckPageAccess";
+
+// Define your button data here
+const buttonList = [
+  { title: "Users", pageName: "UsersPage", route: "", icon: "people" }, // Example MaterialIcons name
+  { title: "Menú", pageName: "MenuPage", route: "", icon: "menu" },
+  { title: "Stats", pageName: "StatsPage", route: "", icon: "bar-chart" },
+  { title: "Storage", pageName: "StockPage", route: "", icon: "inventory" },
+];
 
 export default function ManagmentScreen() {
   const PrimaryColor = useThemeColor({}, "primary");
-
-  // Function to handle the API call
-  const handleApiCall = async () => {
-    try {
-      const response = await axiosClient.get("/stock"); // Replace with your API endpoint
-      console.log("API Response:", response.data);
-    } catch (error) {
-      console.error("API Error:", error);
-    }
-  };
+  const navigation = useNavigation();
 
   return (
     <TemplateLayout pageName="ManagmentPage">
       <View style={styles.content}>
-        <Text style={styles.text}>Welcome to the Management Screen!</Text>
-        <Button
-          title="Call API"
-          color={PrimaryColor} // Themed color for the button
-          onPress={handleApiCall}
-        />
+        {buttonList.map((button, index) => (
+          <CheckPageAccess pageName={button.pageName}>
+            <TouchableOpacity
+              key={index}
+              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              //onPress={() => navigation.navigate(button.route)}
+            >
+              <View style={styles.buttonContent}>
+                {button.icon && (
+                  <MaterialIcons
+                    name={button.icon}
+                    size={40}
+                    color="white"
+                    style={styles.icon}
+                  />
+                )}
+                <Text style={styles.buttonText}>{button.title}</Text>
+              </View>
+            </TouchableOpacity>
+          </CheckPageAccess>
+        ))}
       </View>
     </TemplateLayout>
   );
@@ -33,12 +49,29 @@ export default function ManagmentScreen() {
 
 const styles = StyleSheet.create({
   content: {
-    alignItems: "center",
-    justifyContent: "center",
+    flex: 1,
+    alignItems: "stretch",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
   },
-  text: {
-    marginBottom: 20,
-    fontSize: 16,
-    fontWeight: "500",
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    marginBottom: 10,
+    borderRadius: 8,
+  },
+  buttonContent: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  icon: {
+    marginRight: 10,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 40,
+    fontWeight: "600",
   },
 });
