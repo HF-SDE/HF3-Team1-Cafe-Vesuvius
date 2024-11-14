@@ -1,0 +1,19 @@
+import axios from 'axios';
+import https from 'https';
+
+const token =
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiI2NzM1YjNkMjdmMDE3OWM3MTI2OWQyZmYiLCJzdWIiOiI2NzMxYjhhNzRiMDhiOTNjMmRmNDNlODgiLCJ1c2VybmFtZSI6ImFkbWluIiwicGVybWlzc2lvbnMiOlsiYWRtaW5pc3RyYXRvcjpzdGF0czp2aWV3Iiwib3JkZXI6dmlldyIsImFkbWluaXN0cmF0b3I6cGVybWlzc2lvbjp2aWV3Iiwib3JkZXI6c3RhdHVzOnVwZGF0ZTpkZWxpdmVyIiwiYWRtaW5pc3RyYXRvcjp1c2VyczptYW5hZ2VtZW50IiwiYWRtaW5pc3RyYXRvcjp1c2Vyczp2aWV3IiwiYWRtaW5pc3RyYXRvcjpwZXJtaXNzaW9uOmNyZWF0ZSIsIm1lbnU6dXBkYXRlIiwib3JkZXI6c3RhdHVzOnVwZGF0ZTpjb21wbGV0ZWQiLCJhZG1pbmlzdHJhdG9yOnVzZXJzOmNyZWF0ZSIsImFkbWluaXN0cmF0b3I6dXNlcnM6dXBkYXRlIiwiYWRtaW5pc3RyYXRvcjpwZXJtaXNzaW9uZ3JvdXA6Y3JlYXRlIiwib3JkZXI6Y3JlYXRlIiwidGFibGU6Y3JlYXRlIiwidGFibGU6ZGVsZXRlIiwic3RvY2s6dXBkYXRlIiwic3RvY2s6dmlldyIsInN0b2NrOmNyZWF0ZSIsInJlc2VydmF0aW9uOmNyZWF0ZSIsInRhYmxlOnZpZXciLCJyZXNlcnZhdGlvbjp1cGRhdGUiLCJyZXNlcnZhdGlvbjp2aWV3IiwicmVzZXJ2YXRpb246ZGVsZXRlIiwibWVudTpjcmVhdGUiLCJtZW51OmRlbGV0ZSJdLCJpYXQiOjE3MzE1NzI2OTAsImV4cCI6MjM2MjcyNDY5MH0.SvKxXxld80v4UH1jMyBFbtyYULZUMkORzmDLIkhmjbw';
+
+export const axiosInstance = axios.create({
+  baseURL: 'https://localhost/api',
+  httpsAgent: new https.Agent({
+    rejectUnauthorized: false, // Allow self-signed certificates
+  }),
+  headers: {
+    Authorization: `bearer ${token}`,
+  },
+});
+
+export interface Response<T = any> {
+  data: T;
+}
