@@ -1,10 +1,12 @@
 import { hash, verify } from 'argon2';
+import { error } from 'node:console';
 
 import { APIResponse, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import {
   ChangePasswordBase64Schema,
-  ChangePasswordSchema, jwtTokenSchema,
+  ChangePasswordSchema,
+  jwtTokenSchema,
 } from '@schemas/profile.schemas';
 
 /**
@@ -57,8 +59,8 @@ export async function changePassword(
       const OldPasswordCorrect = await verify(exist.password, oldPassword);
       if (!OldPasswordCorrect) {
         return {
-          status: Status.Failed,
-          message: 'Failed to update password',
+          status: Status.InvalidDetails,
+          message: 'Incorrect password',
         };
       }
     } else {
@@ -77,7 +79,7 @@ export async function changePassword(
     if (!updateResult) {
       return {
         status: Status.UpdateFailed,
-        message: 'Failed to update password',
+        message: 'Failed to update password1',
       };
     }
 
@@ -109,7 +111,7 @@ export async function getProfile(
     if (tokenValidation.error) {
       return {
         status: Status.InvalidDetails,
-        message: tokenValidation.error.message,
+        message: tokenValidation.error.message as string,
       };
     }
     const tokenData = await prisma.token.findUnique({
@@ -144,11 +146,11 @@ export async function getProfile(
       message: 'Profile found',
       data: tokenData.session.user,
     };
-  } catch {
+  } catch (error) {
     return {
       data: undefined,
       status: Status.Failed,
-      message: 'Something went wrong on our end',
+      message: 'Something went wrong on our end' + error.message,
     };
   }
 }

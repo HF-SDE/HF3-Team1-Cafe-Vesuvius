@@ -7,7 +7,6 @@ import {
   View,
   TextInput,
   TouchableOpacity,
-  SectionList,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient"; // Import your API client
@@ -21,37 +20,51 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
 
   const handleReset = async () => {
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      setErrorMessage("Please fill out all fields!");
+      return;
+    }
     if (newPassword !== confirmPassword) {
-      alert("New passwords do not match!");
+      setErrorMessage("Passwords does not match!");
       return;
     }
 
     try {
-      await resetPassword();
-      alert("Password reset successfully!");
-      onClose();
+      const response = await resetPassword();
+      if (response === "success") {
+        onClose(); // Close the modal on success
+      } else {
+        setErrorMessage(response || "An error occurred.");
+      }
     } catch (error) {
-      alert("An error occurred while resetting password.");
+      setErrorMessage("An error occurred while resetting password.");
     }
   };
 
-  const resetPassword = async () => {
+  const resetPassword = async (): Promise<string> => {
     const payload = {
       oldPassword: Buffer.from(oldPassword).toString("base64"),
       newPassword: Buffer.from(newPassword).toString("base64"),
     };
 
     // Replace `/reset-password` with your actual API endpoint
-    const response = await apiClient.put("/profile/reset", payload);
-    return response.data;
+    try {
+      //const response = await apiClient.put("/profile/reset", payload);
+      const response = await apiClient.put("/profile/reset", payload, {
+        validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+      });
+      return response.status === 200 ? "success" : response.data.message;
+    } catch {
+      return "Something went wrong on our end. Please contact support";
+    }
   };
 
   return (
@@ -83,6 +96,10 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
         onChangeText={setConfirmPassword}
       />
 
+      {errorMessage ? (
+        <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
+      ) : null}
+
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
@@ -91,7 +108,7 @@ export default function ModalScreen({ onClose }: ModalScreenProps) {
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: "#ccc" }]}
+          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
           onPress={onClose}
         >
           <Text style={styles.buttonText}>Cancel</Text>
@@ -144,5 +161,10 @@ const styles = StyleSheet.create({
   buttonText: {
     color: "#fff",
     fontWeight: "bold",
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: 14,
+    textAlign: "center",
   },
 });

@@ -15,3 +15,8 @@ export const ChangePasswordSchema = joi.object({
     .required(),
   oldPassword: joi.string().required(),
 });
+
+export const jwtTokenSchema = joi
+  .string()
+  .pattern(/^([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_=]+)\.([a-zA-Z0-9_\-+/=]*)$/)
+  .required();
