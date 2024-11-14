@@ -1,20 +1,62 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 
-import { Prisma } from '@prisma/client';
-import * as OrderService from '@services/order.service';
-import { getHttpStatusCode } from '@utils/Utils';
+import prisma from '@prisma-instance';
+import { Order_Menu } from '@prisma/client';
+
+interface OrderRequest extends Request {
+  body: {
+    items?: Order_Menu[];
+    Order_Menus: {
+      createMany: {
+        data: Order_Menu[];
+      };
+    };
+  };
+}
 
 /**
- * Controller to create a order
+ * Controller to transform the menus array
  * @async
- * @param {Request} req - The request object
+ * @param {OrderRequest} req - The request object
  * @param {Response} res - The response object
+ * @param {NextFunction} next - The next middleware function
  * @returns {Promise<void>} The response object
  */
-export async function create(req: Request, res: Response): Promise<void> {
-  const data = req.body as Prisma.OrderCreateInput;
+export async function transformMenus(
+  req: OrderRequest,
+  res: Response,
+  next: NextFunction,
+): Promise<void> {
+  const { items } = req.body;
+  delete req.body.items;
 
-  const response = await OrderService.create(data);
+  if (!items) {
+    res.status(400).json({
+      status: 'Failed',
+      message: 'No items provided',
+    });
 
-  res.status(getHttpStatusCode(response.status)).json(response).end();
+    return;
+  }
+
+  for (const item of items) {
+    const menuItem = await prisma.menuItem.findUnique({
+      where: { id: item.menuItemId },
+    });
+
+    if (!menuItem) {
+      res.status(400).json({
+        status: 'Failed',
+        message: 'Menu item not found: ' + item.menuItemId,
+      });
+
+      return;
+    }
+
+    item.menuItemPrice = menuItem.price;
+  }
+
+  req.body.Order_Menus = { createMany: { data: items } };
+
+  next();
 }
