@@ -4,7 +4,7 @@
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { APIResponse, Status } from '@api-types/general.types';
-import prisma from '@prisma-instance';
+import prisma, { errorResponse } from '@prisma-instance';
 import { Prisma } from '@prisma/client';
 import { UuidSchema } from '@schemas/general.schemas';
 
@@ -43,9 +43,9 @@ export async function getAll(
       message: `Database collection not found`,
     };
 
-  const results = (await prismaType.findMany({
+  const results = await prismaType.findMany({
     where,
-  })) as any[];
+  });
 
   return {
     data: results,
@@ -68,9 +68,9 @@ export async function create(
   try {
     const prismaType = prisma[prismaModel] as any;
 
-    const results = (await prismaType.create({
+    const results = await prismaType.create({
       data,
-    })) as any[];
+    });
 
     return {
       data: results,
@@ -78,32 +78,8 @@ export async function create(
       message: 'Record created',
     };
   } catch (error) {
-    const prismaError = error as
-      | Prisma.PrismaClientUnknownRequestError
-      | Prisma.PrismaClientKnownRequestError;
-
-    if (prismaError.name == 'PrismaClientValidationError') {
-      return {
-        data: undefined,
-        status: Status.MissingDetails,
-        message: 'Invalid data',
-      };
-    }
-
-    if (prismaError instanceof Prisma.PrismaClientKnownRequestError) {
-      if (prismaError.code === 'P2002')
-        return {
-          data: undefined,
-          status: Status.CreationFailed,
-          message: 'Table with that number already exists',
-        };
-    }
-
-    return {
-      data: undefined,
-      status: Status.CreationFailed,
-      message: 'Error creating record',
-    };
+    const prismaError = error as Prisma.PrismaClientKnownRequestError;
+    return errorResponse(prismaError, 'CreationFailed');
   }
 }
 
@@ -135,28 +111,7 @@ export async function update(
     };
   } catch (error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
-
-    if (prismaError.name === 'PrismaClientValidationError') {
-      return {
-        data: undefined,
-        status: Status.MissingDetails,
-        message: 'Invalid data',
-      };
-    }
-
-    if (prismaError.code === 'P2025') {
-      return {
-        data: undefined,
-        status: Status.UpdateFailed,
-        message: 'Record not found',
-      };
-    }
-
-    return {
-      data: undefined,
-      status: Status.UpdateFailed,
-      message: 'Error updating record',
-    };
+    return errorResponse(prismaError, 'UpdateFailed');
   }
 }
 
@@ -183,19 +138,6 @@ export async function deleteRecord(
     };
   } catch (error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
-
-    if (prismaError.code === 'P2025') {
-      return {
-        data: undefined,
-        status: Status.DeleteFailed,
-        message: 'Record not found',
-      };
-    }
-
-    return {
-      data: undefined,
-      status: Status.DeleteFailed,
-      message: 'Error deleting record',
-    };
+    return errorResponse(prismaError, 'DeleteFailed');
   }
 }
