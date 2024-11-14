@@ -44,7 +44,7 @@ app.use(`/table`, tableRoutes);
 app.use(`/reset`, resetRoutes);
 app.use(`/reservation`, reservationRoutes);
 app.use(`/order`, orderRoutes);
-app.use(`/`, manageRoutes);
+app.use(`/manage`, manageRoutes);
 app.use(`/profile`, profileRoutes);
 
 app.get('/ping', (req, res) => {

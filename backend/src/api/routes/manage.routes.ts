@@ -6,6 +6,6 @@ import { isAllowed } from '@middlewares/isAllowed.mw';
 
 const router = Router();
 
-router.get('/manage/user', verifyJWT, isAllowed(['administrator:users:view']), ManageController.getUsers);
+router.get('/user', verifyJWT, isAllowed(['administrator:users:view']), ManageController.getUsers);
 
 export default router;
