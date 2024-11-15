@@ -56,11 +56,8 @@ export default function TabLayout() {
           backgroundColor: PrimaryColor,
           elevation: 0,
         },
-        headerTintColor: BackgroundColor,
         tabBarShowLabel: false,
         headerTitleAlign: "center",
-        headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
-        headerShadowVisible: false,
         tabBarItemStyle: { display: "none" },
         tabBarIconStyle: {
           height: 50,

@@ -9,12 +9,14 @@ type TemplateLayoutProps = {
   children: React.ReactNode; // Content to render within the template
   pageName: string; // Page name for permission checking
   title?: string; // Optional title to display
+  buttonTitle?: string;
 };
 
 const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   children,
   pageName,
   title,
+  buttonTitle = "Back",
 }) => {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -27,10 +29,12 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   useLayoutEffect(() => {
     navigation.setOptions({
       title: title,
-      headerBackTitle: "Back",
+      headerBackTitle: buttonTitle,
       headerTitleAlign: "center",
       headerStyle: { backgroundColor: PrimaryColor },
       headerTintColor: BackgroundColor,
+      headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
+      headerShadowVisible: false,
     });
   }, [navigation, title]);
 

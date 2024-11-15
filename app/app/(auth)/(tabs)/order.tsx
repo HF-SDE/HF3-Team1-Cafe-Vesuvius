@@ -12,6 +12,7 @@ import { useRouter } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CheckPermission from "@/components/CheckPermission";
 import TemplateLayout from "@/components/TemplateLayout";
+import AddButton from "@/components/AddButton";
 
 interface OrderItem {
   id: string;
@@ -64,14 +65,10 @@ export default function OrderOverview() {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
         />
-        <CheckPermission requiredPermission={["order:create"]}>
-          <TouchableOpacity
-            style={[styles.addButton, { backgroundColor: PrimaryColor }]}
-            onPress={handleAddOrder}
-          >
-            <FontAwesome6 name="plus" size={60} color={SecondaryColor} />
-          </TouchableOpacity>
-        </CheckPermission>
+        <AddButton
+          onPress={handleAddOrder}
+          requiredPermission={["order:create"]}
+        />
       </SafeAreaView>
     </TemplateLayout>
   );
