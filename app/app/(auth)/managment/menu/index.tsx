@@ -23,37 +23,8 @@ export default function AddOrderScreen() {
   const [searchQuery, setSearchQuery] = useState("");
   const [showDropdown, setShowDropdown] = useState(false);
 
-  // Example reservations (replace with your actual data)
-  const reservations = [
-    { id: 1, name: "Reservation 1" },
-    { id: 2, name: "Reservation 2" },
-    { id: 3, name: "Reservation 3" },
-  ];
-
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: "Statistics",
-      headerBackVisible: false,
-      headerLeft: () => null,
-      headerTitleAlign: "center",
-      headerStyle: { backgroundColor: PrimaryColor },
-      headerTintColor: BackgroundColor,
-    });
-  }, [navigation]);
-
-  const handleOrderSubmission = () => {
-    console.log("Order Submitted:", {
-      reservation: selectedReservation,
-      // Add productName, quantity, and price if needed
-    });
-  };
-
-  const filteredReservations = reservations.filter((reservation) =>
-    reservation.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
   return (
-    <TemplateLayout pageName="StatsPage">
+    <TemplateLayout pageName="MenuPage" title="Menu">
       <View style={[styles.container]}>
         <View style={styles.spacer} />
 
@@ -64,14 +35,6 @@ export default function AddOrderScreen() {
           >
             <Text style={[styles.buttonText, { color: BackgroundColor }]}>
               Back
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={handleOrderSubmission}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Submit Order
             </Text>
           </TouchableOpacity>
         </View>

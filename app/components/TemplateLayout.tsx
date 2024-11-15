@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import { StyleSheet, SafeAreaView, Text, View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
@@ -18,8 +18,21 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 }) => {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const navigation = useNavigation();
 
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      title: title,
+      headerBackTitle: "Back",
+      headerTitleAlign: "center",
+      headerStyle: { backgroundColor: PrimaryColor },
+      headerTintColor: BackgroundColor,
+    });
+  }, [navigation, title]);
 
   useEffect(() => {
     const checkPermission = async () => {
@@ -48,8 +61,6 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
         { backgroundColor: BackgroundColor, borderColor: BackgroundColor },
       ]}
     >
-      {title && <Text style={[{ color: TextColor }]}>{title}</Text>}
-      <View />
       {children}
     </SafeAreaView>
   );

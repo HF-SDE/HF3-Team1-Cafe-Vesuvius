@@ -13,13 +13,13 @@ const buttonList = [
   {
     title: "Users",
     pageName: "UsersPage",
-    route: "/order/add-order",
+    route: "/managment/users",
     icon: "users",
   }, // Example MaterialIcons name
   {
     title: "Menú",
     pageName: "MenuPage",
-    route: "",
+    route: "/managment/menu",
     icon: "table-list",
   },
   {
@@ -31,7 +31,7 @@ const buttonList = [
   {
     title: "Storage",
     pageName: "StockPage",
-    route: "",
+    route: "/managment/storage",
     icon: "warehouse",
   },
 ];
