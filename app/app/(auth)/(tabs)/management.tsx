@@ -13,31 +13,32 @@ const buttonList = [
   {
     title: "Users",
     pageName: "UsersPage",
-    route: "/managment/users",
+    route: "/management/users",
     icon: "users",
   }, // Example MaterialIcons name
   {
-    title: "Menú",
+    title: "Menu",
     pageName: "MenuPage",
-    route: "/managment/menu",
+    route: "management/menu",
     icon: "table-list",
   },
   {
     title: "Stats",
     pageName: "StatsPage",
-    route: "/managment/statistics",
+    route: "/management/statistics",
     icon: "chart-simple",
   },
   {
     title: "Storage",
     pageName: "StockPage",
-    route: "/managment/storage",
+    route: "/management/storage",
     icon: "warehouse",
   },
 ];
 
-export default function ManagmentScreen() {
+export default function ManagementScreen() {
   const router = useRouter();
+  const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -53,7 +54,7 @@ export default function ManagmentScreen() {
             <TouchableOpacity
               key={index}
               style={[styles.button, { backgroundColor: PrimaryColor }]}
-              onPress={() => router.push(button.route)}
+              onPress={() => router.navigate(button.route)}
             >
               <View style={styles.buttonContent}>
                 {button.icon && (

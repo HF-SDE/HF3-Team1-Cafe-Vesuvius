@@ -70,7 +70,7 @@ export default function TabLayout() {
     >
       {hasOrderPermission && (
         <Tabs.Screen
-          name="order/index"
+          name="order"
           options={{
             title: "",
             headerTitle: "Order",
@@ -88,7 +88,7 @@ export default function TabLayout() {
       )}
       {hasReservationPermission && (
         <Tabs.Screen
-          name="reservations/index"
+          name="reservations"
           options={{
             title: "",
             headerTitle: "Reservations",
@@ -106,7 +106,7 @@ export default function TabLayout() {
       )}
       {hasManagementPermission && (
         <Tabs.Screen
-          name="managment/index"
+          name="management"
           options={{
             title: "",
             headerTitle: "Management",

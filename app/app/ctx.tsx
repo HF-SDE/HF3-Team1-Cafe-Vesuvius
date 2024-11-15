@@ -1,5 +1,5 @@
 import React from "react";
-import { useStorageState } from "../storage/useStorageState";
+import { useStorageState } from "../hooks/useStorageState";
 import { Buffer } from "buffer";
 import apiClient from "../utils/apiClient";
 

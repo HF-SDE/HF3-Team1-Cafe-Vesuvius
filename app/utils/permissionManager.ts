@@ -1,4 +1,4 @@
-import { getStorageItemAsync } from "../storage/useStorageState";
+import { getStorageItemAsync } from "../hooks/useStorageState";
 
 // utils/PermissionManager.ts
 export class PermissionManager {
@@ -34,7 +34,7 @@ export class PermissionManager {
     "table:delete": ["TablePage"],
     "reservation:view": ["ReservationPage"],
     "reservation:update": ["ReservationPage"],
-    "reservation:create": ["ReservationPage"],
+    "reservation:create": ["ReservationPage", "ReservationCreatePage"],
     "reservation:delete": ["ReservationPage"],
   };
 

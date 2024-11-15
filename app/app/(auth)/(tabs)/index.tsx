@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSession } from "../../ctx";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import ModalScreen from "./profile/modal";
+import ResetPasswordModal from "../profile/reset-password";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
@@ -94,7 +94,7 @@ export default function UserProfileScreen() {
             <View
               style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
             >
-              <ModalScreen onClose={() => setModalVisible(false)} />
+              <ResetPasswordModal onClose={() => setModalVisible(false)} />
             </View>
           </View>
         </Modal>

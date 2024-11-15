@@ -9,14 +9,14 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import apiClient from "../../../../utils/apiClient"; // Import your API client
+import apiClient from "../../../utils/apiClient"; // Import your API client
 import { Buffer } from "buffer";
 
 interface ModalScreenProps {
   onClose: () => void;
 }
 
-export default function ModalScreen({ onClose }: ModalScreenProps) {
+export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");

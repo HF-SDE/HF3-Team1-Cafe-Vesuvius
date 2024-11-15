@@ -40,7 +40,7 @@ export default function OrderOverview() {
   const [orders, setOrders] = useState<OrderItem[]>(sampleOrders);
 
   const handleAddOrder = () => {
-    router.push("/order/add-order");
+    router.push("/reservation/new-reservation");
   };
 
   const renderOrderItem = ({ item }: { item: OrderItem }) => (
@@ -54,7 +54,7 @@ export default function OrderOverview() {
   );
 
   return (
-    <TemplateLayout pageName="OrderPage">
+    <TemplateLayout pageName="ReservationPage">
       <SafeAreaView style={[styles.container]}>
         <FlatList
           data={orders}
@@ -64,7 +64,7 @@ export default function OrderOverview() {
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
         />
-        <CheckPermission requiredPermission={["order:create"]}>
+        <CheckPermission requiredPermission={["reservation:create"]}>
           <TouchableOpacity
             style={[styles.addButton, { backgroundColor: PrimaryColor }]}
             onPress={handleAddOrder}

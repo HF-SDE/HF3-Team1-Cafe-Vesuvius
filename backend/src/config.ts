@@ -11,7 +11,7 @@ const config = {
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || 'secret',
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || 'secret2',
   ACCESS_TOKEN_EXPIRATION: process.env.ACCESS_TOKEN_EXPIRATION || '5m',
-  REFRESH_TOKEN_EXPIRATION: process.env.REFRESH_TOKEN_EXPIRATION || '3d',
+  REFRESH_TOKEN_EXPIRATION: process.env.REFRESH_TOKEN_EXPIRATION || '1d',
   MAX_FAILED_LOGIN_ATTEMPTS: Number(process.env.MAX_FAILED_LOGIN_ATTEMPTS) || 5,
   ATTEMPT_WINDOW_MINUTES: Number(process.env.ATTEMPT_WINDOW_MINUTES) || 15,
   SSL_KEY_PATH: process.env.SSL_KEY_PATH || '/usr/src/app/cert/key.pem',
@@ -19,7 +19,7 @@ const config = {
 
   WHITELISTED_ORIGINS:
     process.env.WHITELISTED_ORIGINS ||
-    'http://localhost:3001 https://localhost:3001 http://localhost:8081 https://localhost:8081 https://localhost http://10.130.54.94:8081 https://10.130.54.94:8081',
+    'https://leading-infinitely-tadpole.ngrok-free.app',
 };
 
 export default config;
