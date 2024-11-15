@@ -9,6 +9,8 @@ services:
       target: base
     expose:
       - "3001"
+    ports:
+      - "3001:3001"
     command: npm run dev
     depends_on:
       - db
@@ -20,6 +22,7 @@ services:
       - ../backend/nodemon.json:/usr/src/app/nodemon.json
     networks:
       - internal
+      - public
 
   db:
     container_name: db
