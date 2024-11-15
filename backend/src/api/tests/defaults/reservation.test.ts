@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import {
   afterAll,
+  afterEach,
   beforeAll,
   describe,
   expect,
@@ -9,16 +10,21 @@ import {
 } from 'vitest';
 
 import { APIResponse } from '@api-types/general.types';
+import prisma from '@prisma-instance';
 import { Reservation } from '@prisma/client';
 
 import { Response, axiosInstance as axios } from './axiosInstance';
+import { login, logout } from './util';
 
 describe('API defaults (reservations)', () => {
   const addedReservations: string[] = [];
 
-  afterAll(() => {
-    addedReservations.forEach(async (id) => {
-      await axios.delete(`/reservation/${id}`);
+  beforeAll(login);
+  afterAll(logout);
+
+  afterEach(async () => {
+    await prisma.reservation.deleteMany({
+      where: { id: { in: addedReservations } },
     });
   });
 
@@ -35,8 +41,10 @@ describe('API defaults (reservations)', () => {
   });
 
   it('should get 1 or no reservation', async () => {
+    const { id: randomId } = await prisma.reservation.findFirstOrThrow({});
+
     const response = await axios.get<{ data: APIResponse<Reservation[]> }>(
-      '/reservation/6731b8a84b08b93c2df43f96',
+      `/reservation/${randomId}`,
     );
 
     expect(response.status).toBe(200);
@@ -67,7 +75,9 @@ describe('API defaults (reservations)', () => {
 
   //* Update cases
   it('should update a reservation', async () => {
-    const response = await axios.put(`/reservation/${addedReservations[0]}`, {
+    const { id: randomId } = await prisma.reservation.findFirstOrThrow({});
+
+    const response = await axios.put(`/reservation/${randomId}`, {
       amount: 2,
       name: 'Jane Doe',
       reservationTime: '2022-02-01T14:00:00.000Z',
@@ -78,9 +88,16 @@ describe('API defaults (reservations)', () => {
 
   //* Delete cases
   it('should delete a reservation', async () => {
-    const response = await axios.delete(`/reservation/${addedReservations[0]}`);
+    const newReservation = await prisma.reservation.create({
+      data: {
+        amount: 1,
+        name: 'John Doe',
+        reservationTime: new Date('2022-01-01T12:00:00.000Z'),
+        tableIds: ['6731b8a84b08b93c2df43f96'],
+      },
+    });
 
-    addedReservations.shift();
+    const response = await axios.delete(`/reservation/${newReservation.id}`);
 
     expect(response.status).toBe(200);
   });
@@ -88,6 +105,9 @@ describe('API defaults (reservations)', () => {
 
 describe('API defaults (reservations) [Errors]', () => {
   const addedReservations: string[] = [];
+
+  beforeAll(login);
+  afterAll(logout);
 
   beforeAll(async () => {
     const response = await axios.post<unknown>('/reservation', {
@@ -106,9 +126,9 @@ describe('API defaults (reservations) [Errors]', () => {
     addedReservations.push(id as string);
   });
 
-  afterAll(() => {
-    addedReservations.forEach(async (id) => {
-      await axios.delete(`/reservation/${id}`);
+  afterAll(async () => {
+    await prisma.reservation.deleteMany({
+      where: { id: { in: addedReservations } },
     });
   });
 
