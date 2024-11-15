@@ -10,7 +10,7 @@ import {
 } from "react-native";
 import { useSession } from "../../ctx";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import ModalScreen from "../profile/modal";
+import ModalScreen from "./profile/modal";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useUserProfile } from "@/hooks/useUserProfile";
 

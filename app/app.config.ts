@@ -18,7 +18,6 @@ module.exports = {
       foregroundImage: "./assets/images/adaptive-icon.png",
       backgroundColor: "#ffffff",
     },
-    package: "com.cafevesuvius.app",
   },
   web: {
     bundler: "metro",

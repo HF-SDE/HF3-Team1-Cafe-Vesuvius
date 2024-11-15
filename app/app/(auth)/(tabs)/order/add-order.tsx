@@ -30,17 +30,6 @@ export default function AddOrderScreen() {
     { id: 3, name: "Reservation 3" },
   ];
 
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      title: "Statistics",
-      headerBackVisible: false,
-      headerLeft: () => null,
-      headerTitleAlign: "center",
-      headerStyle: { backgroundColor: PrimaryColor },
-      headerTintColor: BackgroundColor,
-    });
-  }, [navigation]);
-
   const handleOrderSubmission = () => {
     console.log("Order Submitted:", {
       reservation: selectedReservation,
@@ -53,7 +42,7 @@ export default function AddOrderScreen() {
   );
 
   return (
-    <TemplateLayout pageName="StatsPage">
+    <TemplateLayout pageName="OrderCreatePage" title="New order">
       <View style={[styles.container]}>
         <View style={styles.spacer} />
 

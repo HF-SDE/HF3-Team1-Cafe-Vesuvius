@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import apiClient from "../../../utils/apiClient"; // Import your API client
+import apiClient from "../../../../utils/apiClient"; // Import your API client
 import { Buffer } from "buffer";
 
 interface ModalScreenProps {
