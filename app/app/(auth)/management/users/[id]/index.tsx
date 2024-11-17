@@ -1,17 +1,18 @@
 import { StyleSheet, View, Text, TextInput, Button, Alert } from "react-native";
-import { useRoute, useNavigation } from "@react-navigation/native";
+import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { useUsers } from "@/hooks/useUsers"; // Assuming you have a hook for user management
 import TemplateLayout from "@/components/TemplateLayout";
+import { useLocalSearchParams, Link } from "expo-router";
 
 export default function EditCreateUserPage() {
-  const { params } = useRoute();
-  const { id: userId } = params || {}; // Get the userId from the query params
-  const navigation = useNavigation();
+  const route = useRoute();
+  const { id } = useLocalSearchParams();
+
   const { users, updateUser, createUser } = useUsers();
 
   // Find user by ID if editing
-  const user = users?.find((user) => user.id === userId) || {
+  const user = users?.find((user) => user.id === id) || {
     name: "",
     email: "",
   };
@@ -20,27 +21,26 @@ export default function EditCreateUserPage() {
   const [email, setEmail] = useState(user.email);
 
   useEffect(() => {
-    if (userId) {
+    if (id) {
       setName(user.name);
       setEmail(user.email);
     }
-  }, [userId]);
+  }, [id]);
 
   const handleSave = () => {
-    if (userId) {
-      updateUser(userId, { name, email });
+    if (id) {
+      updateUser(id, { name, email });
       Alert.alert("User updated successfully");
     } else {
       createUser({ name, email });
       Alert.alert("User created successfully");
     }
-    navigation.goBack(); // Navigate back after saving
   };
 
   return (
     <TemplateLayout
       pageName="ManagmentPage"
-      title={userId ? "Edit User" : "Create User"}
+      title={id !== "new" ? "Edit User" : "Create User"}
       buttonTitle="Cancel"
     >
       <View style={styles.container}>
@@ -57,7 +57,15 @@ export default function EditCreateUserPage() {
           onChangeText={setEmail}
         />
 
-        <Button title={userId ? "Save" : "Create"} onPress={handleSave} />
+        <Button title={id !== "new" ? "Save" : "Create"} onPress={handleSave} />
+        <View style={styles.navigationButton}>
+          <Link
+            href={`/management/users/${id}/permissions`}
+            style={styles.link}
+          >
+            <Text style={styles.linkText}>Go to Permissions</Text>
+          </Link>
+        </View>
       </View>
     </TemplateLayout>
   );
@@ -68,16 +76,25 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  title: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
   input: {
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
     marginBottom: 15,
     paddingLeft: 10,
+  },
+  navigationButton: {
+    marginTop: 20,
+  },
+  link: {
+    marginTop: 10,
+    padding: 10,
+    backgroundColor: "blue",
+    borderRadius: 5,
+  },
+  linkText: {
+    color: "white",
+    textAlign: "center",
+    fontSize: 16,
   },
 });

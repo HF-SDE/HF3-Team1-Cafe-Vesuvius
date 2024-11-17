@@ -26,7 +26,7 @@ export default function ManageUsersPage() {
 
   const handleAddUser = () => {
     // Navigate to the edit/create user page (replace with your navigation logic)
-    router.navigate("/management/users/user");
+    router.navigate("/management/users/new");
   };
 
   // Filter users based on the search query (case-insensitive)
@@ -38,7 +38,7 @@ export default function ManageUsersPage() {
 
   const handleUserPress = (userId: string) => {
     // Navigate to the edit/create page for a specific user
-    router.navigate(`/management/users/user?id=${userId}`);
+    router.navigate(`/management/users/${userId}`);
   };
 
   const renderItem = ({ item }) => (
