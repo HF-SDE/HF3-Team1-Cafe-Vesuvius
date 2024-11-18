@@ -19,7 +19,7 @@ function getModel(req: Request): prismaModels {
  */
 export function getAll(model?: prismaModels): ExpressFunction {
   return async (req, res): Promise<void> => {
-    const { id } = req.params;
+    const id = (req.params.id || req.query.id) as string | undefined;
 
     const response = await DefaultService.getAll(model ?? getModel(req), id);
 
