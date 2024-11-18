@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
 
-interface UserProfile {
+interface Permissions {
   username: string;
   email: string;
   initials: string;
   name: string;
+  active: boolean;
 }
 
 export function useUserProfile() {
-  const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
+  const [permissions, setPermissions] = useState<Permissions | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,16 +20,11 @@ export function useUserProfile() {
         setIsLoading(true);
         setError(null);
 
-        //const response = await apiClient.get("/profile");
+        const response = await apiClient.get("/Permissions");
 
-        const response = await apiClient.get("/profile", {
-          withCredentials: true,
-          validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
-        });
-
-        setUserProfile(response.data.data);
+        setPermissions(response.data.data);
       } catch (err: any) {
-        setError("Failed to load profile data");
+        setError("Failed to load permissions");
       } finally {
         setIsLoading(false);
       }
@@ -37,5 +33,5 @@ export function useUserProfile() {
     fetchUserProfile();
   }, []);
 
-  return { userProfile, isLoading, error };
+  return { permissions, isLoading, error };
 }

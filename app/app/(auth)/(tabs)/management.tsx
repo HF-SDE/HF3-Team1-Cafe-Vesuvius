@@ -47,7 +47,7 @@ export default function ManagementScreen() {
   const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <TemplateLayout pageName="ManagmentPage">
+    <TemplateLayout pageName="ManagementPage">
       <View style={styles.content}>
         {buttonList.map((button, index) => (
           <CheckPageAccess pageName={button.pageName}>

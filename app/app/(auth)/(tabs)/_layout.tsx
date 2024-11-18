@@ -31,7 +31,7 @@ export default function TabLayout() {
       setHasReservationPermission(reservationPermission);
 
       const managementPermission = await permissionMan.hasPageAccess(
-        "ManagmentPage"
+        "ManagementPage"
       );
       setHasManagementPermission(managementPermission);
     };

@@ -56,7 +56,6 @@ export default function SessionProvider(props: React.PropsWithChildren) {
               },
               validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
             });
-            console.log(response);
 
             if (!response) {
               throw new Error("No response");
