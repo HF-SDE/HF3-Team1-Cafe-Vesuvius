@@ -19,6 +19,16 @@ export enum Status {
   MissingCredentials = 'MissingCredentials',
   InvalidCredentials = 'InvalidCredentials',
   TooManyRequests = 'TooManyRequests',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  WSSuccess = "Success",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  WSFound = "Found",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  WSUnauthorized = "Unauthorized",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  WSForbidden = "Forbidden",
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
+  WSFailed = "Failed"
 }
 
 export interface APIResponse<T> {

@@ -42,6 +42,14 @@ export function getHttpStatusCode(status: Status): number {
       return 401;
     case Status.TooManyRequests:
       return 429;
+    case Status.WSSuccess:
+      return 1000;
+    case Status.WSUnauthorized:
+      return 1008;
+    case Status.WSForbidden:
+      return 1013;
+    case Status.WSFailed:
+      return 1011;
   }
 }
 
