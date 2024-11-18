@@ -8,6 +8,7 @@ import passport from 'passport';
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
 import manageRoutes from '@routes/manage.routes';
+import menuRoutes from '@routes/menu.routes';
 import orderRoutes from '@routes/order.routes';
 import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
@@ -27,10 +28,9 @@ const limiter = rateLimit({
 const app = express();
 
 app.set('trust proxy', 1);
+app.set('json spaces', 4);
 
-app.use(
-  cors({ credentials: true, origin: config.WHITELISTED_ORIGINS.split(' ') }),
-);
+app.use(cors({ credentials: true, origin: true }));
 
 app.use(helmet());
 app.use(bodyParser.json({}));
@@ -46,6 +46,7 @@ app.use(`/reservation`, reservationRoutes);
 app.use(`/order`, orderRoutes);
 app.use(`/manage`, manageRoutes);
 app.use(`/profile`, profileRoutes);
+app.use(`/menu`, menuRoutes);
 
 app.get('/ping', (req, res) => {
   res.json({

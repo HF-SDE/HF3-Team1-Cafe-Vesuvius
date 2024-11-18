@@ -153,6 +153,11 @@ async function main() {
         permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'Delete reservation',
       },
+      {
+        code: 'permission:view',
+        permissionGroupId: await findPermissionGroup('Administrator'),
+        description: 'View permissions',
+      },
     ],
   });
 
@@ -201,18 +206,7 @@ async function main() {
   });
 
   // Assign permissions to super admin user
-  const adminPermission = await prisma.permission.findMany({
-    where: {
-      OR: [
-        { code: { startsWith: 'administrator' } },
-        { code: { startsWith: 'order' } },
-        { code: { startsWith: 'menu' } },
-        { code: { startsWith: 'stock' } },
-        { code: { startsWith: 'table' } },
-        { code: { startsWith: 'reservation' } },
-      ],
-    },
-  });
+  const adminPermission = await prisma.permission.findMany();
 
   if (adminPermission) {
     adminPermission.forEach(async (permission) => {

@@ -43,10 +43,13 @@ export async function changePassword(
 export async function getProfile(req: Request, res: Response): Promise<void> {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    res.status(400).json({
-      status: 'MissingData',
-      message: 'Missing authentication',
-    });
+    res
+      .status(400)
+      .json({
+        status: 'MissingData',
+        message: 'Missing authentication',
+      })
+      .header('Access-Control-Allow-Origin', '*');
     return;
   }
 

@@ -4,7 +4,7 @@ import TemplateLayout from "@/components/TemplateLayout";
 export default function PermissionPage() {
   return (
     <TemplateLayout
-      pageName="ManagmentPage"
+      pageName="ManagementPage"
       title="Permissions"
       buttonTitle="Cancel"
     >
