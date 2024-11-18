@@ -9,7 +9,6 @@ import config from '@config';
 import authRoutes from '@routes/auth.routes';
 import manageRoutes from '@routes/manage.routes';
 import orderRoutes from '@routes/order.routes';
-import permissionRoutes from '@routes/permission.routes';
 import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
 import resetRoutes from '@routes/reset.routes';
@@ -48,7 +47,6 @@ app.use(`/reservation`, reservationRoutes);
 app.use(`/order`, orderRoutes);
 app.use(`/manage`, manageRoutes);
 app.use(`/profile`, profileRoutes);
-app.use(`/permission`, permissionRoutes);
 
 app.get('/ping', (req, res) => {
   res.json({
