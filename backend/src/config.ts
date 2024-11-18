@@ -19,7 +19,7 @@ const config = {
 
   WHITELISTED_ORIGINS:
     process.env.WHITELISTED_ORIGINS ||
-    'https://leading-infinitely-tadpole.ngrok-free.app',
+    'https://leading-infinitely-tadpole.ngrok-free.app http://http://10.130.65.255:8081 https://http://10.130.65.255:8081',
 };
 
 export default config;
