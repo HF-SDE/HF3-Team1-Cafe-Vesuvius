@@ -74,8 +74,9 @@ services:
     restart: unless-stopped
     command:
       - "http"
-      - "--url=leading-infinitely-tadpole.ngrok-free.app"
+      - "--url=https://smart-randomly-tick.ngrok-free.app"
       - "http://reverse-proxy:80"
+      - "--response-header-add='Access-Control-Allow-Origin: *'"
     ports:
       - 4040:4040
     env_file:
