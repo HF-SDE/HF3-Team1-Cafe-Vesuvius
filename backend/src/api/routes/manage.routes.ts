@@ -9,13 +9,17 @@ import { validateParams } from '@middlewares/validate.mw';
 const router = Router();
 
 router.use('/', verifyJWT);
-router.use('/:id', validateParams);
 
 router.get(
   '/user',
   isAllowed(['administrator:users:view']),
   ManageController.getUsers,
 );
-router.get(['/', '/:id'], isAllowed(['permission:view']), getAll());
+router.get(
+  ['/permission', '/permission/:id'],
+  isAllowed(['permission:view']),
+  validateParams,
+  getAll('permission'),
+);
 
 export default router;
