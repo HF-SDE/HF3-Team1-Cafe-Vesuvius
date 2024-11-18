@@ -30,16 +30,6 @@ export default function UserProfileScreen() {
     // Add loading screen
   }
 
-  if (error) {
-    return (
-      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-        <Text style={[styles.errorText, { color: TextColor }]}>
-          Error: {error}
-        </Text>
-      </View>
-    );
-  }
-
   return (
     <TemplateLayout pageName="ProfilePage">
       <View style={[styles.container]}>

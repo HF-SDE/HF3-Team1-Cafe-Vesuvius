@@ -19,7 +19,12 @@ export function useUserProfile() {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiClient.get("/profile");
+        //const response = await apiClient.get("/profile");
+
+        const response = await apiClient.get("/profile", {
+          withCredentials: true,
+          validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+        });
 
         setUserProfile(response.data.data);
       } catch (err: any) {
