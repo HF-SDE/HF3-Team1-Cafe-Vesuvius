@@ -74,7 +74,7 @@ services:
     restart: unless-stopped
     command:
       - "http"
-      - "--url=https://leading-infinitely-tadpole.ngrok-free.app"
+      - "--url=https://<your-url>.ngrok-free.app"
       - "http://reverse-proxy:80"
     ports:
       - 4040:4040
