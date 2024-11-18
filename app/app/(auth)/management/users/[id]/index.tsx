@@ -118,37 +118,40 @@ export default function EditCreateUserPage() {
       buttonTitle="Cancel"
     >
       <View style={styles.container}>
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={user.username}
+          onChangeText={(value) => handleChange("username", value)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Name"
+          value={user.name}
+          onChangeText={(value) => handleChange("name", value)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Email"
+          value={user.email}
+          onChangeText={(value) => handleChange("email", value)}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Initials"
+          value={user.initials}
+          onChangeText={(value) => handleChange("initials", value)}
+        />
+        <Text style={styles.permissionsTitle}>Active</Text>
+
+        <Switch
+          onValueChange={(newValue) => handleChange("active", newValue)}
+          value={user.active}
+        />
+        <Text style={styles.permissionsTitle}>Permissions</Text>
+
         <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            value={user.username}
-            onChangeText={(value) => handleChange("username", value)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Name"
-            value={user.name}
-            onChangeText={(value) => handleChange("name", value)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={user.email}
-            onChangeText={(value) => handleChange("email", value)}
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Initials"
-            value={user.initials}
-            onChangeText={(value) => handleChange("initials", value)}
-          />
-          <Switch
-            onValueChange={(newValue) => handleChange("active", newValue)}
-            value={user.active}
-          />
           <View style={styles.permissionsContainer}>
-            <Text style={styles.permissionsTitle}>Permissions</Text>
             {isLoading ? (
               <Text>Loading...</Text>
             ) : error ? (
@@ -179,9 +182,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
+    paddingBottom: 80, // Add padding at the bottom to prevent overlap with buttons
   },
   scrollViewContainer: {
     flexGrow: 1,
+    paddingBottom: 100, // Ensure space for buttons at the bottom
   },
   input: {
     height: 40,
