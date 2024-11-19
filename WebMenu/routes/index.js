@@ -5,7 +5,7 @@ const router = Router();
 /* GET home page. */
 router.get("/", async (req, res, next) => {
   const { data } = await axios
-    .get(process.env.BACKEND_URL + "menu")
+    .get(process.env.BACKEND_URL + "/menu")
     .catch((err) => {
       console.log(err);
 
