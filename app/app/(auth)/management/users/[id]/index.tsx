@@ -18,6 +18,8 @@ import Button from "@/components/DefaultButton";
 
 import Switch from "@/components/Switch";
 
+import PermissionsTabView from "@/components/PermissionsTabView";
+
 import { TabView, SceneMap } from "react-native-tab-view";
 
 export default function EditCreateUserPage() {
@@ -96,47 +98,6 @@ export default function EditCreateUserPage() {
       return { ...prevUser, permissions: updatedPermissions };
     });
   };
-  // Function to filter permissions based on tab category
-  const renderPermissionsForCategory = (category: string) => {
-    // const filteredPermissions = permissions.filter(
-    //   (permission) => permission.code.startsWith(category + ":") // Ensure it starts with the category followed by a colon
-    // );
-    return (
-      <FlatList
-        data={permissions}
-        keyExtractor={(item) => item.code}
-        renderItem={renderPermissionItem}
-      />
-    );
-  };
-
-  // Render permission item
-  const renderPermissionItem = ({
-    item,
-  }: {
-    item: { code: string; description: string };
-  }) => {
-    const isActive = user.permissions.some(
-      (permission) => permission.code === item.code
-    );
-    return (
-      <View style={styles.permissionItem}>
-        <Text style={styles.permissionDescription}>{item.description}</Text>
-        <Switch
-          value={isActive}
-          onValueChange={(newValue) =>
-            handlePermissionToggle(item.code, newValue)
-          }
-        />
-      </View>
-    );
-  };
-
-  const renderScene = SceneMap({
-    order: () => renderPermissionsForCategory("Order"),
-    reservation: () => renderPermissionsForCategory("Reservation"),
-    // Add more scenes as needed
-  });
 
   return (
     <TemplateLayout
@@ -163,25 +124,28 @@ export default function EditCreateUserPage() {
           value={user.email}
           onChangeText={(value) => handleChange("email", value)}
         />
-        <TextInput
-          style={styles.input}
-          placeholder="Initials"
-          value={user.initials}
-          onChangeText={(value) => handleChange("initials", value)}
-        />
-        <Text style={styles.permissionsTitle}>Active</Text>
+        <View style={styles.initialsActiveContainer}>
+          <TextInput
+            style={styles.input}
+            placeholder="Initials"
+            value={user.initials}
+            onChangeText={(value) => handleChange("initials", value)}
+          />
+          <View style={styles.activeSwitchContainer}>
+            <Text style={styles.permissionsTitle}>Active</Text>
 
-        <Switch
-          onValueChange={(newValue) => handleChange("active", newValue)}
-          value={user.active}
-        />
+            <Switch
+              onValueChange={(newValue) => handleChange("active", newValue)}
+              value={user.active}
+            />
+          </View>
+        </View>
+
         <Text style={styles.permissionsTitle}>Permissions</Text>
 
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: 300 }}
+        <PermissionsTabView
+          permissions={permissions ? permissions : []}
+          userPermissions={user.permissions}
         />
 
         <View style={styles.buttonContainer}>
@@ -247,5 +211,14 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
+  },
+  initialsActiveContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  activeSwitchContainer: {
+    display: "flex",
+    flexDirection: "row",
   },
 });

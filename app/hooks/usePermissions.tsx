@@ -2,15 +2,12 @@ import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
 
 interface Permissions {
-  username: string;
-  email: string;
-  initials: string;
-  name: string;
-  active: boolean;
+  code: string;
+  description: string;
 }
 
 export function usePermissions() {
-  const [permissions, setPermissions] = useState<Permissions | null>(null);
+  const [permissions, setPermissions] = useState<Permissions[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
