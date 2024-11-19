@@ -8,9 +8,9 @@ router.get("/", async (req, res, next) => {
     .get("https://swan-measured-suddenly.ngrok-free.app/api/menu")
     .catch((err) => {
       console.log(err);
-    });
 
-    console.log(data)
+      return { data: { data: [] } };
+    });
 
   res.render("index", {
     title: "Menu",
