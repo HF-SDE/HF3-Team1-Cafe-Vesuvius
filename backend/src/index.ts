@@ -12,7 +12,6 @@ import menuRoutes from '@routes/menu.routes';
 import orderRoutes from '@routes/order.routes';
 import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
-import resetRoutes from '@routes/reset.routes';
 import stockRoutes from '@routes/stock.routes';
 import tableRoutes from '@routes/table.routes';
 
@@ -41,7 +40,6 @@ app.use(limiter);
 app.use(`/`, authRoutes);
 app.use(`/stock`, stockRoutes);
 app.use(`/table`, tableRoutes);
-app.use(`/reset`, resetRoutes);
 app.use(`/reservation`, reservationRoutes);
 app.use(`/order`, orderRoutes);
 app.use(`/manage`, manageRoutes);

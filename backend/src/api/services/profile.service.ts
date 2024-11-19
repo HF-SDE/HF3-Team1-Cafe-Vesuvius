@@ -1,7 +1,6 @@
 import { hash, verify } from 'argon2';
-import { error } from 'node:console';
 
-import { APIResponse, Status } from '@api-types/general.types';
+import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import {
   ChangePasswordBase64Schema,
@@ -79,7 +78,7 @@ export async function changePassword(
     if (!updateResult) {
       return {
         status: Status.UpdateFailed,
-        message: 'Failed to update password1',
+        message: 'Failed to update password',
       };
     }
 
@@ -111,7 +110,7 @@ export async function getProfile(
     if (tokenValidation.error) {
       return {
         status: Status.InvalidDetails,
-        message: tokenValidation.error.message as string,
+        message: tokenValidation.error.message,
       };
     }
     const tokenData = await prisma.token.findUnique({
