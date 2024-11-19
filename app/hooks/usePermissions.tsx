@@ -9,18 +9,18 @@ interface Permissions {
   active: boolean;
 }
 
-export function useUserProfile() {
+export function usePermissions() {
   const [permissions, setPermissions] = useState<Permissions | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
+    const fetchPermissions = async () => {
       try {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiClient.get("/Permissions");
+        const response = await apiClient.get("/manage/permission");
 
         setPermissions(response.data.data);
       } catch (err: any) {
@@ -30,7 +30,7 @@ export function useUserProfile() {
       }
     };
 
-    fetchUserProfile();
+    fetchPermissions();
   }, []);
 
   return { permissions, isLoading, error };

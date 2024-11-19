@@ -5,15 +5,20 @@ import {
   TextInput,
   Alert,
   FlatList,
+  ScrollView,
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import { useUsers } from "@/hooks/useUsers"; // Assuming you have a hook for user management
+import { usePermissions } from "@/hooks/usePermissions";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import Switch from "@/components/Switch";
 import Button from "@/components/DefaultButton";
+
+import Switch from "@/components/Switch";
+
+import { TabView, SceneMap } from "react-native-tab-view";
 
 export default function EditCreateUserPage() {
   const route = useRoute();
@@ -25,8 +30,8 @@ export default function EditCreateUserPage() {
   const SecondaryColor = useThemeColor({}, "secondary");
 
   const { users, isLoading, error } = useUsers(id as string);
+  const { permissions } = usePermissions();
 
-  // Use a state object to store user fields
   const [user, setUser] = useState({
     username: "",
     name: "",
@@ -35,6 +40,12 @@ export default function EditCreateUserPage() {
     active: true,
     permissions: [] as { code: string; description: string }[], // Add permissions to state
   });
+  const [index, setIndex] = useState(0); // Index for tabs
+  const [routes] = useState([
+    { key: "order", title: "Order" },
+    { key: "reservation", title: "Reservation" },
+    // Add more tabs as needed
+  ]);
 
   useEffect(() => {
     if (users) {
@@ -58,11 +69,9 @@ export default function EditCreateUserPage() {
   const handleSave = () => {
     if (id) {
       // Update user logic here
-      // updateUser(id, user);
       Alert.alert("User updated successfully");
     } else {
       // Create new user logic here
-      // createUser(user);
       Alert.alert("User created successfully");
     }
   };
@@ -74,16 +83,60 @@ export default function EditCreateUserPage() {
     }));
   };
 
+  const handlePermissionToggle = (
+    permissionCode: string,
+    isEnabled: boolean
+  ) => {
+    setUser((prevUser) => {
+      const updatedPermissions = isEnabled
+        ? [...prevUser.permissions, { code: permissionCode, description: "" }]
+        : prevUser.permissions.filter(
+            (permission) => permission.code !== permissionCode
+          );
+      return { ...prevUser, permissions: updatedPermissions };
+    });
+  };
+  // Function to filter permissions based on tab category
+  const renderPermissionsForCategory = (category: string) => {
+    // const filteredPermissions = permissions.filter(
+    //   (permission) => permission.code.startsWith(category + ":") // Ensure it starts with the category followed by a colon
+    // );
+    return (
+      <FlatList
+        data={permissions}
+        keyExtractor={(item) => item.code}
+        renderItem={renderPermissionItem}
+      />
+    );
+  };
+
   // Render permission item
   const renderPermissionItem = ({
     item,
   }: {
     item: { code: string; description: string };
-  }) => (
-    <View style={styles.permissionItem}>
-      <Text style={styles.permissionDescription}>{item.description}</Text>
-    </View>
-  );
+  }) => {
+    const isActive = user.permissions.some(
+      (permission) => permission.code === item.code
+    );
+    return (
+      <View style={styles.permissionItem}>
+        <Text style={styles.permissionDescription}>{item.description}</Text>
+        <Switch
+          value={isActive}
+          onValueChange={(newValue) =>
+            handlePermissionToggle(item.code, newValue)
+          }
+        />
+      </View>
+    );
+  };
+
+  const renderScene = SceneMap({
+    order: () => renderPermissionsForCategory("Order"),
+    reservation: () => renderPermissionsForCategory("Reservation"),
+    // Add more scenes as needed
+  });
 
   return (
     <TemplateLayout
@@ -116,25 +169,20 @@ export default function EditCreateUserPage() {
           value={user.initials}
           onChangeText={(value) => handleChange("initials", value)}
         />
+        <Text style={styles.permissionsTitle}>Active</Text>
+
         <Switch
           onValueChange={(newValue) => handleChange("active", newValue)}
           value={user.active}
         />
+        <Text style={styles.permissionsTitle}>Permissions</Text>
 
-        <View style={styles.permissionsContainer}>
-          <Text style={styles.permissionsTitle}>Permissions</Text>
-          {isLoading ? (
-            <Text>Loading...</Text>
-          ) : error ? (
-            <Text style={styles.errorText}>{error}</Text>
-          ) : (
-            <FlatList
-              data={user.permissions}
-              keyExtractor={(item) => item.code}
-              renderItem={renderPermissionItem}
-            />
-          )}
-        </View>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: 300 }}
+        />
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={handleSave} />
@@ -152,6 +200,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
+    paddingBottom: 80, // Add padding at the bottom to prevent overlap with buttons
+  },
+  scrollViewContainer: {
+    flexGrow: 1,
+    paddingBottom: 100, // Ensure space for buttons at the bottom
   },
   input: {
     height: 40,
@@ -173,9 +226,9 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ddd",
-  },
-  permissionCode: {
-    fontWeight: "bold",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   permissionDescription: {
     marginTop: 5,
@@ -190,5 +243,9 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    position: "absolute",
+    bottom: 20,
+    left: 20,
+    right: 20,
   },
 });

@@ -9,11 +9,9 @@ import { router } from "expo-router";
 const baseURL = process.env.EXPO_PUBLIC_API_URL;
 const apiClient = axios.create({
   baseURL: baseURL,
-  withCredentials: true,
 });
 const localApiClient = axios.create({
   baseURL: baseURL,
-  withCredentials: true,
 });
 
 // Axios request interceptor
