@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <h1><%= title %></h1>
+    <p>Welcome to <%= title %></p>
+    <ul>
+      <% items.forEach((item, index) => { %>
+      <li>
+        <div><%= item.name %></div>
+        <div><%= item.price %></div>
+      </li>
+      <% }) %>
+    </ul>
+  </body>
+</html>
+
+<style>
+  li {
+    width: 20rem;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>

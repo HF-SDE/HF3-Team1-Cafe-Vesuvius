@@ -145,7 +145,7 @@ export default function EditCreateUserPage() {
 
         <PermissionsTabView
           permissions={permissions ? permissions : []}
-          userPermissions={user.permissions}
+          userPermissions={user.permissions ? user.permissions : []}
         />
 
         <View style={styles.buttonContainer}>
