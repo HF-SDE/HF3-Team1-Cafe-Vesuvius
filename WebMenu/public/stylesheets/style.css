@@ -25,6 +25,7 @@ h1 {
 }
 
 .menu-item {
+  width: 100%;
   margin-bottom: 20px;
   padding: 15px;
   border: 1px solid light-dark(#d5af95, #6a442a);
