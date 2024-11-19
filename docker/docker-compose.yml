@@ -15,7 +15,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ../config/environment-variables/backend.dev.env
+      - ../config/environment-variables/.env.backend.dev
     volumes:
       - ../backend/src:/usr/src/app/src
       - ../schemas:/usr/src/app/schemas
@@ -46,7 +46,7 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - ../config/environment-variables/db.dev.env
+      - ../config/environment-variables/.env.db.dev
     volumes:
       - "mongo1_data:/data/db"
       - "mongo1_config:/data/configdb"
@@ -79,7 +79,7 @@ services:
     ports:
       - 4040:4040
     env_file:
-      - ../config/environment-variables/grok.dev.env
+      - ../config/environment-variables/.env.grok.dev
     networks:
       - public
       - internal
