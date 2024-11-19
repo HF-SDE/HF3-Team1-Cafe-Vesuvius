@@ -54,6 +54,19 @@ services:
       - public
       - internal
 
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - ../config/environment-variables/.env.db.dev
+    networks:
+      - internal
+      - public
+
   reverse-proxy:
     container_name: reverse-proxy
     build:
@@ -70,8 +83,8 @@ services:
       - internal
 
   ngrok:
+    container_name: ngrok
     image: ngrok/ngrok:latest
-    restart: unless-stopped
     command:
       - "http"
       - "http://reverse-proxy:80"
@@ -94,3 +107,4 @@ networks:
 volumes:
   mongo1_data: {}
   mongo1_config: {}
+  postgres_data: {}
