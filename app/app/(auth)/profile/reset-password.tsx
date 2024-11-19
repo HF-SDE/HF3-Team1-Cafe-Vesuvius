@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import apiClient from "../../../utils/apiClient"; // Import your API client
+//import apiClient from "../../../utils/apiClient"; // Import your API client
+import { useUserProfile } from "@/hooks/useUserProfile"; // Import the hook
+
 import { Buffer } from "buffer";
 
 interface ModalScreenProps {
@@ -17,6 +19,8 @@ interface ModalScreenProps {
 }
 
 export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
+  const { resetPassword } = useUserProfile(); // Use the hook
+
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -38,32 +42,18 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     }
 
     try {
-      const response = await resetPassword();
+      console.log(oldPassword + newPassword);
+
+      const response = await resetPassword(oldPassword, newPassword);
       if (response === "success") {
         onClose(); // Close the modal on success
       } else {
         setErrorMessage(response || "An error occurred.");
       }
     } catch (error) {
+      console.error(error);
+
       setErrorMessage("An error occurred while resetting password.");
-    }
-  };
-
-  const resetPassword = async (): Promise<string> => {
-    const payload = {
-      oldPassword: Buffer.from(oldPassword).toString("base64"),
-      newPassword: Buffer.from(newPassword).toString("base64"),
-    };
-
-    // Replace `/reset-password` with your actual API endpoint
-    try {
-      //const response = await apiClient.put("/profile/reset", payload);
-      const response = await apiClient.put("/profile/reset", payload, {
-        validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
-      });
-      return response.status === 200 ? "success" : response.data.message;
-    } catch {
-      return "Something went wrong on our end. Please contact support";
     }
   };
 
