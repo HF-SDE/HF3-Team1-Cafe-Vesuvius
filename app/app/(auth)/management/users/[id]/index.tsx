@@ -18,6 +18,8 @@ import Button from "@/components/DefaultButton";
 
 import Switch from "@/components/Switch";
 
+import { TabView, SceneMap } from "react-native-tab-view";
+
 export default function EditCreateUserPage() {
   const route = useRoute();
   const { id } = useLocalSearchParams();
@@ -38,6 +40,12 @@ export default function EditCreateUserPage() {
     active: true,
     permissions: [] as { code: string; description: string }[], // Add permissions to state
   });
+  const [index, setIndex] = useState(0); // Index for tabs
+  const [routes] = useState([
+    { key: "order", title: "Order" },
+    { key: "reservation", title: "Reservation" },
+    // Add more tabs as needed
+  ]);
 
   useEffect(() => {
     if (users) {
@@ -88,6 +96,19 @@ export default function EditCreateUserPage() {
       return { ...prevUser, permissions: updatedPermissions };
     });
   };
+  // Function to filter permissions based on tab category
+  const renderPermissionsForCategory = (category: string) => {
+    // const filteredPermissions = permissions.filter(
+    //   (permission) => permission.code.startsWith(category + ":") // Ensure it starts with the category followed by a colon
+    // );
+    return (
+      <FlatList
+        data={permissions}
+        keyExtractor={(item) => item.code}
+        renderItem={renderPermissionItem}
+      />
+    );
+  };
 
   // Render permission item
   const renderPermissionItem = ({
@@ -110,6 +131,12 @@ export default function EditCreateUserPage() {
       </View>
     );
   };
+
+  const renderScene = SceneMap({
+    order: () => renderPermissionsForCategory("Order"),
+    reservation: () => renderPermissionsForCategory("Reservation"),
+    // Add more scenes as needed
+  });
 
   return (
     <TemplateLayout
@@ -150,21 +177,12 @@ export default function EditCreateUserPage() {
         />
         <Text style={styles.permissionsTitle}>Permissions</Text>
 
-        <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-          <View style={styles.permissionsContainer}>
-            {isLoading ? (
-              <Text>Loading...</Text>
-            ) : error ? (
-              <Text style={styles.errorText}>{error}</Text>
-            ) : (
-              <FlatList
-                data={permissions}
-                keyExtractor={(item) => item.code}
-                renderItem={renderPermissionItem}
-              />
-            )}
-          </View>
-        </ScrollView>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: 300 }}
+        />
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={handleSave} />
