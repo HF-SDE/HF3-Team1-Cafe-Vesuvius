@@ -1,117 +1,185 @@
+import React, { useState } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
+  Platform,
   StyleSheet,
-  View,
   Text,
+  View,
   TextInput,
-  Button,
-  FlatList,
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLayoutEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import TemplateLayout from "@/components/TemplateLayout";
+import apiClient from "../../../utils/apiClient";
+import { Buffer } from "buffer";
+import { table } from "@/models/TableModels";
+import { Reservation } from "@/models/ReservationModels";
+import DatePicker from "react-native-date-picker";
 
-export default function AddOrderScreen() {
+interface ModalScreenProps {
+  onClose: () => void;
+}
+
+export default function NewReservationModal({ onClose }: ModalScreenProps) {
+  const [reservation, setReservations] = useState<Reservation>();
+  const [datePicker, setDatePicker] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-  const navigation = useNavigation();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const handleReset = async () => {
+    if (!reservation?.name || !reservation?.reservationTime || !reservation?.email) {
+      setErrorMessage("Please fill out all fields!");
+      return;
+    }
+    if (reservation?.reservationTime !== reservation?.email) {
+      setErrorMessage("Passwords does not match!");
+      return;
+    }
 
-  // Example reservations (replace with your actual data)
-  const reservations = [
-    { id: 1, name: "Reservation 1" },
-    { id: 2, name: "Reservation 2" },
-    { id: 3, name: "Reservation 3" },
-  ];
-
-  const handleOrderSubmission = () => {
-    console.log("Order Submitted:", {
-      reservation: selectedReservation,
-      // Add productName, quantity, and price if needed
-    });
+    try {
+      const response = await createReservation();
+      if (response === "success") {
+        onClose(); // Close the modal on success
+      } else {
+        setErrorMessage(response || "An error occurred.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred while create reservation.");
+    }
   };
 
-  const filteredReservations = reservations.filter((reservation) =>
-    reservation.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const createReservation = async (): Promise<string> => {
+    if (!reservation) return "Something went wrong on our end. Please contact support";
+
+    if (!reservation.email || !reservation.phone) {
+      return "Please fill out all fields!";
+    }
+
+    const payload: Reservation = {
+      amount: reservation.amount,
+      email: reservation.email,
+      name: reservation.name,
+      phone: reservation.phone,
+      reservationTime: reservation.reservationTime,
+      tables: reservation.tables,
+    };
+
+    try {
+      //const response = await apiClient.put("/profile/reset", payload);
+      const response = await apiClient.post("/reservation/reset", payload, {
+        validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+      });
+      return response.status === 200 ? "success" : response.data.message;
+    } catch {
+      return "Something went wrong on our end. Please contact support";
+    }
+  };
 
   return (
-    <TemplateLayout pageName="ReservationCreatePage" title="New reservation">
-      <View style={[styles.container]}>
-        <View style={styles.spacer} />
+    <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+      <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={handleOrderSubmission}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Submit Order
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <TextInput
+        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
+        placeholder="Name"
+        placeholderTextColor={SecondaryColor}
+        value={reservation?.name}
+        onChangeText={(name) => setReservations({ ...reservation!, name })}
+      />
+      <TextInput
+        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
+        placeholder="Phone"
+        placeholderTextColor={SecondaryColor}
+        inputMode="tel"
+        value={reservation?.phone}
+        onChangeText={(phone) => setReservations({ ...reservation!, phone })}
+      />
+      <TextInput
+        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
+        placeholder="email"
+        placeholderTextColor={SecondaryColor}
+        secureTextEntry
+        value={reservation?.email}
+        onChangeText={(email) => setReservations({ ...reservation!, email })}
+      />
+
+      <DatePicker
+        onDateChange={(date) => { setReservations({ ...reservation!, reservationTime: date }); }}
+        date={new Date(reservation?.reservationTime || new Date())}
+      />
+
+      {errorMessage ? (
+        <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
+      ) : null}
+
+      <View style={styles.buttonContainer}>
+        <TouchableOpacity
+          style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
+          onPress={handleReset}
+        >
+          <Text style={styles.buttonText}>Reset</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
+          onPress={onClose}
+        >
+          <Text style={styles.buttonText}>Cancel</Text>
+        </TouchableOpacity>
       </View>
-    </TemplateLayout>
+
+      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
-    justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
-  },
-  dropdown: {
-    position: "absolute",
-    backgroundColor: "white",
     width: "100%",
-    maxHeight: 150,
-    elevation: 5,
-    zIndex: 1000,
-  },
-  dropdownItem: {
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
+    borderWidth: 1,
+    borderRadius: 5,
+    marginVertical: 10,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    marginTop: 20,
   },
-  button: {
+  resetButton: {
     flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
+    padding: 10,
     borderRadius: 5,
-    margin: 5,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  cancelButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
   },
   buttonText: {
-    fontSize: 24,
+    color: "#fff",
     fontWeight: "bold",
   },
-  spacer: {
-    flex: 1,
+  errorText: {
+    marginTop: 10,
+    fontSize: 14,
+    textAlign: "center",
   },
 });

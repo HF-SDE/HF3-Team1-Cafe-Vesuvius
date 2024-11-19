@@ -24,6 +24,8 @@ import PermissionsTabView from "@/components/PermissionsTabView";
 
 import { TabView, SceneMap } from "react-native-tab-view";
 
+import { UserProfile } from "../../../../../models/userModels";
+
 export default function EditCreateUserPage() {
   const route = useRoute();
   const { id } = useLocalSearchParams();
@@ -35,10 +37,13 @@ export default function EditCreateUserPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const { users, isLoading, error } = useUsers(id as string);
+  const { users, isLoading, error, updateUser, createUser } = useUsers(
+    id as string
+  );
   const { permissions } = usePermissions();
 
   const [user, setUser] = useState({
+    id: "",
     username: "",
     name: "",
     email: "",
@@ -46,12 +51,10 @@ export default function EditCreateUserPage() {
     active: true,
     permissions: [] as { code: string; description: string }[], // Add permissions to state
   });
-  const [index, setIndex] = useState(0); // Index for tabs
-  const [routes] = useState([
-    { key: "order", title: "Order" },
-    { key: "reservation", title: "Reservation" },
-    // Add more tabs as needed
-  ]);
+
+  const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
+    {}
+  );
 
   useEffect(() => {
     if (users) {
@@ -64,14 +67,39 @@ export default function EditCreateUserPage() {
   }, [id, users]);
 
   const handleSave = () => {
-    if (id) {
-      // Update user logic here
+    const changedFieldsCount = Object.keys(changedFields).length;
+
+    if (changedFieldsCount === 0) {
+      console.log("No changes");
+
+      navigation.goBack();
     } else {
-      // Create new user logic here
+      console.log("Update/Create");
+
+      if (id) {
+        // Update user logic here
+        updateUser(user);
+        console.log(changedFields);
+      } else {
+        // Create new user logic here
+      }
     }
   };
 
   const handleChange = (field: string, value: string | boolean) => {
+    if (value !== changedFields[field]) {
+      const origValue = user[field] || "";
+      setChangedFields((prev) => ({
+        ...prev,
+        [field]: origValue,
+      }));
+    } else {
+      // If the value is changed back to original, remove from changedFields
+      const updatedChangedFields = { ...changedFields };
+      delete updatedChangedFields[field];
+      setChangedFields(updatedChangedFields);
+    }
+
     setUser((prevUser) => ({
       ...prevUser,
       [field]: value,
@@ -82,6 +110,20 @@ export default function EditCreateUserPage() {
     permissionCode: string,
     isEnabled: boolean
   ) => {
+    if (isEnabled !== changedFields[permissionCode]) {
+      const origValue = user.permissions.some(
+        (permission) => permission.code === permissionCode
+      );
+      setChangedFields((prev) => ({
+        ...prev,
+        [permissionCode]: origValue,
+      }));
+    } else {
+      // If the value is changed back to original, remove from changedFields
+      const updatedChangedFields = { ...changedFields };
+      delete updatedChangedFields[permissionCode];
+      setChangedFields(updatedChangedFields);
+    }
     setUser((prevUser) => {
       const updatedPermissions = isEnabled
         ? [...prevUser.permissions, { code: permissionCode, description: "" }]

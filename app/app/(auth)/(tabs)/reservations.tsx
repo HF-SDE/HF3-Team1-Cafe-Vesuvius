@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   View,
   SafeAreaView,
+  Modal,
 } from "react-native";
 import { Text } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -13,44 +14,26 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CheckPermission from "@/components/CheckPermission";
 import TemplateLayout from "@/components/TemplateLayout";
 import AddButton from "@/components/AddButton";
+import { Reservation } from "@/models/ReservationModels";
+import { useReservation } from "@/hooks/useResevation";
+import ResetPasswordModal from "../profile/reset-password";
+import NewReservationModal from "../reservation/new-reservation";
 
-interface OrderItem {
-  id: string;
-  items: { name: string; quantity: number; price: number }[];
-  total: number;
-}
+export default function ReservationsOverview() {
+  const { reservations, isLoading, error } = useReservation();
+  const [isModalVisible, setModalVisible] = useState(false);
 
-const sampleOrders: OrderItem[] = [
-  { id: "1", items: [{ name: "Coffee", quantity: 2, price: 3.5 }], total: 7.0 },
-  { id: "2", items: [{ name: "Tea", quantity: 1, price: 2.5 }], total: 2.5 },
-  {
-    id: "3",
-    items: [{ name: "Sandwich", quantity: 3, price: 5.0 }],
-    total: 15.0,
-  },
-  // Add more sample orders as needed
-];
-
-export default function OrderOverview() {
   const router = useRouter();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const [orders, setOrders] = useState<OrderItem[]>(sampleOrders);
-
-  const handleAddOrder = () => {
-    router.push("/reservation/new-reservation");
+  const handleAddReservation = () => {
   };
 
-  const renderOrderItem = ({ item }: { item: OrderItem }) => (
+  const renderReservationItem = ({ item }: { item: Reservation }) => (
     <View style={styles.orderItem}>
-      <Text style={[styles.orderText, { color: TextColor }]}>
-        Order #{item.id}:{" "}
-        {item.items.map((i) => `${i.quantity} x ${i.name}`).join(", ")} - Total:
-        ${item.total.toFixed(2)}
-      </Text>
     </View>
   );
 
@@ -58,19 +41,37 @@ export default function OrderOverview() {
     <TemplateLayout pageName="ReservationPage">
       <SafeAreaView style={[styles.container]}>
         <FlatList
-          data={orders}
-          renderItem={renderOrderItem}
+          data={reservations}
+          renderItem={renderReservationItem}
           keyExtractor={(item) => item.id}
-          style={styles.orderList}
+          style={styles.reservationList}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
         />
+
         <AddButton
-          onPress={handleAddOrder}
+          onPress={() => setModalVisible(true)}
           requiredPermission={["reservation:create"]}
         />
+
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
+        >
+          <View style={styles.modalOverlay}>
+            <View
+              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+            >
+              <NewReservationModal onClose={() => setModalVisible(false)} />
+            </View>
+          </View>
+        </Modal>
       </SafeAreaView>
+
     </TemplateLayout>
+
   );
 }
 
@@ -79,7 +80,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 20,
   },
-  orderList: {
+  reservationList: {
     flex: 1,
   },
   orderItem: {
@@ -99,5 +100,26 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     alignSelf: "center",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 400,
+    height: "50%",
+    minHeight: 400,
+    // backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
+  },
+  button: {
+    paddingVertical: 10,
+    alignItems: "center",
+    borderRadius: 5,
+    marginBottom: 10,
   },
 });

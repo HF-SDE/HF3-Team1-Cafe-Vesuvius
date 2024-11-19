@@ -31,15 +31,21 @@ export default function Index() {
   const Logo = colorScheme === "dark" ? LogoDark : LogoLight; // Choose logo based on theme
 
   const handleLogin = async () => {
-    const isUsernameValid = username.trim() !== "";
-    const isPasswordValid = password.trim() !== "";
+    const trimedUsername = username.trim();
+    const trimedPassword = password.trim();
+
+    setUsername(trimedUsername);
+    setUsername(trimedPassword);
+
+    const isUsernameValid = trimedUsername !== "";
+    const isPasswordValid = trimedPassword !== "";
 
     setIsUsernameEmpty(!isUsernameValid);
     setIsPasswordEmpty(!isPasswordValid);
 
     if (isUsernameValid && isPasswordValid) {
       setIsLoading(true);
-      const signInResult = await signIn(username, password);
+      const signInResult = await signIn(trimedUsername, trimedPassword);
 
       if (signInResult === "authenticated") {
         setErrorMessage("");
