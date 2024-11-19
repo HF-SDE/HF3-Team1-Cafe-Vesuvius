@@ -5,16 +5,18 @@
     <link rel="stylesheet" href="/stylesheets/style.css" />
   </head>
   <body>
-    <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
-    <ul>
-      <% items.forEach((item, index) => { %>
-      <li>
-        <div><%= item.name %></div>
-        <div><%= item.price %></div>
-      </li>
-      <% }) %>
-    </ul>
+    <div class="menu-container">
+      <h1><%= title %></h1>
+      <!-- <p>Welcome to <%= title %></p> -->
+      <ul>
+        <% items.map((item, index) => { %>
+        <li class="menu-item">
+          <div><h3><%= item.name %></h3></div>
+          <div class="price"><%= item.price %>,-</div>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
   </body>
 </html>
 
