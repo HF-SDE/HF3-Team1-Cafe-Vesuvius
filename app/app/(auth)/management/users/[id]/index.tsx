@@ -2,7 +2,6 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   Alert,
   FlatList,
   ScrollView,
@@ -15,6 +14,9 @@ import TemplateLayout from "@/components/TemplateLayout";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
+//import { TextInput } from "react-native-paper";
+import TextInput from "@/components/TextInput";
+import { useNavigation } from "@react-navigation/native";
 
 import Switch from "@/components/Switch";
 
@@ -25,6 +27,8 @@ import { TabView, SceneMap } from "react-native-tab-view";
 export default function EditCreateUserPage() {
   const route = useRoute();
   const { id } = useLocalSearchParams();
+
+  const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -51,19 +55,10 @@ export default function EditCreateUserPage() {
 
   useEffect(() => {
     if (users) {
-      const foundUser = users[0] || {
-        username: "",
-        name: "",
-        email: "",
-        initials: "",
-        active: true,
-        permissions: [], // Default empty permissions
-      };
+      const foundUser = users[0];
 
       if (id && foundUser) {
-        setUser({
-          ...foundUser, // Spread the found user's data
-        });
+        setUser(foundUser);
       }
     }
   }, [id, users]);
@@ -71,10 +66,8 @@ export default function EditCreateUserPage() {
   const handleSave = () => {
     if (id) {
       // Update user logic here
-      Alert.alert("User updated successfully");
     } else {
       // Create new user logic here
-      Alert.alert("User created successfully");
     }
   };
 
@@ -108,28 +101,28 @@ export default function EditCreateUserPage() {
       <View style={styles.container}>
         <TextInput
           style={styles.input}
-          placeholder="Username"
+          label="Username"
           value={user.username}
-          onChangeText={(value) => handleChange("username", value)}
+          onChange={(value) => handleChange("username", value)}
         />
         <TextInput
           style={styles.input}
-          placeholder="Name"
+          label="Name"
           value={user.name}
-          onChangeText={(value) => handleChange("name", value)}
+          onChange={(value) => handleChange("name", value)}
         />
         <TextInput
           style={styles.input}
-          placeholder="Email"
+          label="Email"
           value={user.email}
-          onChangeText={(value) => handleChange("email", value)}
+          onChange={(value) => handleChange("email", value)}
         />
         <View style={styles.initialsActiveContainer}>
           <TextInput
-            style={styles.input}
-            placeholder="Initials"
+            style={[styles.input, styles.initialsInput]}
+            label="Initials"
             value={user.initials}
-            onChangeText={(value) => handleChange("initials", value)}
+            onChange={(value) => handleChange("initials", value)}
           />
           <View style={styles.activeSwitchContainer}>
             <Text style={styles.permissionsTitle}>Active</Text>
@@ -146,10 +139,11 @@ export default function EditCreateUserPage() {
         <PermissionsTabView
           permissions={permissions ? permissions : []}
           userPermissions={user.permissions ? user.permissions : []}
+          onPermissionToggle={handlePermissionToggle}
         />
 
         <View style={styles.buttonContainer}>
-          <Button title="Cancel" onPress={handleSave} />
+          <Button title="Cancel" onPress={() => navigation.goBack()} />
           <Button
             title={id !== "new" ? "Save" : "Create"}
             onPress={handleSave}
@@ -172,10 +166,10 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
     marginBottom: 15,
-    paddingLeft: 10,
+  },
+  initialsInput: {
+    width: "50%",
   },
   permissionsContainer: {
     marginTop: 20,
@@ -207,10 +201,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    position: "absolute",
-    bottom: 20,
-    left: 20,
-    right: 20,
   },
   initialsActiveContainer: {
     display: "flex",
@@ -220,5 +210,8 @@ const styles = StyleSheet.create({
   activeSwitchContainer: {
     display: "flex",
     flexDirection: "row",
+    justifyContent: "space-between",
+    gap: 20,
+    alignSelf: "center",
   },
 });

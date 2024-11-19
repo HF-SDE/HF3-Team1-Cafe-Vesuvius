@@ -25,10 +25,12 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
   // Define categories based on permission prefixes
   const categories = Array.from(
     new Set(permissions.map((permission) => permission.code.split(":")[0]))
-  ).map((key) => ({
-    key,
-    title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize category names
-  }));
+  )
+    .map((key) => ({
+      key,
+      title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize category names
+    }))
+    .sort((a, b) => a.key.localeCompare(b.key));
 
   const renderPermissionsForCategory = (category: string) => {
     const filteredPermissions = permissions.filter((permission) =>
@@ -40,6 +42,8 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
         data={filteredPermissions}
         keyExtractor={(item) => item.code}
         renderItem={renderPermissionItem}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
       />
     );
   };
@@ -74,12 +78,16 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     return renderPermissionsForCategory(route.key);
   };
 
+  if (!permissions || !userPermissions || permissions.length === 0) {
+    return <Text>Loading</Text>;
+  }
+
   return (
     <TabView
       navigationState={{ index, routes: categories }}
       renderScene={SceneMap(renderScene)}
       onIndexChange={setIndex}
-      //initialLayout={{ width: Dimensions.get("window").width }}
+      initialLayout={{ width: Dimensions.get("window").width }}
       renderTabBar={(props) => (
         <TabBar
           {...props}
@@ -108,6 +116,8 @@ const styles = StyleSheet.create({
   },
   tabBar: {
     backgroundColor: "#000",
+    borderRadius: 5,
+    elevation: 0,
   },
   tabIndicator: {
     backgroundColor: "#007aff",
