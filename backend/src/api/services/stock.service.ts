@@ -19,7 +19,6 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
       const validate = UuidSchema.validate(id);
       if (validate.error) {
         return {
-          data: undefined,
           status: Status.InvalidDetails,
           message: validate.error.message,
         };
@@ -37,7 +36,6 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
 
     if (!result) {
       return {
-        data: undefined,
         status: Status.NotFound,
         message: 'Stocks item(s) not found',
       };
@@ -50,7 +48,6 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
     };
   } catch {
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
