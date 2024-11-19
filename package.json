@@ -8,7 +8,8 @@
     "backend:dev": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh",
     "app:dev": "cd app && npm run start",
     "build:dev": "docker compose -f ./docker/docker-compose.yml build",
-    "seed": "cd backend && npx prisma db push && npx prisma db seed"
+    "seed": "cd backend && npx prisma db push && npx prisma db push --schema ./prisma/psql.prisma && npx prisma db seed",
+    "prisma:generate": "cd backend && npx prisma generate && npx prisma generate --schema ./prisma/psql.prisma"
   },
   "author": "Vesuvius",
   "description": "World best Cafe management system",

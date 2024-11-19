@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+  </head>
+  <body>
+    <div class="menu-container">
+      <h1><%= title %></h1>
+      <p>Welcome to <%= title %></p>
+      <ul>
+        <% items.forEach((item, index) => { %>
+        <li class="menu-item">
+          <div><h3><%= item.name %></h3></div>
+          <div class="price"><%= item.price %></div>
+        </li>
+        <% }) %>
+      </ul>
+    </div>
+  </body>
+</html>
+
+<style>
+  li {
+    width: 20rem;
+    display: flex;
+    justify-content: space-between;
+  }
+</style>
