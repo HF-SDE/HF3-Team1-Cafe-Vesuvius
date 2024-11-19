@@ -1,3 +1,4 @@
+import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import { Switch } from "react-native";
 
@@ -6,6 +7,11 @@ interface CustomSwitchProps {
   onValueChange?: (value: boolean) => void;
 }
 
+const BackgroundColor = useThemeColor({}, "background");
+const TextColor = useThemeColor({}, "text");
+const PrimaryColor = useThemeColor({}, "primary");
+const SecondaryColor = useThemeColor({}, "secondary");
+const AccentColor = useThemeColor({}, "accent");
 const CustomSwitch: React.FC<CustomSwitchProps> = ({
   value,
   onValueChange,
