@@ -50,7 +50,7 @@ export function create(model?: prismaModels): ExpressFunction {
  */
 export function update(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
-    const { id } = req.params;
+    const id = (req.params.id || req.query.id) as string;
 
     const response = await DefaultService.update(
       model ?? getModel(req),
@@ -69,7 +69,7 @@ export function update(model?: prismaModels): ExpressFunction {
  */
 export function deleteRecord(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
-    const { id } = req.params;
+    const id = (req.params.id || req.query.id) as string;
 
     const response = await DefaultService.deleteRecord(
       model ?? getModel(req),

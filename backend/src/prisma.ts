@@ -1,7 +1,7 @@
 import { IAPIResponse, Status } from '@api-types/general.types';
 import { Prisma, PrismaClient } from '@prisma/client';
-import { PrismaClient as PrismaClientPSQL  } from '@prisma/clientPSQL';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
 
 const prisma = new PrismaClient();
 export const prismaPSQL = new PrismaClientPSQL();
@@ -36,6 +36,12 @@ export function errorResponse(
         return {
           status: Status[operation],
           message: 'Record not found',
+        };
+
+      case 'P2014':
+        return {
+          status: Status[operation],
+          message: 'Relation deletion error',
         };
     }
   }

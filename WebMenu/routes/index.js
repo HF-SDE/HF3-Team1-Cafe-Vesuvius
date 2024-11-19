@@ -8,6 +8,8 @@ router.get("/", async (req, res, next) => {
     .get(process.env.BACKEND_URL + "menu")
     .catch((err) => {
       console.log(err);
+
+      return { data: { data: [] } };
     });
 
   console.log(data);
