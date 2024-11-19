@@ -12,8 +12,6 @@ router.get("/", async (req, res, next) => {
       return { data: { data: [] } };
     });
 
-  console.log(data);
-
   res.render("index", {
     title: "Menu",
     items: data.data,
