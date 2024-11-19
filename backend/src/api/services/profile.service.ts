@@ -110,7 +110,7 @@ export async function getProfile(
     if (tokenValidation.error) {
       return {
         status: Status.InvalidDetails,
-        message: tokenValidation.error.message as string,
+        message: tokenValidation.error.message,
       };
     }
     const tokenData = await prisma.token.findUnique({
