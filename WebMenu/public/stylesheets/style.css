@@ -1,9 +1,21 @@
 :root {
   color-scheme: light dark;
+
+  --light-text: "#33230a";
+  --light-bg: "#f8ede2";
+  --light-primary: #67422d;
+  --light-secondary: #d5af95;
+  --light-accent: #fbc39d;
+
+  --dark-text: #f5e5cc;
+  --dark-bg: #1d1207;
+  --dark-primary: #d2ad98;
+  --dark-secondary: #6a442a;
+  --dark-accent: #622a04;
 }
 
 body {
-  color: light-dark(#33230a, #f5e5cc);
+  color: light-dark(var(--light-text), var(--dark-text));
   background-color: light-dark(#f8ede2, #1d1207);
   font-family: Arial, sans-serif;
   margin: 0;
