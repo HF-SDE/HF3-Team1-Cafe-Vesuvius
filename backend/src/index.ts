@@ -41,7 +41,6 @@ app.use(limiter);
 app.use(`/`, authRoutes);
 app.use(`/stock`, stockRoutes);
 app.use(`/table`, tableRoutes);
-app.use(`/reset`, resetRoutes);
 app.use(`/reservation`, reservationRoutes);
 app.use(`/order`, orderRoutes);
 app.use(`/manage`, manageRoutes);
