@@ -1,7 +1,6 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import React from "react";
 import { Switch } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface CustomSwitchProps {
   value: boolean;
