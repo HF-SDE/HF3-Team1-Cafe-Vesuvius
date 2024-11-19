@@ -38,17 +38,17 @@ h1 {
 
 .menu-item {
   width: 100%;
-  margin-bottom: 20px;
+  margin: 0 auto 20px;
   padding: 15px;
   border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
   border-radius: 8px;
-  background-color: light-dark(var(--light-accent), var(--dark-accent));
+  background-color: light-dark(var(--light-primary), var(--dark-primary));
 }
 
 .menu-item h3 {
   font-size: 1.25rem;
   margin: 5px 0;
-  color: light-dark(var(--light-primary), var(--dark-primary));
+  color: light-dark(var(--light-secondary), var(--dark-secondary));
 }
 
 .menu-item p {
