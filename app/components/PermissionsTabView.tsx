@@ -61,12 +61,12 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     );
   };
 
-  const renderScene2 = categories.reduce((scenes, category) => {
+  const renderScene = categories.reduce((scenes, category) => {
     scenes[category.key] = () => renderPermissionsForCategory(category.key);
     return scenes;
   }, {} as { [key: string]: () => React.ReactNode });
 
-  const renderScene = ({
+  const renderScene1 = ({
     route,
   }: {
     route: { key: string; title: string };
@@ -77,9 +77,9 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
   return (
     <TabView
       navigationState={{ index, routes: categories }}
-      renderScene={renderScene}
+      renderScene={SceneMap(renderScene)}
       onIndexChange={setIndex}
-      initialLayout={{ width: Dimensions.get("window").width }}
+      //initialLayout={{ width: Dimensions.get("window").width }}
       renderTabBar={(props) => (
         <TabBar
           {...props}

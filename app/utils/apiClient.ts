@@ -9,6 +9,9 @@ import { router } from "expo-router";
 const baseURL = process.env.EXPO_PUBLIC_API_URL;
 const apiClient = axios.create({
   baseURL: baseURL,
+  headers: {
+    "ngrok-skip-browser-warning": "69420",
+  },
 });
 const localApiClient = axios.create({
   baseURL: baseURL,
