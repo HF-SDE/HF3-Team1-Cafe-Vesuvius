@@ -1,9 +1,21 @@
-import { Router } from 'express';
-var router = Router();
+import { Router } from "express";
+import axios from "axios";
+const router = Router();
 
 /* GET home page. */
-router.get('/', function(req, res, next) {
-  res.render('index', { title: 'Express' });
+router.get("/", async (req, res, next) => {
+  const { data } = await axios
+    .get("https://swan-measured-suddenly.ngrok-free.app/api/menu")
+    .catch((err) => {
+      console.log(err);
+    });
+
+    console.log(data)
+
+  res.render("index", {
+    title: "Menu",
+    items: data.data,
+  });
 });
 
 export default router;
