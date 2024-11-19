@@ -1,5 +1,4 @@
 import { hash, verify } from 'argon2';
-import { error } from 'node:console';
 
 import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
