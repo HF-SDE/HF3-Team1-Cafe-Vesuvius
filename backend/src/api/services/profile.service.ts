@@ -79,7 +79,7 @@ export async function changePassword(
     if (!updateResult) {
       return {
         status: Status.UpdateFailed,
-        message: 'Failed to update password1',
+        message: 'Failed to update password',
       };
     }
 
