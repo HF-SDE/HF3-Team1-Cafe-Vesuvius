@@ -1,8 +1,8 @@
 :root {
   color-scheme: light dark;
 
-  --light-text: "#33230a";
-  --light-bg: "#f8ede2";
+  --light-text: #33230a;
+  --light-bg: #f8ede2;
   --light-primary: #67422d;
   --light-secondary: #d5af95;
   --light-accent: #fbc39d;
@@ -16,7 +16,7 @@
 
 body {
   color: light-dark(var(--light-text), var(--dark-text));
-  background-color: light-dark(#f8ede2, #1d1207);
+  background-color: light-dark(var(--light-bg), var(--dark-bg));
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
@@ -26,37 +26,37 @@ body {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
-  background: light-dark(#f8ede2, #1d1207);
+  background: light-dark(var(--light-bg), var(--dark-bg));
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, light-dark(0.1, 0.4));
 }
 
 h1 {
   text-align: center;
-  color: light-dark(#67422d, #d2ad98);
+  color: light-dark(var(--light-primary), var(--dark-primary));
 }
 
 .menu-item {
   width: 100%;
   margin-bottom: 20px;
   padding: 15px;
-  border: 1px solid light-dark(#d5af95, #6a442a);
+  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
   border-radius: 8px;
-  background-color: light-dark(#fbc39d, #622a04);
+  background-color: light-dark(var(--light-accent), var(--dark-accent));
 }
 
 .menu-item h3 {
   font-size: 1.25rem;
   margin: 5px 0;
-  color: light-dark(#67422d, #d2ad98);
+  color: light-dark(var(--light-primary), var(--dark-primary));
 }
 
 .menu-item p {
   margin: 0 0 5px;
-  color: light-dark(#33230a, #f5e5cc);
+  color: light-dark(var(--light-text), var(--dark-text));
 }
 
 .price {
   font-weight: bold;
-  color: light-dark(#d5af95, #6a442a);
+  color: light-dark(var(--light-secondary), var(--dark-secondary));
 }
