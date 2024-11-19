@@ -17,6 +17,7 @@ COPY . .
 
 # Generate Prisma types
 RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/psql.prisma
 
 # Ensure entrypoint.sh is executable
 RUN chmod +x ./entrypoint.sh
