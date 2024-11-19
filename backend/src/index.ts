@@ -30,7 +30,7 @@ const app = express();
 app.set('trust proxy', 1);
 app.set('json spaces', 4);
 
-app.use(cors({ origin: true }));
+app.use(cors());
 
 app.use(helmet());
 app.use(bodyParser.json({}));
