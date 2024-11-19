@@ -6,8 +6,11 @@ import cookieParser from "cookie-parser";
 import logger from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
 
 import indexRouter from "./routes/index.js";
+
+dotenv.config();
 
 var app = express();
 

@@ -5,12 +5,12 @@ const router = Router();
 /* GET home page. */
 router.get("/", async (req, res, next) => {
   const { data } = await axios
-    .get("https://swan-measured-suddenly.ngrok-free.app/api/menu")
+    .get(process.env.BACKEND_URL + "menu")
     .catch((err) => {
       console.log(err);
     });
 
-    console.log(data)
+  console.log(data);
 
   res.render("index", {
     title: "Menu",
