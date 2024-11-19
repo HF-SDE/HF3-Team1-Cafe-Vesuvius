@@ -22,7 +22,6 @@ export function useUserProfile() {
         //const response = await apiClient.get("/profile");
 
         const response = await apiClient.get("/profile", {
-          withCredentials: true,
           validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
         });
 

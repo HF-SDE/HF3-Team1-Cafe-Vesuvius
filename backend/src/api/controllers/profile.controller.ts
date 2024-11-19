@@ -49,7 +49,6 @@ export async function getProfile(req: Request, res: Response): Promise<void> {
         status: 'MissingData',
         message: 'Missing authentication',
       })
-      .header('Access-Control-Allow-Origin', '*');
     return;
   }
 
