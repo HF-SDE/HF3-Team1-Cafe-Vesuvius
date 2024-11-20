@@ -146,6 +146,7 @@ const styles = StyleSheet.create({
     width: "90%",
     maxWidth: 400,
     padding: 20,
+    gap: 10,
   },
   input: {
     height: 50,
