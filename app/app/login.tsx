@@ -36,7 +36,7 @@ export default function Index() {
     const trimedPassword = password.trim();
 
     setUsername(trimedUsername);
-    setUsername(trimedPassword);
+    setPassword(trimedPassword);
 
     const isUsernameValid = trimedUsername !== "";
     const isPasswordValid = trimedPassword !== "";
@@ -96,6 +96,7 @@ export default function Index() {
             onSubmitEditing={handleLogin}
             clearTextOnFocus={false}
             autoComplete="off"
+            isHighlighted={isUsernameEmpty}
           />
         </View>
         <View style={[styles.input_block]}>
@@ -107,10 +108,7 @@ export default function Index() {
             }}
             isInvalid={isPasswordEmpty}
             onSubmitEditing={handleLogin}
-            backgroundColor={BackgroundColor}
-            borderColor={PrimaryColor}
-            textColor={PrimaryColor}
-            iconColor={SecondaryColor}
+            isHighlighted={isPasswordEmpty}
           />
         </View>
 

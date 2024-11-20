@@ -27,6 +27,8 @@ interface InputProps {
   highlighOutlineColor?: string;
   isHighlighted?: boolean;
   secureTextEntry?: boolean;
+  onChange?: (text: string) => void;
+  onSubmitEditing?: TextInputProps["onSubmitEditing"];
 }
 
 /**
@@ -83,7 +85,7 @@ export default function CustomTextInput({
       mode="outlined"
       value={value}
       activeOutlineColor={TextColor}
-      outlineColor={PrimaryColor}
+      outlineColor={isHighlighted ? highlighOutlineColor : PrimaryColor}
       outlineStyle={{ borderWidth: 2 }}
       onChangeText={onChange}
       clearButtonMode={clearButtonMode}
@@ -98,7 +100,7 @@ export default function CustomTextInput({
           text: TextColor,
           placeholder: PrimaryColor,
           background: "transparent",
-          onSurfaceVariant: isHighlighted ? highlighOutlineColor : PrimaryColor,
+          onSurfaceVariant: PrimaryColor,
           primary: TextColor,
           outline: PrimaryColor,
         },

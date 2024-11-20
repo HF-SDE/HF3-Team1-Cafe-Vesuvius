@@ -1,8 +1,6 @@
 import React, { useState } from "react";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-//import { TextInput } from "react-native-paper";
-import TextInput from "../components/TextInput";
+import TextIconInput from "./TextIconInput";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface PasswordInputProps {
   value: string;
@@ -11,11 +9,6 @@ interface PasswordInputProps {
   isInvalid?: boolean;
   onSubmitEditing?: () => void;
   inputStyle?: object;
-  iconStyle?: object;
-  placeholderTextColor?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  textColor?: string;
   iconColor?: string;
   highlighOutlineColor?: string;
   isHighlighted?: boolean;
@@ -28,67 +21,28 @@ export default function PasswordInput({
   isInvalid = false,
   onSubmitEditing,
   inputStyle = {},
-  iconStyle = {},
-  placeholderTextColor = "gray",
-  backgroundColor = "white",
-  borderColor = "gray",
-  textColor = "black",
-  iconColor = "gray",
+  iconColor,
   highlighOutlineColor = "red",
   isHighlighted = false,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const PrimaryColor = useThemeColor({}, "primary");
 
   return (
-    <View style={styles.inputBlock}>
-      <TextInput
-        label={placeholder}
-        secureTextEntry={!showPassword}
-        autoCapitalize="none"
-        autoCorrect={false}
-        value={value}
-        onChange={onChangeText}
-        onSubmitEditing={onSubmitEditing}
-        isHighlighted={isHighlighted}
-        highlighOutlineColor={highlighOutlineColor}
-      />
-      <TouchableOpacity
-        onPress={() => setShowPassword((prev) => !prev)}
-        style={[styles.iconContainer, iconStyle]}
-      >
-        <MaterialCommunityIcons
-          name={showPassword ? "eye-off" : "eye"}
-          size={24}
-          style={{ color: iconColor }}
-        />
-      </TouchableOpacity>
-    </View>
+    <TextIconInput
+      label={placeholder}
+      value={value}
+      onChangeText={onChangeText}
+      secureTextEntry={!showPassword}
+      icon={showPassword ? "eye-off" : "eye"}
+      iconPosition="right"
+      onIconPress={() => setShowPassword((prev) => !prev)}
+      style={inputStyle}
+      highlighOutlineColor={highlighOutlineColor}
+      isHighlighted={isHighlighted}
+      onSubmitEditing={onSubmitEditing}
+      iconColor={iconColor || SecondaryColor}
+    />
   );
 }
-
-const styles = StyleSheet.create({
-  inputBlock: {
-    flexDirection: "row",
-    alignItems: "center",
-    position: "relative",
-    width: "100%",
-    verticalAlign: "middle",
-  },
-  input: {
-    height: 50,
-    width: "100%",
-    borderWidth: 0,
-    borderRadius: 5,
-    paddingHorizontal: 10,
-    marginVertical: 10,
-  },
-  iconContainer: {
-    padding: 5,
-    position: "absolute",
-    right: 10,
-    justifyContent: "center",
-    alignItems: "center",
-    alignSelf: "center",
-    marginTop: 5,
-  },
-});
