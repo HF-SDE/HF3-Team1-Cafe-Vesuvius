@@ -12,12 +12,15 @@ const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
   setSearchQuery,
 }) => {
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   return (
     <TextInput
-      style={[styles.input, { color: TextColor, borderColor: SecondaryColor }]}
+      style={[styles.input, { color: TextColor, borderColor: PrimaryColor }]}
       placeholder="Search users"
       placeholderTextColor={SecondaryColor}
       value={searchQuery}
