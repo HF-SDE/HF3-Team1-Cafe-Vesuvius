@@ -12,9 +12,15 @@ export interface Permission {
   description: string;
 }
 
-export interface Permission {
+export interface Menu {
   id: string;
   category: string[];
   name: string;
   price: number;
+}
+
+export interface Stock {
+  id: string;
+  name: string;
+  unit: string;
 }
