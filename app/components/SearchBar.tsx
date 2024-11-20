@@ -5,11 +5,13 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface SearchBarProps {
   searchQuery: string;
+  placeholder?: string;
   setSearchQuery: (query: string) => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   searchQuery,
+  placeholder = "Search",
   setSearchQuery,
 }) => {
   const BackgroundColor = useThemeColor({}, "background");
@@ -21,7 +23,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   return (
     <TextInput
       style={[styles.input, { color: TextColor, borderColor: PrimaryColor }]}
-      placeholder="Search users"
+      placeholder={placeholder}
       placeholderTextColor={SecondaryColor}
       value={searchQuery}
       onChangeText={setSearchQuery}
@@ -37,6 +39,7 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingLeft: 10,
     borderRadius: 5,
+    minHeight: 40,
   },
 });
 

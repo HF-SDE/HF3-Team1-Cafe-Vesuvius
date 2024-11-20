@@ -89,7 +89,7 @@ export default function Index() {
             autoCorrect={false}
             autoCapitalize="none"
             value={username}
-            onChange={(text) => {
+            onChangeText={(text) => {
               setUsername(text);
               setIsUsernameEmpty(false);
             }}

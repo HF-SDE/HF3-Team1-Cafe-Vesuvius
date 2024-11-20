@@ -11,7 +11,7 @@ import { TextStyle } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
 import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 
-interface InputProps {
+export interface CustomTextInputProps extends TextInputProps {
   label: TextInputLabelProp;
   value?: TextInputProps["value"];
   placeholder?: TextInputProps["placeholder"];
@@ -24,11 +24,19 @@ interface InputProps {
   inputMode?: InputModeOptions;
   autoCorrect?: TextInputProps["autoCorrect"];
   autoCapitalize?: TextInputProps["autoCapitalize"];
+
+  /**
+   * Color of the outline when the text input is highlighted
+   */
   highlighOutlineColor?: string;
+  
+  /**
+   * If the text input is highlighted
+   */
   isHighlighted?: boolean;
   secureTextEntry?: TextInputProps['secureTextEntry'];
   editable?: TextInputProps["editable"];
-  onChange?: TextInputProps["onChangeText"];
+  onChangeText?: TextInputProps["onChangeText"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
 }
 
@@ -60,7 +68,7 @@ interface InputProps {
 export default function CustomTextInput({
   label,
   value,
-  onChange,
+  onChangeText: onChange,
   style,
   onSubmitEditing,
   autoCorrect,
@@ -75,7 +83,7 @@ export default function CustomTextInput({
   isHighlighted = false,
   secureTextEntry,
   editable = true,
-}: InputProps) {
+}: CustomTextInputProps) {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");

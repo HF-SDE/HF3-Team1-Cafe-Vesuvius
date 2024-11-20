@@ -10,21 +10,43 @@ import {
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { TextInputLabelProp } from "react-native-paper/lib/typescript/components/TextInput/types";
-import CustomTextInput from "../components/TextInput";
+import CustomTextInput, { CustomTextInputProps } from "../components/TextInput";
 
-interface TextIconInputProps extends TextInputProps {
+interface TextIconInputProps extends CustomTextInputProps {
   label: TextInputLabelProp;
   value: TextInputProps["value"];
   placeholder?: TextInputProps["placeholder"];
+
+  /**
+   * Name of the icon to show
+   * 
+   * See Icon Explorer app https://expo.github.io/vector-icons/
+   */
   icon: ComponentProps<typeof MaterialCommunityIcons>['name'];
+
+  /**
+   * Position of the icon
+   */
   iconPosition?: "left" | "right";
-  iconStyle?:  StyleProp<ViewStyle>;
+
+  /**
+   * Style for the icon @see https://reactnative.dev/docs/view#style
+   */
+  iconStyle?: StyleProp<ViewStyle>;
+  
+  /**
+   * Color of the icon. Can be a string or OpaqueColorValue (returned from PlatformColor(..))
+   */
   iconColor?: ComponentProps<typeof MaterialCommunityIcons>['color'];
   secureTextEntry?: TextInputProps["secureTextEntry"];
   highlighOutlineColor?: ComponentProps<typeof CustomTextInput>['highlighOutlineColor'];
   isHighlighted?: ComponentProps<typeof CustomTextInput>['isHighlighted'];
   editable?: TextInputProps["editable"];
   onChangeText: TextInputProps["onChangeText"];
+
+  /**
+   * Called when the icon touch is released, but not if cancelled (e.g. by a scroll that steals the responder lock).
+   */
   onIconPress?: TouchableOpacityProps["onPress"];
 }
 
@@ -82,7 +104,7 @@ export default function TextIconInput({
         {...rest}
         label={label}
         value={value}
-        onChange={onChangeText}
+        onChangeText={onChangeText}
         placeholder={placeholder}
         secureTextEntry={secureTextEntry}
         highlighOutlineColor={highlighOutlineColor}

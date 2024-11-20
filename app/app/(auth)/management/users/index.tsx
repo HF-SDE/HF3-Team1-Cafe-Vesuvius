@@ -61,7 +61,11 @@ export default function ManageUsersPage() {
   return (
     <TemplateLayout pageName="UsersPage" title="Users">
       <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder="Search users"
+        />
         {/* Use the SearchBar component */}
         {isLoading ? (
           <Text style={[styles.loadingText, { color: TextColor }]}>

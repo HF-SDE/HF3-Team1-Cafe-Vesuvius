@@ -11,3 +11,16 @@ export interface Permission {
   code: string;
   description: string;
 }
+
+export interface Menu {
+  id: string;
+  category: string[];
+  name: string;
+  price: number;
+}
+
+export interface Stock {
+  id: string;
+  name: string;
+  unit: string;
+}
