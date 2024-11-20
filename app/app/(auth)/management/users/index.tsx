@@ -22,6 +22,8 @@ export default function ManageUsersPage() {
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   const navigation = useNavigation();
 
   const [searchQuery, setSearchQuery] = useState("");
@@ -46,10 +48,10 @@ export default function ManageUsersPage() {
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleUserPress(item.id)}>
       <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
-        <Text style={[styles.userName, { color: SecondaryColor }]}>
+        <Text style={[styles.userName, { color: BackgroundColor }]}>
           {item.name}
         </Text>
-        <Text style={[styles.userEmail, { color: SecondaryColor }]}>
+        <Text style={[styles.userEmail, { color: AccentColor }]}>
           {item.email}
         </Text>
       </View>

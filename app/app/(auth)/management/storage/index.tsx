@@ -2,42 +2,118 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
-  Button,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import TemplateLayout from "@/components/TemplateLayout";
+import { useStock } from "@/hooks/useStock";
+import AddButton from "@/components/AddButton";
+import { router } from "expo-router";
 
-export default function AddOrderScreen() {
+import SearchBar from "@/components/SearchBar";
+
+export default function ManageUsersPage() {
+  const { stock, isLoading, error } = useStock();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-  const navigation = useNavigation();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [quantities, setQuantities] = useState({}); // Track adjustments per item
+
+  const handleAddUser = () => {
+    router.navigate("/management/storage/new");
+  };
+
+  const handleIncrease = (itemId) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [itemId]: (prev[itemId] || 0) + 1,
+    }));
+  };
+
+  const handleDecrease = (itemId) => {
+    setQuantities((prev) => ({
+      ...prev,
+      [itemId]: Math.max(
+        (prev[itemId] || 0) - 1,
+        -stock.find((item) => item.id === itemId).quantity
+      ),
+    }));
+  };
+
+  const filteredUsers = stock
+    ? stock.filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  const renderItem = ({ item }) => {
+    const adjustedQty = quantities[item.id] || 0; // Current adjustment
+    const newStock = item.quantity + adjustedQty; // Adjusted stock
+
+    return (
+      <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
+        <View style={styles.itemRow}>
+          <TouchableOpacity onPress={() => handleDecrease(item.id)}>
+            <Text style={[styles.icon, { color: SecondaryColor }]}>-</Text>
+          </TouchableOpacity>
+          <Text style={[styles.adjustedQty, { color: SecondaryColor }]}>
+            {adjustedQty}
+          </Text>
+          <TouchableOpacity onPress={() => handleIncrease(item.id)}>
+            <Text style={[styles.icon, { color: SecondaryColor }]}>+</Text>
+          </TouchableOpacity>
+        </View>
+        <Text style={[styles.userName, { color: SecondaryColor }]}>
+          {item.name}
+        </Text>
+        <Text style={[styles.userEmail, { color: SecondaryColor }]}>
+          Current stock: {item.quantity}
+        </Text>
+        {newStock !== item.quantity && (
+          <Text style={[styles.userEmail, { color: SecondaryColor }]}>
+            New stock: {newStock}
+          </Text>
+        )}
+      </View>
+    );
+  };
 
   return (
     <TemplateLayout pageName="StockPage" title="Storage">
-      <View style={[styles.container]}>
-        <View style={styles.spacer} />
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder="Search for item"
+        />
+        {isLoading ? (
+          <Text style={[styles.loadingText, { color: TextColor }]}>
+            Loading...
+          </Text>
+        ) : error ? (
+          <Text style={[styles.errorText, { color: TextColor }]}>
+            Something went wrong!
+          </Text>
+        ) : (
+          <FlatList
+            data={filteredUsers}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.userList}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+        <AddButton
+          onPress={handleAddUser}
+          requiredPermission={["order:create"]}
+        />
       </View>
     </TemplateLayout>
   );
@@ -49,43 +125,44 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
+  userList: {
+    flexGrow: 1,
   },
-  dropdown: {
-    position: "absolute",
-    backgroundColor: "white",
-    width: "100%",
-    maxHeight: 150,
-    elevation: 5,
-    zIndex: 1000,
+  userItem: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
   },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 5,
-    margin: 5,
-  },
-  buttonText: {
-    fontSize: 24,
+  userName: {
+    fontSize: 18,
     fontWeight: "bold",
   },
-  spacer: {
-    flex: 1,
+  userEmail: {
+    fontSize: 14,
+    marginTop: 5,
+  },
+  loadingText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+    color: "red",
+  },
+  itemRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 10,
+  },
+  icon: {
+    fontSize: 24,
+    marginHorizontal: 10,
+  },
+  adjustedQty: {
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });

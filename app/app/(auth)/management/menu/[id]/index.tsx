@@ -105,14 +105,14 @@ export default function EditCreateUserPage() {
       <View style={styles.container}>
         <TextInput
           style={styles.input}
-          label="Username"
+          label="Name"
           value={menuItem.name}
           onChange={(value) => handleChange("username", value)}
           clearTextOnFocus={false}
         />
         <TextInput
           style={styles.input}
-          label="Name"
+          label="Price"
           value={menuItem.price.toString()}
           onChange={(value) => handleChange("name", value)}
           clearTextOnFocus={false}

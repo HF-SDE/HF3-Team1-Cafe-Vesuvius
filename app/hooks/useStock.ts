@@ -1,30 +1,30 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-import { Menu } from "../models/userModels";
+import { Stock } from "../models/userModels";
 
-export function useMenu(id?: string | string[]) {
-  const [menu, setMenu] = useState<Menu[] | null>(null);
+export function useStock(id?: string | string[]) {
+  const [stock, setStock] = useState<Stock[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const fetchMenu = async () => {
+    const fetchStock = async () => {
       try {
         setIsLoading(true);
         setError(null);
-        const endpoint = id ? `/menu?id=${id}` : "/menu";
+        const endpoint = id ? `/stock?id=${id}` : "/stock";
         const response = await apiClient.get(endpoint);
 
-        setMenu(response.data.data);
+        setStock(response.data.data);
       } catch (err: any) {
-        setError("Failed to load menu");
+        setError("Failed to load stock");
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchMenu();
+    fetchStock();
   }, [id]);
 
-  return { menu, isLoading, error };
+  return { stock, isLoading, error };
 }
