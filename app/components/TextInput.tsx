@@ -1,6 +1,7 @@
 import React from "react";
 import { TextInput } from "react-native-paper";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 interface InputProps {
@@ -31,14 +32,30 @@ const CustomTextInput: React.FC<InputProps> = ({
 
   return (
     <TextInput
+      style={[style, { backgroundColor: BackgroundColor, color: TextColor }]}
       style={styles.inputBlock}
       label={label}
       mode="outlined"
       value={value}
+      activeOutlineColor={TextColor}
+      outlineColor={PrimaryColor}
       outlineStyle={{ borderWidth: 2 }}
       activeOutlineColor="white"
       outlineColor={SecondaryColor}
       onChangeText={onChange}
+      theme={{
+        colors: {
+          text: TextColor,
+          placeholder: PrimaryColor,
+          background: "transparent",
+          onSurfaceVariant: PrimaryColor,
+          primary: TextColor,
+          outline: PrimaryColor,
+        },
+      }}
+      contentStyle={{
+        color: PrimaryColor,
+      }}
       onSubmitEditing={onSubmitEditing}
       theme={{ colors: { onSurfaceVariant: placeholderTextColor } }}
       autoCorrect={autoCorrect}
