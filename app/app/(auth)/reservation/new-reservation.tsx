@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,
@@ -61,6 +61,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
   const [reservation, setReservations] = useState<Reservation>();
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [disabled, setDisabled] = useState(true);
   const [page, setPage] = useState(1);
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -131,7 +132,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               clearButtonMode="always"
               autoCapitalize="words"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(name) => setReservations({ ...reservation!, name })}
+              onChangeText={(name) => validateInput<Reservation | undefined>(name, reservation, setReservations, setDisabled)}
             />
             <CustomTextInput
               label="Phone"
@@ -139,7 +140,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="tel"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(phone) => setReservations({ ...reservation!, phone })}
+              onChangeText={(phone) => validateInput<Reservation | undefined>(phone, reservation, setReservations, setDisabled)}
             />
             <CustomTextInput
               label="Email"
@@ -147,21 +148,22 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="email"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(email) => setReservations({ ...reservation!, email })}
+              onChangeText={(email) => validateInput<Reservation | undefined>(email, reservation, setReservations, setDisabled)}
             />
             <CustomTextInput
               label="Amount of People"
-              value={reservation?.partySize.toString()}
+              value={reservation?.partySize?.toString()}
               inputMode="numeric"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(partySize) => setReservations({ ...reservation!, partySize })}
+              onChangeText={(partySize) => validateInput<Reservation | undefined>(partySize, reservation, setReservations, setDisabled)}
             />
             <TextIconInput
               label="Reservation Time"
-              value={reservation?.reservationTime?.toString() ?? dayjs().format("YYYY-MM-DD HH:mm")}
+              value={dayjs(reservation?.reservationTime).format("YYYY-MM-DD HH:mm") ?? dayjs().format("YYYY-MM-DD HH:mm")}
               placeholderTextColor={SecondaryColor}
               icon="calendar"
+              editable={false}
               onIconPress={() => setDatePicker(!datePicker)}
               onChangeText={(email) => setReservations({ ...reservation!, email })}
             />
@@ -169,13 +171,16 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
             {
               datePicker
               &&
-              <DateTimePicker
-                mode="single"
-                onChange={(date) => { setReservations({ ...reservation!, reservationTime: dayjs(date.date) }); }}
-                date={dayjs((reservation?.reservationTime || new Date()))}
-                firstDayOfWeek={1}
-                timePicker={true}
-              />
+              <View style={styles.dateTimePicker}>
+                <DateTimePicker
+                  mode="single"
+                  onChange={(date) => { setReservations({ ...reservation!, reservationTime: dayjs(date.date) }); setDatePicker(false) }}
+                  date={dayjs(reservation?.reservationTime) ?? dayjs().toDate()}
+                  firstDayOfWeek={1}
+                  timePicker={true}
+
+                />
+              </View>
             }
 
             {errorMessage ? (
@@ -185,7 +190,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
           :
           <FlatList ListHeaderComponent={<Text>Tables</Text>} numColumns={4} data={tables} renderItem={({ item }) => (
             <Item {...item} />
-          )} keyExtractor={(item) => item.number.toString()} contentContainerStyle={styles.listContainer} style={styles.flatList} />
+          )} keyExtractor={(item) => item.number?.toString()} contentContainerStyle={styles.listContainer} style={styles.flatList} />
 
       }
       <View style={styles.buttonContainer}>
@@ -198,6 +203,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
         <TouchableOpacity
           style={[styles.cancelButton, { backgroundColor: "#969696" }]}
           onPress={page === 1 ? () => setPage(2) : onClose}
+          disabled={disabled}
         >
           <Text style={styles.buttonText}>{page === 1 ? "Next" : "Create"}</Text>
         </TouchableOpacity>
@@ -216,7 +222,28 @@ function Item(props: table) {
   );
 }
 
+// function validateInput<D, T>(text: D, valueAction: [D | undefined, Dispatch<React.SetStateAction<D | undefined>>], disabled: Dispatch<SetStateAction<boolean>>) {
+//   if (typeof text === "number" && text > 0) {
+//     valueAction[1]({ ...valueAction[0], text });
+//     disabled(false);
+//     return;
+//   }
+//   if (typeof text === "string" && text.length > 0) {
+//     disabled(false);
+//     valueAction;
+//     return;
+//   }
+//   disabled(true);
+// }
+
 const styles = StyleSheet.create({
+  dateTimePicker: {
+    position: "absolute",
+    backgroundColor: "white",
+    zIndex: 2,
+    borderRadius: 20,
+    padding: 10,
+  },
   item: {
     flex: 1,
     maxWidth: "25%", // 100% devided by the number of rows you want
@@ -273,6 +300,7 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
+
   },
   buttonText: {
     color: "#fff",
