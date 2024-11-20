@@ -11,6 +11,7 @@ import {
 import { useThemeColor } from "@/hooks/useThemeColor";
 //import apiClient from "../../../utils/apiClient"; // Import your API client
 import { useUserProfile } from "@/hooks/useUserProfile"; // Import the hook
+import PasswordInput from "../../../components/PasswordInput";
 
 import { Buffer } from "buffer";
 
@@ -30,6 +31,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   const handleReset = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
@@ -61,29 +63,38 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
       <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
 
-      <TextInput
-        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
-        placeholder="Old Password"
-        placeholderTextColor={SecondaryColor}
-        secureTextEntry
+      <PasswordInput
         value={oldPassword}
         onChangeText={setOldPassword}
+        //isInvalid={isPasswordEmpty}
+        //onSubmitEditing={handleLogin}
+        backgroundColor={BackgroundColor}
+        borderColor={PrimaryColor}
+        textColor={PrimaryColor}
+        iconColor={SecondaryColor}
+        placeholder="Old Password"
       />
-      <TextInput
-        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
-        placeholder="New Password"
-        placeholderTextColor={SecondaryColor}
-        secureTextEntry
+      <PasswordInput
         value={newPassword}
         onChangeText={setNewPassword}
+        //isInvalid={isPasswordEmpty}
+        //onSubmitEditing={handleLogin}
+        backgroundColor={BackgroundColor}
+        borderColor={PrimaryColor}
+        textColor={PrimaryColor}
+        iconColor={SecondaryColor}
+        placeholder="New Password"
       />
-      <TextInput
-        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
-        placeholder="Confirm New Password"
-        placeholderTextColor={SecondaryColor}
-        secureTextEntry
+      <PasswordInput
         value={confirmPassword}
         onChangeText={setConfirmPassword}
+        //isInvalid={isPasswordEmpty}
+        //onSubmitEditing={handleLogin}
+        backgroundColor={BackgroundColor}
+        borderColor={PrimaryColor}
+        textColor={PrimaryColor}
+        iconColor={SecondaryColor}
+        placeholder="Confirm New Password"
       />
 
       {errorMessage ? (
@@ -98,7 +109,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
           <Text style={styles.buttonText}>Reset</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
+          style={[styles.cancelButton, { backgroundColor: AccentColor }]}
           onPress={onClose}
         >
           <Text style={styles.buttonText}>Cancel</Text>
