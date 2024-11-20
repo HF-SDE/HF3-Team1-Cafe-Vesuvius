@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { View, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { TextInput } from "react-native-paper";
 
 interface PasswordInputProps {
   value: string;
@@ -43,11 +44,17 @@ export default function PasswordInput({
             color: textColor,
             backgroundColor: backgroundColor,
             paddingRight: 45,
+            paddingTop: 0,
           },
           inputStyle,
         ]}
-        placeholder={placeholder}
-        placeholderTextColor={placeholderTextColor}
+        theme={{ colors: { onSurfaceVariant: "gray" } }}
+        outlineColor={isInvalid ? "red" : borderColor}
+        activeOutlineColor="white"
+        outlineStyle={{ borderWidth: 2 }}
+        mode="outlined"
+        label={placeholder}
+        textColor={textColor}
         secureTextEntry={!showPassword}
         autoCapitalize="none"
         autoCorrect={false}
@@ -75,11 +82,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
     position: "relative",
     width: "100%",
+    verticalAlign: "middle",
   },
   input: {
     height: 50,
     width: "100%",
-    borderWidth: 2,
+    borderWidth: 0,
     borderRadius: 5,
     paddingHorizontal: 10,
     marginVertical: 10,
@@ -90,5 +98,7 @@ const styles = StyleSheet.create({
     right: 10,
     justifyContent: "center",
     alignItems: "center",
+    alignSelf: "center",
+    marginTop: 5,
   },
 });
