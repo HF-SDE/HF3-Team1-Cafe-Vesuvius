@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
-    paddingBottom: 80, // Add padding at the bottom to prevent overlap with buttons
   },
   scrollViewContainer: {
     flexGrow: 1,
