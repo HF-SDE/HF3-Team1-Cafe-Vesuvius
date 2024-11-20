@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     borderRadius: 5,
     margin: 5,
+    maxHeight: 50,
   },
   buttonText: {
     fontSize: 24,

@@ -178,9 +178,7 @@ export default function EditCreateUserPage() {
           </View>
         </View>
 
-        <Text style={[styles.permissionsTitle, { color: TextColor }]}>
-          Permissions
-        </Text>
+        <Text>Permissions</Text>
 
         <PermissionsTabView
           permissions={permissions ? permissions : []}
@@ -188,8 +186,11 @@ export default function EditCreateUserPage() {
           onPermissionToggle={handlePermissionToggle}
         />
 
+        <Button title="Reset password" onPress={() => navigation.goBack()} />
+
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
+
           <Button
             title={id !== "new" ? "Save" : "Create"}
             onPress={handleSave}
