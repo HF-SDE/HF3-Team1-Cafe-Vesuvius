@@ -15,6 +15,9 @@ const apiClient = axios.create({
 });
 const localApiClient = axios.create({
   baseURL: baseURL,
+  headers: {
+    "ngrok-skip-browser-warning": "69420",
+  },
 });
 
 // Axios request interceptor
