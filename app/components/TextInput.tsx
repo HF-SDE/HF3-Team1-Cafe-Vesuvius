@@ -10,8 +10,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 interface InputProps {
   label: TextInputLabelProp;
   value: TextInputProps["value"];
-  onChange: TextInputProps["onChangeText"];
-  onSubmitEditing?: TextInputProps["onSubmitEditing"];
+  placeholder: TextInputProps["placeholder"];
   style?: StyleProp<TextStyle>;
   clearButtonMode: TextInputProps["clearButtonMode"];
   autoComplete: TextInputProps["autoComplete"];
@@ -21,6 +20,8 @@ interface InputProps {
   inputMode: InputModeOptions;
   autoCorrect?: TextInputProps["autoCorrect"];
   autoCapitalize?: TextInputProps["autoCapitalize"];
+  onChange: TextInputProps["onChangeText"];
+  onSubmitEditing?: TextInputProps["onSubmitEditing"];
 }
 
 
@@ -32,6 +33,7 @@ interface InputProps {
  * 
  * @param {TextInputLabelProp} label - label for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#label
  * @param {TextInputProps["value"]} value - value for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#value
+ * @param {TextInputProps["placeholder"]} placeholder - placeholder for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#placeholder
  * @param {StyleProp<TextStyle>} style - custom style for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#style
  * @param {TextInputProps["clearButtonMode"]} [clearButtonMode="never"] [IOS ONLY] - default is "never". @see https://reactnative.dev/docs/textinput#clearbuttonmode-ios
  * @param {TextInputProps["autoComplete"]} [autoComplete="off"] - default is "off". @see https://reactnative.dev/docs/textinput#autocomplete
@@ -45,7 +47,7 @@ interface InputProps {
  * @param {TextInputProps["onSubmitEditing"]} [onSubmitEditing] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
  * @returns {*}
  */
-export default function CustomTextInput({ label, value, onChange, style, onSubmitEditing, autoCorrect = true, clearButtonMode = "never", autoComplete = "off", autoCapitalize = "sentences", clearTextOnFocus = true, enablesReturnKeyAutomatically = false, enterKeyHint = "next", inputMode = "text"  }: InputProps): any {
+export default function CustomTextInput({ label, value, onChange, style, onSubmitEditing, placeholder, autoCorrect = true, clearButtonMode = "never", autoComplete = "off", autoCapitalize = "sentences", clearTextOnFocus = true, enablesReturnKeyAutomatically = false, enterKeyHint = "next", inputMode = "text"  }: InputProps): any {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -60,6 +62,7 @@ export default function CustomTextInput({ label, value, onChange, style, onSubmi
         styles.inputBlock,
         { backgroundColor: BackgroundColor, color: TextColor },
       ]}
+      placeholder={placeholder}
       label={label}
       mode="outlined"
       value={value}
