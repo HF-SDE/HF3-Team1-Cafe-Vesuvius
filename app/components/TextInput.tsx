@@ -12,6 +12,9 @@ interface InputProps {
   style?: object;
   autoCorrect?: boolean;
   autoCapitalize?: string | undefined;
+  highlighOutlineColor?: string;
+  isHighlighted?: string;
+  secureTextEntry?: boolean;
 }
 
 const CustomTextInput: React.FC<InputProps> = ({
@@ -21,6 +24,9 @@ const CustomTextInput: React.FC<InputProps> = ({
   onSubmitEditing,
   style,
   autoCorrect,
+  highlighOutlineColor,
+  isHighlighted,
+  secureTextEntry,
 }) => {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -57,6 +63,7 @@ const CustomTextInput: React.FC<InputProps> = ({
       }}
       onSubmitEditing={onSubmitEditing}
       autoCorrect={autoCorrect}
+      secureTextEntry={secureTextEntry}
     />
   );
 };

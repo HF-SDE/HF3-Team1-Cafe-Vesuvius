@@ -86,7 +86,6 @@ export default function Index() {
         <View style={styles.input_block}>
           <TextInput
             label="Username"
-            placeholderTextColor="gray"
             autoCorrect={false}
             autoCapitalize="none"
             value={username}
