@@ -7,7 +7,6 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from "react-native";
 import LogoLight from "../components/icons/CaféVesuviusLogo2.svg";
 import LogoDark from "../components/icons/CaféVesuviusLogo3.svg";
@@ -16,6 +15,8 @@ import { router } from "expo-router";
 import { useSession } from "./ctx";
 import { useColorScheme } from "react-native";
 import PasswordInput from "../components/PasswordInput";
+
+import TextInput from "../components/TextInput";
 
 export default function Index() {
   const { signIn } = useSession();
@@ -84,20 +85,12 @@ export default function Index() {
       >
         <View style={styles.input_block}>
           <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isUsernameEmpty ? "red" : PrimaryColor,
-                color: PrimaryColor,
-                backgroundColor: BackgroundColor,
-              },
-            ]}
-            placeholder="Username"
+            label="Username"
             placeholderTextColor="gray"
             autoCorrect={false}
             autoCapitalize="none"
             value={username}
-            onChangeText={(text) => {
+            onChange={(text) => {
               setUsername(text);
               setIsUsernameEmpty(false);
             }}
