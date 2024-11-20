@@ -178,7 +178,9 @@ export default function EditCreateUserPage() {
           </View>
         </View>
 
-        <Text>Permissions</Text>
+        <Text style={{ color: TextColor, fontSize: 18, fontWeight: "bold" }}>
+          Permissions
+        </Text>
 
         <PermissionsTabView
           permissions={permissions ? permissions : []}
@@ -229,7 +231,7 @@ const styles = StyleSheet.create({
   permissionItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
+    // borderBottomColor: "#ddd",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
