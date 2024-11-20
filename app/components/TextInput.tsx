@@ -10,8 +10,8 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 interface InputProps {
   label: TextInputLabelProp;
   value: string;
-  onChange: (value: string) => void;
-  onSubmitEditing?: () => void;
+  onChange: TextInputProps["onChangeText"];
+  onSubmitEditing?: TextInputProps["onSubmitEditing"];
   style?: StyleProp<TextStyle>;
   clearButtonMode: TextInputProps["clearButtonMode"];
   autoComplete: TextInputProps["autoComplete"];
@@ -32,7 +32,6 @@ interface InputProps {
  * 
  * @param {TextInputLabelProp} label - label for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#label
  * @param {string} value - value for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#value
- * @param {(value: string) => void} onChange - function to handle text input change event @see https://reactnative.dev/docs/textinput#onchangetext
  * @param {StyleProp<TextStyle>} style - custom style for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#style
  * @param {TextInputProps["clearButtonMode"]} [clearButtonMode="never"] [IOS ONLY] - default is "never". @see https://reactnative.dev/docs/textinput#clearbuttonmode-ios
  * @param {TextInputProps["autoComplete"]} [autoComplete="off"] - default is "off". @see https://reactnative.dev/docs/textinput#autocomplete
@@ -41,9 +40,12 @@ interface InputProps {
  * @param {TextInputProps["enablesReturnKeyAutomatically"]} [enablesReturnKeyAutomatically=false] [IOS ONLY] - default is false.  @see https://reactnative.dev/docs/textinput#enablesreturnkeyautomatically-ios
  * @param {EnterKeyHintTypeOptions} [enterKeyHint="next"] - default is "next". What enter keys should be used for. @see https://reactnative.dev/docs/textinput#enterkeyhint
  * @param {InputModeOptions} [inputMode="text"] - default is "text". Helps to determine what keyboardType should be used. @see https://reactnative.dev/docs/textinput#inputmode
+ * @param {TextInputProps["autoCorrect"]} [autoCorrect="true"] - default is true. @see https://reactnative.dev/docs/textinput#autocorrect
+ * @param {TextInputProps["onChangeText"]} onChange - function to handle text input change event @see https://reactnative.dev/docs/textinput#onchangetext
+ * @param {TextInputProps["onSubmitEditing"]} [onSubmitEditing] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
  * @returns {*}
  */
-export default function CustomTextInput({ label, value, onChange, style, onSubmitEditing, autoCorrect, clearButtonMode = "never", autoComplete = "off", autoCapitalize = "sentences", clearTextOnFocus = true, enablesReturnKeyAutomatically = false, enterKeyHint = "next", inputMode = "text"  }: InputProps) {
+export default function CustomTextInput({ label, value, onChange, style, onSubmitEditing, autoCorrect = true, clearButtonMode = "never", autoComplete = "off", autoCapitalize = "sentences", clearTextOnFocus = true, enablesReturnKeyAutomatically = false, enterKeyHint = "next", inputMode = "text"  }: InputProps): any {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -64,7 +66,6 @@ export default function CustomTextInput({ label, value, onChange, style, onSubmi
       activeOutlineColor={TextColor}
       outlineColor={PrimaryColor}
       outlineStyle={{ borderWidth: 2 }}
-      onChangeText={onChange}
       clearButtonMode={clearButtonMode}
       autoComplete={autoComplete}
       autoCapitalize={autoCapitalize}
@@ -72,6 +73,9 @@ export default function CustomTextInput({ label, value, onChange, style, onSubmi
       enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
       enterKeyHint={enterKeyHint}
       inputMode={inputMode}
+      autoCorrect={autoCorrect}
+      onSubmitEditing={onSubmitEditing}
+      onChangeText={onChange}
       theme={{
         colors: {
           text: TextColor,
@@ -85,8 +89,6 @@ export default function CustomTextInput({ label, value, onChange, style, onSubmi
       contentStyle={{
         color: PrimaryColor,
       }}
-      onSubmitEditing={onSubmitEditing}
-      autoCorrect={autoCorrect}
     />
   );
 };
