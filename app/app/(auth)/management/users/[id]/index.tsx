@@ -215,7 +215,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   initialsInput: {
-    width: "50%",
+    maxWidth: "50%",
   },
   permissionsContainer: {
     marginTop: 20,
