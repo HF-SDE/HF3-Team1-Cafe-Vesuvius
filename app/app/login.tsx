@@ -7,15 +7,16 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from "react-native";
 import LogoLight from "../components/icons/CaféVesuviusLogo2.svg";
 import LogoDark from "../components/icons/CaféVesuviusLogo3.svg";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useSession } from "./ctx";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
+import PasswordInput from "../components/PasswordInput";
+
+import TextInput from "../components/TextInput";
 
 export default function Index() {
   const { signIn } = useSession();
@@ -84,20 +85,12 @@ export default function Index() {
       >
         <View style={styles.input_block}>
           <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isUsernameEmpty ? "red" : PrimaryColor,
-                color: PrimaryColor,
-                backgroundColor: BackgroundColor,
-              },
-            ]}
-            placeholder="Username"
+            label="Username"
             placeholderTextColor="gray"
             autoCorrect={false}
             autoCapitalize="none"
             value={username}
-            onChangeText={(text) => {
+            onChange={(text) => {
               setUsername(text);
               setIsUsernameEmpty(false);
             }}
@@ -105,38 +98,19 @@ export default function Index() {
           />
         </View>
         <View style={[styles.input_block]}>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isPasswordEmpty ? "red" : PrimaryColor,
-                color: PrimaryColor,
-                backgroundColor: BackgroundColor,
-                paddingRight: 45,
-              },
-            ]}
-            placeholder="Password"
-            placeholderTextColor="gray"
-            autoCorrect={false}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
+          <PasswordInput
             value={password}
             onChangeText={(text) => {
               setPassword(text);
               setIsPasswordEmpty(false);
             }}
+            isInvalid={isPasswordEmpty}
             onSubmitEditing={handleLogin}
+            backgroundColor={BackgroundColor}
+            borderColor={PrimaryColor}
+            textColor={PrimaryColor}
+            iconColor={SecondaryColor}
           />
-          <TouchableOpacity
-            onPress={() => setShowPassword((previous) => !previous)}
-            style={styles.icon_container}
-          >
-            <MaterialCommunityIcons
-              name={showPassword ? "eye-off" : "eye"}
-              size={24}
-              style={{ color: SecondaryColor }}
-            />
-          </TouchableOpacity>
         </View>
 
         {errorMessage ? (

@@ -15,24 +15,28 @@ const buttonList = [
     pageName: "UsersPage",
     route: "/management/users",
     icon: "users",
+    size: 48,
   }, // Example MaterialIcons name
   {
     title: "Menu",
     pageName: "MenuPage",
     route: "management/menu",
     icon: "table-list",
+    size: 62,
   },
   {
     title: "Stats",
     pageName: "StatsPage",
     route: "/management/statistics",
     icon: "chart-simple",
+    size: 62,
   },
   {
     title: "Storage",
     pageName: "StockPage",
     route: "/management/storage",
     icon: "warehouse",
+    size: 48,
   },
 ];
 
@@ -60,7 +64,7 @@ export default function ManagementScreen() {
                 {button.icon && (
                   <FontAwesome6
                     name={button.icon}
-                    size={50}
+                    size={button.size}
                     color={BackgroundColor}
                     style={styles.icon}
                   />
@@ -98,10 +102,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   icon: {
-    marginRight: 20,
     width: 70,
+    marginRight: 20,
     justifyContent: "center",
-    alignItems: "center",
+    alignSelf: "center",
   },
   buttonText: {
     fontSize: 50,
