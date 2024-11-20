@@ -19,7 +19,10 @@ const AddButton: React.FC<AddButtonProps> = ({
   return (
     <CheckPermission requiredPermission={requiredPermission}>
       <TouchableOpacity
-        style={[styles.addButton, { backgroundColor: PrimaryColor }]}
+        style={[
+          styles.addButton,
+          { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+        ]}
         onPress={onPress}
       >
         <FontAwesome6 name="plus" size={60} color={SecondaryColor} />
@@ -38,6 +41,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     alignSelf: "center",
+    borderWidth: 5,
+    borderStyle: "solid",
   },
 });
 

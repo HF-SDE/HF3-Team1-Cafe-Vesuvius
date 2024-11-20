@@ -60,7 +60,9 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
       (permission) => permission.code === item.code
     );
     return (
-      <View style={styles.permissionItem}>
+      <View
+        style={[styles.permissionItem, { borderBottomColor: PrimaryColor }]}
+      >
         <Text style={[styles.permissionDescription, { color: TextColor }]}>
           {item.description}
         </Text>
@@ -105,8 +107,10 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
             { backgroundColor: PrimaryColor },
           ]}
           style={[styles.tabBar, { backgroundColor: AccentColor }]}
-          labelStyle={styles.tabLabel}
+          labelStyle={[styles.tabLabel, { color: TextColor }]}
           scrollEnabled={true}
+          activeColor={TextColor}
+          inactiveColor={PrimaryColor}
         />
       )}
     />
@@ -117,7 +121,6 @@ const styles = StyleSheet.create({
   permissionItem: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -133,7 +136,7 @@ const styles = StyleSheet.create({
     height: 3,
   },
   tabLabel: {
-    color: "#333",
+    // color: "#333",
     fontSize: 14,
   },
 });

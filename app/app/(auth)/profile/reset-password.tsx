@@ -103,16 +103,18 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
-          onPress={handleReset}
-        >
-          <Text style={styles.buttonText}>Reset</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
           style={[styles.cancelButton, { backgroundColor: AccentColor }]}
           onPress={onClose}
         >
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={[styles.buttonText, { color: TextColor }]}>Cancel</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
+          onPress={handleReset}
+        >
+          <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+            Reset
+          </Text>
         </TouchableOpacity>
       </View>
 
@@ -127,6 +129,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
+    gap: 10,
   },
   title: {
     fontSize: 24,
@@ -145,13 +148,13 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "100%",
     marginTop: 20,
+    gap: 10,
   },
   resetButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginRight: 10,
   },
   cancelButton: {
     flex: 1,
@@ -160,7 +163,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
+    // color: "#fff",
     fontWeight: "bold",
   },
   errorText: {
