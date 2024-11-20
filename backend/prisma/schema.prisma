@@ -43,7 +43,7 @@ model Session {
 
 model Token {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sessionId    String   @unique @db.ObjectId
+  sessionId    String   @db.ObjectId
   session      Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   accessToken  String   @unique
   refreshToken String   @unique
