@@ -17,6 +17,8 @@ interface PasswordInputProps {
   borderColor?: string;
   textColor?: string;
   iconColor?: string;
+  highlighOutlineColor?: string;
+  isHighlighted?: boolean;
 }
 
 export default function PasswordInput({
@@ -32,24 +34,14 @@ export default function PasswordInput({
   borderColor = "gray",
   textColor = "black",
   iconColor = "gray",
+  highlighOutlineColor = "red",
+  isHighlighted = false,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
     <View style={styles.inputBlock}>
       <TextInput
-        style={[
-          styles.input,
-          {
-            borderColor: isInvalid ? "red" : borderColor,
-            color: textColor,
-            backgroundColor: backgroundColor,
-            paddingRight: 45,
-            paddingTop: 0,
-          },
-          inputStyle,
-        ]}
-        highlighOutlineColor="red"
         label={placeholder}
         secureTextEntry={!showPassword}
         autoCapitalize="none"
@@ -57,6 +49,8 @@ export default function PasswordInput({
         value={value}
         onChange={onChangeText}
         onSubmitEditing={onSubmitEditing}
+        isHighlighted={isHighlighted}
+        highlighOutlineColor={highlighOutlineColor}
       />
       <TouchableOpacity
         onPress={() => setShowPassword((prev) => !prev)}

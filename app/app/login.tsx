@@ -94,6 +94,8 @@ export default function Index() {
               setIsUsernameEmpty(false);
             }}
             onSubmitEditing={handleLogin}
+            clearTextOnFocus={false}
+            autoComplete="off"
           />
         </View>
         <View style={[styles.input_block]}>
