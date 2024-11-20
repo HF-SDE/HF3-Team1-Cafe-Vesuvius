@@ -9,7 +9,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 interface InputProps {
   label: TextInputLabelProp;
-  value: string;
+  value: TextInputProps["value"];
   onChange: TextInputProps["onChangeText"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
   style?: StyleProp<TextStyle>;
@@ -31,7 +31,7 @@ interface InputProps {
  * <CustomTextInput label="Name" value={name} onChange={setName} />
  * 
  * @param {TextInputLabelProp} label - label for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#label
- * @param {string} value - value for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#value
+ * @param {TextInputProps["value"]} value - value for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#value
  * @param {StyleProp<TextStyle>} style - custom style for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#style
  * @param {TextInputProps["clearButtonMode"]} [clearButtonMode="never"] [IOS ONLY] - default is "never". @see https://reactnative.dev/docs/textinput#clearbuttonmode-ios
  * @param {TextInputProps["autoComplete"]} [autoComplete="off"] - default is "off". @see https://reactnative.dev/docs/textinput#autocomplete
