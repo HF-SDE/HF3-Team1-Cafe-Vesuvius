@@ -14,6 +14,8 @@ import { useUsers } from "@/hooks/useUsers";
 import AddButton from "@/components/AddButton";
 import { router } from "expo-router";
 
+import SearchBar from "@/components/SearchBar"; // Import the SearchBar
+
 export default function ManageUsersPage() {
   const { users, isLoading, error } = useUsers();
   const BackgroundColor = useThemeColor({}, "background");
@@ -57,17 +59,8 @@ export default function ManageUsersPage() {
   return (
     <TemplateLayout pageName="UsersPage" title="Users">
       <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-        <TextInput
-          style={[
-            styles.input,
-            { color: TextColor, borderColor: SecondaryColor },
-          ]}
-          placeholder="Search users"
-          placeholderTextColor={SecondaryColor}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-
+        <SearchBar searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+        {/* Use the SearchBar component */}
         {isLoading ? (
           <Text style={[styles.loadingText, { color: TextColor }]}>
             Loading...
@@ -86,7 +79,6 @@ export default function ManageUsersPage() {
             showsVerticalScrollIndicator={false}
           />
         )}
-
         <AddButton
           onPress={handleAddUser}
           requiredPermission={["order:create"]}
