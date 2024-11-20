@@ -15,15 +15,20 @@ const CustomTextInput: React.FC<InputProps> = ({
   onChange,
   style,
 }) => {
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   return (
     <TextInput
-      style={style}
+      style={[style, { borderColor: "red" }]}
       label={label}
       mode="outlined"
       value={value}
       activeOutlineColor={PrimaryColor}
+      outlineColor={SecondaryColor}
       onChangeText={onChange}
     />
   );
