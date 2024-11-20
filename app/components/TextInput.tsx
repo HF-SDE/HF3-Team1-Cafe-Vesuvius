@@ -48,6 +48,29 @@ interface InputProps {
  * @returns {*}
  */
 export default function CustomTextInput({ label, value, onChange, style, onSubmitEditing, placeholder, autoCorrect = true, clearButtonMode = "never", autoComplete = "off", autoCapitalize = "sentences", clearTextOnFocus = true, enablesReturnKeyAutomatically = false, enterKeyHint = "next", inputMode = "text"  }: InputProps): any {
+  label: string;
+  value: string;
+  onChange: (value: string) => void;
+  onSubmitEditing?: () => void;
+  style?: object;
+  autoCorrect?: boolean;
+  autoCapitalize?: string | undefined;
+  highlighOutlineColor?: string;
+  isHighlighted?: string;
+  secureTextEntry?: boolean;
+}
+
+const CustomTextInput: React.FC<InputProps> = ({
+  label,
+  value,
+  onChange,
+  onSubmitEditing,
+  style,
+  autoCorrect,
+  highlighOutlineColor,
+  isHighlighted,
+  secureTextEntry,
+}) => {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -92,6 +115,9 @@ export default function CustomTextInput({ label, value, onChange, style, onSubmi
       contentStyle={{
         color: PrimaryColor,
       }}
+      onSubmitEditing={onSubmitEditing}
+      autoCorrect={autoCorrect}
+      secureTextEntry={secureTextEntry}
     />
   );
 };

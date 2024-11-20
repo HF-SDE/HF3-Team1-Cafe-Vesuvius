@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { View, TouchableOpacity, StyleSheet } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { TextInput } from "react-native-paper";
+//import { TextInput } from "react-native-paper";
+import TextInput from "../components/TextInput";
 
 interface PasswordInputProps {
   value: string;
@@ -48,18 +49,13 @@ export default function PasswordInput({
           },
           inputStyle,
         ]}
-        theme={{ colors: { onSurfaceVariant: "gray" } }}
-        outlineColor={isInvalid ? "red" : borderColor}
-        activeOutlineColor="white"
-        outlineStyle={{ borderWidth: 2 }}
-        mode="outlined"
+        highlighOutlineColor="red"
         label={placeholder}
-        textColor={textColor}
         secureTextEntry={!showPassword}
         autoCapitalize="none"
         autoCorrect={false}
         value={value}
-        onChangeText={onChangeText}
+        onChange={onChangeText}
         onSubmitEditing={onSubmitEditing}
       />
       <TouchableOpacity
