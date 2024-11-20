@@ -87,6 +87,7 @@ export default function TextIconInput({
         secureTextEntry={secureTextEntry}
         highlighOutlineColor={highlighOutlineColor}
         isHighlighted={isHighlighted}
+        editable={editable}
         style={[
           styles.textInput,
           icon && iconPosition === "left" ? { paddingLeft: 40 } : {},

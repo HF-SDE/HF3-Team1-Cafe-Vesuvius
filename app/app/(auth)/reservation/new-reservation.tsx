@@ -7,22 +7,61 @@ import {
   View,
   TextInput,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
 import { Buffer } from "buffer";
 import { table } from "@/models/TableModels";
 import { Reservation } from "@/models/ReservationModels";
-import DatePicker from "react-native-date-picker";
+import DateTimePicker from "react-native-ui-datepicker";
+import dayjs from "dayjs";
+import CustomTextInput from "@/components/TextInput";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TextIconInput from "@/components/TextIconInput";
 
 interface ModalScreenProps {
   onClose: () => void;
+  tables: table[];
 }
 
-export default function NewReservationModal({ onClose }: ModalScreenProps) {
+// Temp data
+const tmptables = [
+  { id: 'table-1', number: 1 },
+  { id: 'table-2', number: 2 },
+  { id: 'table-3', number: 3 },
+  { id: 'table-4', number: 4 },
+  { id: 'table-5', number: 5 },
+  { id: 'table-6', number: 6 },
+  { id: 'table-7', number: 7 },
+  { id: 'table-8', number: 8 },
+  { id: 'table-9', number: 9 },
+  { id: 'table-10', number: 10 },
+  { id: 'table-11', number: 11 },
+  { id: 'table-12', number: 12 },
+  { id: 'table-13', number: 13 },
+  { id: 'table-14', number: 14 },
+  { id: 'table-15', number: 15 },
+  { id: 'table-16', number: 16 },
+  { id: 'table-17', number: 17 },
+  { id: 'table-18', number: 18 },
+  { id: 'table-19', number: 19 },
+  { id: 'table-20', number: 20 },
+  { id: 'table-21', number: 21 },
+  { id: 'table-22', number: 22 },
+  { id: 'table-23', number: 23 },
+  { id: 'table-24', number: 24 },
+  { id: 'table-25', number: 25 },
+  { id: 'table-26', number: 26 },
+  { id: 'table-27', number: 27 },
+  { id: 'table-28', number: 28 }
+];
+
+export default function NewReservationModal({ onClose, tables = tmptables }: ModalScreenProps) {
   const [reservation, setReservations] = useState<Reservation>();
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [page, setPage] = useState(1);
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -79,42 +118,66 @@ export default function NewReservationModal({ onClose }: ModalScreenProps) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-      <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
+    <SafeAreaView style={[styles.container, { backgroundColor: BackgroundColor }]}>
+      <Text style={[styles.title, { color: TextColor }]}>New Reservations</Text>
+      {
+        page === 1 ?
+          <>
+            <CustomTextInput
+              label="Name"
+              value={reservation?.name}
+              inputMode="text"
+              clearButtonMode="always"
+              autoCapitalize="words"
+              enablesReturnKeyAutomatically={true}
+              onChange={(name) => setReservations({ ...reservation!, name })}
+            />
+            <CustomTextInput
+              label="Phone"
+              value={reservation?.phone}
+              inputMode="tel"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChange={(phone) => setReservations({ ...reservation!, phone })}
+            />
+            <CustomTextInput
+              label="Email"
+              value={reservation?.email}
+              inputMode="email"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChange={(email) => setReservations({ ...reservation!, email })}
+            />
+            <TextIconInput
+              label="Reservation Time"
+              value={reservation?.reservationTime?.toString() ?? dayjs().format("YYYY-MM-DD HH:mm")}
+              placeholderTextColor={SecondaryColor}
+              icon="calendar"
+              onChangeText={(email) => setReservations({ ...reservation!, email })}
+            />
 
-      <TextInput
-        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
-        placeholder="Name"
-        placeholderTextColor={SecondaryColor}
-        value={reservation?.name}
-        onChangeText={(name) => setReservations({ ...reservation!, name })}
-      />
-      <TextInput
-        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
-        placeholder="Phone"
-        placeholderTextColor={SecondaryColor}
-        inputMode="tel"
-        value={reservation?.phone}
-        onChangeText={(phone) => setReservations({ ...reservation!, phone })}
-      />
-      <TextInput
-        style={[styles.input, { borderColor: PrimaryColor, color: TextColor }]}
-        placeholder="email"
-        placeholderTextColor={SecondaryColor}
-        secureTextEntry
-        value={reservation?.email}
-        onChangeText={(email) => setReservations({ ...reservation!, email })}
-      />
+            {
+              datePicker
+              &&
+              <DateTimePicker
+                mode="single"
+                onChange={(date) => { setReservations({ ...reservation!, reservationTime: dayjs(date.date) }); }}
+                date={dayjs((reservation?.reservationTime || new Date()))}
+                firstDayOfWeek={1}
+                timePicker={true}
+              />
+            }
 
-      <DatePicker
-        onDateChange={(date) => { setReservations({ ...reservation!, reservationTime: date }); }}
-        date={new Date(reservation?.reservationTime || new Date())}
-      />
+            {errorMessage ? (
+              <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
+            ) : null}
+          </>
+          :
+          <FlatList ListHeaderComponent={<Text>Tables</Text>} numColumns={4} data={tables} renderItem={({ item }) => (
+            <Item {...item} />
+          )} keyExtractor={(item) => item.number.toString()} contentContainerStyle={styles.listContainer} style={styles.flatList} />
 
-      {errorMessage ? (
-        <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
-      ) : null}
-
+      }
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
@@ -124,18 +187,46 @@ export default function NewReservationModal({ onClose }: ModalScreenProps) {
         </TouchableOpacity>
         <TouchableOpacity
           style={[styles.cancelButton, { backgroundColor: "#969696" }]}
-          onPress={onClose}
+          onPress={page === 1 ? () => setPage(2) : onClose}
         >
-          <Text style={styles.buttonText}>Cancel</Text>
+          <Text style={styles.buttonText}>{page === 1 ? "Next" : "Create"}</Text>
         </TouchableOpacity>
       </View>
-
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+    </SafeAreaView>
+  );
+
+}
+
+function Item(props: table) {
+  return (
+    <View style={styles.item}>
+      <Text>{props.number}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  item: {
+    flex: 1,
+    maxWidth: "25%", // 100% devided by the number of rows you want
+    alignItems: "center",
+    width: "100%",
+
+    // my visual styles; not important for the grid
+    padding: 10,
+    backgroundColor: "rgba(249, 180, 45, 0.25)",
+    borderWidth: 1.5,
+    borderColor: "#fff"
+  },
+  listContainer: {
+    padding: 16,
+  },
+  flatList: {
+    flex: 1,
+    alignContent: "center",
+    width: "100%", // Ensures the FlatList spans the full width
+  },
   container: {
     flex: 1,
     alignItems: "center",
