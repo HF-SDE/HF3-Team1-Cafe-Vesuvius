@@ -27,6 +27,7 @@ interface InputProps {
   highlighOutlineColor?: string;
   isHighlighted?: boolean;
   secureTextEntry?: TextInputProps['secureTextEntry'];
+  editable?: TextInputProps["editable"];
   onChange?: TextInputProps["onChangeText"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
 }
@@ -47,6 +48,11 @@ interface InputProps {
  * @param {TextInputProps["enablesReturnKeyAutomatically"]} [enablesReturnKeyAutomatically=false] [IOS ONLY] [Optional] - default is false.  @see https://reactnative.dev/docs/textinput#enablesreturnkeyautomatically-ios
  * @param {EnterKeyHintTypeOptions} [enterKeyHint="next"] [Optional] - default is "next". What enter keys should be used for. @see https://reactnative.dev/docs/textinput#enterkeyhint
  * @param {InputModeOptions} [inputMode="text"] [Optional] - default is "text" - Helps to determine what keyboardType should be used. @see https://reactnative.dev/docs/textinput#inputmode
+ * @param {string} [highlighOutlineColor="red"] [Optional] - default is "red" - Color of the outline when the text input is highlighted
+ * @param {boolean} [isHighlighted=false] [Optional] - default is false - If the text input is highlighted
+ * @param {TextInputProps["autoCorrect"]} [autoCorrect] [Optional] - default is true - If the text input should be auto corrected @see https://reactnative.dev/docs/textinput#autocorrect
+ * @param {TextInputProps["secureTextEntry"]} [secureTextEntry] [Optional] - default is false - If the text input should be secure @see https://reactnative.dev/docs/textinput#securetextentry
+ * @param {TextInputProps["editable"]} [editable] [Optional] - default is true - If the text input should be editable @see https://reactnative.dev/docs/textinput#editable
  * @param {TextInputProps["onChangeText"]} [onChange] [Optional] - function to handle text input change event @see https://reactnative.dev/docs/textinput#onchangetext
  * @param {TextInputProps["onSubmitEditing"]} [onSubmitEditing] [Optional] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
  * @returns {*}
@@ -68,6 +74,7 @@ export default function CustomTextInput({
   highlighOutlineColor = "red",
   isHighlighted = false,
   secureTextEntry,
+  editable = true,
 }: InputProps) {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -96,6 +103,7 @@ export default function CustomTextInput({
       enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
       enterKeyHint={enterKeyHint}
       inputMode={inputMode}
+      editable={editable}
       theme={{
         colors: {
           text: TextColor,
