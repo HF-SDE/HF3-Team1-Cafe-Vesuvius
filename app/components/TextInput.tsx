@@ -10,7 +10,6 @@ interface InputProps {
   onChange: (value: string) => void;
   onSubmitEditing?: () => void;
   style?: object;
-  placeholderTextColor?: string;
   autoCorrect?: boolean;
   autoCapitalize?: string | undefined;
 }
@@ -21,7 +20,6 @@ const CustomTextInput: React.FC<InputProps> = ({
   onChange,
   onSubmitEditing,
   style,
-  placeholderTextColor,
   autoCorrect,
 }) => {
   const BackgroundColor = useThemeColor({}, "background");
@@ -32,16 +30,17 @@ const CustomTextInput: React.FC<InputProps> = ({
 
   return (
     <TextInput
-      style={[style, { backgroundColor: BackgroundColor, color: TextColor }]}
-      style={styles.inputBlock}
+      style={[
+        style,
+        styles.inputBlock,
+        { backgroundColor: BackgroundColor, color: TextColor },
+      ]}
       label={label}
       mode="outlined"
       value={value}
       activeOutlineColor={TextColor}
       outlineColor={PrimaryColor}
       outlineStyle={{ borderWidth: 2 }}
-      activeOutlineColor="white"
-      outlineColor={SecondaryColor}
       onChangeText={onChange}
       theme={{
         colors: {
@@ -57,7 +56,6 @@ const CustomTextInput: React.FC<InputProps> = ({
         color: PrimaryColor,
       }}
       onSubmitEditing={onSubmitEditing}
-      theme={{ colors: { onSurfaceVariant: placeholderTextColor } }}
       autoCorrect={autoCorrect}
     />
   );
