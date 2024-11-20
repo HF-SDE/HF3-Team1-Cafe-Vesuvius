@@ -9,15 +9,15 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 
 interface InputProps {
   label: TextInputLabelProp;
-  value: TextInputProps["value"];
+  value?: TextInputProps["value"];
   placeholder?: TextInputProps["placeholder"];
   style?: StyleProp<TextStyle>;
-  clearButtonMode: TextInputProps["clearButtonMode"];
-  autoComplete: TextInputProps["autoComplete"];
-  clearTextOnFocus: TextInputProps["clearTextOnFocus"];
-  enablesReturnKeyAutomatically: TextInputProps["enablesReturnKeyAutomatically"];
-  enterKeyHint: EnterKeyHintTypeOptions;
-  inputMode: InputModeOptions;
+  clearButtonMode?: TextInputProps["clearButtonMode"];
+  autoComplete?: TextInputProps["autoComplete"];
+  clearTextOnFocus?: TextInputProps["clearTextOnFocus"];
+  enablesReturnKeyAutomatically?: TextInputProps["enablesReturnKeyAutomatically"];
+  enterKeyHint?: EnterKeyHintTypeOptions;
+  inputMode?: InputModeOptions;
   autoCorrect?: TextInputProps["autoCorrect"];
   autoCapitalize?: TextInputProps["autoCapitalize"];
   onChange: TextInputProps["onChangeText"];
