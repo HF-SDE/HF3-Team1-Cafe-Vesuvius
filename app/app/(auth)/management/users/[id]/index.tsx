@@ -167,7 +167,9 @@ export default function EditCreateUserPage() {
             onChange={(value) => handleChange("initials", value)}
           />
           <View style={styles.activeSwitchContainer}>
-            <Text style={styles.permissionsTitle}>Active</Text>
+            <Text style={[styles.permissionsTitle, { color: TextColor }]}>
+              Active
+            </Text>
 
             <Switch
               onValueChange={(newValue) => handleChange("active", newValue)}
@@ -176,7 +178,9 @@ export default function EditCreateUserPage() {
           </View>
         </View>
 
-        <Text style={styles.permissionsTitle}>Permissions</Text>
+        <Text style={[styles.permissionsTitle, { color: TextColor }]}>
+          Permissions
+        </Text>
 
         <PermissionsTabView
           permissions={permissions ? permissions : []}
@@ -240,6 +244,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buttonContainer: {
+    // paddingTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",

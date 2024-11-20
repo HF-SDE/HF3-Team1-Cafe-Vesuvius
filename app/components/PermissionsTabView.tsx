@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import Switch from "@/components/Switch";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface Permission {
   code: string;
@@ -54,7 +55,9 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     );
     return (
       <View style={styles.permissionItem}>
-        <Text style={styles.permissionDescription}>{item.description}</Text>
+        <Text style={[styles.permissionDescription, { color: TextColor }]}>
+          {item.description}
+        </Text>
         <Switch
           value={isActive}
           onValueChange={(newValue) =>
@@ -82,6 +85,12 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     return <Text>Loading</Text>;
   }
 
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   return (
     <TabView
       navigationState={{ index, routes: categories }}
@@ -91,8 +100,11 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
       renderTabBar={(props) => (
         <TabBar
           {...props}
-          indicatorStyle={styles.tabIndicator}
-          style={styles.tabBar}
+          indicatorStyle={[
+            styles.tabIndicator,
+            { backgroundColor: PrimaryColor },
+          ]}
+          style={[styles.tabBar, { backgroundColor: AccentColor }]}
           labelStyle={styles.tabLabel}
           scrollEnabled={true}
         />
@@ -112,15 +124,12 @@ const styles = StyleSheet.create({
   },
   permissionDescription: {
     fontSize: 14,
-    color: "#555",
   },
   tabBar: {
-    backgroundColor: "#000",
     borderRadius: 5,
     elevation: 0,
   },
   tabIndicator: {
-    backgroundColor: "#007aff",
     height: 3,
   },
   tabLabel: {
