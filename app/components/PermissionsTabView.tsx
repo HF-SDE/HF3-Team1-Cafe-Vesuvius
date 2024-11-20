@@ -23,6 +23,12 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
 }) => {
   const [index, setIndex] = useState(0);
 
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   // Define categories based on permission prefixes
   const categories = Array.from(
     new Set(permissions.map((permission) => permission.code.split(":")[0]))
@@ -84,12 +90,6 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
   if (!permissions || !userPermissions || permissions.length === 0) {
     return <Text>Loading</Text>;
   }
-
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
 
   return (
     <TabView
