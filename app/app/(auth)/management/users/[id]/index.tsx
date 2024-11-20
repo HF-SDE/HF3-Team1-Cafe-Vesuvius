@@ -128,8 +128,8 @@ export default function EditCreateUserPage() {
       const updatedPermissions = isEnabled
         ? [...prevUser.permissions, { code: permissionCode, description: "" }]
         : prevUser.permissions.filter(
-            (permission) => permission.code !== permissionCode
-          );
+          (permission) => permission.code !== permissionCode
+        );
       return { ...prevUser, permissions: updatedPermissions };
     });
   };
@@ -145,21 +145,21 @@ export default function EditCreateUserPage() {
           style={styles.input}
           label="Username"
           value={user.username}
-          onChange={(value) => handleChange("username", value)}
+          onChangeText={(value) => handleChange("username", value)}
           clearTextOnFocus={false}
         />
         <TextInput
           style={styles.input}
           label="Name"
           value={user.name}
-          onChange={(value) => handleChange("name", value)}
+          onChangeText={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />
         <TextInput
           style={styles.input}
           label="Email"
           value={user.email}
-          onChange={(value) => handleChange("email", value)}
+          onChangeText={(value) => handleChange("email", value)}
           inputMode="email"
           clearTextOnFocus={false}
         />
@@ -168,7 +168,7 @@ export default function EditCreateUserPage() {
             style={[styles.input, styles.initialsInput]}
             label="Initials"
             value={user.initials}
-            onChange={(value) => handleChange("initials", value)}
+            onChangeText={(value) => handleChange("initials", value)}
             clearTextOnFocus={false}
           />
           <View style={styles.activeSwitchContainer}>

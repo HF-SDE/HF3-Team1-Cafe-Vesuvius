@@ -101,6 +101,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
       amount: reservation.amount,
       email: reservation.email,
       name: reservation.name,
+      partySize: Number(reservation.partySize),
       phone: reservation.phone,
       reservationTime: reservation.reservationTime,
       tables: reservation.tables,
@@ -130,7 +131,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               clearButtonMode="always"
               autoCapitalize="words"
               enablesReturnKeyAutomatically={true}
-              onChange={(name) => setReservations({ ...reservation!, name })}
+              onChangeText={(name) => setReservations({ ...reservation!, name })}
             />
             <CustomTextInput
               label="Phone"
@@ -138,7 +139,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="tel"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChange={(phone) => setReservations({ ...reservation!, phone })}
+              onChangeText={(phone) => setReservations({ ...reservation!, phone })}
             />
             <CustomTextInput
               label="Email"
@@ -146,13 +147,22 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="email"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChange={(email) => setReservations({ ...reservation!, email })}
+              onChangeText={(email) => setReservations({ ...reservation!, email })}
+            />
+            <CustomTextInput
+              label="Amount of People"
+              value={reservation?.partySize.toString()}
+              inputMode="numeric"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChangeText={(partySize) => setReservations({ ...reservation!, partySize })}
             />
             <TextIconInput
               label="Reservation Time"
               value={reservation?.reservationTime?.toString() ?? dayjs().format("YYYY-MM-DD HH:mm")}
               placeholderTextColor={SecondaryColor}
               icon="calendar"
+              onIconPress={() => setDatePicker(!datePicker)}
               onChangeText={(email) => setReservations({ ...reservation!, email })}
             />
 
