@@ -3,41 +3,90 @@ import {
   View,
   Text,
   TextInput,
-  Button,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLayoutEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import TemplateLayout from "@/components/TemplateLayout";
+import { useMenu } from "@/hooks/useMenu";
+import AddButton from "@/components/AddButton";
+import { router } from "expo-router";
 
-export default function AddOrderScreen() {
+import SearchBar from "@/components/SearchBar"; // Import the SearchBar
+
+export default function ManageUsersPage() {
+  const { menu, isLoading, error } = useMenu();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
   const navigation = useNavigation();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+
+  const handleAddUser = () => {
+    // Navigate to the edit/create user page (replace with your navigation logic)
+    router.navigate("/management/menu/new");
+  };
+
+  // Filter users based on the search query (case-insensitive)
+  const filteredUsers = menu
+    ? menu.filter((user) =>
+        user.name.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : [];
+
+  const handleUserPress = (userId: string) => {
+    // Navigate to the edit/create page for a specific user
+    router.navigate(`/management/menu/${userId}`);
+  };
+
+  const renderItem = ({ item }) => (
+    <TouchableOpacity onPress={() => handleUserPress(item.id)}>
+      <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
+        <Text style={[styles.userName, { color: SecondaryColor }]}>
+          {item.name}
+        </Text>
+        <Text style={[styles.userEmail, { color: SecondaryColor }]}>
+          {item.email}
+        </Text>
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <TemplateLayout pageName="MenuPage" title="Menu">
-      <View style={[styles.container]}>
-        <View style={styles.spacer} />
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder="Search for menu"
+        />
+        {/* Use the SearchBar component */}
+        {isLoading ? (
+          <Text style={[styles.loadingText, { color: TextColor }]}>
+            Loading...
+          </Text>
+        ) : error ? (
+          <Text style={[styles.errorText, { color: TextColor }]}>
+            {error.message}
+          </Text>
+        ) : (
+          <FlatList
+            data={filteredUsers}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.userList}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+        <AddButton
+          onPress={handleAddUser}
+          requiredPermission={["order:create"]}
+        />
       </View>
     </TemplateLayout>
   );
@@ -56,36 +105,31 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingLeft: 10,
   },
-  dropdown: {
-    position: "absolute",
-    backgroundColor: "white",
-    width: "100%",
-    maxHeight: 150,
-    elevation: 5,
-    zIndex: 1000,
+  userList: {
+    flexGrow: 1,
   },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
+  userItem: {
+    padding: 15,
+    borderRadius: 10, // Add rounded corners here
+    marginBottom: 15,
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 5,
-    margin: 5,
-  },
-  buttonText: {
-    fontSize: 24,
+  userName: {
+    fontSize: 18,
     fontWeight: "bold",
   },
-  spacer: {
-    flex: 1,
+  userEmail: {
+    fontSize: 14,
+    marginTop: 5,
+  },
+  loadingText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+    color: "red",
   },
 });

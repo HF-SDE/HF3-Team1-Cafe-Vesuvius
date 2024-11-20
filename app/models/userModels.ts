@@ -11,3 +11,10 @@ export interface Permission {
   code: string;
   description: string;
 }
+
+export interface Permission {
+  id: string;
+  category: string[];
+  name: string;
+  price: number;
+}
