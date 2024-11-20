@@ -101,6 +101,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
       amount: reservation.amount,
       email: reservation.email,
       name: reservation.name,
+      partySize: Number(reservation.partySize),
       phone: reservation.phone,
       reservationTime: reservation.reservationTime,
       tables: reservation.tables,
@@ -147,6 +148,14 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
               onChangeText={(email) => setReservations({ ...reservation!, email })}
+            />
+            <CustomTextInput
+              label="Amount of People"
+              value={reservation?.partySize.toString()}
+              inputMode="numeric"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChangeText={(partySize) => setReservations({ ...reservation!, partySize })}
             />
             <TextIconInput
               label="Reservation Time"
