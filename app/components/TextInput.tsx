@@ -10,7 +10,7 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 interface InputProps {
   label: TextInputLabelProp;
   value: TextInputProps["value"];
-  placeholder: TextInputProps["placeholder"];
+  placeholder?: TextInputProps["placeholder"];
   style?: StyleProp<TextStyle>;
   clearButtonMode: TextInputProps["clearButtonMode"];
   autoComplete: TextInputProps["autoComplete"];
