@@ -81,6 +81,7 @@ export async function updateOrderStatus(
   res: Response,
 ): Promise<void> {
   let items = req.body.items || [];
+  const orderId = req.params.id;
 
   const validated = Order_MenusSchema.validate(items);
 
@@ -95,7 +96,7 @@ export async function updateOrderStatus(
 
   items = validated.value;
 
-  const response = await OrderService.updateStatus(items);
+  const response = await OrderService.updateStatus(orderId, items);
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
