@@ -16,6 +16,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import SearchBar from "@/components/SearchBar";
 import { TextInput } from "react-native";
+import { SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
   const { stock, isLoading, error } = useStock();
@@ -23,6 +24,7 @@ export default function ManageUsersPage() {
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   const [searchQuery, setSearchQuery] = useState("");
   const [quantities, setQuantities] = useState({}); // Track adjustments per item
@@ -180,13 +182,54 @@ export default function ManageUsersPage() {
             Something went wrong!
           </Text>
         ) : (
-          <FlatList
+          <SwipeListView
             data={filteredUsers}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.userList}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
+            renderHiddenItem={(data, rowMap) => (
+              <View style={styles.hiddenItemContainer}>
+                <TouchableOpacity
+                  style={[
+                    styles.hiddenButton,
+                    styles.hiddenButtonStart,
+                    styles.deleteButton,
+                  ]}
+                  onPress={() => console.log("Delete", data.item.id)}
+                >
+                  <FontAwesome6
+                    name="trash-alt"
+                    style={styles.iconStyle}
+                    size={36}
+                    color="white"
+                  />
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={[
+                    styles.hiddenButton,
+                    styles.hiddenButtonEnd,
+                    styles.editButton,
+                    { backgroundColor: AccentColor },
+                  ]}
+                  onPress={() => console.log("Edit", data.item.id)}
+                >
+                  <FontAwesome6
+                    name="edit"
+                    style={styles.iconStyle}
+                    size={36}
+                    color="white"
+                  />
+                </TouchableOpacity>
+              </View>
+            )}
+            leftOpenValue={100}
+            rightOpenValue={-100}
+            stopLeftSwipe={100}
+            stopRightSwipe={-100}
+            ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
           />
         )}
         <AddButton
@@ -211,7 +254,7 @@ const styles = StyleSheet.create({
   userItem: {
     padding: 15,
     borderRadius: 10,
-    marginBottom: 15,
+    //marginBottom: 15,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -267,5 +310,39 @@ const styles = StyleSheet.create({
     borderWidth: 3,
     borderRadius: 5,
     marginHorizontal: 5,
+  },
+  hiddenItemContainer: {
+    flex: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "transparent",
+    borderRadius: 10,
+    //marginBottom: 15,
+    height: "100%",
+  },
+  hiddenButton: {
+    width: "50%",
+    height: "100%",
+
+    justifyContent: "center",
+  },
+  hiddenButtonStart: {
+    alignItems: "flex-start",
+  },
+  hiddenButtonEnd: {
+    alignItems: "flex-end",
+  },
+  deleteButton: {
+    backgroundColor: "red",
+    borderTopLeftRadius: 10,
+    borderBottomLeftRadius: 10,
+  },
+  editButton: {
+    borderTopRightRadius: 10,
+    borderBottomRightRadius: 10,
+  },
+  iconStyle: {
+    marginHorizontal: 35,
   },
 });
