@@ -2,19 +2,23 @@ import { IAPIResponse, Status } from '@api-types/general.types';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
+import { capitalize } from '@utils/Utils';
 
 const prisma = new PrismaClient();
 export const prismaPSQL = new PrismaClientPSQL();
 export default prisma;
 
+export type prismaModels = Uncapitalize<Prisma.ModelName>;
 /**
  * Function to handle error responses
  * @param {PrismaClientKnownRequestError} err - The error object.
+ * @param {prismaModels} model - The model that caused the error.
  * @param {keyof typeof Status} operation - The operation that caused the error.
  * @returns {IAPIResponse} An object containing the status and message.
  */
 export function errorResponse(
   err: PrismaClientKnownRequestError,
+  model: prismaModels,
   operation: keyof typeof Status,
 ): IAPIResponse {
   if (err.name == 'PrismaClientValidationError') {
@@ -29,13 +33,13 @@ export function errorResponse(
       case 'P2002':
         return {
           status: Status[operation],
-          message: 'Record already exists',
+          message: `${capitalize(model)} already exists`,
         };
 
       case 'P2025':
         return {
           status: Status[operation],
-          message: 'Record not found',
+          message: `${capitalize(model)} not found`,
         };
 
       case 'P2014':

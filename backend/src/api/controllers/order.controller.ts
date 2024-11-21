@@ -2,6 +2,9 @@ import { NextFunction, Request, Response } from 'express';
 
 import prisma from '@prisma-instance';
 import { Order_Menu } from '@prisma/client';
+import { Order_MenusSchema } from '@schemas/order_menu.schema';
+import * as OrderService from '@services/order.service';
+import { getHttpStatusCode } from '@utils/Utils';
 
 interface OrderRequest extends Request {
   body: {
@@ -59,4 +62,40 @@ export async function transformMenus(
   req.body.Order_Menus = { createMany: { data: items } };
 
   next();
+}
+
+interface OrderStatusRequest extends Request {
+  body: {
+    items?: Order_Menu[];
+  };
+}
+
+/**
+ * Controller to validate the order status
+ * @param {OrderStatusRequest} req - The request object
+ * @param {Response} res - The response object
+ * @returns {Promise<void>}
+ */
+export async function updateOrderStatus(
+  req: OrderStatusRequest,
+  res: Response,
+): Promise<void> {
+  let items = req.body.items || [];
+
+  const validated = Order_MenusSchema.validate(items);
+
+  if (validated.error) {
+    res.status(400).json({
+      status: 'Failed',
+      message: validated.error.message,
+    });
+
+    return;
+  }
+
+  items = validated.value;
+
+  const response = await OrderService.updateStatus(items);
+
+  res.status(getHttpStatusCode(response.status)).json(response).end();
 }
