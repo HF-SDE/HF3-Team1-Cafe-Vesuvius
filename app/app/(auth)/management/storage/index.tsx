@@ -33,14 +33,14 @@ export default function ManageUsersPage() {
     router.navigate("/management/storage/new");
   };
 
-  const handleIncrease = (itemId) => {
+  const handleIncrease = (itemId: string) => {
     setQuantities((prev) => ({
       ...prev,
       [itemId]: (prev[itemId] || 0) + 1,
     }));
   };
 
-  const handleDecrease = (itemId) => {
+  const handleDecrease = (itemId: string) => {
     setQuantities((prev) => ({
       ...prev,
       [itemId]: Math.max(
@@ -50,8 +50,6 @@ export default function ManageUsersPage() {
     }));
   };
   const handleQuantityChange = (itemId: string, text: string) => {
-    console.log("Change");
-
     // Allow negative sign during typing but sanitize input
     if (text === "-" || text === "0-") {
       setQuantities((prev) => ({
@@ -79,6 +77,7 @@ export default function ManageUsersPage() {
       return;
     }
 
+    if (!stock) return;
     const item = stock.find((item) => item.id === itemId);
     if (!item) return;
 
