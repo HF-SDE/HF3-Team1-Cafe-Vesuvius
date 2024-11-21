@@ -12,8 +12,10 @@ import TemplateLayout from "@/components/TemplateLayout";
 import { useStock } from "@/hooks/useStock";
 import AddButton from "@/components/AddButton";
 import { router } from "expo-router";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import SearchBar from "@/components/SearchBar";
+import { TextInput } from "react-native";
 
 export default function ManageUsersPage() {
   const { stock, isLoading, error } = useStock();
@@ -45,6 +47,46 @@ export default function ManageUsersPage() {
       ),
     }));
   };
+  const handleQuantityChange = (itemId: string, text: string) => {
+    console.log("Change");
+
+    // Allow negative sign during typing but sanitize input
+    if (text === "-" || text === "0-") {
+      setQuantities((prev) => ({
+        ...prev,
+        [itemId]: "-", // Keep the placeholder as "-" or an empty string
+      }));
+      return;
+    }
+    if (text === "") {
+      setQuantities((prev) => ({
+        ...prev,
+        [itemId]: "0", // Keep the placeholder as "-" or an empty string
+      }));
+      return;
+    }
+
+    const parsedValue = parseInt(text, 10);
+
+    // Reset invalid input
+    if (isNaN(parsedValue)) {
+      setQuantities((prev) => ({
+        ...prev,
+        [itemId]: 0,
+      }));
+      return;
+    }
+
+    const item = stock.find((item) => item.id === itemId);
+    if (!item) return;
+
+    // Clamp input between -item.quantity and a reasonable maximum (e.g., 9999)
+    const clampedValue = Math.min(Math.max(parsedValue, -item.quantity), 9999);
+    setQuantities((prev) => ({
+      ...prev,
+      [itemId]: clampedValue,
+    }));
+  };
 
   const filteredUsers = stock
     ? stock.filter((user) =>
@@ -53,36 +95,73 @@ export default function ManageUsersPage() {
     : [];
 
   const renderItem = ({ item }) => {
-    const adjustedQty = quantities[item.id] || 0; // Current adjustment
-    const newStock = item.quantity + adjustedQty; // Adjusted stock
+    const adjustedQty: string = !isNaN(Number(quantities[item.id]))
+      ? Number(quantities[item.id]).toString()
+      : "0"; // Current adjustment
+    const newStock = item.quantity + Number(adjustedQty); // Adjusted stock
 
     return (
       <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
-        <View style={styles.itemRow}>
-          <TouchableOpacity onPress={() => handleDecrease(item.id)}>
-            <Text style={[styles.icon, { color: SecondaryColor }]}>-</Text>
-          </TouchableOpacity>
-          <Text style={[styles.adjustedQty, { color: SecondaryColor }]}>
-            {adjustedQty}
+        <View>
+          <Text style={[styles.itemName, { color: BackgroundColor }]}>
+            {item.name}
           </Text>
-          <TouchableOpacity onPress={() => handleIncrease(item.id)}>
-            <Text style={[styles.icon, { color: SecondaryColor }]}>+</Text>
-          </TouchableOpacity>
+          <Text style={[styles.itemStock, { color: SecondaryColor }]}>
+            Stock: {item.quantity}
+          </Text>
         </View>
-        <Text style={[styles.userName, { color: SecondaryColor }]}>
-          {item.name}
-        </Text>
-        <Text style={[styles.userEmail, { color: SecondaryColor }]}>
-          Current stock: {item.quantity}
-        </Text>
-        {newStock !== item.quantity && (
-          <Text style={[styles.userEmail, { color: SecondaryColor }]}>
+        <View style={styles.inputContainer}>
+          <View style={styles.itemRow}>
+            <TouchableOpacity
+              style={[]}
+              onPress={() => handleDecrease(item.id)}
+            >
+              <FontAwesome6
+                name="square-minus"
+                size={45}
+                color={SecondaryColor}
+              />
+            </TouchableOpacity>
+
+            <TextInput
+              style={[
+                styles.textInput,
+                { color: SecondaryColor, borderColor: SecondaryColor },
+              ]}
+              value={adjustedQty}
+              keyboardType="number-pad"
+              onChangeText={(text) => handleQuantityChange(item.id, text)}
+            />
+            <TouchableOpacity
+              style={[]}
+              onPress={() => handleIncrease(item.id)}
+            >
+              <FontAwesome6
+                name="square-plus"
+                size={45}
+                color={SecondaryColor}
+              />
+            </TouchableOpacity>
+          </View>
+
+          <Text
+            style={[
+              styles.itemStock,
+              {
+                color:
+                  newStock !== item.quantity ? SecondaryColor : "transparent",
+                visibility: newStock !== item.quantity ? "visible" : "hidden",
+              },
+            ]}
+          >
             New stock: {newStock}
           </Text>
-        )}
+        </View>
       </View>
     );
   };
+
+  const hasChanges = Object.values(quantities).some((value) => value !== 0);
 
   return (
     <TemplateLayout pageName="StockPage" title="Storage">
@@ -113,6 +192,7 @@ export default function ManageUsersPage() {
         <AddButton
           onPress={handleAddUser}
           requiredPermission={["order:create"]}
+          icon={hasChanges ? "save" : undefined}
         />
       </View>
     </TemplateLayout>
@@ -132,14 +212,18 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10,
     marginBottom: 15,
+    flexDirection: "row",
+    justifyContent: "space-between",
   },
-  userName: {
+  itemName: {
     fontSize: 18,
     fontWeight: "bold",
   },
-  userEmail: {
+  itemStock: {
     fontSize: 14,
     marginTop: 5,
+    marginRight: 5,
+    fontWeight: "bold",
   },
   loadingText: {
     fontSize: 16,
@@ -155,14 +239,33 @@ const styles = StyleSheet.create({
   itemRow: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 10,
+    alignSelf: "flex-end",
+  },
+  itemColumn: {
+    flexDirection: "column",
+    alignItems: "center",
   },
   icon: {
     fontSize: 24,
     marginHorizontal: 10,
   },
   adjustedQty: {
+    fontSize: 40,
+    marginHorizontal: 5,
+    fontWeight: "bold",
+  },
+  inputContainer: {
+    flexDirection: "column",
+    alignItems: "center",
+  },
+  textInput: {
+    width: 60,
+    height: 40,
     fontSize: 18,
     fontWeight: "bold",
+    textAlign: "center",
+    borderWidth: 3,
+    borderRadius: 5,
+    marginHorizontal: 5,
   },
 });

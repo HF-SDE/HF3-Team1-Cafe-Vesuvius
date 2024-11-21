@@ -13,7 +13,7 @@ import TemplateLayout from "@/components/TemplateLayout";
 import { useUsers } from "@/hooks/useUsers";
 import AddButton from "@/components/AddButton";
 import { router } from "expo-router";
-
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SearchBar from "@/components/SearchBar"; // Import the SearchBar
 
 export default function ManageUsersPage() {
@@ -48,12 +48,15 @@ export default function ManageUsersPage() {
   const renderItem = ({ item }) => (
     <TouchableOpacity onPress={() => handleUserPress(item.id)}>
       <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
-        <Text style={[styles.userName, { color: BackgroundColor }]}>
-          {item.name}
-        </Text>
-        <Text style={[styles.userEmail, { color: AccentColor }]}>
-          {item.email}
-        </Text>
+        <View>
+          <Text style={[styles.userName, { color: BackgroundColor }]}>
+            {item.name}
+          </Text>
+          <Text style={[styles.userEmail, { color: AccentColor }]}>
+            {item.email}
+          </Text>
+        </View>
+        <FontAwesome6 name="edit" size={48} color={SecondaryColor} />
       </View>
     </TouchableOpacity>
   );
@@ -114,6 +117,9 @@ const styles = StyleSheet.create({
     padding: 15,
     borderRadius: 10, // Add rounded corners here
     marginBottom: 15,
+    flex: 1,
+    justifyContent: "space-between",
+    flexDirection: "row",
   },
   userName: {
     fontSize: 18,

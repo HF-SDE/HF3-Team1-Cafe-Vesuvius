@@ -7,11 +7,13 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 interface AddButtonProps {
   onPress: () => void;
   requiredPermission: string[];
+  icon?: string;
 }
 
 const AddButton: React.FC<AddButtonProps> = ({
   onPress,
   requiredPermission,
+  icon,
 }) => {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
@@ -25,7 +27,11 @@ const AddButton: React.FC<AddButtonProps> = ({
         ]}
         onPress={onPress}
       >
-        <FontAwesome6 name="plus" size={60} color={SecondaryColor} />
+        <FontAwesome6
+          name={icon ? icon : "plus"}
+          size={60}
+          color={SecondaryColor}
+        />
       </TouchableOpacity>
     </CheckPermission>
   );
