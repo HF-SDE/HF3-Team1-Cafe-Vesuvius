@@ -201,13 +201,13 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
       }
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: "#969696" }]}
+          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
           onPress={onClose}
         >
           <Text style={styles.buttonText}>cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: PrimaryColor }]}
+          style={[styles.mainButton, { backgroundColor: PrimaryColor }]}
           onPress={page === 1 ? () => setPage(2) : handleCreate}
           disabled={areKeysDefined<Reservation>(["name", "phone", "email", "partySize"], reservation)}
         >
@@ -346,14 +346,14 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 20,
   },
-  resetButton: {
+  cancelButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
     marginRight: 10,
   },
-  cancelButton: {
+  mainButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
