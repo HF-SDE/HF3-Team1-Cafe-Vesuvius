@@ -12,7 +12,7 @@ import {
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
 import { Buffer } from "buffer";
-import { table } from "@/models/TableModels";
+import { Table } from "@/models/TableModels";
 import { Reservation } from "@/models/ReservationModels";
 import DateTimePicker from "react-native-ui-datepicker";
 import dayjs from "dayjs";
@@ -22,7 +22,7 @@ import TextIconInput from "@/components/TextIconInput";
 
 interface ModalScreenProps {
   onClose: () => void;
-  tables: table[];
+  tables: Table[];
 }
 
 // Temp data
@@ -58,10 +58,11 @@ const tmptables = [
 ];
 
 export default function NewReservationModal({ onClose, tables = tmptables }: ModalScreenProps) {
-  const [reservation, setReservations] = useState<Reservation>();
+  const [reservation, setReservations] = useState<Reservation>({ amount: 1, email: "", name: "", partySize: 2, phone: "", reservationTime: dayjs().toDate(), tables: [] });
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [disabled, setDisabled] = useState(true);
+  const [tableSelect, setTableSelect] = useState<number>(0);
+  const [tableSelectNeed, setTableSelectNeed] = useState<number>(1);
   const [page, setPage] = useState(1);
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -156,7 +157,11 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="numeric"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(partySize) => setReservations({ ...reservation!, partySize: Number(partySize) })}
+              onChangeText={(partySize) => {
+                setReservations({ ...reservation!, partySize: Number(partySize) });
+                setTableSelectNeed(Math.ceil(Number(partySize) / 2));
+              }}
+
             />
             <TextIconInput
               label="Reservation Time"
@@ -189,8 +194,8 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
             ) : null}
           </>
           :
-          <FlatList ListHeaderComponent={<Text>Tables</Text>} numColumns={4} data={tables} renderItem={({ item }) => (
-            <Item {...item} />
+          <FlatList ListHeaderComponent={<Text>Tables - {tableSelectNeed} out of {tableSelect} </Text>} numColumns={4} data={tables} renderItem={({ item }) => (
+            <Item table={item} setTableSelect={setTableSelect} tableSelect={tableSelect} tableSelectNeed={tableSelectNeed} reservation={[reservation, setReservations]} />
           )} keyExtractor={(item) => item.number?.toString()} contentContainerStyle={styles.listContainer} style={styles.flatList} />
 
       }
@@ -214,19 +219,66 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
   );
 }
 
-function Item(props: table) {
+interface TableProps {
+  table: Table;
+  tableSelect: number;
+  tableSelectNeed: number;
+  setTableSelect: Dispatch<SetStateAction<number>>;
+  reservation: [Reservation, Dispatch<SetStateAction<Reservation>>]
+}
+
+
+/**
+ * The item component for the flatlist
+ * @param {TableProps} props - The props for the item
+ */
+function Item(props: TableProps) {
+  const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
   return (
-    <View style={styles.item}>
-      <Text>{props.number}</Text>
-    </View>
+    <TouchableOpacity style={disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item} onPress={() => {
+      console.log(props.reservation[0].tables);
+      props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables, props.table] });
+      props.setTableSelect(props.tableSelect + 1)
+    }} disabled={disabled}>
+      <Text>{props.table.number}</Text>
+    </TouchableOpacity>
   );
 }
 
 
+/**
+ * Check if the item need to be disabled
+ * @param {Table} table - The table to check
+ * @param {number} tableSelect - The number of tables selected
+ * @param {number} tableSelectNeed - The number of tables needed
+ * @param {[Reservation, Dispatch<SetStateAction<Reservation>>]} action - The action to update the reservation
+ * @returns {boolean} - True if the item should be disabled, false otherwise
+ */
+function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: number, action: [Reservation, Dispatch<SetStateAction<Reservation>>]): boolean {
+  for (const key in action[0].tables) {
+    if(action[0].tables[key].id === table.id) {
+      return true;
+    }
+  }
+  if (tableSelect === tableSelectNeed) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+
+/**
+ * Check if all keys are defined in the object
+ * @template {Record<string, any>} T - The type of the object
+ * @param {string[]} keys - The keys to check
+ * @param {(T | undefined)} obj - The object to check
+ * @returns {boolean} - True if all keys are defined, false otherwise
+ */
 function areKeysDefined<T extends Record<string, any>>(keys: string[], obj: T | undefined): boolean {
   if (!obj) return true;
   if (keys.every(key => key in obj)) {
-    return !keys.every(key => obj[key] !== undefined && obj[key] !== null);
+    return !keys.every(key => obj[key] !== undefined && obj[key] !== null && obj[key] !== "");
   }
   return true;
 }
@@ -240,6 +292,17 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   item: {
+    flex: 1,
+    maxWidth: "25%",
+    alignItems: "center",
+    width: "100%",
+
+    padding: 10,
+    backgroundColor: "rgba(249, 180, 45, 0.25)",
+    borderWidth: 1.5,
+    borderColor: "#fff"
+  },
+  itemDisabled: {
     flex: 1,
     maxWidth: "25%", // 100% devided by the number of rows you want
     alignItems: "center",
@@ -295,7 +358,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-
   },
   buttonText: {
     color: "#fff",
