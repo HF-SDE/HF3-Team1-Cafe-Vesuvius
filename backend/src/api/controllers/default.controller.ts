@@ -1,16 +1,18 @@
 import { Request, Response } from 'express';
 
 import { ExpressFunction } from '@api-types/general.types';
-import { Prisma } from '@prisma/client';
+import { prismaModels } from '@prisma-instance';
 import * as DefaultService from '@services/default.service';
 import { getHttpStatusCode } from '@utils/Utils';
-
-type prismaModels = Uncapitalize<Prisma.ModelName>;
+import * as configWithoutType from '@utils/configs';
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 function getModel(req: Request): prismaModels {
   return req.baseUrl.replace('/', '') as prismaModels;
 }
+
+type Config = Record<prismaModels, object>;
+const config: Config = configWithoutType as Config;
 
 /**
  * Controller to get all
@@ -18,10 +20,14 @@ function getModel(req: Request): prismaModels {
  * @returns {ExpressFunction} The response object
  */
 export function getAll(model?: prismaModels): ExpressFunction {
-  return async (req, res): Promise<void> => {
+  return async (req, res) => {
     const id = (req.params.id || req.query.id) as string | undefined;
 
-    const response = await DefaultService.getAll(model ?? getModel(req), id);
+    if (!model) model = getModel(req);
+
+    const modelConfig = config[model] ?? {};
+
+    const response = await DefaultService.getAll(model, { id, ...modelConfig });
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
@@ -52,11 +58,9 @@ export function update(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
     const id = (req.params.id || req.query.id) as string;
 
-    const response = await DefaultService.update(
-      model ?? getModel(req),
-      id,
-      req.body,
-    );
+    if (!model) model = getModel(req);
+
+    const response = await DefaultService.update(model, id, req.body);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
@@ -71,10 +75,9 @@ export function deleteRecord(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
     const id = (req.params.id || req.query.id) as string;
 
-    const response = await DefaultService.deleteRecord(
-      model ?? getModel(req),
-      id,
-    );
+    if (!model) model = getModel(req);
+
+    const response = await DefaultService.deleteRecord(model, id);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };

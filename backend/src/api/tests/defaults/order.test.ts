@@ -1,11 +1,4 @@
-import {
-  afterAll,
-  beforeAll,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-} from 'vitest';
+import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 
 import { APIResponse } from '@api-types/general.types';
 import prisma from '@prisma-instance';
@@ -23,7 +16,6 @@ describe('API defaults (order)', () => {
     const response = await axios.get<{ data: APIResponse<Order[]> }>('/order');
 
     expect(response.status).toBe(200);
-    expectTypeOf(response.data.data).toEqualTypeOf<APIResponse<Order[]>>();
   });
 
   it('should get 1 or no order', async () => {
@@ -34,9 +26,6 @@ describe('API defaults (order)', () => {
     );
 
     expect(response.status).toBe(200);
-    expectTypeOf(response.data.data).toEqualTypeOf<APIResponse<Order[]>>();
-
-    return response.data.data;
   });
 
   //* Create cases
@@ -50,7 +39,10 @@ describe('API defaults (order)', () => {
     });
 
     expect(response.status).toBe(201);
-    expectTypeOf(response.data.data).toEqualTypeOf<APIResponse<Order>>();
+    expect(response.data).toStrictEqual({
+      status: 'Created',
+      message: 'Created new order',
+    });
   });
 });
 
