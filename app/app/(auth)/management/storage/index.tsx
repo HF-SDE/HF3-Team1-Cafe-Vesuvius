@@ -19,7 +19,7 @@ import { TextInput } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
-  const { stock, isLoading, error } = useStock();
+  const { stock, isLoading, error, updateStock, createStock } = useStock();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -30,7 +30,40 @@ export default function ManageUsersPage() {
   const [quantities, setQuantities] = useState({}); // Track adjustments per item
 
   const handleAddUser = () => {
-    router.navigate("/management/storage/new");
+    if (hasChanges) {
+      // Create an array of changed stock items with the id and the new quantity
+      const changedStock = Object.keys(quantities)
+        .map((itemId) => {
+          const adjustedQty = quantities[itemId];
+          const item = stock.find((item) => item.id === itemId);
+
+          if (item && adjustedQty !== "0") {
+            // Calculate the new quantity
+            const quantity = item.quantity + Number(adjustedQty);
+
+            return {
+              id: item.id,
+              quantity,
+            };
+          }
+
+          return null;
+        })
+        .filter((item) => item !== null); // Remove null values from the array
+
+      // Log the changed stock for debugging
+      console.log(changedStock);
+
+      // Now you can use `changedStock` for your API call to update the stock
+      updateStock(changedStock);
+      resetChanges();
+    } else {
+      router.navigate("/management/storage/new");
+    }
+  };
+
+  const resetChanges = () => {
+    setQuantities({});
   };
 
   const handleIncrease = (itemId: string) => {
