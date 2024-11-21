@@ -1,5 +1,5 @@
 import { DateType } from "react-native-ui-datepicker";
-import { table } from "./TableModels";
+import { Table } from "./TableModels";
 
 export interface Reservation {
   id?: string;
@@ -9,5 +9,5 @@ export interface Reservation {
   email: string;
   phone: string;
   amount: number;
-  tables: table[];
+  tables: Table[];
 }
