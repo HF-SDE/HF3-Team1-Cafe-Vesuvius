@@ -17,10 +17,10 @@ export function useStock(id?: string | string[]) {
 
         const updatedStock = response.data.data.map((item: Stock) => ({
           ...item,
-          quantityToAdd: item.quantityToAdd ?? 1,
+          quantityToAdd: item.quantityToAdd ?? 0,
         }));
 
-        setStock(response.data.data);
+        setStock(updatedStock);
       } catch (err: any) {
         setError("Failed to load stock");
       } finally {
@@ -31,5 +31,39 @@ export function useStock(id?: string | string[]) {
     fetchStock();
   }, [id]);
 
-  return { stock, isLoading, error };
+  const createStock = async (newStock: Stock) => {
+    try {
+      const response = await apiClient.post("/stock", newStock);
+      setStock((prevStock) =>
+        prevStock ? [...prevStock, response.data] : [response.data]
+      );
+    } catch (err: any) {
+      setError("Failed to create stock");
+    }
+  };
+
+  const updateStock = async (updatedStock: Stock[]) => {
+    try {
+      const payload = { items: updatedStock };
+      const response = await apiClient.put(`/stock`, payload);
+
+      if (response.data.status === "Updated") {
+        setStock(
+          (prevStock) =>
+            prevStock?.map((item) =>
+              updatedStock.find((updated) => updated.id === item.id)
+                ? {
+                    ...item,
+                    ...updatedStock.find((updated) => updated.id === item.id),
+                  }
+                : item
+            ) ?? null
+        );
+      }
+    } catch (err: any) {
+      setError("Failed to update stock");
+    }
+  };
+
+  return { stock, isLoading, error, createStock, updateStock };
 }
