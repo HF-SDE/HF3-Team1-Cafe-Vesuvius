@@ -7,11 +7,21 @@
   <body>
     <div class="menu-container">
       <h1><%= title %></h1>
-      <!-- <p>Welcome to <%= title %></p> -->
+      <div>
+        <h1>Food</h1>
+       
+      </div>
       <ul>
         <% items.map((item, index) => { %>
         <li class="menu-item">
-          <div><h3><%= item.name %></h3></div>
+          <div>
+            <label><%= item.category.join(", ") %></label>
+            <h3><%= item.name %></h3>
+            <span>
+              <%= item.RawMaterial_MenuItems.map((rawMaterialMenuItem) => {
+              return rawMaterialMenuItem.RawMaterial.name; }).join(", ") %>
+            </span>
+          </div>
           <div class="price"><%= item.price %>,-</div>
         </li>
         <% }) %>

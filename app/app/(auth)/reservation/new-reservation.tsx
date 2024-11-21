@@ -69,7 +69,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const handleReset = async () => {
+  const handleCreate = async () => {
     if (!reservation?.name || !reservation?.reservationTime || !reservation?.email) {
       setErrorMessage("Please fill out all fields!");
       return;
@@ -132,7 +132,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               clearButtonMode="always"
               autoCapitalize="words"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(name) => validateInput<Reservation | undefined>(name, reservation, setReservations, setDisabled)}
+              onChangeText={(name) => setReservations({ ...reservation!, name })}
             />
             <CustomTextInput
               label="Phone"
@@ -140,7 +140,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="tel"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(phone) => validateInput<Reservation | undefined>(phone, reservation, setReservations, setDisabled)}
+              onChangeText={(phone) => setReservations({ ...reservation!, phone })}
             />
             <CustomTextInput
               label="Email"
@@ -148,7 +148,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="email"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(email) => validateInput<Reservation | undefined>(email, reservation, setReservations, setDisabled)}
+              onChangeText={(email) => setReservations({ ...reservation!, email })}
             />
             <CustomTextInput
               label="Amount of People"
@@ -156,7 +156,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="numeric"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(partySize) => validateInput<Reservation | undefined>(partySize, reservation, setReservations, setDisabled)}
+              onChangeText={(partySize) => setReservations({ ...reservation!, partySize: Number(partySize) })}
             />
             <TextIconInput
               label="Reservation Time"
@@ -178,7 +178,8 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
                   date={dayjs(reservation?.reservationTime) ?? dayjs().toDate()}
                   firstDayOfWeek={1}
                   timePicker={true}
-
+                  maxDate={dayjs().add(1, "year").toDate()}
+                  minDate={dayjs().toDate()}
                 />
               </View>
             }
@@ -195,15 +196,15 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
       }
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
-          onPress={handleReset}
+          style={[styles.resetButton, { backgroundColor: "#969696" }]}
+          onPress={onClose}
         >
-          <Text style={styles.buttonText}>Reset</Text>
+          <Text style={styles.buttonText}>cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
-          onPress={page === 1 ? () => setPage(2) : onClose}
-          disabled={disabled}
+          style={[styles.cancelButton, { backgroundColor: PrimaryColor }]}
+          onPress={page === 1 ? () => setPage(2) : handleCreate}
+          disabled={areKeysDefined<Reservation>(["name", "phone", "email", "partySize"], reservation)}
         >
           <Text style={styles.buttonText}>{page === 1 ? "Next" : "Create"}</Text>
         </TouchableOpacity>
@@ -211,7 +212,6 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </SafeAreaView>
   );
-
 }
 
 function Item(props: table) {
@@ -222,19 +222,14 @@ function Item(props: table) {
   );
 }
 
-// function validateInput<D, T>(text: D, valueAction: [D | undefined, Dispatch<React.SetStateAction<D | undefined>>], disabled: Dispatch<SetStateAction<boolean>>) {
-//   if (typeof text === "number" && text > 0) {
-//     valueAction[1]({ ...valueAction[0], text });
-//     disabled(false);
-//     return;
-//   }
-//   if (typeof text === "string" && text.length > 0) {
-//     disabled(false);
-//     valueAction;
-//     return;
-//   }
-//   disabled(true);
-// }
+
+function areKeysDefined<T extends Record<string, any>>(keys: string[], obj: T | undefined): boolean {
+  if (!obj) return true;
+  if (keys.every(key => key in obj)) {
+    return !keys.every(key => obj[key] !== undefined && obj[key] !== null);
+  }
+  return true;
+}
 
 const styles = StyleSheet.create({
   dateTimePicker: {
