@@ -18,9 +18,3 @@ export interface Menu {
   name: string;
   price: number;
 }
-
-export interface Stock {
-  id: string;
-  name: string;
-  unit: string;
-}
