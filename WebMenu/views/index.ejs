@@ -7,21 +7,23 @@
   <body>
     <div class="menu-container">
       <h1><%= title %></h1>
-      <div>
-        <h1>Food</h1>
-       
+
+      <!-- Filter Buttons -->
+      <div class="filter-container">
+        <form action="/" method="get">
+          <button type="submit" name="category" value="" <%= !category ? 'class="active"' : '' %>>All</button>
+          <% categories.forEach(categoryOption => { %>
+            <button type="submit" name="category" value="<%= categoryOption %>" 
+              <%= categoryOption === category ? 'class="active"' : '' %>><%= categoryOption %></button>
+          <% }); %>
+        </form>
       </div>
+      
+      <!-- Menu Items -->
       <ul>
         <% items.map((item, index) => { %>
         <li class="menu-item">
-          <div>
-            <label><%= item.category.join(", ") %></label>
-            <h3><%= item.name %></h3>
-            <span>
-              <%= item.RawMaterial_MenuItems.map((rawMaterialMenuItem) => {
-              return rawMaterialMenuItem.RawMaterial.name; }).join(", ") %>
-            </span>
-          </div>
+          <div><h3><%= item.name %></h3></div>
           <div class="price"><%= item.price %>,-</div>
         </li>
         <% }) %>
@@ -29,11 +31,3 @@
     </div>
   </body>
 </html>
-
-<style>
-  li {
-    width: 20rem;
-    display: flex;
-    justify-content: space-between;
-  }
-</style>
