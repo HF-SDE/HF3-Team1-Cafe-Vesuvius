@@ -87,14 +87,16 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     paddingHorizontal: 20,
     paddingVertical: 20,
+    gap: 25,
+    marginBottom: 10,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    marginBottom: 20,
     borderRadius: 8,
+    flex: 1,
   },
   buttonContent: {
     flexDirection: "row",
