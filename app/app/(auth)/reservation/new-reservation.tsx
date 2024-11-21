@@ -132,7 +132,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               clearButtonMode="always"
               autoCapitalize="words"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(name) => validateInput<Reservation | undefined, string>(name, "name", [reservation, setReservations])}
+              onChangeText={(name) => setReservations({ ...reservation!, name })}
             />
             <CustomTextInput
               label="Phone"
@@ -140,7 +140,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="tel"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(phone) => validateInput<Reservation | undefined, string>(phone, "phone", [reservation, setReservations])}
+              onChangeText={(phone) => setReservations({ ...reservation!, phone })}
             />
             <CustomTextInput
               label="Email"
@@ -148,7 +148,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="email"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(email) => validateInput<Reservation | undefined, string>(email, "email", [reservation, setReservations])}
+              onChangeText={(email) => setReservations({ ...reservation!, email })}
             />
             <CustomTextInput
               label="Amount of People"
@@ -156,7 +156,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
               inputMode="numeric"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(partySize) => validateInput<Reservation | undefined, number>(Number(partySize), "partySize", [reservation, setReservations])}
+              onChangeText={(partySize) => setReservations({ ...reservation!, partySize: Number(partySize) })}
             />
             <TextIconInput
               label="Reservation Time"
@@ -204,7 +204,7 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
         <TouchableOpacity
           style={[styles.cancelButton, { backgroundColor: PrimaryColor }]}
           onPress={page === 1 ? () => setPage(2) : handleCreate}
-          disabled={validate(["name", "phone", "email", "partySize", "reservationTime"], reservation)}
+          disabled={areKeysDefined<Reservation>(["name", "phone", "email", "partySize"], reservation)}
         >
           <Text style={styles.buttonText}>{page === 1 ? "Next" : "Create"}</Text>
         </TouchableOpacity>
@@ -222,23 +222,13 @@ function Item(props: table) {
   );
 }
 
-function validateInput<D, T>(text: T, key: string, valueAction: [D | undefined, Dispatch<React.SetStateAction<D | undefined>>]) {
-  if (typeof text === "number" && text > 0) {
-    valueAction[1]({ ...valueAction[0], [key]: text } as D);
-    return;
-  }
-  if (typeof text === "string" && text.length > 0) {
-    valueAction;
-    return;
-  }
-}
 
-function validate<D extends Record<string, any>>(items: string[], data: D | undefined): boolean {
-  if (!data) return true;
-  return items.every((item) => {
-    if (data[item] === undefined) return true;
-    return false;
-  });
+function areKeysDefined<T extends Record<string, any>>(keys: string[], obj: T | undefined): boolean {
+  if (!obj) return true;
+  if (keys.every(key => key in obj)) {
+    return !keys.every(key => obj[key] !== undefined && obj[key] !== null);
+  }
+  return true;
 }
 
 const styles = StyleSheet.create({
