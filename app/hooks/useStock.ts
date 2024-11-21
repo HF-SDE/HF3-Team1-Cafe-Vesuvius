@@ -31,59 +31,37 @@ export function useStock(id?: string | string[]) {
     fetchStock();
   }, [id]);
 
-  // Create a new stock item
-  const createStock = async (newStock: Stoc) => {
+  const createStock = async (newStock: Stock) => {
     try {
-      setIsLoading(true);
-      setError(null);
       const response = await apiClient.post("/stock", newStock);
-      // Optionally add the new stock item to the current stock list
       setStock((prevStock) =>
         prevStock ? [...prevStock, response.data] : [response.data]
       );
     } catch (err: any) {
       setError("Failed to create stock");
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  // Update an existing stock item
   const updateStock = async (updatedStock: Stock[]) => {
     try {
-      setIsLoading(true);
-      setError(null);
       const payload = { items: updatedStock };
-
       const response = await apiClient.put(`/stock`, payload);
 
-      // Update the stock list with the updated item
       if (response.data.status === "Updated") {
-        // Update the stock list with the updated stock items
-        setStock((prevStock) => {
-          if (!prevStock) return updatedStock; // If stock is null, just return the updated stock
-
-          // Map through the current stock and update the modified items
-          return prevStock.map((item) => {
-            // Find if this item exists in the updatedStock array
-            const updatedItem = updatedStock.find(
-              (updated) => updated.id === item.id
-            );
-            if (updatedItem) {
-              // Merge the updated fields into the existing item (you can choose to update only specific fields)
-              return { ...item, ...updatedItem };
-            }
-            // If no update for this item, return the original item
-            return item;
-          });
-        });
-      } else {
-        setError("Failed to update stock");
+        setStock(
+          (prevStock) =>
+            prevStock?.map((item) =>
+              updatedStock.find((updated) => updated.id === item.id)
+                ? {
+                    ...item,
+                    ...updatedStock.find((updated) => updated.id === item.id),
+                  }
+                : item
+            ) ?? null
+        );
       }
     } catch (err: any) {
       setError("Failed to update stock");
-    } finally {
-      setIsLoading(false);
     }
   };
 
