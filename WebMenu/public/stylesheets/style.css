@@ -85,3 +85,35 @@ li {
   display: flex;
   justify-content: space-between;
 }
+
+.filter-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.filter-container button {
+  /* background-color: light-dark(#f1f1f1, #333);
+  border: 1px solid light-dark(#ccc, #555); */
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* .filter-container button:hover {
+  background-color: light-dark(#ddd, #444);
+  border-color: light-dark(#bbb, #666);
+} */
+
+/* .filter-container button.active {
+  background-color: light-dark(var(--light-primary), var(--dark-primary));
+  color: white;
+  border-color: light-dark(var(--light-secondary), var(--dark-secondary));
+} */
+
+.filter-container button:focus {
+  outline: none;
+}

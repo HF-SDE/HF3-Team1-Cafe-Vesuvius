@@ -8,8 +8,7 @@ import {
 } from "react-native";
 import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { useMenu } from "@/hooks/useMenu"; // Assuming you have a hook for user management
-import { usePermissions } from "@/hooks/usePermissions";
+import { useStock } from "@/hooks/useStock"; // Assuming you have a hook for user management
 import TemplateLayout from "@/components/TemplateLayout";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -32,13 +31,13 @@ export default function EditCreateUserPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const { menu, isLoading, error } = useMenu(id as string);
+  const { stock, isLoading, error } = useStock(id as string);
 
-  const [menuItem, setMenuItem] = useState({
+  const [stockItem, setStockItem] = useState({
     id: "",
     name: "",
-    price: 0,
-    category: [],
+    quantity: 0,
+    unit: "",
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
@@ -46,14 +45,14 @@ export default function EditCreateUserPage() {
   );
 
   useEffect(() => {
-    if (menu) {
-      const foundMenuItem = menu[0];
+    if (stock) {
+      const foundStockItem = stock[0];
 
-      if (id && foundMenuItem) {
-        setMenuItem(foundMenuItem);
+      if (id && foundStockItem) {
+        setStockItem(foundStockItem);
       }
     }
-  }, [id, menu]);
+  }, [id, stock]);
 
   const handleSave = () => {
     const changedFieldsCount = Object.keys(changedFields).length;
@@ -77,7 +76,7 @@ export default function EditCreateUserPage() {
 
   const handleChange = (field: string, value: string | boolean) => {
     if (value !== changedFields[field]) {
-      const origValue = menuItem[field] || "";
+      const origValue = stockItem[field] || "";
       setChangedFields((prev) => ({
         ...prev,
         [field]: origValue,
@@ -89,7 +88,7 @@ export default function EditCreateUserPage() {
       setChangedFields(updatedChangedFields);
     }
 
-    setMenuItem((prevUser) => ({
+    setStockItem((prevUser) => ({
       ...prevUser,
       [field]: value,
     }));
@@ -97,22 +96,22 @@ export default function EditCreateUserPage() {
 
   return (
     <TemplateLayout
-      pageName="ManagementPage"
-      title={id !== "new" ? "Edit Menu Item" : "Create Menu Item"}
+      pageName="StockPage"
+      title={id !== "new" ? "Edit Stock Item" : "Create Stock Item"}
       buttonTitle="Cancel"
     >
       <View style={styles.container}>
         <TextInput
           style={styles.input}
           label="Name"
-          value={menuItem.name}
-          onChange={(value) => handleChange("username", value)}
+          value={stockItem.name}
+          onChange={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />
         <TextInput
           style={styles.input}
-          label="Price"
-          value={menuItem.price.toString()}
+          label="Quantity"
+          value={stockItem.quantity.toString()}
           onChange={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />

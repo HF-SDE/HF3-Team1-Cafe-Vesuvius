@@ -11,6 +11,7 @@ import { useNavigation } from "@react-navigation/native";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useStock } from "@/hooks/useStock";
 import AddButton from "@/components/AddButton";
+import DefaultButton from "@/components/DefaultButton";
 import { router } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
@@ -29,7 +30,18 @@ export default function ManageUsersPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [quantities, setQuantities] = useState({}); // Track adjustments per item
 
-  const handleAddUser = () => {
+  const handleAddEditStockItem = (id?: string) => {
+    let path = "/management/storage/";
+    if (id) {
+      path += id; // Reassign the result of concatenation back to `path`
+    } else {
+      path += "new"; // Reassign here as well
+    }
+    router.navigate(path);
+  };
+
+  const handleDeleteStockItem = () => {};
+  const handleSaveStockItems = () => {
     if (hasChanges) {
       // Create an array of changed stock items with the id and the new quantity
       const changedStock = Object.keys(quantities)
@@ -57,8 +69,6 @@ export default function ManageUsersPage() {
       // Now you can use `changedStock` for your API call to update the stock
       updateStock(changedStock);
       resetChanges();
-    } else {
-      router.navigate("/management/storage/new");
     }
   };
 
@@ -246,7 +256,7 @@ export default function ManageUsersPage() {
                     styles.editButton,
                     { backgroundColor: AccentColor },
                   ]}
-                  onPress={() => console.log("Edit", data.item.id)}
+                  onPress={() => handleAddEditStockItem(data.item.id)}
                 >
                   <FontAwesome6
                     name="edit"
@@ -264,11 +274,19 @@ export default function ManageUsersPage() {
             ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
           />
         )}
-        <AddButton
-          onPress={handleAddUser}
-          requiredPermission={["order:create"]}
-          icon={hasChanges ? "save" : undefined}
-        />
+        {!hasChanges && (
+          <AddButton
+            onPress={() => handleAddEditStockItem()}
+            requiredPermission={["order:create"]}
+          />
+        )}
+        {hasChanges && (
+          <View>
+            <DefaultButton title="Save" onPress={handleSaveStockItems} />
+
+            <DefaultButton title="Resets" onPress={resetChanges} />
+          </View>
+        )}
       </View>
     </TemplateLayout>
   );
