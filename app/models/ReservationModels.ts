@@ -5,7 +5,7 @@ export interface Reservation {
   id?: string;
   name: string;
   partySize: number | string;
-  reservationTime: Date | string | DateType;
+  reservationTime: DateType;
   email: string;
   phone: string;
   amount: number;
