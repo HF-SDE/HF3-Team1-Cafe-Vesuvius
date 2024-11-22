@@ -107,9 +107,16 @@ li:hover {
   color: light-dark(var(--light-secondary), var(--dark-secondary));
 }
 
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .price {
   font-weight: bold;
-  color: light-dark(var(--light-secondary), var(--dark-secondary));
+  padding: 3px 5px;
+  border-radius: 2rem;
 }
 
 /* Optional: Add some margin at the bottom of the container */
