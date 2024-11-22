@@ -1,29 +1,24 @@
 import {
+  NativeSyntheticEvent,
   StyleSheet,
-  View,
   Text,
-  Alert,
-  FlatList,
-  ScrollView,
+  TextInputChangeEventData,
+  View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { useStock } from "@/hooks/useStock"; // Assuming you have a hook for user management
+import { useStock } from "@/hooks/useStock";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
+import QuantityInput from "@/components/QuantityInput";
+
 import { useNavigation } from "@react-navigation/native";
-
-import Switch from "@/components/Switch";
-
-import PermissionsTabView from "@/components/PermissionsTabView";
+import { StockItemModel } from "../../../../../models/StorageModel";
 
 export default function EditCreateUserPage() {
-  const route = useRoute();
   const { id } = useLocalSearchParams();
-
   const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -31,13 +26,16 @@ export default function EditCreateUserPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const { stock, isLoading, error } = useStock(id as string);
+  const { stock, isLoading, error, updateStock, createStock } = useStock(
+    id as string
+  );
 
-  const [stockItem, setStockItem] = useState({
-    id: "",
+  const [stockItem, setStockItem] = useState<StockItemModel>({
+    id: (id as string) || "",
     name: "",
-    quantity: 0,
     unit: "",
+    quantity: 0,
+    quantityToAdd: 0,
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
@@ -64,17 +62,21 @@ export default function EditCreateUserPage() {
     } else {
       console.log("Update/Create");
 
-      if (id) {
+      if (id !== "new") {
         // Update user logic here
-        //updateUser(user);
-        console.log(changedFields);
+        const updatedFields = { id: stockItem.id, ...changedFields };
+        updateStock(updatedFields);
       } else {
+        const updatedFields: StockItemModel = { ...changedFields };
+        createStock(updatedFields);
         // Create new user logic here
       }
+      setChangedFields({});
+      navigation.goBack();
     }
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
+  const handleChange = (field: string, value) => {
     if (value !== changedFields[field]) {
       const origValue = stockItem[field] || "";
       setChangedFields((prev) => ({
@@ -93,6 +95,10 @@ export default function EditCreateUserPage() {
       [field]: value,
     }));
   };
+  const quantityChange = (itemId: string, newQty: number) => {
+    const updatedStockItem = { ...stockItem, quantityToAdd: newQty };
+    setStockItem(updatedStockItem);
+  };
 
   return (
     <TemplateLayout
@@ -105,14 +111,30 @@ export default function EditCreateUserPage() {
           style={styles.input}
           label="Name"
           value={stockItem.name}
-          onChange={(value) => handleChange("name", value)}
+          onChangeText={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />
         <TextInput
           style={styles.input}
           label="Quantity"
-          value={stockItem.quantity.toString()}
-          onChange={(value) => handleChange("name", value)}
+          value={(
+            stockItem.quantity + (stockItem.quantityToAdd || 0)
+          ).toString()}
+          //onChangeText={(value) => handleChange("quantity", value)}
+          clearTextOnFocus={false}
+          inputMode="numeric"
+        />
+        <Text>Quantity</Text>
+        <QuantityInput
+          itemId={stockItem.id as string}
+          initialQty={stockItem.quantity as number}
+          onQuantityChange={quantityChange}
+        />
+        <TextInput
+          style={styles.input}
+          label="Unit"
+          value={stockItem.unit}
+          onChangeText={(value) => handleChange("unit", value)}
           clearTextOnFocus={false}
         />
 
@@ -136,7 +158,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1,
-    paddingBottom: 100, // Ensure space for buttons at the bottom
+    paddingBottom: 100,
   },
   input: {
     height: 40,
@@ -172,7 +194,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buttonContainer: {
-    // paddingTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",

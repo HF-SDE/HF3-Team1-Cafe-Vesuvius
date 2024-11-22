@@ -1,27 +1,37 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-import { Stock } from "../models/StorageModel";
+import { StockItemModel } from "../models/StorageModel";
 
 export function useStock(id?: string | string[]) {
-  const [stock, setStock] = useState<Stock[] | null>(null);
+  const [stock, setStock] = useState<StockItemModel[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchStock = async () => {
       try {
+        if (id === "new") {
+          return;
+        }
         setIsLoading(true);
         setError(null);
         const endpoint = id ? `/stock?id=${id}` : "/stock";
         const response = await apiClient.get(endpoint);
+        console.log(response);
 
-        const updatedStock = response.data.data.map((item: Stock) => ({
-          ...item,
-          quantityToAdd: item.quantityToAdd ?? 0,
-        }));
+        const updatedStock = Array.isArray(response.data.data)
+          ? response.data.data.map((item: StockItemModel) => ({
+              ...item,
+              quantityToAdd: item.quantityToAdd ?? 0,
+            }))
+          : [];
 
-        setStock(updatedStock);
+        console.log(response.data.data);
+
+        setStock(response.data.data);
       } catch (err: any) {
+        console.log(err);
+
         setError("Failed to load stock");
       } finally {
         setIsLoading(false);
@@ -31,7 +41,7 @@ export function useStock(id?: string | string[]) {
     fetchStock();
   }, [id]);
 
-  const createStock = async (newStock: Stock) => {
+  const createStock = async (newStock: StockItemModel) => {
     try {
       const response = await apiClient.post("/stock", newStock);
       setStock((prevStock) =>
@@ -42,12 +52,17 @@ export function useStock(id?: string | string[]) {
     }
   };
 
-  const updateStock = async (updatedStock: Stock[]) => {
+  const updateStock = async (
+    updatedStock: StockItemModel[] | StockItemModel
+  ) => {
     try {
+      if (!Array.isArray(updatedStock)) {
+        updatedStock = [updatedStock];
+      }
       const payload = { items: updatedStock };
       const response = await apiClient.put(`/stock`, payload);
 
-      if (response.data.status === "Updated") {
+      if (response.status === 200) {
         setStock(
           (prevStock) =>
             prevStock?.map((item) =>
