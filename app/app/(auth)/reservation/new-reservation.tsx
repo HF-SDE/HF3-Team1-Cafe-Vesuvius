@@ -70,6 +70,8 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
+  const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "partySize"], reservation);
+
   const handleCreate = async () => {
     if (!reservation?.name || !reservation?.reservationTime || !reservation?.email) {
       setErrorMessage("Please fill out all fields!");
@@ -201,15 +203,15 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
       }
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: "#969696" }]}
+          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
           onPress={onClose}
         >
           <Text style={styles.buttonText}>cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: PrimaryColor }]}
+          style={[styles.mainButton, disabledButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
           onPress={page === 1 ? () => setPage(2) : handleCreate}
-          disabled={areKeysDefined<Reservation>(["name", "phone", "email", "partySize"], reservation)}
+          disabled={disabledButton}
         >
           <Text style={styles.buttonText}>{page === 1 ? "Next" : "Create"}</Text>
         </TouchableOpacity>
@@ -234,12 +236,15 @@ interface TableProps {
  */
 function Item(props: TableProps) {
   const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
+  console.log(props.reservation[0])
   return (
-    <TouchableOpacity style={disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item} onPress={() => {
-      console.log(props.reservation[0].tables);
-      props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables, props.table] });
-      props.setTableSelect(props.tableSelect + 1)
-    }} disabled={disabled}>
+    <TouchableOpacity
+      style={disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
+      onPress={() => {
+        props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables, props.table] });
+        props.setTableSelect(props.tableSelect + 1)
+      }}
+      disabled={disabled}>
       <Text>{props.table.number}</Text>
     </TouchableOpacity>
   );
@@ -256,7 +261,7 @@ function Item(props: TableProps) {
  */
 function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: number, action: [Reservation, Dispatch<SetStateAction<Reservation>>]): boolean {
   for (const key in action[0].tables) {
-    if(action[0].tables[key].id === table.id) {
+    if (action[0].tables[key].id === table.id) {
       return true;
     }
   }
@@ -346,14 +351,14 @@ const styles = StyleSheet.create({
     width: "100%",
     marginTop: 20,
   },
-  resetButton: {
+  cancelButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
     marginRight: 10,
   },
-  cancelButton: {
+  mainButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
