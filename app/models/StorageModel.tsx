@@ -1,7 +1,7 @@
-export interface Stock {
-  id: string;
-  name: string;
-  unit: string;
-  quantity: number;
-  quantityToAdd: number;
+export interface StockItemModel {
+  id?: string;
+  name?: string;
+  unit?: string;
+  quantity?: number;
+  quantityToAdd?: number;
 }
