@@ -55,7 +55,7 @@ export default function ReservationsOverview(): ReactElement {
           </TouchableOpacity>
         </View>
         <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Text style={styles.orderText}>{dayjs(item.reservationTime).format("HH:mm")}</Text>
+          <Text style={styles.orderText}>{dayjs(item.reservationTime).format("DD/MM/YYYY HH:mm")}</Text>
           <Text style={styles.orderText}> Tables:
             {item.tables ? item.tables.map((i) => (
               i.number
