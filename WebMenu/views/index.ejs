@@ -1,45 +1,58 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/stylesheets/style.css" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Vesuvius menu card.">
-  </head>
-  <body>
-    <div class="menu-container">
-      <h1><%= title %></h1>
 
-      <!-- Filter Buttons -->
-      <div class="filter-container">
-        <form action="/" method="get">
-          <button type="submit" name="category" value="" <%= !category ? 'class="active"' : '' %>>All</button>
-          <% categories.forEach(categoryOption => { %>
-            <button type="submit" name="category" value="<%= categoryOption %>" 
-              <%= categoryOption === category ? 'class="active"' : '' %>><%= categoryOption %>
-            </button>
+<head>
+  <title>
+    <%= title %>
+  </title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vesuvius menu card.">
+</head>
+
+<body>
+  <div class="menu-container">
+    <h1>
+      <%= title %>
+    </h1>
+
+    <!-- Filter Buttons -->
+    <div class="filter-container">
+      <form action="/" method="get">
+        <button type="submit" name="category" value="" <%=!category ? 'class="active"' : '' %>>All</button>
+        <% categories.forEach(categoryOption=> { %>
+          <button type="submit" name="category" value="<%= categoryOption %>" <%=categoryOption===category
+            ? 'class="active"' : '' %>><%= categoryOption %>
+          </button>
           <% }); %>
-        </form>
-      </div>
-      
-      <!-- Menu Items -->
-      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
-        <% items.map((item, index) => { %>
+      </form>
+    </div>
+
+    <!-- Menu Items -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem">
+      <% items.map((item, index)=> { %>
         <div class="menu-item">
           <div class="menu-header">
-            <h2><%= item.name %></h2>
-            <div class="price"><%= item.price %>,-</div>
+            <h2>
+              <%= item.name %>
+            </h2>
+            <div class="price">
+              <%= item.price %>,-
+            </div>
           </div>
 
-          <img src="/images/<%= item.name %>.webp" alt="<%= item.name %>" height="200rem" width="200rem" style="border-radius: 2rem;" />
-
+          <div>
+            <img src="/images/<%= item.name %>.webp" alt="<%= item.name %>" height="200rem" width="200rem"
+              style="border-radius: 2rem;" />
+          </div>
           <span>
-            <%= item.RawMaterial_MenuItems.map((rawMaterialMenuItem) => {
-            return rawMaterialMenuItem.RawMaterial.name; }).join(", ") %>
+            <%= item.RawMaterial_MenuItems.map((rawMaterialMenuItem)=> {
+              return rawMaterialMenuItem.RawMaterial.name; }).join(", ") %>
           </span>
         </div>
         <% }) %>
-      </div>
     </div>
-  </body>
+  </div>
+</body>
+
 </html>
