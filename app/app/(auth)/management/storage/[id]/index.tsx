@@ -38,7 +38,6 @@ export default function EditCreateUserPage() {
     name: "",
     unit: "",
     quantity: 0,
-    quantityToAdd: 0,
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
