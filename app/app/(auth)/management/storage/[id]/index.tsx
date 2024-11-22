@@ -1,29 +1,27 @@
 import {
+  NativeSyntheticEvent,
   StyleSheet,
-  View,
   Text,
-  Alert,
-  FlatList,
-  ScrollView,
+  TextInputChangeEventData,
+  View,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { useStock } from "@/hooks/useStock"; // Assuming you have a hook for user management
+import { useStock } from "@/hooks/useStock";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
+import QuantityInput from "@/components/QuantityInput";
+
 import { useNavigation } from "@react-navigation/native";
+import { StockItemModel } from "../../../../../models/StorageModel";
 
-import Switch from "@/components/Switch";
-
-import PermissionsTabView from "@/components/PermissionsTabView";
+import { FontAwesome6 } from "@expo/vector-icons"; // Import FontAwesome6 icons
+import InputSpinner from "react-native-input-spinner";
 
 export default function EditCreateUserPage() {
-  const route = useRoute();
   const { id } = useLocalSearchParams();
-
   const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -31,13 +29,16 @@ export default function EditCreateUserPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const { stock, isLoading, error } = useStock(id as string);
+  const { stock, isLoading, error, updateStock, createStock } = useStock(
+    id as string
+  );
 
-  const [stockItem, setStockItem] = useState({
-    id: "",
+  const [stockItem, setStockItem] = useState<StockItemModel>({
+    id: (id as string) || "",
     name: "",
-    quantity: 0,
     unit: "",
+    quantity: 0,
+    quantityToAdd: 0,
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
@@ -64,17 +65,21 @@ export default function EditCreateUserPage() {
     } else {
       console.log("Update/Create");
 
-      if (id) {
+      if (id !== "new") {
         // Update user logic here
-        //updateUser(user);
-        console.log(changedFields);
+        const updatedFields = { id: stockItem.id, ...changedFields };
+        updateStock(updatedFields);
       } else {
+        const updatedFields: StockItemModel = { ...changedFields };
+        createStock(updatedFields);
         // Create new user logic here
       }
+      setChangedFields({});
+      navigation.goBack();
     }
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
+  const handleChange = (field: string, value) => {
     if (value !== changedFields[field]) {
       const origValue = stockItem[field] || "";
       setChangedFields((prev) => ({
@@ -93,6 +98,10 @@ export default function EditCreateUserPage() {
       [field]: value,
     }));
   };
+  const quantityChange = (itemId: string, newQty: number) => {
+    const updatedStockItem = { ...stockItem, quantityToAdd: newQty };
+    setStockItem(updatedStockItem);
+  };
 
   return (
     <TemplateLayout
@@ -105,20 +114,53 @@ export default function EditCreateUserPage() {
           style={styles.input}
           label="Name"
           value={stockItem.name}
-          onChange={(value) => handleChange("name", value)}
+          onChangeText={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />
+
+        {/* Use InputSpinner with custom icon buttons */}
+        <InputSpinner
+          step={1}
+          color={SecondaryColor}
+          textColor="white"
+          value={stockItem.quantity}
+          onChange={(num) => handleChange("quantity", num)}
+          leftButton={
+            <FontAwesome6
+              name="square-minus"
+              size={30}
+              color={SecondaryColor}
+            />
+          }
+          rightButton={
+            <FontAwesome6 name="square-plus" size={30} color={SecondaryColor} />
+          }
+          buttonStyle={{
+            borderRadius: 10,
+            borderWidth: 3,
+            backgroundColor: "transparent",
+            borderColor: SecondaryColor,
+            padding: 5,
+          }}
+          buttonTextColor={SecondaryColor}
+          buttonFontSize={40}
+          style={styles.spinner} // Apply compact styling here
+        >
+          <View>
+            <Text>{stockItem.unit}</Text>
+          </View>
+        </InputSpinner>
+
         <TextInput
           style={styles.input}
-          label="Quantity"
-          value={stockItem.quantity.toString()}
-          onChange={(value) => handleChange("name", value)}
+          label="Unit"
+          value={stockItem.unit}
+          onChangeText={(value) => handleChange("unit", value)}
           clearTextOnFocus={false}
         />
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
-
           <Button
             title={id !== "new" ? "Save" : "Create"}
             onPress={handleSave}
@@ -134,59 +176,18 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  scrollViewContainer: {
-    flexGrow: 1,
-    paddingBottom: 100, // Ensure space for buttons at the bottom
-  },
   input: {
     height: 40,
     marginBottom: 15,
   },
-  initialsInput: {
-    maxWidth: "50%",
-  },
-  permissionsContainer: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  permissionsTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  permissionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  permissionDescription: {
-    marginTop: 5,
-    fontSize: 14,
-    color: "#555",
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
+  spinner: {
+    height: 50, // Adjust height for compactness
+    marginBottom: 15,
+    alignSelf: "flex-start",
   },
   buttonContainer: {
-    // paddingTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-  },
-  initialsActiveContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  activeSwitchContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 20,
-    alignSelf: "center",
   },
 });

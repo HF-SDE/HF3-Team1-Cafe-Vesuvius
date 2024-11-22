@@ -6,7 +6,12 @@ const omit = {
 };
 
 export const menuItem: Prisma.MenuItemFindManyArgs = {
-  include: { RawMaterial_MenuItems: true },
+  include: {
+    RawMaterial_MenuItems: {
+      include: { RawMaterial: true },
+    },
+  },
+
   omit,
 };
 

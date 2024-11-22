@@ -13,7 +13,6 @@ import { StockCreateSchema, StockUpdateSchema } from '@schemas/stock.schemas';
  */
 export async function get(id?: string): Promise<APIResponse<StockResult>> {
   try {
-    let result: StockResult | null;
     if (id) {
       // Validate the id
       const validate = UuidSchema.validate(id);
@@ -23,16 +22,12 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
           message: validate.error.message,
         };
       }
-
-      // Find the stock item by id
-      result = await prisma.rawMaterial.findUnique({
-        where: {
-          id,
-        },
-      });
-    } else {
-      result = await prisma.rawMaterial.findMany();
     }
+    const result = await prisma.rawMaterial.findMany({
+      where: {
+        id,
+      },
+    });
 
     if (!result) {
       return {

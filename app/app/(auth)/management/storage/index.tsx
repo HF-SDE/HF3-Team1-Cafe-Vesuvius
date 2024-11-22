@@ -2,25 +2,28 @@ import {
   StyleSheet,
   View,
   Text,
-  FlatList,
+  TextInput,
   TouchableOpacity,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import TemplateLayout from "@/components/TemplateLayout";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStock } from "@/hooks/useStock";
-import AddButton from "@/components/AddButton";
-import DefaultButton from "@/components/DefaultButton";
-import { router } from "expo-router";
+
+import { RelativePathString, router } from "expo-router";
+
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-import SearchBar from "@/components/SearchBar";
-import { TextInput } from "react-native";
 import { SwipeListView } from "react-native-swipe-list-view";
 
+import SearchBar from "@/components/SearchBar";
+import AddButton from "@/components/AddButton";
+import DefaultButton from "@/components/DefaultButton";
+import TemplateLayout from "@/components/TemplateLayout";
+import { StockItemModel } from "../../../../models/StorageModel";
+
 export default function ManageUsersPage() {
-  const { stock, isLoading, error, updateStock, createStock } = useStock();
+  const { stock, isLoading, error, updateStock } = useStock();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -31,12 +34,9 @@ export default function ManageUsersPage() {
   const [quantities, setQuantities] = useState({}); // Track adjustments per item
 
   const handleAddEditStockItem = (id?: string) => {
-    let path = "/management/storage/";
-    if (id) {
-      path += id; // Reassign the result of concatenation back to `path`
-    } else {
-      path += "new"; // Reassign here as well
-    }
+    const path: RelativePathString = `/management/storage/${
+      id ?? "new"
+    }` as RelativePathString;
     router.navigate(path);
   };
 
@@ -44,9 +44,12 @@ export default function ManageUsersPage() {
   const handleSaveStockItems = () => {
     if (hasChanges) {
       // Create an array of changed stock items with the id and the new quantity
-      const changedStock = Object.keys(quantities)
+      const changedStock: StockItemModel[] = Object.keys(quantities)
         .map((itemId) => {
           const adjustedQty = quantities[itemId];
+          if (!stock) {
+            return null;
+          }
           const item = stock.find((item) => item.id === itemId);
 
           if (item && adjustedQty !== "0") {
@@ -62,9 +65,6 @@ export default function ManageUsersPage() {
           return null;
         })
         .filter((item) => item !== null); // Remove null values from the array
-
-      // Log the changed stock for debugging
-      console.log(changedStock);
 
       // Now you can use `changedStock` for your API call to update the stock
       updateStock(changedStock);
@@ -138,7 +138,7 @@ export default function ManageUsersPage() {
       )
     : [];
 
-  const renderItem = ({ item }) => {
+  const renderItem = ({ item }: { item: StockItemModel }) => {
     const adjustedQty: string = !isNaN(Number(quantities[item.id]))
       ? Number(quantities[item.id]).toString()
       : "0"; // Current adjustment
@@ -151,7 +151,7 @@ export default function ManageUsersPage() {
             {item.name}
           </Text>
           <Text style={[styles.itemStock, { color: SecondaryColor }]}>
-            Stock: {item.quantity}
+            Stock: {item.quantity} {item.unit}
           </Text>
         </View>
         <View style={styles.inputContainer}>
@@ -304,7 +304,6 @@ const styles = StyleSheet.create({
   userItem: {
     padding: 15,
     borderRadius: 10,
-    //marginBottom: 15,
     flexDirection: "row",
     justifyContent: "space-between",
   },
@@ -368,7 +367,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "transparent",
     borderRadius: 10,
-    //marginBottom: 15,
     height: "100%",
   },
   hiddenButton: {

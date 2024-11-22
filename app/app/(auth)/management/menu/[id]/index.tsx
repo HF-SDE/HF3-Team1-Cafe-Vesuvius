@@ -102,20 +102,22 @@ export default function EditCreateUserPage() {
       buttonTitle="Cancel"
     >
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          label="Name"
-          value={menuItem.name}
-          onChange={(value) => handleChange("username", value)}
-          clearTextOnFocus={false}
-        />
-        <TextInput
-          style={styles.input}
-          label="Price"
-          value={menuItem.price.toString()}
-          onChange={(value) => handleChange("name", value)}
-          clearTextOnFocus={false}
-        />
+        <View>
+          <TextInput
+            style={styles.input}
+            label="Name"
+            value={menuItem.name}
+            onChange={(value) => handleChange("username", value)}
+            clearTextOnFocus={false}
+          />
+          <TextInput
+            style={styles.input}
+            label="Price"
+            value={menuItem.price.toString()}
+            onChange={(value) => handleChange("name", value)}
+            clearTextOnFocus={false}
+          />
+        </View>
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
@@ -134,6 +136,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
+    justifyContent: "space-between",
   },
   scrollViewContainer: {
     flexGrow: 1,

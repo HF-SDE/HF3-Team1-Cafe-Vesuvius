@@ -14,6 +14,11 @@
   --dark-accent: #622a04;
 }
 
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   color: light-dark(var(--light-text), var(--dark-text));
   background-color: light-dark(var(--light-bg), var(--dark-bg));
@@ -22,6 +27,7 @@ body {
   padding: 0;
 }
 
+/* Menu container */
 .menu-container {
   max-width: 800px;
   margin: 20px auto;
@@ -36,56 +42,7 @@ h1 {
   color: light-dark(var(--light-primary), var(--dark-primary));
 }
 
-.menu-item {
-  width: 100%;
-  margin: 0 auto 20px;
-  padding: 15px;
-  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
-  border-radius: 8px;
-  background-color: light-dark(var(--light-primary), var(--dark-primary));
-}
-
-.menu-item h3 {
-  font-size: 1.25rem;
-  margin: 5px 0;
-  color: light-dark(var(--light-secondary), var(--dark-secondary));
-}
-
-.menu-item p {
-  margin: 0 0 5px;
-  color: light-dark(var(--light-text), var(--dark-text));
-}
-
-.price {
-  font-weight: bold;
-  color: light-dark(var(--light-secondary), var(--dark-secondary));
-}
-
-li {
-  width: 20rem;
-  display: flex;
-  justify-content: space-between;
-}
-button.active {
-  background-color: #007bff;
-  color: white;
-}
-/* Remove default margin and padding for the <ul> */
-ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none; /* Optional: removes bullet points */
-}
-
-/* If you want to adjust the <li> as well */
-li {
-  margin: 0;
-  padding: 0;
-  width: 20rem;
-  display: flex;
-  justify-content: space-between;
-}
-
+/* Filter container */
 .filter-container {
   display: flex;
   justify-content: center;
@@ -94,26 +51,88 @@ li {
 }
 
 .filter-container button {
-  /* background-color: light-dark(#f1f1f1, #333);
-  border: 1px solid light-dark(#ccc, #555); */
+  background-color: light-dark(var(--light-primary), var(--dark-primary));
+  color: light-dark(var(--light-bg), var(--dark-bg));
+  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
   padding: 10px 20px;
   border-radius: 5px;
   font-size: 1rem;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
-/* .filter-container button:hover {
-  background-color: light-dark(#ddd, #444);
-  border-color: light-dark(#bbb, #666);
-} */
+.filter-container button:hover {
+  background-color: light-dark(var(--light-secondary), var(--dark-secondary));
+}
 
-/* .filter-container button.active {
+button.active {
+  background-color: light-dark(var(--light-accent), var(--dark-accent));
+}
+
+/* Menu items container (grid layout) */
+ul {
+  margin: 0;
+  padding: 0;
+  list-style-type: none; /* Remove bullet points */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Create a 3-column layout */
+  gap: 20px; /* Add spacing between items */
+}
+
+/* Responsive: Single column for small screens */
+@media (max-width: 768px) {
+  ul {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Add spacing between items */
+  }
+}
+
+/* Individual menu items */
+li {
+  margin: 0;
+  padding: 15px;
+  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
+  border-radius: 8px;
   background-color: light-dark(var(--light-primary), var(--dark-primary));
-  color: white;
-  border-color: light-dark(var(--light-secondary), var(--dark-secondary));
-} */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: box-shadow 0.3s ease;
+}
 
-.filter-container button:focus {
-  outline: none;
+li:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, light-dark(0.1, 0.3));
+}
+
+/* Menu item text styling */
+.menu-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  font-size: 1rem;
+  margin: 0;
+  padding: 0.5rem;
+
+  border: 2px solid light-dark(var(--light-secondary), var(--dark-secondary));
+  border-radius: 8px;
+}
+
+.menu-header {
+  display: flex;
+  flex-direction: column;
+}
+
+.price {
+  font-weight: bold;
+  padding: 3px 5px;
+  border-radius: 2rem;
+}
+
+/* Optional: Add some margin at the bottom of the container */
+.menu-container ul {
+  margin-bottom: 20px;
 }

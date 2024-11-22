@@ -7,6 +7,7 @@ import logger from "morgan";
 import path from "path";
 import { fileURLToPath } from "url";
 import dotenv from "dotenv";
+import compression from "compression";
 
 import indexRouter from "./routes/index.js";
 
@@ -24,6 +25,7 @@ app.set("view engine", "ejs");
 app.use(logger("dev"));
 app.use(json());
 app.use(urlencoded({ extended: false }));
+app.use(compression());
 app.use(serveStatic(join(__dirname, "public")));
 
 app.use("/", indexRouter);
