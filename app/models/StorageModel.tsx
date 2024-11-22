@@ -3,5 +3,4 @@ export interface StockItemModel {
   name?: string;
   unit?: string;
   quantity?: number;
-  quantityToAdd?: number;
 }

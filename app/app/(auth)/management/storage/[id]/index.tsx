@@ -17,6 +17,9 @@ import QuantityInput from "@/components/QuantityInput";
 import { useNavigation } from "@react-navigation/native";
 import { StockItemModel } from "../../../../../models/StorageModel";
 
+import { FontAwesome6 } from "@expo/vector-icons"; // Import FontAwesome6 icons
+import InputSpinner from "react-native-input-spinner";
+
 export default function EditCreateUserPage() {
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
@@ -114,22 +117,40 @@ export default function EditCreateUserPage() {
           onChangeText={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />
-        <TextInput
-          style={styles.input}
-          label="Quantity"
-          value={(
-            stockItem.quantity + (stockItem.quantityToAdd || 0)
-          ).toString()}
-          //onChangeText={(value) => handleChange("quantity", value)}
-          clearTextOnFocus={false}
-          inputMode="numeric"
-        />
-        <Text>Quantity</Text>
-        <QuantityInput
-          itemId={stockItem.id as string}
-          initialQty={stockItem.quantity as number}
-          onQuantityChange={quantityChange}
-        />
+
+        {/* Use InputSpinner with custom icon buttons */}
+        <InputSpinner
+          step={1}
+          color={SecondaryColor}
+          textColor="white"
+          value={stockItem.quantity}
+          onChange={(num) => handleChange("quantity", num)}
+          leftButton={
+            <FontAwesome6
+              name="square-minus"
+              size={30}
+              color={SecondaryColor}
+            />
+          }
+          rightButton={
+            <FontAwesome6 name="square-plus" size={30} color={SecondaryColor} />
+          }
+          buttonStyle={{
+            borderRadius: 10,
+            borderWidth: 3,
+            backgroundColor: "transparent",
+            borderColor: SecondaryColor,
+            padding: 5,
+          }}
+          buttonTextColor={SecondaryColor}
+          buttonFontSize={40}
+          style={styles.spinner} // Apply compact styling here
+        >
+          <View>
+            <Text>{stockItem.unit}</Text>
+          </View>
+        </InputSpinner>
+
         <TextInput
           style={styles.input}
           label="Unit"
@@ -140,7 +161,6 @@ export default function EditCreateUserPage() {
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
-
           <Button
             title={id !== "new" ? "Save" : "Create"}
             onPress={handleSave}
@@ -156,58 +176,18 @@ const styles = StyleSheet.create({
     padding: 20,
     flex: 1,
   },
-  scrollViewContainer: {
-    flexGrow: 1,
-    paddingBottom: 100,
-  },
   input: {
     height: 40,
     marginBottom: 15,
   },
-  initialsInput: {
-    maxWidth: "50%",
-  },
-  permissionsContainer: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  permissionsTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  permissionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  permissionDescription: {
-    marginTop: 5,
-    fontSize: 14,
-    color: "#555",
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
+  spinner: {
+    height: 50, // Adjust height for compactness
+    marginBottom: 15,
+    alignSelf: "flex-start",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-  },
-  initialsActiveContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  activeSwitchContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 20,
-    alignSelf: "center",
   },
 });
