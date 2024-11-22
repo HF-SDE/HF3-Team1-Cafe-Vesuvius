@@ -17,16 +17,6 @@ export function useStock(id?: string | string[]) {
         setError(null);
         const endpoint = id ? `/stock?id=${id}` : "/stock";
         const response = await apiClient.get(endpoint);
-        console.log(response);
-
-        const updatedStock = Array.isArray(response.data.data)
-          ? response.data.data.map((item: StockItemModel) => ({
-              ...item,
-              quantityToAdd: item.quantityToAdd ?? 0,
-            }))
-          : [];
-
-        console.log(response.data.data);
 
         setStock(response.data.data);
       } catch (err: any) {
