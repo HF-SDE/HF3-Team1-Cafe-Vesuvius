@@ -47,7 +47,7 @@ h1 {
 
 .filter-container button {
   background-color: light-dark(var(--light-primary), var(--dark-primary));
-  color: white;
+  color: light-dark(var(--light-bg), var(--dark-bg));
   border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
   padding: 10px 20px;
   border-radius: 5px;
