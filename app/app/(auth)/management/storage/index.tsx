@@ -198,7 +198,7 @@ export default function ManageUsersPage() {
               },
             ]}
           >
-            New stock: {newStock}
+            New stock: {newStock} {item.unit}
           </Text>
         </View>
       </View>
