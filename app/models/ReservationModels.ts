@@ -4,10 +4,10 @@ import { Table } from "./TableModels";
 export interface Reservation {
   id?: string;
   name: string;
-  partySize: number | string;
+  amount: number | string;
   reservationTime: DateType;
   email: string;
   phone: string;
-  amount: number;
-  tables: Table[];
+  tables?: Table[];
+  tableIds?: string[];
 }

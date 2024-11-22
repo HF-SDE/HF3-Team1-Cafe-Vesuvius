@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ReactElement, useState } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -10,18 +10,23 @@ import {
 import { Text } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import CheckPermission from "@/components/CheckPermission";
 import TemplateLayout from "@/components/TemplateLayout";
 import AddButton from "@/components/AddButton";
 import { Reservation } from "@/models/ReservationModels";
 import { useReservation } from "@/hooks/useResevation";
-import ResetPasswordModal from "../profile/reset-password";
 import NewReservationModal from "../reservation/new-reservation";
+import { useTable } from "@/hooks/useTable";
+import dayjs from "dayjs";
+import { AntDesign } from "@expo/vector-icons";
+import InfoReservationModal from "../reservation/info-reservation";
 
-export default function ReservationsOverview() {
-  const { reservations, isLoading, error } = useReservation();
-  const [isModalVisible, setModalVisible] = useState(false);
+
+export default function ReservationsOverview(): ReactElement {
+  const { reservations, isLoading: reservationsIsLoading, error: reservationsError } = useReservation();
+  const { table, isLoading: tableIsLoading, error: tableError } = useTable();
+  const [isCreateModalVisible, setCreateModalVisible] = useState(false);
+  const [isInfoModalVisible, setInfoModalVisible] = useState(false);
+  const [selectedReservations, setSelectedReservations] = useState<{ email: string, phone: string }>({ email: "", phone: "" });
 
   const router = useRouter();
   const BackgroundColor = useThemeColor({}, "background");
@@ -29,13 +34,37 @@ export default function ReservationsOverview() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const handleAddReservation = () => {
-  };
 
-  const renderReservationItem = ({ item }: { item: Reservation }) => (
-    <View style={styles.orderItem}>
-    </View>
-  );
+  /**
+   * Set selected reservation
+   * @param {string} email 
+   * @param {string} phone 
+   */
+  function reservationSelect(email: string, phone: string): void {
+    setInfoModalVisible(true);
+    setSelectedReservations({ email, phone });
+  }
+
+  function renderReservationItem({ item }: { item: Reservation }): ReactElement {
+    return (
+      <View style={[styles.orderItem, { backgroundColor: PrimaryColor }]}>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.orderText}>{item.name}</Text>
+          <TouchableOpacity style={{ backgroundColor: SecondaryColor, padding: 5, borderRadius: 99999 }} onPress={() => reservationSelect(item.email, item.phone)}>
+            <AntDesign name="info" size={30} />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <Text style={styles.orderText}>{dayjs(item.reservationTime).format("HH:mm")}</Text>
+          <Text style={styles.orderText}> Tables:
+            {item.tables ? item.tables.map((i) => (
+              i.number
+            )) : null}
+          </Text>
+        </View>
+      </View >
+    );
+  }
 
   return (
     <TemplateLayout pageName="ReservationPage">
@@ -43,28 +72,43 @@ export default function ReservationsOverview() {
         <FlatList
           data={reservations}
           renderItem={renderReservationItem}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.id!}
           style={styles.reservationList}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
         />
 
         <AddButton
-          onPress={() => setModalVisible(true)}
+          onPress={() => setCreateModalVisible(true)}
           requiredPermission={["reservation:create"]}
         />
 
         <Modal
           animationType="none"
           transparent={true}
-          visible={isModalVisible}
-          onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
+          visible={isCreateModalVisible}
+          onRequestClose={() => setCreateModalVisible(false)} // Close modal on Android back button
         >
           <View style={styles.modalOverlay}>
             <View
               style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
             >
-              <NewReservationModal onClose={() => setModalVisible(false)} />
+              <NewReservationModal tables={table!} onClose={() => setCreateModalVisible(false)} />
+            </View>
+          </View>
+        </Modal>
+
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={isInfoModalVisible}
+          onRequestClose={() => setInfoModalVisible(false)}
+        >
+          <View style={styles.modalOverlay}>
+            <View
+              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+            >
+              <InfoReservationModal email={selectedReservations.email} phone={selectedReservations.phone} onClose={() => setInfoModalVisible(false)} />
             </View>
           </View>
         </Modal>
@@ -87,9 +131,14 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderBottomColor: "#ccc",
+    paddingBlock: 10,
+    marginBlockEnd: 10,
+    borderRadius: 10,
   },
   orderText: {
     fontSize: 16,
+    color: "white",
+    fontWeight: "bold",
   },
   addButton: {
     width: 70,
