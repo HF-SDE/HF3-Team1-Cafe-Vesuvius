@@ -20,6 +20,8 @@ import TextInput from "@/components/TextInput";
 import TextIconInput from "@/components/TextIconInput";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TemplateLayout from "@/components/TemplateLayout";
+import MenuTabView from "@/components/MenuTabView";
+
 import {
   MenuModel,
   RawMaterial_MenuItems,
@@ -47,16 +49,10 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
-  const [menuItemCategories, setMenuItemCategories] = useState<string[]>([]);
-  const [menuItemIngredients, setMenuItemIngredients] = useState<
-    RawMaterial_MenuItems[]
-  >([]);
-
   const [newCategory, setNewCategory] = useState("");
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
-  const [index, setIndex] = useState(0);
 
   useEffect(() => {
     if (menu) {
@@ -89,115 +85,6 @@ export default function EditCreateUserPage() {
     setMenuItem((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleAddCategory = () => {
-    if (newCategory.trim()) {
-      setMenuItem((prev) => ({
-        ...prev,
-        category: [...prev.category, newCategory.trim()],
-      }));
-      setNewCategory("");
-    }
-  };
-
-  const handleDeleteCategory = (category: string) => {
-    setMenuItem((prev) => ({
-      ...prev,
-      category: prev.category.filter((cat) => cat !== category),
-    }));
-  };
-
-  const handleAddIngredient = () => {
-    const newIngredient: RawMaterial_MenuItems = {
-      id: `${Date.now()}`,
-      quantity: 1,
-      RawMaterial: { name: "New Ingredient", unit: "unit" },
-    };
-    setMenuItem((prev) => ({
-      ...prev,
-      RawMaterial_MenuItems: [...prev.RawMaterial_MenuItems, newIngredient],
-    }));
-  };
-
-  const handleDeleteIngredient = (id: string) => {
-    setMenuItem((prev) => ({
-      ...prev,
-      RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
-        (item) => item.id !== id
-      ),
-    }));
-  };
-
-  const RenderCategory = ({ category }: { category: string }) => (
-    <View style={styles.categoryItem}>
-      <Text style={styles.categoryText}>{category}</Text>
-      <TouchableOpacity onPress={() => handleDeleteCategory(category)}>
-        <FontAwesome6 name="trash" size={18} color="red" />
-      </TouchableOpacity>
-    </View>
-  );
-
-  const RenderIngredient = ({ item }: { item: RawMaterial_MenuItems }) => (
-    <View style={styles.ingredientItem}>
-      <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
-      <RNTextInput
-        style={styles.quantityInput}
-        value={item.quantity.toString()}
-        keyboardType="numeric"
-        onChangeText={(value) =>
-          setMenuItem((prev) => ({
-            ...prev,
-            RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map((ing) =>
-              ing.id === item.id ? { ...ing, quantity: Number(value) } : ing
-            ),
-          }))
-        }
-      />
-      <TouchableOpacity onPress={() => handleDeleteIngredient(item.id)}>
-        <FontAwesome6 name="trash" size={18} color="red" />
-      </TouchableOpacity>
-    </View>
-  );
-
-  const CategoriesTab = () => (
-    <View style={styles.section}>
-      <TextIconInput
-        placeholder="New Category"
-        value={newCategory}
-        onChangeText={setNewCategory}
-        label={"New category"}
-        icon="plus"
-        iconColor={PrimaryColor}
-        onIconPress={handleAddCategory}
-      />
-      <RNTextInput style={styles.quantityInput} keyboardType="numeric" />
-      <FlatList
-        data={menuItem.category}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => <RenderCategory category={item} />}
-        style={styles.listContainer}
-      />
-    </View>
-  );
-
-  const IngredientsTab = () => (
-    <View style={styles.section}>
-      <TouchableOpacity style={styles.addIcon} onPress={handleAddIngredient}>
-        <FontAwesome6 name="square-plus" size={60} color={PrimaryColor} />
-      </TouchableOpacity>
-      <FlatList
-        data={menuItem.RawMaterial_MenuItems}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <RenderIngredient item={item} />}
-        style={styles.listContainer}
-      />
-    </View>
-  );
-
-  const renderScene = SceneMap({
-    categories: CategoriesTab,
-    ingredients: IngredientsTab,
-  });
-
   return (
     <TemplateLayout
       pageName="ManagementPage"
@@ -222,19 +109,56 @@ export default function EditCreateUserPage() {
             />
           </View>
 
-          <TabView
-            navigationState={{ index, routes }}
-            renderScene={renderScene}
-            onIndexChange={setIndex}
-            initialLayout={{ width: Dimensions.get("window").width }}
-            renderTabBar={(props) => (
-              <TabBar
-                {...props}
-                indicatorStyle={{ backgroundColor: PrimaryColor }}
-                style={{ backgroundColor: AccentColor }}
-                labelStyle={{ color: TextColor }}
-              />
-            )}
+          <MenuTabView
+            categories={menuItem.category}
+            ingredients={menuItem.RawMaterial_MenuItems}
+            onAddCategory={(category) => {
+              setMenuItem((prev) => ({
+                ...prev,
+                category: [...prev.category, category],
+              }));
+            }}
+            onDeleteCategory={(category) => {
+              setMenuItem((prev) => ({
+                ...prev,
+                category: prev.category.filter((cat) => cat !== category),
+              }));
+            }}
+            onAddIngredient={() => {
+              const newIngredient: RawMaterial_MenuItems = {
+                id: `${Date.now()}`,
+                quantity: 1,
+                RawMaterial: { name: "New Ingredient", unit: "unit" },
+              };
+              setMenuItem((prev) => ({
+                ...prev,
+                RawMaterial_MenuItems: [
+                  ...prev.RawMaterial_MenuItems,
+                  newIngredient,
+                ],
+              }));
+            }}
+            onDeleteIngredient={(id) => {
+              setMenuItem((prev) => ({
+                ...prev,
+                RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
+                  (item) => item.id !== id
+                ),
+              }));
+            }}
+            onUpdateIngredientQuantity={(id, quantity) => {
+              setMenuItem((prev) => ({
+                ...prev,
+                RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map((item) =>
+                  item.id === id ? { ...item, quantity } : item
+                ),
+              }));
+            }}
+            themeColors={{
+              primary: PrimaryColor,
+              text: TextColor,
+              accent: AccentColor,
+            }}
           />
         </View>
 
