@@ -8,6 +8,8 @@ import {
   ScrollView,
   TouchableOpacity,
   TextInput as RNTextInput,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -45,6 +47,11 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
+  const [menuItemCategories, setMenuItemCategories] = useState<string[]>([]);
+  const [menuItemIngredients, setMenuItemIngredients] = useState<
+    RawMaterial_MenuItems[]
+  >([]);
+
   const [newCategory, setNewCategory] = useState("");
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
@@ -73,7 +80,9 @@ export default function EditCreateUserPage() {
     // Update or create logic here
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string) => {
+    console.log(field + " - " + value);
+
     if (value !== menuItem[field]) {
       setChangedFields((prev) => ({ ...prev, [field]: value }));
     }
@@ -160,6 +169,7 @@ export default function EditCreateUserPage() {
         iconColor={PrimaryColor}
         onIconPress={handleAddCategory}
       />
+      <RNTextInput style={styles.quantityInput} keyboardType="numeric" />
       <FlatList
         data={menuItem.category}
         keyExtractor={(item) => item}
@@ -203,12 +213,12 @@ export default function EditCreateUserPage() {
             <TextInput
               label="Name"
               value={menuItem.name}
-              onChange={(value) => handleChange("name", value)}
+              onChangeText={(text) => handleChange("name", text)}
             />
             <TextInput
               label="Price"
               value={menuItem.price.toString()}
-              onChange={(value) => handleChange("price", value)}
+              onChangeText={(text) => handleChange("price", text)}
             />
           </View>
 
