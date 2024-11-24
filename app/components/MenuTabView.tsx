@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   StyleSheet,
   View,
@@ -12,13 +12,15 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TextIconInput from "@/components/TextIconInput";
 import { RawMaterial_MenuItems } from "../models/MenuModel";
+import AddIngredientModal from "../app/(auth)/management/menu/[id]/add-ingredient";
+import { useThemeColor } from "@/hooks/useThemeColor";
 
 type CategoryIngredientTabsProps = {
   categories: string[];
   ingredients: RawMaterial_MenuItems[];
   onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
-  onAddIngredient: () => void;
+  onAddIngredient: (ingredient: RawMaterial_MenuItems) => void;
   onDeleteIngredient: (id: string) => void;
   onUpdateIngredientQuantity: (id: string, quantity: number) => void;
   themeColors: {
@@ -40,6 +42,13 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
 }) => {
   const [newCategory, setNewCategory] = React.useState("");
   const [index, setIndex] = React.useState(0);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const BackgroundColor = useThemeColor({}, "background");
+  const TextColor = useThemeColor({}, "text");
+  const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
   const routes = [
     { key: "categories", title: "Categories" },
@@ -62,6 +71,7 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
           }
         }}
       />
+
       <FlatList
         data={categories}
         keyExtractor={(item) => item}
@@ -80,7 +90,10 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
 
   const IngredientsTab = () => (
     <View style={styles.section}>
-      <TouchableOpacity style={styles.addIcon} onPress={onAddIngredient}>
+      <TouchableOpacity
+        style={styles.addIcon}
+        onPress={() => setIsModalVisible(true)}
+      >
         <FontAwesome6
           name="square-plus"
           size={60}
@@ -101,6 +114,8 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
                 onUpdateIngredientQuantity(item.id, Number(value))
               }
             />
+            <Text>{item.RawMaterial.unit}</Text>
+
             <TouchableOpacity onPress={() => onDeleteIngredient(item.id)}>
               <FontAwesome6 name="trash" size={18} color="red" />
             </TouchableOpacity>
@@ -117,20 +132,36 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
   });
 
   return (
-    <TabView
-      navigationState={{ index, routes }}
-      renderScene={renderScene}
-      onIndexChange={setIndex}
-      initialLayout={{ width: Dimensions.get("window").width }}
-      renderTabBar={(props) => (
-        <TabBar
-          {...props}
-          indicatorStyle={{ backgroundColor: themeColors.primary }}
-          style={{ backgroundColor: themeColors.accent }}
-          labelStyle={{ color: themeColors.text }}
-        />
-      )}
-    />
+    <View>
+      <Text style={{ color: "white" }}>TEST</Text>
+      <TabView
+        navigationState={{ index, routes }}
+        renderScene={renderScene}
+        onIndexChange={setIndex}
+        initialLayout={{ width: Dimensions.get("window").width }}
+        renderTabBar={(props) => (
+          <TabBar
+            {...props}
+            indicatorStyle={[
+              styles.tabIndicator,
+              { backgroundColor: PrimaryColor },
+            ]}
+            style={[styles.tabBar, { backgroundColor: AccentColor }]}
+            labelStyle={[styles.tabLabel, { color: TextColor }]}
+            scrollEnabled={true}
+            activeColor={TextColor}
+            inactiveColor={PrimaryColor}
+          />
+        )}
+      />
+
+      <AddIngredientModal
+        visible={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        onAddIngredient={onAddIngredient}
+        themeColors={themeColors}
+      />
+    </View>
   );
 };
 
@@ -177,6 +208,17 @@ const styles = StyleSheet.create({
   addIcon: {
     alignItems: "center",
     paddingVertical: 10,
+  },
+  tabBar: {
+    borderRadius: 5,
+    elevation: 0,
+  },
+  tabIndicator: {
+    height: 3,
+  },
+  tabLabel: {
+    // color: "#333",
+    fontSize: 14,
   },
 });
 

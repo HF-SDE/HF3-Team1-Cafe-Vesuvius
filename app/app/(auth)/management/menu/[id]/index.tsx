@@ -22,10 +22,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TemplateLayout from "@/components/TemplateLayout";
 import MenuTabView from "@/components/MenuTabView";
 
-import {
-  MenuModel,
-  RawMaterial_MenuItems,
-} from "../../../../../models/MenuModel";
+import { MenuModel } from "../../../../../models/MenuModel";
 import AddButton from "@/components/AddButton";
 
 export default function EditCreateUserPage() {
@@ -124,17 +121,12 @@ export default function EditCreateUserPage() {
                 category: prev.category.filter((cat) => cat !== category),
               }));
             }}
-            onAddIngredient={() => {
-              const newIngredient: RawMaterial_MenuItems = {
-                id: `${Date.now()}`,
-                quantity: 1,
-                RawMaterial: { name: "New Ingredient", unit: "unit" },
-              };
+            onAddIngredient={(ingredient) => {
               setMenuItem((prev) => ({
                 ...prev,
                 RawMaterial_MenuItems: [
                   ...prev.RawMaterial_MenuItems,
-                  newIngredient,
+                  ingredient,
                 ],
               }));
             }}
