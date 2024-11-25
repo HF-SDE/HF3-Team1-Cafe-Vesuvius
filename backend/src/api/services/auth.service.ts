@@ -367,7 +367,7 @@ export async function login(
   userData: LoginRequestBody,
 ): Promise<APIResponse<AccessResult>> {
   try {
-    const validate = LoginSchema.validate(userData);
+    const validate = LoginSchema.validate({username: userData.username, password: userData.password});
     if (validate.error) {
       return {
         data: undefined,
@@ -451,7 +451,7 @@ export async function logout(
 ): Promise<APIResponse<undefined>> {
   try {
     // Validate the token using TokenSchema
-    const validate = TokenSchema.validate(token);
+    const validate = TokenSchema.validate({token: token.token});
 
     // If validation fails, return an error response
     if (validate.error) {
@@ -495,7 +495,7 @@ export async function accessToken(
 ): Promise<APIResponse<AccessResult>> {
   try {
     // Validate the token using TokenSchema
-    const validate = TokenSchema.validate(token);
+    const validate = TokenSchema.validate({token: token.token});
 
     // If validation fails, return an error response
     if (validate.error) {
@@ -547,7 +547,7 @@ export async function refreshToken(
 ): Promise<APIResponse<RefreshResult>> {
   try {
     // Validate the token using TokenSchema
-    const validate = TokenSchema.validate(token);
+    const validate = TokenSchema.validate({token: token.token});
 
     // If validation fails, return an error response
     if (validate.error) {
