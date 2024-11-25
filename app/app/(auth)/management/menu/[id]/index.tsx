@@ -103,7 +103,17 @@ export default function EditCreateUserPage() {
             <TextInput
               label="Price"
               value={menuItem.price.toString()}
-              onChangeText={(text) => handleChange("price", text)}
+              onChangeText={(text) => {
+                // Replace commas with periods
+                let formattedText = text.replace(/,/g, ".");
+
+                // Validate the input and ensure only two decimal places are allowed
+                const regex = /^\d*\.?\d{0,2}$/;
+
+                if (regex.test(formattedText)) {
+                  handleChange("price", formattedText);
+                }
+              }}
             />
           </View>
 
