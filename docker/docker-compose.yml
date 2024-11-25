@@ -9,8 +9,6 @@ services:
       target: base
     expose:
       - "3001"
-    ports:
-      - "3001:3001"
     command: npm run dev
     depends_on:
       - db
@@ -91,7 +89,6 @@ services:
       context: ..
       dockerfile: docker/nginx.Dockerfile
     ports:
-      - 443:443
       - 80:80
     depends_on:
       - backend
