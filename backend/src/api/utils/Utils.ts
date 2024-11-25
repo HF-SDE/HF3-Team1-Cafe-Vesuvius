@@ -58,7 +58,7 @@ export function defaultResponse(code: number | string) {
     case Status.Unauthorized:
     case getHttpStatusCode(Status.Unauthorized):
       return {
-        stats: 'Unauthorized',
+        status: 'Unauthorized',
         message: 'Unauthorized',
       };
   }
