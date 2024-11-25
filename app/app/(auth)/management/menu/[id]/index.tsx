@@ -106,52 +106,54 @@ export default function EditCreateUserPage() {
             />
           </View>
 
-          <MenuTabView
-            categories={menuItem.category}
-            ingredients={menuItem.RawMaterial_MenuItems}
-            onAddCategory={(category) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                category: [...prev.category, category],
-              }));
-            }}
-            onDeleteCategory={(category) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                category: prev.category.filter((cat) => cat !== category),
-              }));
-            }}
-            onAddIngredient={(ingredient) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                RawMaterial_MenuItems: [
-                  ...prev.RawMaterial_MenuItems,
-                  ingredient,
-                ],
-              }));
-            }}
-            onDeleteIngredient={(id) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
-                  (item) => item.id !== id
-                ),
-              }));
-            }}
-            onUpdateIngredientQuantity={(id, quantity) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map((item) =>
-                  item.id === id ? { ...item, quantity } : item
-                ),
-              }));
-            }}
-            themeColors={{
-              primary: PrimaryColor,
-              text: TextColor,
-              accent: AccentColor,
-            }}
-          />
+          <View style={{ minHeight: "70%" }}>
+            <MenuTabView
+              categories={menuItem.category}
+              ingredients={menuItem.RawMaterial_MenuItems}
+              onAddCategory={(category) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  category: [...prev.category, category],
+                }));
+              }}
+              onDeleteCategory={(category) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  category: prev.category.filter((cat) => cat !== category),
+                }));
+              }}
+              onAddIngredient={(ingredient) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: [
+                    ...prev.RawMaterial_MenuItems,
+                    ingredient,
+                  ],
+                }));
+              }}
+              onDeleteIngredient={(id) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
+                    (item) => item.id !== id
+                  ),
+                }));
+              }}
+              onUpdateIngredientQuantity={(id, quantity) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map(
+                    (item) => (item.id === id ? { ...item, quantity } : item)
+                  ),
+                }));
+              }}
+              themeColors={{
+                primary: PrimaryColor,
+                text: TextColor,
+                accent: AccentColor,
+              }}
+            />
+          </View>
         </View>
 
         <View style={styles.buttonContainer}>

@@ -14,6 +14,7 @@ import TextIconInput from "@/components/TextIconInput";
 import { RawMaterial_MenuItems } from "../models/MenuModel";
 import AddIngredientModal from "../app/(auth)/management/menu/[id]/add-ingredient";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 type CategoryIngredientTabsProps = {
   categories: string[];
@@ -132,8 +133,7 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
   });
 
   return (
-    <View>
-      <Text style={{ color: "white" }}>TEST</Text>
+    <View style={{ flex: 1 }}>
       <TabView
         navigationState={{ index, routes }}
         renderScene={renderScene}
@@ -148,7 +148,6 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
             ]}
             style={[styles.tabBar, { backgroundColor: AccentColor }]}
             labelStyle={[styles.tabLabel, { color: TextColor }]}
-            scrollEnabled={true}
             activeColor={TextColor}
             inactiveColor={PrimaryColor}
           />
@@ -171,6 +170,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     marginTop: 10,
+    height: "80%",
   },
   categoryItem: {
     flexDirection: "row",
@@ -217,7 +217,6 @@ const styles = StyleSheet.create({
     height: 3,
   },
   tabLabel: {
-    // color: "#333",
     fontSize: 14,
   },
 });
