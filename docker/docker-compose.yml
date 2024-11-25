@@ -9,7 +9,7 @@ services:
       target: base
     expose:
       - "3001"
-    command: npm run dev
+    command: ["npm", "run", "dev"]
     depends_on:
       - db
     env_file:
@@ -29,7 +29,7 @@ services:
       target: base
     expose:
       - "3000"
-    command: npm run dev
+    command: ["npm", "run", "dev"]
     depends_on:
       - backend
     environment:
@@ -73,15 +73,17 @@ services:
   postgres:
     container_name: postgres
     image: postgres:latest
+    expose:
+      - "5432"
     ports:
       - 5432:5432
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
     env_file:
       - ../config/environment-variables/.env.db.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
-      - internal
       - public
+      - internal
 
   reverse-proxy:
     container_name: reverse-proxy
@@ -100,12 +102,9 @@ services:
   ngrok:
     container_name: ngrok
     image: ngrok/ngrok:latest
-    command:
-      - "http"
-      - "http://reverse-proxy:80"
-      - "--url=${NGROK_URL}"
     ports:
       - 4040:4040
+    command: ["http", "http://reverse-proxy:80", "--url=${NGROK_URL}"]
     env_file:
       - ../config/environment-variables/.env.grok.dev
     networks:
