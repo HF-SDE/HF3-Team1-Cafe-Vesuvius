@@ -23,7 +23,7 @@ export async function login(
   const userObject: LoginRequestBody = {
     username,
     password,
-    ip: req.socket.remoteAddress as string,
+    ip: req.headers['x-forwarded-for'] as string,
   };
 
   const response = await AuthService.login(userObject);
@@ -46,7 +46,7 @@ export async function logout(req: Request, res: Response): Promise<void> {
   const { token } = req.body as { token: string };
   const response = await AuthService.logout({
     token,
-    ip: req.socket.remoteAddress as string,
+    ip: req.headers['x-forwarded-for'] as string,
   });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
@@ -65,7 +65,7 @@ export async function getAccessToken(
   const { token } = req.body as { token: string };
   const response = await AuthService.accessToken({
     token,
-    ip: req.socket.remoteAddress as string,
+    ip: req.headers['x-forwarded-for'] as string,
   });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
@@ -103,7 +103,7 @@ export async function getRefreshToken(
 
   const response = await AuthService.refreshToken({
     token,
-    ip: req.socket.remoteAddress as string,
+    ip: req.headers['x-forwarded-for'] as string,
   });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();

@@ -33,7 +33,6 @@ export async function getAll(
 
   if (validate.error) {
     return {
-      data: undefined,
       status: Status.MissingDetails,
       message: validate.error.message,
     };
@@ -45,7 +44,6 @@ export async function getAll(
 
   if (!prismaType) {
     return {
-      data: undefined,
       status: Status.Failed,
       message: `Database collection not found`,
     };
@@ -81,7 +79,6 @@ export async function create(
 
       if (error) {
         return {
-          data: undefined,
           status: Status.InvalidDetails,
           message: error.message,
         };
@@ -127,7 +124,6 @@ export async function update(
 
       if (error) {
         return {
-          data: undefined,
           status: Status.InvalidDetails,
           message: error.message,
         };

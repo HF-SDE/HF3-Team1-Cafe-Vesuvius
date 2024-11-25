@@ -106,52 +106,54 @@ export default function EditCreateUserPage() {
             />
           </View>
 
-          <MenuTabView
-            categories={menuItem.category}
-            ingredients={menuItem.RawMaterial_MenuItems}
-            onAddCategory={(category) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                category: [...prev.category, category],
-              }));
-            }}
-            onDeleteCategory={(category) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                category: prev.category.filter((cat) => cat !== category),
-              }));
-            }}
-            onAddIngredient={(ingredient) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                RawMaterial_MenuItems: [
-                  ...prev.RawMaterial_MenuItems,
-                  ingredient,
-                ],
-              }));
-            }}
-            onDeleteIngredient={(id) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
-                  (item) => item.id !== id
-                ),
-              }));
-            }}
-            onUpdateIngredientQuantity={(id, quantity) => {
-              setMenuItem((prev) => ({
-                ...prev,
-                RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map((item) =>
-                  item.id === id ? { ...item, quantity } : item
-                ),
-              }));
-            }}
-            themeColors={{
-              primary: PrimaryColor,
-              text: TextColor,
-              accent: AccentColor,
-            }}
-          />
+          <View style={{ minHeight: "70%" }}>
+            <MenuTabView
+              categories={menuItem.category}
+              ingredients={menuItem.RawMaterial_MenuItems}
+              onAddCategory={(category) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  category: [...prev.category, category],
+                }));
+              }}
+              onDeleteCategory={(category) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  category: prev.category.filter((cat) => cat !== category),
+                }));
+              }}
+              onAddIngredient={(ingredient) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: [
+                    ...prev.RawMaterial_MenuItems,
+                    ingredient,
+                  ],
+                }));
+              }}
+              onDeleteIngredient={(id) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
+                    (item) => item.id !== id
+                  ),
+                }));
+              }}
+              onUpdateIngredientQuantity={(id, quantity) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map(
+                    (item) => (item.id === id ? { ...item, quantity } : item)
+                  ),
+                }));
+              }}
+              themeColors={{
+                primary: PrimaryColor,
+                text: TextColor,
+                accent: AccentColor,
+              }}
+            />
+          </View>
         </View>
 
         <View style={styles.buttonContainer}>
@@ -179,48 +181,12 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
   },
-  listContainer: {
+
+  inputBox: {
     marginTop: 10,
-  },
-  categoryItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-  },
-  categoryText: {
-    fontSize: 16,
-  },
-  ingredientItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f9f9f9",
-    marginBottom: 10,
-  },
-  ingredientName: {
-    flex: 1,
-    fontSize: 16,
-  },
-  quantityInput: {
-    width: 60,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 8,
-    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  addIcon: {
-    alignItems: "center",
-    paddingVertical: 10,
   },
 });

@@ -24,7 +24,6 @@ export function validateParams(
     res
       .status(getHttpStatusCode(Status.InvalidDetails))
       .json({
-        data: undefined,
         status: Status.InvalidDetails,
         message: validate.error.message,
       })

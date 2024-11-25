@@ -23,6 +23,24 @@ services:
     networks:
       - internal
 
+  web:
+    container_name: web
+    build:
+      context: ../WebMenu/
+      dockerfile: Dockerfile
+      target: base
+    expose:
+      - "3000"
+    command: npm run dev
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://reverse-proxy/api
+    volumes:
+      - ../WebMenu/src:/usr/src/app/src
+    networks:
+      - internal
+
   db:
     container_name: db
     build:
