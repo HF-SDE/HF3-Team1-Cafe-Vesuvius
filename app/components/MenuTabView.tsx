@@ -167,10 +167,10 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
 const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
+    height: "100%",
   },
   listContainer: {
     marginTop: 10,
-    height: "80%",
   },
   categoryItem: {
     flexDirection: "row",
@@ -207,7 +207,7 @@ const styles = StyleSheet.create({
   },
   addIcon: {
     alignItems: "center",
-    paddingVertical: 10,
+    paddingTop: 5,
   },
   tabBar: {
     borderRadius: 5,

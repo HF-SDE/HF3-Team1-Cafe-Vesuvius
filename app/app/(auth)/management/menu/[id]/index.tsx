@@ -181,48 +181,12 @@ const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
   },
-  listContainer: {
+
+  inputBox: {
     marginTop: 10,
-  },
-  categoryItem: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginBottom: 8,
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f0f0f0",
-  },
-  categoryText: {
-    fontSize: 16,
-  },
-  ingredientItem: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    padding: 10,
-    borderRadius: 8,
-    backgroundColor: "#f9f9f9",
-    marginBottom: 10,
-  },
-  ingredientName: {
-    flex: 1,
-    fontSize: 16,
-  },
-  quantityInput: {
-    width: 60,
-    borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    padding: 8,
-    textAlign: "center",
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
-  },
-  addIcon: {
-    alignItems: "center",
-    paddingVertical: 10,
   },
 });
