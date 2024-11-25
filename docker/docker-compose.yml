@@ -32,10 +32,10 @@ services:
     expose:
       - "3000"
     command: npm run dev
-    environment:
-      - BACKEND_URL=http://reverse-proxy/api
     depends_on:
       - backend
+    environment:
+      - BACKEND_URL=http://reverse-proxy/api
     volumes:
       - ../WebMenu/src:/usr/src/app/src
     networks:
