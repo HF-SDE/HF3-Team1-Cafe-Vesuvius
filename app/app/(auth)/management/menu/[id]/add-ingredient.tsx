@@ -56,10 +56,10 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
   const renderItem = ({ item }: { item: StockItemModel }) => (
     <TouchableOpacity
-      style={styles.itemContainer}
+      style={[styles.itemContainer, { borderColor: PrimaryColor }]}
       onPress={() => handleSelectItem(item)}
     >
-      <Text style={styles.itemText}>
+      <Text style={[styles.itemText, { color: TextColor }]}>
         {item.name} ({item.unit})
       </Text>
     </TouchableOpacity>
@@ -84,14 +84,17 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           renderItem={renderItem}
           showsHorizontalScrollIndicator={false}
           showsVerticalScrollIndicator={false}
+          style={styles.ingredientList}
         />
 
         <View style={styles.modalButtonContainer}>
           <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: "red" }]}
+            style={[styles.modalButton, { backgroundColor: PrimaryColor }]}
             onPress={onClose}
           >
-            <Text style={styles.modalButtonText}>Cancel</Text>
+            <Text style={[styles.modalButtonText, { color: BackgroundColor }]}>
+              Cancel
+            </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -103,20 +106,21 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
-    justifyContent: "center",
-    paddingHorizontal: 20,
+    padding: 10,
     gap: 10,
+    height: "100%",
+    borderRadius: 10,
   },
   modalContent: {
     width: "100%",
-    maxWidth: 400,
     height: "50%",
     minHeight: 400,
-    // backgroundColor: "white",
     padding: 10,
+    paddingBottom: 30,
     borderRadius: 10,
   },
   title: {
+    textAlign: "center",
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
@@ -142,10 +146,15 @@ const styles = StyleSheet.create({
   modalButton: {
     padding: 10,
     borderRadius: 5,
+    width: "100%",
   },
   modalButtonText: {
-    color: "white",
     fontSize: 16,
+    textAlign: "center",
+    fontWeight: "bold",
+  },
+  ingredientList: {
+    minHeight: "100%",
   },
 });
 

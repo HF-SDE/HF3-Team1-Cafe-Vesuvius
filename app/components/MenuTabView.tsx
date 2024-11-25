@@ -78,10 +78,12 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
         data={categories}
         keyExtractor={(item) => item}
         renderItem={({ item }) => (
-          <View style={styles.categoryItem}>
+          <View
+            style={[styles.categoryItem, { backgroundColor: PrimaryColor }]}
+          >
             <Text style={styles.categoryText}>{item}</Text>
             <TouchableOpacity onPress={() => onDeleteCategory(item)}>
-              <FontAwesome6 name="trash" size={18} color="red" />
+              <FontAwesome6 name="trash-alt" size={18} color={SecondaryColor} />
             </TouchableOpacity>
           </View>
         )}
@@ -106,20 +108,24 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
         data={ingredients}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <View style={styles.ingredientItem}>
+          <View
+            style={[styles.ingredientItem, { backgroundColor: PrimaryColor }]}
+          >
             <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
             <RNTextInput
-              style={styles.quantityInput}
+              style={[styles.quantityInput, { borderColor: SecondaryColor }]}
               value={item.quantity.toString()}
               keyboardType="numeric"
               onChangeText={(value) =>
                 onUpdateIngredientQuantity(item.id, Number(value))
               }
             />
-            <Text>{item.RawMaterial.unit}</Text>
+            <Text style={{ width: 30, color: BackgroundColor }}>
+              {item.RawMaterial.unit}
+            </Text>
 
             <TouchableOpacity onPress={() => onDeleteIngredient(item.id)}>
-              <FontAwesome6 name="trash" size={18} color="red" />
+              <FontAwesome6 name="trash-alt" size={18} color={SecondaryColor} />
             </TouchableOpacity>
           </View>
         )}
@@ -192,7 +198,6 @@ const styles = StyleSheet.create({
     marginBottom: 8,
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#f0f0f0",
   },
   categoryText: {
     fontSize: 16,
@@ -200,20 +205,21 @@ const styles = StyleSheet.create({
   ingredientItem: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "space-between",
+    justifyContent: "space-evenly",
     padding: 10,
     borderRadius: 8,
-    backgroundColor: "#f9f9f9",
+    // backgroundColor: "#f9f9f9",
     marginBottom: 10,
+    gap: 10,
   },
   ingredientName: {
     flex: 1,
     fontSize: 16,
+    width: 10,
   },
   quantityInput: {
     width: 60,
-    borderWidth: 1,
-    borderColor: "#ccc",
+    borderWidth: 2,
     borderRadius: 8,
     padding: 8,
     textAlign: "center",
@@ -242,8 +248,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400,
     height: "50%",
-    minHeight: 400,
-    // backgroundColor: "white",
+    minHeight: 600,
     padding: 10,
     borderRadius: 10,
   },
