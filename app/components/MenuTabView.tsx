@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
   TextInput as RNTextInput,
+  Modal,
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -153,13 +154,25 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
           />
         )}
       />
-
-      <AddIngredientModal
+      <Modal
+        animationType="none"
+        transparent={true}
         visible={isModalVisible}
-        onClose={() => setIsModalVisible(false)}
-        onAddIngredient={onAddIngredient}
-        themeColors={themeColors}
-      />
+        onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+          >
+            <AddIngredientModal
+              visible={isModalVisible}
+              onClose={() => setIsModalVisible(false)}
+              onAddIngredient={onAddIngredient}
+              themeColors={themeColors}
+            />{" "}
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 };
@@ -218,6 +231,21 @@ const styles = StyleSheet.create({
   },
   tabLabel: {
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 400,
+    height: "50%",
+    minHeight: 400,
+    // backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
   },
 });
 

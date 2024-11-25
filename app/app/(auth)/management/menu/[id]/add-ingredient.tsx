@@ -13,6 +13,7 @@ import { StockItemModel } from "../../../../../models/StorageModel";
 import { useStock } from "@/hooks/useStock";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import SearchBar from "@/components/SearchBar";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface AddIngredientModalProps {
   visible: boolean;
@@ -65,48 +66,46 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
   );
 
   return (
-    <Modal
-      visible={visible}
-      transparent={true}
-      animationType="none"
-      onRequestClose={onClose}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: BackgroundColor }]}
     >
-      <View style={styles.modalContainer}>
-        <View style={[styles.modalContent, { backgroundColor: PrimaryColor }]}>
-          <Text style={styles.modalTitle}>Add New Ingredient</Text>
-          <SearchBar
-            searchQuery={searchQuery}
-            setSearchQuery={setSearchQuery}
-            placeholder="Search for menu"
-          />
+      <View style={[styles.modalContent]}>
+        <Text style={[styles.title, { color: TextColor }]}>
+          Add New Ingredient
+        </Text>
+        <SearchBar
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          placeholder="Search for menu"
+        />
 
-          <FlatList
-            data={filteredStock}
-            renderItem={renderItem}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-          />
+        <FlatList
+          data={filteredStock}
+          renderItem={renderItem}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+        />
 
-          <View style={styles.modalButtonContainer}>
-            <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: "red" }]}
-              onPress={onClose}
-            >
-              <Text style={styles.modalButtonText}>Cancel</Text>
-            </TouchableOpacity>
-          </View>
+        <View style={styles.modalButtonContainer}>
+          <TouchableOpacity
+            style={[styles.modalButton, { backgroundColor: "red" }]}
+            onPress={onClose}
+          >
+            <Text style={styles.modalButtonText}>Cancel</Text>
+          </TouchableOpacity>
         </View>
       </View>
-    </Modal>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
-  modalContainer: {
+  container: {
     flex: 1,
-    justifyContent: "center",
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    gap: 10,
   },
   modalContent: {
     width: "100%",
@@ -117,14 +116,13 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 10,
   },
-  modalTitle: {
-    fontSize: 20,
+  title: {
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
+    marginBottom: 20,
   },
   modalInput: {
     borderWidth: 1,
-    borderColor: "#ccc",
     padding: 10,
     marginVertical: 5,
     borderRadius: 5,
@@ -132,7 +130,6 @@ const styles = StyleSheet.create({
   itemContainer: {
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: "#eee",
   },
   itemText: {
     fontSize: 16,
