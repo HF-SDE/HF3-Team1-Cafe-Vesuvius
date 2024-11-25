@@ -147,7 +147,6 @@ export async function getProfile(
     };
   } catch (error) {
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end' + error.message,
     };

@@ -22,7 +22,6 @@ export async function resetPassword(
     const passwordValidation = PasswordSchema.validate(newPassword);
     if (passwordValidation.error) {
       return {
-        data: undefined,
         status: Status.Failed,
         message: passwordValidation.error.details[0].message, // Return the first validation error
       };
@@ -35,7 +34,6 @@ export async function resetPassword(
 
     if (!user) {
       return {
-        data: undefined,
         status: Status.NotFound,
         message: 'User not found',
       };
@@ -48,7 +46,6 @@ export async function resetPassword(
     );
     if (!isOldPasswordCorrect) {
       return {
-        data: undefined,
         status: Status.Failed,
         message: 'Old password is incorrect',
       };
@@ -64,13 +61,11 @@ export async function resetPassword(
     });
 
     return {
-      data: undefined,
       status: Status.Success,
       message: 'Password updated successfully',
     };
   } catch {
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
