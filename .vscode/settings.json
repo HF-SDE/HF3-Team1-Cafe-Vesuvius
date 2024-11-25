@@ -1,5 +1,5 @@
 {
-  "cSpell.words": ["alphanum", "moussé", "PSQL"],
+  "cSpell.words": ["alphanum", "healthcheck", "moussé", "PSQL"],
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[nginx]": {
