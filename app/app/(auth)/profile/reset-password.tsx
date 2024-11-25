@@ -14,6 +14,7 @@ import { useUserProfile } from "@/hooks/useUserProfile"; // Import the hook
 import PasswordInput from "../../../components/PasswordInput";
 
 import { Buffer } from "buffer";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ModalScreenProps {
   onClose: () => void;
@@ -60,7 +61,9 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: BackgroundColor }]}
+    >
       <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
 
       <PasswordInput
@@ -119,7 +122,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
       </View>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-    </View>
+    </SafeAreaView>
   );
 }
 
