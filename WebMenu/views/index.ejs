@@ -29,20 +29,22 @@
     </div>
 
     <!-- Menu Items -->
-    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem">
+    <div class="menu-grid">
       <% items.map((item, index)=> { %>
         <div class="menu-item">
           <div class="menu-header">
             <h2>
               <%= item.name %>
             </h2>
-            <div class="price">
+            <h3 class="price">
               <%= item.price %>,-
-            </div>
+            </h3>
           </div>
 
           <div>
-            <img src="/images/<%= item.name %>.webp" alt="<%= item.name %>" height="200rem" width="200rem" style="border-radius: 2rem;" />
+            <img src="/images/<%= item.name %>.webp" alt="<%= item.name %>"   aspect-ratio="1/1" width="100%" style="border-radius: 2rem;" />
+
+  
           </div>
           <span>
             <%= item.RawMaterial_MenuItems.map((rawMaterialMenuItem)=> {

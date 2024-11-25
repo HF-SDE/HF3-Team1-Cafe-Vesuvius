@@ -17,10 +17,10 @@
 * {
   margin: 0;
   padding: 0;
+  box-sizing: content-box;
 }
 
 body {
-  color: light-dark(var(--light-text), var(--dark-text));
   background-color: light-dark(var(--light-bg), var(--dark-bg));
   font-family: Arial, sans-serif;
   margin: 0;
@@ -29,17 +29,17 @@ body {
 
 /* Menu container */
 .menu-container {
-  max-width: 800px;
-  margin: 20px auto;
   padding: 20px;
-  background: light-dark(var(--light-bg), var(--dark-bg));
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, light-dark(0.1, 0.4));
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 h1 {
   text-align: center;
-  color: light-dark(var(--light-primary), var(--dark-primary));
+  color: light-dark(var(--light-text), var(--dark-text));
 }
 
 /* Filter container */
@@ -53,7 +53,7 @@ h1 {
 .filter-container button {
   background-color: light-dark(var(--light-primary), var(--dark-primary));
   color: light-dark(var(--light-bg), var(--dark-bg));
-  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
+  /* border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary)); */
   padding: 10px 20px;
   border-radius: 5px;
   font-size: 1rem;
@@ -62,7 +62,7 @@ h1 {
 }
 
 .filter-container button:hover {
-  background-color: light-dark(var(--light-secondary), var(--dark-secondary));
+  background-color: light-dark(var(--light-text), var(--dark-text));
 }
 
 button.active {
@@ -70,41 +70,24 @@ button.active {
 }
 
 /* Menu items container (grid layout) */
-ul {
+.menu-grid {
   margin: 0;
   padding: 0;
   list-style-type: none; /* Remove bullet points */
   display: grid;
   grid-template-columns: repeat(3, 1fr); /* Create a 3-column layout */
   gap: 20px; /* Add spacing between items */
+  width: 80vw;
 }
 
 /* Responsive: Single column for small screens */
 @media (max-width: 768px) {
-  ul {
+  .menu-grid {
     display: flex;
     flex-direction: column;
     gap: 15px; /* Add spacing between items */
   }
 }
-
-/* Individual menu items */
-li {
-  margin: 0;
-  padding: 15px;
-  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
-  border-radius: 8px;
-  background-color: light-dark(var(--light-primary), var(--dark-primary));
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: box-shadow 0.3s ease;
-}
-
-li:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, light-dark(0.1, 0.3));
-}
-
 /* Menu item text styling */
 .menu-item {
   display: flex;
@@ -113,17 +96,18 @@ li:hover {
 
   gap: 1rem;
 
-  font-size: 1rem;
+  font-size: 1.2rem;
   margin: 0;
-  padding: 0.5rem;
-
-  border: 2px solid light-dark(var(--light-secondary), var(--dark-secondary));
+  padding: 1rem;
+  background-color: light-dark(var(--light-accent), var(--dark-accent));
+  /* border: 2px solid light-dark(var(--light-secondary), var(--dark-secondary)); */
   border-radius: 8px;
 }
 
 .menu-header {
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  flex-direction: row;
 }
 
 .price {
