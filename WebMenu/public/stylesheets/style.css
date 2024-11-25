@@ -75,7 +75,7 @@ button.active {
   padding: 0;
   list-style-type: none; /* Remove bullet points */
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Create a 3-column layout */
+  grid-template-columns: repeat(4, 1fr); /* Create a 3-column layout */
   gap: 20px; /* Add spacing between items */
   width: 80vw;
 }
@@ -102,6 +102,7 @@ button.active {
   background-color: light-dark(var(--light-accent), var(--dark-accent));
   /* border: 2px solid light-dark(var(--light-secondary), var(--dark-secondary)); */
   border-radius: 8px;
+  border: 3px solid light-dark(var(--light-primary), var(--dark-primary));
 }
 
 .menu-header {
