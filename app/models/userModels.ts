@@ -12,9 +12,3 @@ export interface Permission {
   description: string;
 }
 
-export interface Menu {
-  id: string;
-  category: string[];
-  name: string;
-  price: number;
-}
