@@ -6,6 +6,7 @@
     "install": "cd backend && npm install && cd ../app && npm install",
     "dev": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh && cd app && npm run start",
     "backend:dev": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh",
+    "backend": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.prod.yml -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh",
     "app:dev": "cd app && npm run start",
     "build:dev": "docker compose -f ./docker/docker-compose.yml build",
     "seed": "cd backend && npx prisma db push && npx prisma db push --schema ./prisma/psql.prisma && npx prisma db seed",
