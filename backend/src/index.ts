@@ -52,6 +52,10 @@ app.get('/ping', (req, res) => {
   });
 });
 
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 app.listen(config.PORT, () => {
   console.info(`Server is running on ${config.PORT}`);
 });

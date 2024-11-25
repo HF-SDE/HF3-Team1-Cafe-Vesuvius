@@ -16,14 +16,12 @@ import SearchBar from "@/components/SearchBar";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface AddIngredientModalProps {
-  visible: boolean;
   onClose: () => void;
   onAddIngredient: (ingredient: RawMaterial_MenuItems) => void;
   themeColors: { primary: string; text: string };
 }
 
 const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
-  visible,
   onClose,
   onAddIngredient,
   themeColors,

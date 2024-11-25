@@ -43,6 +43,8 @@ export default function PasswordInput({
       isHighlighted={isHighlighted}
       onSubmitEditing={onSubmitEditing}
       iconColor={iconColor || SecondaryColor}
+      autoCapitalize="none"
+      autoComplete="off"
     />
   );
 }
