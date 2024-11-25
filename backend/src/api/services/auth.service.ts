@@ -367,10 +367,12 @@ export async function login(
   userData: LoginRequestBody,
 ): Promise<APIResponse<AccessResult>> {
   try {
-    const validate = LoginSchema.validate({username: userData.username, password: userData.password});
+    const validate = LoginSchema.validate({
+      username: userData.username,
+      password: userData.password,
+    });
     if (validate.error) {
       return {
-        data: undefined,
         status: Status.MissingCredentials,
         message: 'Some credentials are missing',
       };
@@ -379,7 +381,6 @@ export async function login(
     // Check if the account should be locked due to too many failed attempts
     if (isAccountLocked(userData.username, userData.ip)) {
       return {
-        data: undefined,
         status: Status.TooManyRequests,
         message: 'Too many failed login attempts. Please try again later.',
       };
@@ -398,7 +399,6 @@ export async function login(
           if (err || !user) {
             addFailedAttempt(userData.username, userData.ip);
             return resolve({
-              data: undefined,
               status: Status.InvalidCredentials,
               message: 'Wrong username or password',
             });
@@ -422,7 +422,6 @@ export async function login(
           } catch (tokenError) {
             console.error('Token generation error: ' + tokenError);
             resolve({
-              data: undefined,
               status: Status.Failed,
               message: 'Failed to generate tokens',
             });
@@ -433,7 +432,6 @@ export async function login(
   } catch (error) {
     console.error('Login error: ' + error);
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
@@ -451,12 +449,11 @@ export async function logout(
 ): Promise<APIResponse<undefined>> {
   try {
     // Validate the token using TokenSchema
-    const validate = TokenSchema.validate({token: token.token});
+    const validate = TokenSchema.validate({ token: token.token });
 
     // If validation fails, return an error response
     if (validate.error) {
       return {
-        data: undefined,
         status: Status.MissingCredentials,
         message: 'Some credentials are missing',
       };
@@ -467,7 +464,7 @@ export async function logout(
 
     // Return a successful response
     return {
-      data: undefined, // Assuming the data is not needed here
+      // Assuming the data is not needed here
       status: Status.Success,
       message: 'Logout successful',
     };
@@ -477,7 +474,6 @@ export async function logout(
 
     // Return a generic error message
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
@@ -495,12 +491,11 @@ export async function accessToken(
 ): Promise<APIResponse<AccessResult>> {
   try {
     // Validate the token using TokenSchema
-    const validate = TokenSchema.validate({token: token.token});
+    const validate = TokenSchema.validate({ token: token.token });
 
     // If validation fails, return an error response
     if (validate.error) {
       return {
-        data: undefined,
         status: Status.MissingCredentials,
         message: 'Some credentials are missing',
       };
@@ -511,7 +506,6 @@ export async function accessToken(
     // Check if new tokens were not returned (authorization failure)
     if (!newTokens) {
       return {
-        data: undefined,
         status: Status.Unauthorized,
         message: 'Not authorized',
       };
@@ -529,7 +523,6 @@ export async function accessToken(
 
     // Return a generic error message
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
@@ -547,12 +540,11 @@ export async function refreshToken(
 ): Promise<APIResponse<RefreshResult>> {
   try {
     // Validate the token using TokenSchema
-    const validate = TokenSchema.validate({token: token.token});
+    const validate = TokenSchema.validate({ token: token.token });
 
     // If validation fails, return an error response
     if (validate.error) {
       return {
-        data: undefined,
         status: Status.MissingCredentials,
         message: 'Some credentials are missing' + validate.error.message,
       };
@@ -560,7 +552,6 @@ export async function refreshToken(
     const tokens = await getRefreshToken(token);
     if (!tokens) {
       return {
-        data: undefined,
         status: Status.Unauthorized,
         message: 'Not authorized',
       };
@@ -578,7 +569,6 @@ export async function refreshToken(
 
     // Return a generic error message
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
