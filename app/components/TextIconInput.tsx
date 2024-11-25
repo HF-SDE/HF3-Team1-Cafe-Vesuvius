@@ -19,10 +19,10 @@ interface TextIconInputProps extends CustomTextInputProps {
 
   /**
    * Name of the icon to show
-   * 
+   *
    * See Icon Explorer app https://expo.github.io/vector-icons/
    */
-  icon: ComponentProps<typeof MaterialCommunityIcons>['name'];
+  icon: ComponentProps<typeof MaterialCommunityIcons>["name"];
 
   /**
    * Position of the icon
@@ -33,14 +33,16 @@ interface TextIconInputProps extends CustomTextInputProps {
    * Style for the icon @see https://reactnative.dev/docs/view#style
    */
   iconStyle?: StyleProp<ViewStyle>;
-  
+
   /**
    * Color of the icon. Can be a string or OpaqueColorValue (returned from PlatformColor(..))
    */
-  iconColor?: ComponentProps<typeof MaterialCommunityIcons>['color'];
+  iconColor?: ComponentProps<typeof MaterialCommunityIcons>["color"];
   secureTextEntry?: TextInputProps["secureTextEntry"];
-  highlighOutlineColor?: ComponentProps<typeof CustomTextInput>['highlighOutlineColor'];
-  isHighlighted?: ComponentProps<typeof CustomTextInput>['isHighlighted'];
+  highlighOutlineColor?: ComponentProps<
+    typeof CustomTextInput
+  >["highlighOutlineColor"];
+  isHighlighted?: ComponentProps<typeof CustomTextInput>["isHighlighted"];
   editable?: TextInputProps["editable"];
   onChangeText: TextInputProps["onChangeText"];
 
@@ -49,7 +51,6 @@ interface TextIconInputProps extends CustomTextInputProps {
    */
   onIconPress?: TouchableOpacityProps["onPress"];
 }
-
 
 /**
  * Text input with icon

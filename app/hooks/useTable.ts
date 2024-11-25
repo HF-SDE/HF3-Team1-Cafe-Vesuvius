@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-import { Reservation } from "@/models/ReservationModels";
+import { Table } from "@/models/TableModels";
 
-export function useReservation() {
-  const [reservations, setReservations] = useState<Reservation[] | null>(null);
+export function useTable() {
+  const [table, setTable] = useState<Table[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -13,11 +13,11 @@ export function useReservation() {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiClient.get("/reservation", {
+        const response = await apiClient.get("/table", {
           validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
         });
 
-        setReservations(response.data.data);
+        setTable(response.data.data);
       } catch (err: unknown) {
         setError("Failed to load reservation data");
       } finally {
@@ -28,5 +28,5 @@ export function useReservation() {
     fetchReservations();
   }, []);
 
-  return { reservations: reservations, isLoading, error };
+  return { table: table, isLoading, error };
 }

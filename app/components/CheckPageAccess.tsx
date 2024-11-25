@@ -13,8 +13,6 @@ const CheckPageAccess: React.FC<CheckPageAccessProps> = ({
   const [hasPageAccess, setHasPageAccess] = useState(false);
 
   useEffect(() => {
-    console.log("TESTER");
-
     const checkPageAccess = async () => {
       const permissionMan = new PermissionManager();
       await permissionMan.init();
@@ -25,7 +23,6 @@ const CheckPageAccess: React.FC<CheckPageAccessProps> = ({
     };
 
     checkPageAccess();
-    console.log(hasPageAccess);
   }, [pageName]);
 
   return hasPageAccess ? <>{children}</> : null;

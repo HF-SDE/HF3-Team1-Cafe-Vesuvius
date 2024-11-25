@@ -81,14 +81,6 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     return scenes;
   }, {} as { [key: string]: () => React.ReactNode });
 
-  const renderScene1 = ({
-    route,
-  }: {
-    route: { key: string; title: string };
-  }) => {
-    return renderPermissionsForCategory(route.key);
-  };
-
   if (!permissions || !userPermissions || permissions.length === 0) {
     return <Text>Loading</Text>;
   }
@@ -136,7 +128,6 @@ const styles = StyleSheet.create({
     height: 3,
   },
   tabLabel: {
-    // color: "#333",
     fontSize: 14,
   },
 });

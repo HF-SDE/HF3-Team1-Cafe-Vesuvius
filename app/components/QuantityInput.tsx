@@ -61,7 +61,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
             const newQty = parseInt(text, 10);
             if (!isNaN(newQty)) {
               setQuantity(newQty);
-              onQuantityChange(itemId, newQty.toString());
+              onQuantityChange(itemId, newQty);
             }
           }}
         />
@@ -70,6 +70,8 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
           <FontAwesome6 name="square-plus" size={45} color={SecondaryColor} />
         </TouchableOpacity>
       </View>
+      <Text>Current stock {initialQty}</Text>
+      <Text>New stock {initialQty + quantity}</Text>
     </View>
   );
 };

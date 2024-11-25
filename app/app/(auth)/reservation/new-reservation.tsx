@@ -1,17 +1,15 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
   FlatList,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
-import { Buffer } from "buffer";
 import { Table } from "@/models/TableModels";
 import { Reservation } from "@/models/ReservationModels";
 import DateTimePicker from "react-native-ui-datepicker";
@@ -25,40 +23,8 @@ interface ModalScreenProps {
   tables: Table[];
 }
 
-// Temp data
-const tmptables = [
-  { id: 'table-1', number: 1 },
-  { id: 'table-2', number: 2 },
-  { id: 'table-3', number: 3 },
-  { id: 'table-4', number: 4 },
-  { id: 'table-5', number: 5 },
-  { id: 'table-6', number: 6 },
-  { id: 'table-7', number: 7 },
-  { id: 'table-8', number: 8 },
-  { id: 'table-9', number: 9 },
-  { id: 'table-10', number: 10 },
-  { id: 'table-11', number: 11 },
-  { id: 'table-12', number: 12 },
-  { id: 'table-13', number: 13 },
-  { id: 'table-14', number: 14 },
-  { id: 'table-15', number: 15 },
-  { id: 'table-16', number: 16 },
-  { id: 'table-17', number: 17 },
-  { id: 'table-18', number: 18 },
-  { id: 'table-19', number: 19 },
-  { id: 'table-20', number: 20 },
-  { id: 'table-21', number: 21 },
-  { id: 'table-22', number: 22 },
-  { id: 'table-23', number: 23 },
-  { id: 'table-24', number: 24 },
-  { id: 'table-25', number: 25 },
-  { id: 'table-26', number: 26 },
-  { id: 'table-27', number: 27 },
-  { id: 'table-28', number: 28 }
-];
-
-export default function NewReservationModal({ onClose, tables = tmptables }: ModalScreenProps) {
-  const [reservation, setReservations] = useState<Reservation>({ amount: 1, email: "", name: "", partySize: 2, phone: "", reservationTime: dayjs().toDate(), tables: [] });
+export default function NewReservationModal({ onClose, tables}: ModalScreenProps) {
+  const [reservation, setReservations] = useState<Reservation>({ email: "", name: "", amount: 2, phone: "", reservationTime: dayjs().toDate(), tables: [] });
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [tableSelect, setTableSelect] = useState<number>(0);
@@ -70,18 +36,10 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "partySize"], reservation);
+  const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "amount"], reservation);
+  const disabledCreateButton = tableSelect !== tableSelectNeed;
 
-  const handleCreate = async () => {
-    if (!reservation?.name || !reservation?.reservationTime || !reservation?.email) {
-      setErrorMessage("Please fill out all fields!");
-      return;
-    }
-    if (reservation?.reservationTime !== reservation?.email) {
-      setErrorMessage("Passwords does not match!");
-      return;
-    }
-
+  async function handleCreate() {
     try {
       const response = await createReservation();
       if (response === "success") {
@@ -94,29 +52,23 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
     }
   };
 
-  const createReservation = async (): Promise<string> => {
+  async function createReservation(): Promise<string> {
     if (!reservation) return "Something went wrong on our end. Please contact support";
 
-    if (!reservation.email || !reservation.phone) {
-      return "Please fill out all fields!";
-    }
-
     const payload: Reservation = {
-      amount: reservation.amount,
       email: reservation.email,
       name: reservation.name,
-      partySize: Number(reservation.partySize),
+      amount: Number(reservation.amount),
       phone: reservation.phone,
       reservationTime: reservation.reservationTime,
-      tables: reservation.tables,
+      tableIds: reservation.tables?.map((table) => table.id),
     };
 
     try {
-      //const response = await apiClient.put("/profile/reset", payload);
-      const response = await apiClient.post("/reservation/reset", payload, {
+      const response = await apiClient.post("/reservation", payload, {
         validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
       });
-      return response.status === 200 ? "success" : response.data.message;
+      return response.status === 201 ? "success" : response.data.message;
     } catch {
       return "Something went wrong on our end. Please contact support";
     }
@@ -155,12 +107,12 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
             />
             <CustomTextInput
               label="Amount of People"
-              value={reservation?.partySize?.toString()}
+              value={reservation?.amount?.toString()}
               inputMode="numeric"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
               onChangeText={(partySize) => {
-                setReservations({ ...reservation!, partySize: Number(partySize) });
+                setReservations({ ...reservation!, amount: Number(partySize) });
                 setTableSelectNeed(Math.ceil(Number(partySize) / 2));
               }}
 
@@ -208,13 +160,24 @@ export default function NewReservationModal({ onClose, tables = tmptables }: Mod
         >
           <Text style={styles.buttonText}>cancel</Text>
         </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.mainButton, disabledButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
-          onPress={page === 1 ? () => setPage(2) : handleCreate}
-          disabled={disabledButton}
-        >
-          <Text style={styles.buttonText}>{page === 1 ? "Next" : "Create"}</Text>
-        </TouchableOpacity>
+        {page === 1
+          ?
+          <TouchableOpacity
+            style={[styles.mainButton, disabledButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
+            onPress={() => setPage(2)}
+            disabled={disabledButton}
+          >
+            <Text style={styles.buttonText}>Next</Text>
+          </TouchableOpacity>
+          :
+          <TouchableOpacity
+            style={[styles.mainButton, disabledCreateButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
+            onPress={handleCreate}
+            disabled={disabledCreateButton}
+          >
+            <Text style={styles.buttonText}>Create</Text>
+          </TouchableOpacity>
+        }
       </View>
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
     </SafeAreaView>
@@ -236,15 +199,15 @@ interface TableProps {
  */
 function Item(props: TableProps) {
   const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
-  console.log(props.reservation[0])
+  const selected = areItemselected(props.table, props.reservation[0]);
   return (
     <TouchableOpacity
-      style={disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
+      style={selected ? { ...styles.item, backgroundColor: "blue" } : disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
       onPress={() => {
-        props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables, props.table] });
+        props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables!, props.table] });
         props.setTableSelect(props.tableSelect + 1)
       }}
-      disabled={disabled}>
+      disabled={selected || disabled}>
       <Text>{props.table.number}</Text>
     </TouchableOpacity>
   );
@@ -260,16 +223,31 @@ function Item(props: TableProps) {
  * @returns {boolean} - True if the item should be disabled, false otherwise
  */
 function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: number, action: [Reservation, Dispatch<SetStateAction<Reservation>>]): boolean {
-  for (const key in action[0].tables) {
-    if (action[0].tables[key].id === table.id) {
+  if (action[0].tables) {
+    for (const key in action[0].tables) {
+      if (action[0].tables[key].id === table.id) {
+        return true;
+      }
+    }
+    if (tableSelect === tableSelectNeed) {
       return true;
+    } else {
+      return false;
     }
   }
-  if (tableSelect === tableSelectNeed) {
-    return true;
-  } else {
+  return true;
+}
+
+function areItemselected(table: Table, reservation: Reservation): boolean {
+  if (reservation.tables) {
+    for (const key in reservation.tables) {
+      if (reservation.tables[key].id === table.id) {
+        return true;
+      }
+    }
     return false;
   }
+  return true;
 }
 
 

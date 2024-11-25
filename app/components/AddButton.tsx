@@ -5,7 +5,7 @@ import CheckPermission from "@/components/CheckPermission";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface AddButtonProps {
-  onPress: () => void;
+  onPress?: () => void;
   requiredPermission: string[];
   icon?: string;
 }

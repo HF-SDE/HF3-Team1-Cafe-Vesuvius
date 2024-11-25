@@ -1,46 +1,52 @@
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   View,
   Text,
-  Alert,
   FlatList,
+  Dimensions,
   ScrollView,
+  TouchableOpacity,
+  TextInput as RNTextInput,
+  NativeSyntheticEvent,
+  TextInputChangeEventData,
 } from "react-native";
-import { useRoute } from "@react-navigation/native";
-import { useState, useEffect } from "react";
-import { useMenu } from "@/hooks/useMenu"; // Assuming you have a hook for user management
-import { usePermissions } from "@/hooks/usePermissions";
-import TemplateLayout from "@/components/TemplateLayout";
-import { useLocalSearchParams } from "expo-router";
+import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { useRoute, useNavigation } from "@react-navigation/native";
+import { useMenu } from "@/hooks/useMenu";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
-import { useNavigation } from "@react-navigation/native";
+import TextIconInput from "@/components/TextIconInput";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import TemplateLayout from "@/components/TemplateLayout";
+import MenuTabView from "@/components/MenuTabView";
 
-import Switch from "@/components/Switch";
-
-import PermissionsTabView from "@/components/PermissionsTabView";
+import { MenuModel } from "../../../../../models/MenuModel";
+import AddButton from "@/components/AddButton";
 
 export default function EditCreateUserPage() {
   const route = useRoute();
-  const { id } = useLocalSearchParams();
-
+  const { id } = route.params || {};
   const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
 
-  const { menu, isLoading, error } = useMenu(id as string);
+  const { menu } = useMenu(id as string);
 
-  const [menuItem, setMenuItem] = useState({
+  const [menuItem, setMenuItem] = useState<MenuModel>({
     id: "",
     name: "",
     price: 0,
     category: [],
+    RawMaterial_MenuItems: [],
   });
 
+  const [newCategory, setNewCategory] = useState("");
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
@@ -48,51 +54,32 @@ export default function EditCreateUserPage() {
   useEffect(() => {
     if (menu) {
       const foundMenuItem = menu[0];
-
-      if (id && foundMenuItem) {
-        setMenuItem(foundMenuItem);
-      }
+      if (id && foundMenuItem) setMenuItem(foundMenuItem);
     }
   }, [id, menu]);
 
+  const routes = [
+    { key: "categories", title: "Categories" },
+    { key: "ingredients", title: "Ingredients" },
+  ];
+
   const handleSave = () => {
-    const changedFieldsCount = Object.keys(changedFields).length;
-
-    if (changedFieldsCount === 0) {
+    if (Object.keys(changedFields).length === 0) {
       console.log("No changes");
-
       navigation.goBack();
-    } else {
-      console.log("Update/Create");
-
-      if (id) {
-        // Update user logic here
-        //updateUser(user);
-        console.log(changedFields);
-      } else {
-        // Create new user logic here
-      }
+      return;
     }
+    console.log("Changes:", changedFields);
+    // Update or create logic here
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
-    if (value !== changedFields[field]) {
-      const origValue = menuItem[field] || "";
-      setChangedFields((prev) => ({
-        ...prev,
-        [field]: origValue,
-      }));
-    } else {
-      // If the value is changed back to original, remove from changedFields
-      const updatedChangedFields = { ...changedFields };
-      delete updatedChangedFields[field];
-      setChangedFields(updatedChangedFields);
-    }
+  const handleChange = (field: string, value: string) => {
+    console.log(field + " - " + value);
 
-    setMenuItem((prevUser) => ({
-      ...prevUser,
-      [field]: value,
-    }));
+    if (value !== menuItem[field]) {
+      setChangedFields((prev) => ({ ...prev, [field]: value }));
+    }
+    setMenuItem((prev) => ({ ...prev, [field]: value }));
   };
 
   return (
@@ -103,25 +90,74 @@ export default function EditCreateUserPage() {
     >
       <View style={styles.container}>
         <View>
-          <TextInput
-            style={styles.input}
-            label="Name"
-            value={menuItem.name}
-            onChange={(value) => handleChange("username", value)}
-            clearTextOnFocus={false}
-          />
-          <TextInput
-            style={styles.input}
-            label="Price"
-            value={menuItem.price.toString()}
-            onChange={(value) => handleChange("name", value)}
-            clearTextOnFocus={false}
-          />
+          <View style={styles.section}>
+            <Text style={[styles.sectionTitle, { color: PrimaryColor }]}>
+              Menu Info
+            </Text>
+            <TextInput
+              label="Name"
+              value={menuItem.name}
+              onChangeText={(text) => handleChange("name", text)}
+            />
+            <TextInput
+              label="Price"
+              value={menuItem.price.toString()}
+              onChangeText={(text) => handleChange("price", text)}
+            />
+          </View>
+
+          <View style={{ minHeight: "70%" }}>
+            <MenuTabView
+              categories={menuItem.category}
+              ingredients={menuItem.RawMaterial_MenuItems}
+              onAddCategory={(category) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  category: [...prev.category, category],
+                }));
+              }}
+              onDeleteCategory={(category) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  category: prev.category.filter((cat) => cat !== category),
+                }));
+              }}
+              onAddIngredient={(ingredient) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: [
+                    ...prev.RawMaterial_MenuItems,
+                    ingredient,
+                  ],
+                }));
+              }}
+              onDeleteIngredient={(id) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
+                    (item) => item.id !== id
+                  ),
+                }));
+              }}
+              onUpdateIngredientQuantity={(id, quantity) => {
+                setMenuItem((prev) => ({
+                  ...prev,
+                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map(
+                    (item) => (item.id === id ? { ...item, quantity } : item)
+                  ),
+                }));
+              }}
+              themeColors={{
+                primary: PrimaryColor,
+                text: TextColor,
+                accent: AccentColor,
+              }}
+            />
+          </View>
         </View>
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
-
           <Button
             title={id !== "new" ? "Save" : "Create"}
             onPress={handleSave}
@@ -138,59 +174,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
-  scrollViewContainer: {
-    flexGrow: 1,
-    paddingBottom: 100, // Ensure space for buttons at the bottom
+  sectionTitle: {
+    fontSize: 24,
+    fontWeight: "bold",
   },
-  input: {
-    height: 40,
-    marginBottom: 15,
-  },
-  initialsInput: {
-    maxWidth: "50%",
-  },
-  permissionsContainer: {
-    marginTop: 20,
+  section: {
     marginBottom: 20,
   },
-  permissionsTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-  },
-  permissionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "#ddd",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  permissionDescription: {
-    marginTop: 5,
-    fontSize: 14,
-    color: "#555",
-  },
-  errorText: {
-    color: "red",
-    textAlign: "center",
+
+  inputBox: {
+    marginTop: 10,
   },
   buttonContainer: {
-    // paddingTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
-  },
-  initialsActiveContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  activeSwitchContainer: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    gap: 20,
-    alignSelf: "center",
   },
 });

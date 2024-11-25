@@ -1,138 +1,127 @@
 :root {
   color-scheme: light dark;
 
-  --light-text: #33230a;
-  --light-bg: #f8ede2;
-  --light-primary: #67422d;
-  --light-secondary: #d5af95;
-  --light-accent: #fbc39d;
-
-  --dark-text: #f5e5cc;
-  --dark-bg: #1d1207;
-  --dark-primary: #d2ad98;
-  --dark-secondary: #6a442a;
-  --dark-accent: #622a04;
+  /* Simplified color variables */
+  --text-light: #33230a;
+  --text-dark: #f5e5cc;
+  --bg-light: #f8ede2;
+  --bg-dark: #1d1207;
+  --primary-light: #67422d;
+  --primary-dark: #d2ad98;
+  --accent-light: #fbc39d;
+  --accent-dark: #622a04;
 }
 
+/* Reset & base styles */
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
 }
 
 body {
-  color: light-dark(var(--light-text), var(--dark-text));
-  background-color: light-dark(var(--light-bg), var(--dark-bg));
   font-family: Arial, sans-serif;
+  background-color: light-dark(var(--bg-light), var(--bg-dark));
+  color: light-dark(var(--text-light), var(--text-dark));
   margin: 0;
   padding: 0;
 }
 
-/* Menu container */
 .menu-container {
-  max-width: 800px;
-  margin: 20px auto;
   padding: 20px;
-  background: light-dark(var(--light-bg), var(--dark-bg));
-  border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, light-dark(0.1, 0.4));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 h1 {
+  margin-bottom: 20px;
   text-align: center;
-  color: light-dark(var(--light-primary), var(--dark-primary));
 }
 
-/* Filter container */
+/* Filter Buttons */
 .filter-container {
   display: flex;
-  justify-content: center;
   gap: 10px;
   margin-bottom: 20px;
 }
 
 .filter-container button {
-  background-color: light-dark(var(--light-primary), var(--dark-primary));
-  color: light-dark(var(--light-bg), var(--dark-bg));
-  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
-  padding: 10px 20px;
-  border-radius: 5px;
+  background-color: light-dark(var(--primary-light), var(--primary-dark));
+  color: light-dark(var(--bg-light), var(--bg-dark));
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
   font-size: 1rem;
   cursor: pointer;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  transition: background-color 0.3s ease;
 }
 
 .filter-container button:hover {
-  background-color: light-dark(var(--light-secondary), var(--dark-secondary));
+  background-color: light-dark(var(--text-light), var(--text-dark));
 }
 
 button.active {
-  background-color: light-dark(var(--light-accent), var(--dark-accent));
+  background-color: light-dark(var(--accent-light), var(--accent-dark));
 }
 
-/* Menu items container (grid layout) */
-ul {
-  margin: 0;
-  padding: 0;
-  list-style-type: none; /* Remove bullet points */
+/* Menu Grid */
+.menu-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Create a 3-column layout */
-  gap: 20px; /* Add spacing between items */
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  width: 100%;
+  max-width: 1200px;
 }
 
-/* Responsive: Single column for small screens */
-@media (max-width: 768px) {
-  ul {
-    display: flex;
-    flex-direction: column;
-    gap: 15px; /* Add spacing between items */
-  }
-}
-
-/* Individual menu items */
-li {
-  margin: 0;
-  padding: 15px;
-  border: 1px solid light-dark(var(--light-secondary), var(--dark-secondary));
-  border-radius: 8px;
-  background-color: light-dark(var(--light-primary), var(--dark-primary));
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: box-shadow 0.3s ease;
-}
-
-li:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, light-dark(0.1, 0.3));
-}
-
-/* Menu item text styling */
+/* Menu Item Card */
 .menu-item {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-
-  gap: 1rem;
-
-  font-size: 1rem;
-  margin: 0;
-  padding: 0.5rem;
-
-  border: 2px solid light-dark(var(--light-secondary), var(--dark-secondary));
+  align-items: center;
+  background-color: light-dark(var(--accent-light), var(--accent-dark));
+  padding: 16px;
   border-radius: 8px;
+  border: 2px solid light-dark(var(--primary-light), var(--primary-dark));
+  text-align: center;
+  gap: 10px;
 }
 
 .menu-header {
+  width: 100%;
   display: flex;
-  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .price {
   font-weight: bold;
-  padding: 3px 5px;
-  border-radius: 2rem;
+  background-color: light-dark(var(--primary-light), var(--primary-dark));
+  color: light-dark(var(--bg-light), var(--bg-dark));
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.9rem;
 }
 
-/* Optional: Add some margin at the bottom of the container */
-.menu-container ul {
-  margin-bottom: 20px;
+.menu-item img {
+  width: 100%;
+  height: auto;
+  max-width: 250px;
+  border-radius: 8px;
+}
+
+span {
+  font-size: 0.9rem;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .filter-container {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .menu-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }

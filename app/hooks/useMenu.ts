@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-import { Menu } from "../models/userModels";
+import { MenuModel } from "../models/MenuModel";
 
 export function useMenu(id?: string | string[]) {
-  const [menu, setMenu] = useState<Menu[] | null>(null);
+  const [menu, setMenu] = useState<MenuModel[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 

@@ -17,6 +17,8 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import SearchBar from "@/components/SearchBar"; // Import the SearchBar
 
+import { MenuModel } from "../../../../models/MenuModel";
+
 export default function ManageUsersPage() {
   const { menu, isLoading, error } = useMenu();
   const BackgroundColor = useThemeColor({}, "background");
@@ -44,7 +46,7 @@ export default function ManageUsersPage() {
     router.navigate(`/management/menu/${userId}`);
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: MenuModel }) => (
     <TouchableOpacity onPress={() => handleUserPress(item.id)}>
       <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
         <View>
@@ -74,9 +76,7 @@ export default function ManageUsersPage() {
             Loading...
           </Text>
         ) : error ? (
-          <Text style={[styles.errorText, { color: TextColor }]}>
-            {error.message}
-          </Text>
+          <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
         ) : (
           <FlatList
             data={filteredUsers}
