@@ -5,10 +5,11 @@ import {
   TextInput,
   TouchableOpacity,
   ListRenderItemInfo,
+  Modal,
 } from "react-native";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 
-import { RelativePathString, router } from "expo-router";
+import { RelativePathString } from "expo-router";
 import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -26,6 +27,8 @@ import { StockItemModel } from "../../../../models/StorageModel";
 
 import { PermissionManager } from "@/utils/permissionManager";
 
+import EditCreateStockModal from "./create-edit-stock";
+
 export default function ManageUsersPage() {
   const { stock, isLoading, error, updateStock } = useStock();
   const BackgroundColor = useThemeColor({}, "background");
@@ -40,6 +43,11 @@ export default function ManageUsersPage() {
   const [canDelete, setCanDelete] = useState(false);
   const [canEdit, setCanEdit] = useState(false);
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [itemInModal, setItemInModal] = useState<StockItemModel | undefined>(
+    undefined
+  );
+
   useEffect(() => {
     const checkPermissions = async () => {
       const permissionMan = new PermissionManager();
@@ -53,12 +61,20 @@ export default function ManageUsersPage() {
     checkPermissions();
   }, []);
 
-  const handleAddEditStockItem = useCallback((id?: string) => {
-    const path: RelativePathString = `/management/storage/${
-      id ?? "new"
-    }` as RelativePathString;
-    router.navigate(path);
-  }, []);
+  const handleAddEditStockItem = useCallback(
+    async (id?: string) => {
+      if (!stock || stock.length === 0) {
+        console.error("Stock data is not loaded yet.");
+        return;
+      }
+
+      const itemToShow = id ? stock.find((item) => item.id === id) : undefined;
+
+      setItemInModal(itemToShow);
+      setIsModalVisible(true);
+    },
+    [stock] // Ensure the callback updates if stock changes
+  );
 
   const handleDeleteStockItem = useCallback(() => {}, []);
 
@@ -251,7 +267,6 @@ export default function ManageUsersPage() {
             color="white"
           />
         </TouchableOpacity>
-
         <TouchableOpacity
           style={[
             styles.hiddenButton,
@@ -291,7 +306,7 @@ export default function ManageUsersPage() {
     if (value <= -150 && !animationIsRunning.current) {
       animationIsRunning.current = true;
 
-      handleAddEditStockItem(key);
+      //handleAddEditStockItem(key);
 
       animationIsRunning.current = false;
     }
@@ -318,10 +333,10 @@ export default function ManageUsersPage() {
             data={filteredUsers}
             renderItem={renderItem}
             renderHiddenItem={(data, rowMap) => renderHiddenItem(data, rowMap)}
-            leftOpenValue={100} // Left swipe enabled only if permission granted
-            rightOpenValue={-100} // Right swipe enabled only if permission granted
-            stopLeftSwipe={150} // Limit left swipe if allowed
-            stopRightSwipe={-150} // Limit right swipe if allowed
+            leftOpenValue={100}
+            rightOpenValue={-100}
+            stopLeftSwipe={150}
+            stopRightSwipe={-150}
             disableLeftSwipe={!canEdit}
             disableRightSwipe={!canDelete}
             keyExtractor={(item) => item.id as string}
@@ -330,7 +345,13 @@ export default function ManageUsersPage() {
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
             onSwipeValueChange={onSwipeValueChange}
-            closeOnRowBeginSwipe={true}
+            onRowOpen={(rowKey, rowMap) => {
+              console.log(`Row opened: ${rowKey}`);
+              if (rowMap[rowKey]) {
+                rowMap[rowKey].closeRow();
+              }
+              handleAddEditStockItem(rowKey);
+            }}
           />
         )}
         {!hasChanges && (
@@ -347,6 +368,23 @@ export default function ManageUsersPage() {
           />
         )}
       </View>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+          >
+            <EditCreateStockModal
+              stockItem={itemInModal}
+              onClose={() => setIsModalVisible(false)}
+            />
+          </View>
+        </View>
+      </Modal>
     </TemplateLayout>
   );
 }
@@ -452,5 +490,21 @@ const styles = StyleSheet.create({
   },
   iconStyle: {
     marginHorizontal: 35,
+  },
+
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 400,
+    height: "50%",
+    minHeight: 400,
+    // backgroundColor: "white",
+    padding: 10,
+    borderRadius: 10,
   },
 });

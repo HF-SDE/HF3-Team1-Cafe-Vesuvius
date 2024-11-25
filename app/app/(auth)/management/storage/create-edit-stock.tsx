@@ -7,7 +7,6 @@ import {
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useStock } from "@/hooks/useStock";
-import TemplateLayout from "@/components/TemplateLayout";
 import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
@@ -15,13 +14,21 @@ import TextInput from "@/components/TextInput";
 import QuantityInput from "@/components/QuantityInput";
 
 import { useNavigation } from "@react-navigation/native";
-import { StockItemModel } from "../../../../../models/StorageModel";
+import { StockItemModel } from "../../../../models/StorageModel";
 
 import { FontAwesome6 } from "@expo/vector-icons"; // Import FontAwesome6 icons
 import InputSpinner from "react-native-input-spinner";
+import { SafeAreaView } from "react-native-safe-area-context";
 
-export default function EditCreateUserPage() {
-  const { id } = useLocalSearchParams();
+interface EditCreateUserPageProps {
+  onClose: () => void;
+  stockItem: StockItemModel | undefined; // If undefined create a new empty one
+}
+
+const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
+  onClose,
+  stockItem: propStockItem,
+}) => {
   const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -29,85 +36,72 @@ export default function EditCreateUserPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
-  const { stock, isLoading, error, updateStock, createStock } = useStock(
-    id as string
-  );
+  const { updateStock, createStock } = useStock(); // Assuming `stock` is fetched from useStock hook
 
-  const [stockItem, setStockItem] = useState<StockItemModel>({
-    id: (id as string) || "",
-    name: "",
-    unit: "",
-    quantity: 0,
-  });
+  const [stockItem, setStockItem] = useState<StockItemModel>(
+    propStockItem || {
+      id: undefined,
+      name: "",
+      unit: "",
+      quantity: 0,
+    }
+  );
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
-
-  useEffect(() => {
-    if (stock) {
-      const foundStockItem = stock[0];
-
-      if (id && foundStockItem) {
-        setStockItem(foundStockItem);
-      }
-    }
-  }, [id, stock]);
 
   const handleSave = () => {
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
       console.log("No changes");
-
       navigation.goBack();
     } else {
       console.log("Update/Create");
 
       if (id !== "new") {
-        // Update user logic here
         const updatedFields = { id: stockItem.id, ...changedFields };
         updateStock(updatedFields);
       } else {
         const updatedFields: StockItemModel = { ...changedFields };
         createStock(updatedFields);
-        // Create new user logic here
       }
+
       setChangedFields({});
       navigation.goBack();
     }
   };
 
-  const handleChange = (field: string, value) => {
-    if (value !== changedFields[field]) {
-      const origValue = stockItem[field] || "";
+  const handleChange = (field: string, value: any) => {
+    if (value !== stockItem[field]) {
       setChangedFields((prev) => ({
         ...prev,
-        [field]: origValue,
+        [field]: value,
       }));
     } else {
-      // If the value is changed back to original, remove from changedFields
       const updatedChangedFields = { ...changedFields };
       delete updatedChangedFields[field];
       setChangedFields(updatedChangedFields);
     }
 
-    setStockItem((prevUser) => ({
-      ...prevUser,
+    setStockItem((prevStockItem) => ({
+      ...prevStockItem,
       [field]: value,
     }));
   };
-  const quantityChange = (itemId: string, newQty: number) => {
-    const updatedStockItem = { ...stockItem, quantityToAdd: newQty };
+
+  const quantityChange = (newQty: number) => {
+    const updatedStockItem = { ...stockItem, quantity: newQty };
     setStockItem(updatedStockItem);
+    setChangedFields((prev) => ({
+      ...prev,
+      quantity: newQty,
+    }));
   };
 
   return (
-    <TemplateLayout
-      pageName="StockPage"
-      title={id !== "new" ? "Edit Stock Item" : "Create Stock Item"}
-      buttonTitle="Cancel"
-    >
+    <SafeAreaView>
       <View style={styles.container}>
         <TextInput
           style={styles.input}
@@ -122,7 +116,7 @@ export default function EditCreateUserPage() {
           color={SecondaryColor}
           textColor="white"
           value={stockItem.quantity}
-          onChange={(num) => handleChange("quantity", num)}
+          onChange={quantityChange}
           leftButton={
             <FontAwesome6
               name="square-minus"
@@ -158,16 +152,16 @@ export default function EditCreateUserPage() {
         />
 
         <View style={styles.buttonContainer}>
-          <Button title="Cancel" onPress={() => navigation.goBack()} />
+          <Button title="Cancel" onPress={onClose} />
           <Button
-            title={id !== "new" ? "Save" : "Create"}
+            title={stockItem.id ? "Save" : "Create"}
             onPress={handleSave}
           />
         </View>
       </View>
-    </TemplateLayout>
+    </SafeAreaView>
   );
-}
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -189,3 +183,5 @@ const styles = StyleSheet.create({
     width: "100%",
   },
 });
+
+export default EditCreateUserPage;
