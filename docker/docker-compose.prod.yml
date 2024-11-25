@@ -1,55 +1,26 @@
+name: Cafe Vesuvius
+
 services:
   backend:
-    container_name: backend
-    build:
-      context: ../backend/
-      dockerfile: Dockerfile
-      target: base
-    ports:
-      - "3001:3001" # Expose HTTPS on port 3001
-    volumes:
-      - ../backend/src:/usr/src/app/src
-      - ../schemas:/usr/src/app/schemas
-      - ../backend/nodemon.json:/usr/src/app/nodemon.json
-    command: npm run dev
-    depends_on:
-      - db
-    env_file:
-      - ../config/environment-variables/backend.dev.env
-    networks:
-      - public
-      - private
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
   db:
-    container_name: db
-    image: mongo:4.4
-    ports:
-      - "27017:27017"
-    command:
-      [
-        "mongod",
-        "--keyFile",
-        "/data/keyfile.pem",
-        "--replSet",
-        "rs0",
-        "--bind_ip_all",
-        "--port",
-        "27017",
-      ]
-    networks:
-      - private
-    volumes:
-      - mongo1_data:/data/db
-      - mongo1_config:/data/configdb
+    healthcheck:
+      test: ["CMD", "mongosh", "mongodb://localhost:27017", "--eval", "db.runCommand('ping')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
 
-networks:
-  public:
-    external: true
-    driver: bridge
-  private:
-    internal: true
-    driver: bridge
-
-volumes:
-  mongo1_data: {}
-  mongo1_config: {}
+  reverse-proxy:
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
