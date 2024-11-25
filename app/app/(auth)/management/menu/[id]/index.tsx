@@ -95,6 +95,7 @@ export default function EditCreateUserPage() {
               Menu Info
             </Text>
             <TextInput
+              style={{ marginBottom: 10 }}
               label="Name"
               value={menuItem.name}
               onChangeText={(text) => handleChange("name", text)}
