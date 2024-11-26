@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import TextIconInput from "@/components/TextIconInput";
 import { RawMaterial_MenuItems } from "../models/MenuModel";
 import AddIngredientModal from "../app/(auth)/management/menu/[id]/add-ingredient";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { SafeAreaView } from "react-native-safe-area-context";
+import NewCategoryInput from "./NewCategoryInput";
 
 type CategoryIngredientTabsProps = {
   categories: string[];
@@ -25,6 +25,7 @@ type CategoryIngredientTabsProps = {
   onAddIngredient: (ingredient: RawMaterial_MenuItems) => void;
   onDeleteIngredient: (id: string) => void;
   onUpdateIngredientQuantity: (id: string, quantity: number) => void;
+
   themeColors: {
     primary: string;
     text: string;
@@ -32,158 +33,157 @@ type CategoryIngredientTabsProps = {
   };
 };
 
-const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
-  categories,
-  ingredients,
-  onAddCategory,
-  onDeleteCategory,
-  onAddIngredient,
-  onDeleteIngredient,
-  onUpdateIngredientQuantity,
-  themeColors,
-}) => {
-  const [newCategory, setNewCategory] = React.useState("");
-  const [index, setIndex] = React.useState(0);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+const MenuTabView = React.memo(
+  ({
+    categories,
+    ingredients,
+    onAddCategory,
+    onDeleteCategory,
+    onAddIngredient,
+    onDeleteIngredient,
+    onUpdateIngredientQuantity,
+    themeColors,
+  }: CategoryIngredientTabsProps) => {
+    const [index, setIndex] = React.useState(0);
+    const [isModalVisible, setIsModalVisible] = useState(false);
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+    const BackgroundColor = useThemeColor({}, "background");
+    const TextColor = useThemeColor({}, "text");
+    const PrimaryColor = useThemeColor({}, "primary");
+    const SecondaryColor = useThemeColor({}, "secondary");
+    const AccentColor = useThemeColor({}, "accent");
 
-  const routes = [
-    { key: "categories", title: "Categories" },
-    { key: "ingredients", title: "Ingredients" },
-  ];
+    const routes = [
+      { key: "categories", title: "Categories" },
+      { key: "ingredients", title: "Ingredients" },
+    ];
 
-  const CategoriesTab = () => (
-    <View style={styles.section}>
-      <TextIconInput
-        placeholder="New Category"
-        value={newCategory}
-        onChangeText={setNewCategory}
-        label={"New category"}
-        icon="plus"
-        iconColor={themeColors.primary}
-        onIconPress={() => {
-          if (newCategory.trim()) {
-            onAddCategory(newCategory.trim());
-            setNewCategory("");
-          }
-        }}
-      />
-
-      <FlatList
-        data={categories}
-        keyExtractor={(item) => item}
-        renderItem={({ item }) => (
-          <View
-            style={[styles.categoryItem, { backgroundColor: PrimaryColor }]}
-          >
-            <Text style={styles.categoryText}>{item}</Text>
-            <TouchableOpacity onPress={() => onDeleteCategory(item)}>
-              <FontAwesome6 name="trash-alt" size={18} color={SecondaryColor} />
-            </TouchableOpacity>
-          </View>
-        )}
-        style={styles.listContainer}
-      />
-    </View>
-  );
-
-  const IngredientsTab = () => (
-    <View style={styles.section}>
-      <TouchableOpacity
-        style={styles.addIcon}
-        onPress={() => setIsModalVisible(true)}
-      >
-        <FontAwesome6
-          name="square-plus"
-          size={60}
-          color={themeColors.primary}
+    const CategoriesTab = () => (
+      <View style={styles.section}>
+        <NewCategoryInput
+          onAddCategory={onAddCategory}
+          themeColors={themeColors}
         />
-      </TouchableOpacity>
-      <FlatList
-        data={ingredients}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <View
-            style={[styles.ingredientItem, { backgroundColor: PrimaryColor }]}
-          >
-            <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
-            <RNTextInput
-              style={[styles.quantityInput, { borderColor: SecondaryColor }]}
-              value={item.quantity.toString()}
-              keyboardType="numeric"
-              onChangeText={(value) =>
-                onUpdateIngredientQuantity(item.id, Number(value))
-              }
-            />
-            <Text style={{ width: 30, color: BackgroundColor }}>
-              {item.RawMaterial.unit}
-            </Text>
 
-            <TouchableOpacity onPress={() => onDeleteIngredient(item.id)}>
-              <FontAwesome6 name="trash-alt" size={18} color={SecondaryColor} />
-            </TouchableOpacity>
-          </View>
-        )}
-        style={styles.listContainer}
-      />
-    </View>
-  );
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item}
+          renderItem={({ item }) => (
+            <View
+              style={[styles.categoryItem, { backgroundColor: PrimaryColor }]}
+            >
+              <Text style={styles.categoryText}>{item}</Text>
+              <TouchableOpacity onPress={() => onDeleteCategory(item)}>
+                <FontAwesome6
+                  name="trash-alt"
+                  size={18}
+                  color={SecondaryColor}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+          style={styles.listContainer}
+        />
+      </View>
+    );
 
-  const renderScene = SceneMap({
-    categories: CategoriesTab,
-    ingredients: IngredientsTab,
-  });
-
-  return (
-    <View style={{ flex: 1 }}>
-      <TabView
-        navigationState={{ index, routes }}
-        renderScene={renderScene}
-        onIndexChange={setIndex}
-        initialLayout={{ width: Dimensions.get("window").width }}
-        renderTabBar={(props) => (
-          <TabBar
-            {...props}
-            indicatorStyle={[
-              styles.tabIndicator,
-              { backgroundColor: PrimaryColor },
-            ]}
-            style={[styles.tabBar, { backgroundColor: AccentColor }]}
-            labelStyle={[styles.tabLabel, { color: TextColor }]}
-            activeColor={TextColor}
-            inactiveColor={PrimaryColor}
+    const IngredientsTab = () => (
+      <View style={styles.section}>
+        <TouchableOpacity
+          style={styles.addIcon}
+          onPress={() => setIsModalVisible(true)}
+        >
+          <FontAwesome6
+            name="square-plus"
+            size={60}
+            color={themeColors.primary}
           />
-        )}
-      />
-      <Modal
-        animationType="none"
-        transparent={true}
-        visible={isModalVisible}
-        onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
-      >
-        <View style={styles.modalOverlay}>
-          <View
-            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
-          >
-            <AddIngredientModal
-              onClose={() => setIsModalVisible(false)}
-              onAddIngredient={onAddIngredient}
-              themeColors={themeColors}
-              excitingStockItems={ingredients.flatMap(
-                (ingredient) => ingredient.RawMaterial
-              )}
+        </TouchableOpacity>
+        <FlatList
+          data={ingredients}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => (
+            <View
+              style={[styles.ingredientItem, { backgroundColor: PrimaryColor }]}
+            >
+              <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
+              <RNTextInput
+                style={[styles.quantityInput, { borderColor: SecondaryColor }]}
+                value={item.quantity.toString()}
+                keyboardType="numeric"
+                onChangeText={(value) =>
+                  onUpdateIngredientQuantity(item.id, Number(value))
+                }
+              />
+              <Text style={{ width: 30, color: BackgroundColor }}>
+                {item.RawMaterial.unit}
+              </Text>
+
+              <TouchableOpacity onPress={() => onDeleteIngredient(item.id)}>
+                <FontAwesome6
+                  name="trash-alt"
+                  size={18}
+                  color={SecondaryColor}
+                />
+              </TouchableOpacity>
+            </View>
+          )}
+          style={styles.listContainer}
+        />
+      </View>
+    );
+
+    const renderScene = SceneMap({
+      categories: CategoriesTab,
+      ingredients: IngredientsTab,
+    });
+
+    return (
+      <View style={{ flex: 1 }}>
+        <TabView
+          navigationState={{ index, routes }}
+          renderScene={renderScene}
+          onIndexChange={setIndex}
+          initialLayout={{ width: Dimensions.get("window").width }}
+          renderTabBar={(props) => (
+            <TabBar
+              {...props}
+              indicatorStyle={[
+                styles.tabIndicator,
+                { backgroundColor: PrimaryColor },
+              ]}
+              style={[styles.tabBar, { backgroundColor: AccentColor }]}
+              labelStyle={[styles.tabLabel, { color: TextColor }]}
+              activeColor={TextColor}
+              inactiveColor={PrimaryColor}
             />
+          )}
+        />
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={isModalVisible}
+          onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
+        >
+          <View style={styles.modalOverlay}>
+            <View
+              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+            >
+              <AddIngredientModal
+                onClose={() => setIsModalVisible(false)}
+                onAddIngredient={onAddIngredient}
+                themeColors={themeColors}
+                excitingStockItems={ingredients.flatMap(
+                  (ingredient) => ingredient.RawMaterial
+                )}
+              />
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
-  );
-};
+        </Modal>
+      </View>
+    );
+  }
+);
 
 const styles = StyleSheet.create({
   section: {
@@ -256,4 +256,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default CategoryIngredientTabs;
+export default MenuTabView;

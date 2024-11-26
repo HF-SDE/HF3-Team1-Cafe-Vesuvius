@@ -51,6 +51,10 @@ export default function EditCreateUserPage() {
     {}
   );
 
+  const handleChangeCategory = (category: string) => {
+    setNewCategory(category);
+  };
+
   useEffect(() => {
     if (menu) {
       const foundMenuItem = menu[0];
@@ -124,6 +128,8 @@ export default function EditCreateUserPage() {
 
           <View style={{ minHeight: "70%" }}>
             <MenuTabView
+              newCategory={newCategory} // Pass the state here
+              setNewCategory={handleChangeCategory} // Pass the setter here
               categories={menuItem.category}
               ingredients={menuItem.RawMaterial_MenuItems}
               onAddCategory={(category) => {
