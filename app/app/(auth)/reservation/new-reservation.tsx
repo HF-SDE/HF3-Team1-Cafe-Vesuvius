@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,
@@ -23,8 +23,14 @@ interface ModalScreenProps {
   tables: Table[];
 }
 
-export default function NewReservationModal({ onClose, tables }: ModalScreenProps) {
-  const [reservation, setReservations] = useState<Reservation>({ email: "example@example.com", name: "Bob", amount: 2, phone: "+4511111111", reservationTime: dayjs().toDate(), tables: [] });
+/**
+ * New reservation modal
+ * @param {() => void} onClose - On close function
+ * @param {Table[]} tables - Tables
+ * @returns {ReactElement}
+ */
+export default function NewReservationModal({ onClose, tables }: ModalScreenProps): ReactElement {
+  const [reservation, setReservations] = useState<Reservation>({ email: "", name: "", amount: 2, phone: "", reservationTime: dayjs().toDate(), tables: [] });
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [tableSelect, setTableSelect] = useState<number>(0);
@@ -39,7 +45,6 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
   const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "amount"], reservation);
   const disabledCreateButton = tableSelect !== tableSelectNeed;
 
-  
   /**
    * Handle the create reservation
    * @returns {Promise<void>}
@@ -56,7 +61,6 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
       setErrorMessage("An error occurred while create reservation.");
     }
   };
-
   
   /**
    * Create a reservation
@@ -195,6 +199,11 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
   );
 }
 
+/**
+ * Table Props
+ * @interface TableProps
+ * @typedef {TableProps}
+ */
 interface TableProps {
   table: Table;
   tableSelect: number;
