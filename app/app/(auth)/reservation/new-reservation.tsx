@@ -239,6 +239,13 @@ function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: num
   return true;
 }
 
+
+/**
+ * Check if the item is selected
+ * @param {Table} table
+ * @param {Reservation} reservation
+ * @returns {boolean}
+ */
 function areItemselected(table: Table, reservation: Reservation): boolean {
   if (reservation.tables) {
     for (const key in reservation.tables) {
