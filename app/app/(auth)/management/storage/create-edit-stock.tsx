@@ -102,7 +102,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
 
   return (
     <SafeAreaView>
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
         <TextInput
           style={styles.input}
           label="Name"
@@ -114,20 +114,22 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
           type="float"
           decimalSeparator=","
           step={1}
-          precision={2}
-          color={SecondaryColor}
-          min={null}
-          textColor="white"
+          color={PrimaryColor}
+          textColor={PrimaryColor}
           value={stockItem.quantity}
           onChange={quantityChange}
+          leftButton={<FontAwesome6 name="square-minus" size={30} />}
+          rightButton={<FontAwesome6 name="square-plus" size={30} />}
+          inputStyle={{ borderColor: PrimaryColor }}
+          fontSize={20}
           buttonStyle={{
             borderRadius: 10,
             borderWidth: 3,
             backgroundColor: "transparent",
-            borderColor: SecondaryColor,
+            borderColor: PrimaryColor,
             padding: 5,
           }}
-          buttonTextColor={SecondaryColor}
+          buttonTextColor={PrimaryColor}
           buttonFontSize={40}
           style={styles.spinner} // Apply compact styling here
         ></InputSpinner>
@@ -164,7 +166,9 @@ const styles = StyleSheet.create({
   spinner: {
     height: 50, // Adjust height for compactness
     marginBottom: 15,
-    alignSelf: "flex-start",
+    alignSelf: "center",
+    width: "100%",
+    fontSize: 24,
   },
   buttonContainer: {
     flexDirection: "row",
