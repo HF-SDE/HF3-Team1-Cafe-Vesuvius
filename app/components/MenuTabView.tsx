@@ -171,11 +171,13 @@ const CategoryIngredientTabs: React.FC<CategoryIngredientTabsProps> = ({
             style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
           >
             <AddIngredientModal
-              visible={isModalVisible}
               onClose={() => setIsModalVisible(false)}
               onAddIngredient={onAddIngredient}
               themeColors={themeColors}
-            />{" "}
+              excitingStockItems={ingredients.flatMap(
+                (ingredient) => ingredient.RawMaterial
+              )}
+            />
           </View>
         </View>
       </Modal>

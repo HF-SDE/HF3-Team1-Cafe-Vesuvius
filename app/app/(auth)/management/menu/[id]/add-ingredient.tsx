@@ -19,12 +19,14 @@ interface AddIngredientModalProps {
   onClose: () => void;
   onAddIngredient: (ingredient: RawMaterial_MenuItems) => void;
   themeColors: { primary: string; text: string };
+  excitingStockItems: StockItemModel[];
 }
 
 const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
   onClose,
   onAddIngredient,
   themeColors,
+  excitingStockItems,
 }) => {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -34,11 +36,18 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { stock, isLoading, error, updateStock } = useStock();
+  const { stock, isLoading, error } = useStock();
 
   const filteredStock = stock
-    ? stock.filter((stockItem) =>
-        (stockItem.name || "").toLowerCase().includes(searchQuery.toLowerCase())
+    ? stock.filter(
+        (stockItem) =>
+          // Check if the item is not in excitingStockItems and matches the search query
+          !excitingStockItems.some(
+            (usedItem) => usedItem.id === stockItem.id // Assuming 'id' is unique for each stock item
+          ) &&
+          (stockItem.name || "")
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
       )
     : [];
 

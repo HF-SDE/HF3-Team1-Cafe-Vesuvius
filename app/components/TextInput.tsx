@@ -29,15 +29,16 @@ export interface CustomTextInputProps extends TextInputProps {
    * Color of the outline when the text input is highlighted
    */
   highlighOutlineColor?: string;
-  
+
   /**
    * If the text input is highlighted
    */
   isHighlighted?: boolean;
-  secureTextEntry?: TextInputProps['secureTextEntry'];
+  secureTextEntry?: TextInputProps["secureTextEntry"];
   editable?: TextInputProps["editable"];
   onChangeText?: TextInputProps["onChangeText"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
+  onKeyPress?: TextInputProps["onKeyPress"];
 }
 
 /**
@@ -71,6 +72,7 @@ export default function CustomTextInput({
   onChangeText: onChange,
   style,
   onSubmitEditing,
+  onKeyPress,
   autoCorrect,
   clearButtonMode = "never",
   autoComplete = "off",
@@ -126,6 +128,7 @@ export default function CustomTextInput({
         color: PrimaryColor,
       }}
       onSubmitEditing={onSubmitEditing}
+      onKeyPress={onKeyPress}
       autoCorrect={autoCorrect}
       secureTextEntry={secureTextEntry}
     />

@@ -99,6 +99,8 @@ export default function EditCreateUserPage() {
               label="Name"
               value={menuItem.name}
               onChangeText={(text) => handleChange("name", text)}
+              clearTextOnFocus={false}
+              selectTextOnFocus={false}
             />
             <TextInput
               label="Price"
@@ -114,6 +116,9 @@ export default function EditCreateUserPage() {
                   handleChange("price", formattedText);
                 }
               }}
+              inputMode="decimal"
+              clearTextOnFocus={false}
+              selectTextOnFocus={false}
             />
           </View>
 
