@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,

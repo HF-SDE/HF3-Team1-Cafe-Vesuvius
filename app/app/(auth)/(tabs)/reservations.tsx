@@ -146,6 +146,7 @@ export default function ReservationsOverview(): ReactElement {
           transparent={true}
           visible={isCreateModalVisible}
           onRequestClose={() => setCreateModalVisible(false)} // Close modal on Android back button
+          
         >
           <View style={styles.modalOverlay}>
             <View

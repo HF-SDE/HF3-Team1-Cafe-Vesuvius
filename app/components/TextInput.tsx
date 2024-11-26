@@ -1,4 +1,4 @@
-import React, { ComponentProps, HTMLInputAutoCompleteAttribute } from "react";
+import React from "react";
 import { TextInput, TextInputProps } from "react-native-paper";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { TextInputLabelProp } from "react-native-paper/lib/typescript/components/TextInput/types";
@@ -8,8 +8,7 @@ import {
   StyleProp,
 } from "react-native";
 import { TextStyle } from "react-native/Libraries/StyleSheet/StyleSheetTypes";
-import { transparent } from "react-native-paper/lib/typescript/styles/themes/v2/colors";
-import { View, TouchableOpacity, StyleSheet } from "react-native";
+import { StyleSheet } from "react-native";
 
 export interface CustomTextInputProps extends TextInputProps {
   label: TextInputLabelProp;
