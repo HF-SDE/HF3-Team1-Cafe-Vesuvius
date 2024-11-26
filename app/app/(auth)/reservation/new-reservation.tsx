@@ -52,6 +52,11 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
     }
   };
 
+  
+  /**
+   * Create a reservation
+   * @returns {Promise<string>}
+   */
   async function createReservation(): Promise<string> {
     if (!reservation) return "Something went wrong on our end. Please contact support";
 
