@@ -40,6 +40,9 @@ export default function ManageUsersPage() {
   const AccentColor = useThemeColor({}, "accent");
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(3);
+  const itemsPerPage = 20;
+
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const [canDelete, setCanDelete] = useState(false);
@@ -211,6 +214,12 @@ export default function ManageUsersPage() {
       : [];
   }, [stock, searchQuery]);
 
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredUsers.slice(start, end);
+  }, [filteredUsers, currentPage, itemsPerPage]);
+
   const renderItem = ({ item }: { item: StockItemModel }) => {
     const adjustedQty = quantities[item.id as string]
       ? quantities[item.id as string].toString()
@@ -365,7 +374,7 @@ export default function ManageUsersPage() {
           </Text>
         ) : (
           <SwipeListView
-            data={filteredUsers}
+            data={paginatedData}
             renderItem={renderItem}
             renderHiddenItem={(data, rowMap) => renderHiddenItem(data, rowMap)}
             leftOpenValue={100}
