@@ -44,7 +44,7 @@ interface TextIconInputProps extends CustomTextInputProps {
   >["highlighOutlineColor"];
   isHighlighted?: ComponentProps<typeof CustomTextInput>["isHighlighted"];
   editable?: TextInputProps["editable"];
-  onChangeText: TextInputProps["onChangeText"];
+  onChangeText?: TextInputProps["onChangeText"];
 
   /**
    * Called when the icon touch is released, but not if cancelled (e.g. by a scroll that steals the responder lock).
