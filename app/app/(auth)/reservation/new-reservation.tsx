@@ -39,6 +39,11 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
   const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "amount"], reservation);
   const disabledCreateButton = tableSelect !== tableSelectNeed;
 
+  
+  /**
+   * Handle the create reservation
+   * @returns {*}
+   */
   async function handleCreate() {
     try {
       const response = await createReservation();
