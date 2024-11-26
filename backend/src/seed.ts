@@ -243,6 +243,11 @@ async function generateMongo() {
         description: 'Create stock',
       },
       {
+        code: 'stock:delete',
+        permissionGroupId: await findPermissionGroup('Stock'),
+        description: 'Delete stock',
+      },
+      {
         code: 'table:view',
         permissionGroupId: await findPermissionGroup('Table'),
         description: 'View tables',
@@ -1663,7 +1668,7 @@ async function generateMongo() {
 async function generatingPSQL() {
   // Menu
   await prismaPSQL.menu.createMany({
-    data: menu
+    data: menu,
   });
 }
 
