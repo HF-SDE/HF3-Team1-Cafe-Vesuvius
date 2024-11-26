@@ -23,7 +23,7 @@ import { Card, Searchbar, Text } from "react-native-paper";
 
 
 export default function ReservationsOverview(): ReactElement {
-  const { reservations, isLoading: reservationsIsLoading, error: reservationsError } = useReservation();
+  const { reservations, isLoading: reservationsIsLoading, error: reservationsError, refresh } = useReservation();
   const [reservationsLoading, setReservationsLoading] = useState<boolean>(true);
   const { table, isLoading: tableIsLoading, error: tableError } = useTable();
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
@@ -50,9 +50,7 @@ export default function ReservationsOverview(): ReactElement {
 
   function handleRefresh(): void {
     setReservationsLoading(true);
-    if (reservations) {
-      setReservationsData(sortReservations(reservations));
-    }
+    refresh();
     setReservationsLoading(false);
   }
 
@@ -69,7 +67,7 @@ export default function ReservationsOverview(): ReactElement {
   function renderReservationItem({ item }: { item: Reservation }): ReactElement {
     return (
       <Card style={[styles.orderItem, { backgroundColor: PrimaryColor }]} mode="contained" onPress={() => reservationSelect(item.email, item.phone)}>
-        <Card.Title title={item.name} titleStyle={{ color: "white" }} titleVariant={"titleLarge"} right={(props) =>
+        <Card.Title title={item.name} titleStyle={{ color: "white" }} titleVariant={"titleLarge"} right={() =>
           <Card.Actions>
             <Pressable style={{ backgroundColor: SecondaryColor, padding: 5, borderRadius: 99999 }} onPress={() => reservationSelect(item.email, item.phone)}>
               <AntDesign name="info" size={30} />
@@ -148,6 +146,7 @@ export default function ReservationsOverview(): ReactElement {
           transparent={true}
           visible={isCreateModalVisible}
           onRequestClose={() => setCreateModalVisible(false)} // Close modal on Android back button
+          
         >
           <View style={styles.modalOverlay}>
             <View
