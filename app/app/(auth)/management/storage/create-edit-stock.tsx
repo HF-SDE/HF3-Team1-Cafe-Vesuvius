@@ -112,14 +112,14 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         />
         <InputSpinner
           type="float"
-          decimalSeparator=","
+          decimalSeparator="."
           step={1}
           color={PrimaryColor}
           textColor={PrimaryColor}
           value={stockItem.quantity}
           onChange={quantityChange}
-          leftButton={<FontAwesome6 name="square-minus" size={30} />}
-          rightButton={<FontAwesome6 name="square-plus" size={30} />}
+          //leftButton={<FontAwesome6 name="square-minus" size={30} />}
+          //rightButton={<FontAwesome6 name="square-plus" size={30} />}
           inputStyle={{ borderColor: PrimaryColor }}
           fontSize={20}
           buttonStyle={{
