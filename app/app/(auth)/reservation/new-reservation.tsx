@@ -203,7 +203,6 @@ interface TableProps {
   reservation: [Reservation, Dispatch<SetStateAction<Reservation>>]
 }
 
-
 /**
  * The item component for the flatlist
  * @param {TableProps} props - The props for the item
