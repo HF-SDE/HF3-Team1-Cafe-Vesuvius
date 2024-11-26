@@ -42,9 +42,9 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
   
   /**
    * Handle the create reservation
-   * @returns {*}
+   * @returns {Promise<void>}
    */
-  async function handleCreate() {
+  async function handleCreate(): Promise<void> {
     try {
       const response = await createReservation();
       if (response === "success") {
