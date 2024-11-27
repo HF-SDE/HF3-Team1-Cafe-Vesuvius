@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 
-import { ExpressFunction } from '@api-types/general.types';
+import { ExpressFunction, Status } from '@api-types/general.types';
 import { prismaModels } from '@prisma-instance';
+import { UuidSchema } from '@schemas/general.schemas';
 import * as DefaultService from '@services/default.service';
 import { getHttpStatusCode } from '@utils/Utils';
 import * as configWithoutType from '@utils/configs';
@@ -22,6 +23,19 @@ const config: Config = configWithoutType as Config;
 export function getAll(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
     if (!model) model = getModel(req);
+
+    req.query.id ??= req.params.id;
+
+    const { error } = UuidSchema.validate(req.query.id);
+
+    if (error) {
+      res
+        .status(400)
+        .json({ status: Status.InvalidDetails, message: error.message })
+        .end();
+
+      return;
+    }
 
     const modelConfig = req.config || { ...config[model], where: req.query };
 
