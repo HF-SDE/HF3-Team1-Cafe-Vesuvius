@@ -17,6 +17,22 @@ export const menuItem: Prisma.MenuItemFindManyArgs = {
 
 export const table: Prisma.TableFindManyArgs = { omit };
 
-export const order: Prisma.OrderFindManyArgs = { omit, include: { Order_Menus: true } };
+export const order: Prisma.OrderFindManyArgs = {
+  omit,
+  include: { Order_Menus: true },
+};
 
-export const reservation: Prisma.ReservationFindManyArgs = { omit, include: { Tables: true } };
+export const reservation: Prisma.ReservationFindManyArgs = {
+  omit: {
+    ...omit,
+    tableIds: true,
+  },
+  include: {
+    Tables: {
+      omit: {
+        ...omit,
+        reservationIds: true,
+      },
+    },
+  },
+};

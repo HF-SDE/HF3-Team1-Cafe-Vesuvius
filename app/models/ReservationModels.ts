@@ -8,7 +8,7 @@ export interface Reservation {
   reservationTime: DateType;
   email: string;
   phone: string;
-  tables?: Table[];
+  Tables?: Table[];
   tableIds?: string[];
 }
 
