@@ -19,4 +19,4 @@ export const table: Prisma.TableFindManyArgs = { omit };
 
 export const order: Prisma.OrderFindManyArgs = { omit, include: { Order_Menus: true } };
 
-export const reservation: Prisma.ReservationFindManyArgs = { omit, include: { Table: true } };
+export const reservation: Prisma.ReservationFindManyArgs = { omit, include: { Tables: true } };
