@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 
-import { ExpressFunction } from '@api-types/general.types';
+import { ExpressFunction, Status } from '@api-types/general.types';
 import { prismaModels } from '@prisma-instance';
+import { UuidSchema } from '@schemas/general.schemas';
 import * as DefaultService from '@services/default.service';
 import { getHttpStatusCode } from '@utils/Utils';
 import * as configWithoutType from '@utils/configs';
@@ -11,7 +12,7 @@ function getModel(req: Request): prismaModels {
   return req.baseUrl.replace('/', '') as prismaModels;
 }
 
-type Config = Record<prismaModels, object>;
+type Config = Record<prismaModels, Record<string, unknown>>;
 const config: Config = configWithoutType as Config;
 
 /**
@@ -21,13 +22,24 @@ const config: Config = configWithoutType as Config;
  */
 export function getAll(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
-    const id = (req.params.id || req.query.id) as string | undefined;
-
     if (!model) model = getModel(req);
 
-    const modelConfig = config[model] ?? {};
+    req.query.id ??= req.params.id;
 
-    const response = await DefaultService.getAll(model, { id, ...modelConfig });
+    const { error } = UuidSchema.validate(req.query.id);
+
+    if (error) {
+      res
+        .status(400)
+        .json({ status: Status.InvalidDetails, message: error.message })
+        .end();
+
+      return;
+    }
+
+    const modelConfig = req.config || { ...config[model], where: req.query };
+
+    const response = await DefaultService.getAll(model, modelConfig);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };

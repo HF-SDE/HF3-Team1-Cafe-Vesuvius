@@ -18,6 +18,7 @@ import { useMenu } from "@/hooks/useMenu";
 import TemplateLayout from "@/components/TemplateLayout";
 import AddButton from "@/components/AddButton";
 import SearchBar from "@/components/SearchBar";
+import LoadingPage from "@/components/LoadingPage";
 
 import { MenuModel } from "@/models/MenuModel";
 
@@ -73,9 +74,7 @@ export default function ManageUsersPage() {
         />
         {/* Use the SearchBar component */}
         {isLoading ? (
-          <Text style={[styles.loadingText, { color: TextColor }]}>
-            Loading...
-          </Text>
+          <LoadingPage />
         ) : error ? (
           <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
         ) : (
@@ -129,11 +128,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     marginTop: 5,
     fontWeight: "bold",
-  },
-  loadingText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginVertical: 20,
   },
   errorText: {
     fontSize: 16,

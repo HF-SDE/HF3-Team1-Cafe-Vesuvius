@@ -65,7 +65,7 @@ export function defaultResponse(code: number | string) {
 }
 
 interface ISchemaOptions {
-  optional?: boolean;
+  type?: "default" | "optional" | "where";
 }
 
 /**
@@ -76,13 +76,12 @@ interface ISchemaOptions {
  */
 export function getSchema(
   schemaName: prismaModels,
-  { optional = false }: ISchemaOptions = {},
+  { type = 'default' }: ISchemaOptions = {},
 ): Joi.ObjectSchema | undefined {
   // import schema file from schemas folder by schemaName
   try {
     const filePath = `../../../schemas/${schemaName}.schema.ts`;
 
-    const type = optional ? 'optional' : 'default';
     // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
     const schema = require(filePath)[type] as Joi.ObjectSchema;
 

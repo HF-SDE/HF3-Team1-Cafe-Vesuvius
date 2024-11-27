@@ -25,3 +25,11 @@ export default schema.or("email", "phone").messages({
 
 const keys = Object.keys(schema.describe().keys);
 export const optional = schema.fork(keys, (schema) => schema.optional());
+
+export const where = Joi.object<Prisma.ReservationWhereInput>({
+  id: UuidSchema.optional(),
+  name: Joi.string().optional(),
+  email: Joi.string().email().optional(),
+  phone: Joi.string().optional(),
+  reservationTime: Joi.date().optional(),
+}).options({ allowUnknown: false })

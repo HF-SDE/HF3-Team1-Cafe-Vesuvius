@@ -20,6 +20,7 @@ import SaveResetButton from "@/components/SaveResetButton";
 import TemplateLayout from "@/components/TemplateLayout";
 import CheckPermission from "@/components/CheckPermission";
 import Pagination from "@/components/Pagination";
+import LoadingPage from "@/components/LoadingPage";
 
 import { StockItemModel } from "@/models/StorageModel";
 
@@ -379,9 +380,7 @@ export default function ManageUsersPage() {
           Page {currentPage} of {totalPages}
         </Text>
         {isLoading ? (
-          <Text style={[styles.loadingText, { color: TextColor }]}>
-            Loading...
-          </Text>
+          <LoadingPage />
         ) : error ? (
           <Text style={[styles.errorText, { color: TextColor }]}>
             Something went wrong!
@@ -480,11 +479,6 @@ const styles = StyleSheet.create({
     marginRight: 5,
     fontWeight: "bold",
   },
-  loadingText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginVertical: 20,
-  },
   errorText: {
     fontSize: 16,
     textAlign: "center",
@@ -517,6 +511,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 40,
     fontSize: 18,
+    padding: 0,
+    margin: 0,
     fontWeight: "bold",
     textAlign: "center",
     borderWidth: 3,

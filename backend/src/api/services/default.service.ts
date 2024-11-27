@@ -8,37 +8,35 @@ import Joi from 'joi';
 import { APIResponse, Status } from '@api-types/general.types';
 import prisma, { errorResponse, prismaModels } from '@prisma-instance';
 import { Prisma } from '@prisma/client';
-import { UuidSchema } from '@schemas/general.schemas';
 import { capitalize, getSchema } from '@utils/Utils';
 
 type Result = any;
-
-interface Params {
-  id?: string;
-  config?: object;
-}
 
 /**
  * Service to get all records from a collection
  * @async
  * @param {prismaModels} prismaModel - The Prisma model to get the records from.
- * @param {Params} params - The parameters to filter the records by.
+ * @param {Record<string, unknown>} config - The parameters to filter the records by.
  * @returns {Promise<APIResponse<Result>>} A promise that resolves to an object containing the data, status, and message.
  */
 export async function getAll(
   prismaModel: prismaModels,
-  { id, ...config }: Params = {},
+  config: Record<string, unknown> = {},
 ): Promise<APIResponse<Result>> {
-  const validate = UuidSchema.validate(id);
+  const whereSchema = getSchema(prismaModel, { type: 'where' });
 
-  if (validate.error) {
-    return {
-      status: Status.MissingDetails,
-      message: validate.error.message,
-    };
+  if (whereSchema) {
+    const validatedWhere = whereSchema.validate(config.where);
+
+    if (validatedWhere.error) {
+      return {
+        status: Status.InvalidDetails,
+        message: validatedWhere.error.message,
+      };
+    }
+
+    config.where = validatedWhere.value;
   }
-
-  const where = id ? { id } : undefined;
 
   const prismaType = prisma[prismaModel] as any;
 
@@ -49,7 +47,7 @@ export async function getAll(
     };
   }
 
-  const results = await prismaType.findMany({ where, ...config });
+  const results = await prismaType.findMany(config);
 
   return {
     data: results,
@@ -113,7 +111,7 @@ export async function update(
   id: string,
   data: unknown,
   schema: Joi.ObjectSchema | undefined = getSchema(prismaModel, {
-    optional: true,
+    type: 'optional',
   }),
 ): Promise<APIResponse<Result>> {
   const prismaType = prisma[prismaModel] as any;
