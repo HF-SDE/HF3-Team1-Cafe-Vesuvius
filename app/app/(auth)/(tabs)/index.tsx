@@ -4,6 +4,7 @@ import { useSession } from "../../ctx";
 import ResetPasswordModal from "../profile/reset-password";
 
 import TemplateLayout from "@/components/TemplateLayout";
+import LoadingPage from "@/components/LoadingPage";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
@@ -21,7 +22,7 @@ export default function UserProfileScreen() {
   const { signOut, session } = useSession();
 
   if (isLoading) {
-    return <Text>Loading...</Text>;
+    return <LoadingPage />;
   }
 
   return (

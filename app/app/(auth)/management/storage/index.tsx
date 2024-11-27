@@ -517,6 +517,8 @@ const styles = StyleSheet.create({
     width: 60,
     height: 40,
     fontSize: 18,
+    padding: 0,
+    margin: 0,
     fontWeight: "bold",
     textAlign: "center",
     borderWidth: 3,

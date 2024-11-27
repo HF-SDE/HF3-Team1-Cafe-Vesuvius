@@ -13,6 +13,8 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 
 import TemplateLayout from "@/components/TemplateLayout";
 
+import LoadingPage from "@/components/LoadingPage";
+
 import {
   LineChart,
   BarChart,
@@ -86,7 +88,11 @@ export default function StatsPage() {
 
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
-      <ScrollView contentContainerStyle={styles.container}>
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      >
         <LineChart
           data={{
             labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
