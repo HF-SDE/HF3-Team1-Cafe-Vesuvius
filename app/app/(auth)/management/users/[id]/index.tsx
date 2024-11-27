@@ -1,12 +1,5 @@
 import { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  Alert,
-  FlatList,
-  ScrollView,
-} from "react-native";
+import { StyleSheet, View, Text, Modal } from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
@@ -20,6 +13,7 @@ import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
 import Switch from "@/components/Switch";
 import PermissionsTabView from "@/components/PermissionsTabView";
+import ResetPasswordModal from "./reset-password";
 
 import { UserProfile } from "@/models/userModels";
 
@@ -32,6 +26,8 @@ export default function EditCreateUserPage() {
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
 
   const { users, isLoading, error, updateUser, createUser } = useUsers(
     id as string
@@ -189,7 +185,10 @@ export default function EditCreateUserPage() {
           onPermissionToggle={handlePermissionToggle}
         />
 
-        <Button title="Reset password" onPress={() => navigation.goBack()} />
+        <Button
+          title="Reset password"
+          onPress={() => setIsModalVisible(true)}
+        />
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
@@ -200,6 +199,20 @@ export default function EditCreateUserPage() {
           />
         </View>
       </View>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+          >
+            <ResetPasswordModal onClose={() => setIsModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
     </TemplateLayout>
   );
 }
@@ -261,5 +274,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 20,
     alignSelf: "center",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 400,
+    minHeight: 300,
+    padding: 10,
+    borderRadius: 10,
   },
 });
