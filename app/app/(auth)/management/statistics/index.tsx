@@ -18,27 +18,35 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from "react-native-chart-kit";
+import { screensEnabled } from "react-native-screens";
 
 export default function StatsPage() {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
+  const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   const navigation = useNavigation();
 
   const chartConfig = {
-    backgroundColor: PrimaryColor,
+    backgroundColor: AccentColor,
     backgroundGradientFrom: PrimaryColor,
     backgroundGradientTo: PrimaryColor,
     decimalPlaces: 2,
-    color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    // color: (opacity = 1) => `rgba(255, 000, 000, ${opacity})`
+    // color: (opacity = 1) => `(SecondaryColor, ${opacity})`,
+    color: (opacity = 1) => SecondaryColor,
+    // labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
+    // labelColor: (opacity = 1) => `rgba ${opacity})`,
+    labelcolor: (opacity = 1) => SecondaryColor,
     style: {
       borderRadius: 16,
     },
     propsForDots: {
       r: "6",
       strokeWidth: "2",
-      stroke: "#ffa726",
+      stroke: PrimaryColor,
     },
   };
 
@@ -51,28 +59,28 @@ export default function StatsPage() {
     {
       name: "Groceries",
       population: 40,
-      color: "#ff6384",
+      color: BackgroundColor,
       legendFontColor: TextColor,
       legendFontSize: 12,
     },
     {
       name: "Bills",
       population: 30,
-      color: "#36a2eb",
+      color: SecondaryColor,
       legendFontColor: TextColor,
       legendFontSize: 12,
     },
     {
       name: "Entertainment",
       population: 20,
-      color: "#ffcd56",
+      color: AccentColor,
       legendFontColor: TextColor,
       legendFontSize: 12,
     },
     {
       name: "Savings",
       population: 10,
-      color: "#4bc0c0",
+      color: TextColor,
       legendFontColor: TextColor,
       legendFontSize: 12,
     },
@@ -81,10 +89,6 @@ export default function StatsPage() {
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
       <ScrollView contentContainerStyle={styles.container}>
-        <Text style={[styles.header, { color: TextColor }]}>
-          Your Statistics
-        </Text>
-
         <LineChart
           data={{
             labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
@@ -123,7 +127,7 @@ export default function StatsPage() {
           height={220}
           chartConfig={chartConfig}
           accessor={"population"}
-          backgroundColor={"transparent"}
+          backgroundColor={PrimaryColor}
           paddingLeft={"15"}
           style={styles.chart}
         />
@@ -154,7 +158,10 @@ export default function StatsPage() {
         />
 
         <TouchableOpacity
-          style={[styles.button, { backgroundColor: PrimaryColor }]}
+          style={[
+            styles.button,
+            { backgroundColor: PrimaryColor, borderColor: BackgroundColor },
+          ]}
           onPress={() => navigation.goBack()}
         >
           <Text style={[styles.buttonText, { color: BackgroundColor }]}>
@@ -171,11 +178,6 @@ const styles = StyleSheet.create({
     padding: 20,
     paddingBottom: 50,
   },
-  header: {
-    fontSize: 24,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
   chart: {
     marginVertical: 8,
     borderRadius: 16,
@@ -185,6 +187,11 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     alignItems: "center",
+    position: "sticky",
+    marginHorizontal: "auto",
+    width: "95%",
+    bottom: 15,
+    borderWidth: 2,
   },
   buttonText: {
     fontSize: 18,
