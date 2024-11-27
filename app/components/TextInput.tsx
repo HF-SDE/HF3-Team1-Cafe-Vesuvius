@@ -1,5 +1,5 @@
-import React from "react";
-import { TextInput, TextInputProps } from "react-native-paper";
+import React, { ReactElement } from "react";
+import { HelperText, HelperTextProps, TextInput, TextInputProps } from "react-native-paper";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { TextInputLabelProp } from "react-native-paper/lib/typescript/components/TextInput/types";
 import {
@@ -15,6 +15,7 @@ export interface CustomTextInputProps extends TextInputProps {
   value?: TextInputProps["value"];
   placeholder?: TextInputProps["placeholder"];
   style?: StyleProp<TextStyle>;
+  error?: TextInputProps["error"];
   clearButtonMode?: TextInputProps["clearButtonMode"];
   autoComplete?: TextInputProps["autoComplete"];
   clearTextOnFocus?: TextInputProps["clearTextOnFocus"];
@@ -49,6 +50,7 @@ export interface CustomTextInputProps extends TextInputProps {
  * @param {TextInputLabelProp} label [Required] - label for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#label
  * @param {string} [value] [Optional] - value for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#value
  * @param {StyleProp<TextStyle>} [style] [Optional] - custom style for the text input @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#style
+ * @param {TextInputProps["error"]} [error] [Optional] - default is false - Whether to style the TextInput with error style. @see https://callstack.github.io/react-native-paper/docs/components/TextInput/#error
  * @param {TextInputProps["clearButtonMode"]} [clearButtonMode="never"] [IOS ONLY] [Optional] - default is "never". @see https://reactnative.dev/docs/textinput#clearbuttonmode-ios
  * @param {TextInputProps["autoComplete"]} [autoComplete="off"] [Optional] - default is "off". @see https://reactnative.dev/docs/textinput#autocomplete
  * @param {TextInputProps["autoCapitalize"]} [autoCapitalize="sentences"] [Optional] - default is "sentences". @see https://reactnative.dev/docs/textinput#autocapitalize
@@ -84,7 +86,8 @@ export default function CustomTextInput({
   isHighlighted = false,
   secureTextEntry,
   editable = true,
-}: CustomTextInputProps) {
+  error = false,
+}: CustomTextInputProps): ReactElement {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -92,45 +95,48 @@ export default function CustomTextInput({
   const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <TextInput
-      style={[
-        style,
-        styles.inputBlock,
-        { backgroundColor: BackgroundColor, color: TextColor },
-      ]}
-      label={label}
-      mode="outlined"
-      value={value}
-      activeOutlineColor={TextColor}
-      outlineColor={isHighlighted ? highlighOutlineColor : PrimaryColor}
-      outlineStyle={{ borderWidth: 2 }}
-      onChangeText={onChange}
-      clearButtonMode={clearButtonMode}
-      autoComplete={autoComplete}
-      autoCapitalize={autoCapitalize}
-      clearTextOnFocus={clearTextOnFocus}
-      enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
-      enterKeyHint={enterKeyHint}
-      inputMode={inputMode}
-      editable={editable}
-      theme={{
-        colors: {
-          text: TextColor,
-          placeholder: PrimaryColor,
-          background: "transparent",
-          onSurfaceVariant: PrimaryColor,
-          primary: TextColor,
-          outline: PrimaryColor,
-        },
-      }}
-      contentStyle={{
-        color: PrimaryColor,
-      }}
-      onSubmitEditing={onSubmitEditing}
-      onKeyPress={onKeyPress}
-      autoCorrect={autoCorrect}
-      secureTextEntry={secureTextEntry}
-    />
+    <>
+      <TextInput
+        style={[
+          style,
+          styles.inputBlock,
+          { backgroundColor: BackgroundColor, color: TextColor },
+        ]}
+        label={label}
+        mode="outlined"
+        value={value}
+        activeOutlineColor={TextColor}
+        outlineColor={isHighlighted ? highlighOutlineColor : PrimaryColor}
+        outlineStyle={{ borderWidth: 2 }}
+        onChangeText={onChange}
+        clearButtonMode={clearButtonMode}
+        autoComplete={autoComplete}
+        autoCapitalize={autoCapitalize}
+        clearTextOnFocus={clearTextOnFocus}
+        enablesReturnKeyAutomatically={enablesReturnKeyAutomatically}
+        enterKeyHint={enterKeyHint}
+        inputMode={inputMode}
+        editable={editable}
+        theme={{
+          colors: {
+            text: TextColor,
+            placeholder: PrimaryColor,
+            background: "transparent",
+            onSurfaceVariant: PrimaryColor,
+            primary: TextColor,
+            outline: PrimaryColor,
+          },
+        }}
+        contentStyle={{
+          color: PrimaryColor,
+        }}
+        onSubmitEditing={onSubmitEditing}
+        onKeyPress={onKeyPress}
+        autoCorrect={autoCorrect}
+        secureTextEntry={secureTextEntry}
+        error={error}
+      />
+    </>
   );
 }
 

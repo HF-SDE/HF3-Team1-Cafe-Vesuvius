@@ -1,33 +1,23 @@
-import {
-  StyleSheet,
-  View,
-  Text,
-  Alert,
-  FlatList,
-  ScrollView,
-} from "react-native";
-import { useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
-import { useUsers } from "@/hooks/useUsers"; // Assuming you have a hook for user management
-import { usePermissions } from "@/hooks/usePermissions";
-import TemplateLayout from "@/components/TemplateLayout";
+import { StyleSheet, View, Text, Modal } from "react-native";
+
 import { useLocalSearchParams } from "expo-router";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import Button from "@/components/DefaultButton";
-//import { TextInput } from "react-native-paper";
-import TextInput from "@/components/TextInput";
 import { useNavigation } from "@react-navigation/native";
 
+import { useUsers } from "@/hooks/useUsers";
+import { usePermissions } from "@/hooks/usePermissions";
+import { useThemeColor } from "@/hooks/useThemeColor";
+
+import TemplateLayout from "@/components/TemplateLayout";
+import Button from "@/components/DefaultButton";
+import TextInput from "@/components/TextInput";
 import Switch from "@/components/Switch";
-
 import PermissionsTabView from "@/components/PermissionsTabView";
+import ResetPasswordModal from "./reset-password";
 
-import { TabView, SceneMap } from "react-native-tab-view";
-
-import { UserProfile } from "../../../../../models/userModels";
+import { UserProfile } from "@/models/userModels";
 
 export default function EditCreateUserPage() {
-  const route = useRoute();
   const { id } = useLocalSearchParams();
 
   const navigation = useNavigation();
@@ -37,19 +27,21 @@ export default function EditCreateUserPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   const { users, isLoading, error, updateUser, createUser } = useUsers(
     id as string
   );
   const { permissions } = usePermissions();
 
-  const [user, setUser] = useState({
+  const [user, setUser] = useState<UserProfile>({
     id: "",
     username: "",
     name: "",
     email: "",
     initials: "",
     active: true,
-    permissions: [] as { code: string; description: string }[], // Add permissions to state
+    permissions: [] as { code: string; description: string }[],
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
@@ -86,7 +78,7 @@ export default function EditCreateUserPage() {
     }
   };
 
-  const handleChange = (field: string, value: string | boolean) => {
+  const handleChange = (field: keyof UserProfile, value: string | boolean) => {
     if (value !== changedFields[field]) {
       const origValue = user[field] || "";
       setChangedFields((prev) => ({
@@ -128,8 +120,8 @@ export default function EditCreateUserPage() {
       const updatedPermissions = isEnabled
         ? [...prevUser.permissions, { code: permissionCode, description: "" }]
         : prevUser.permissions.filter(
-          (permission) => permission.code !== permissionCode
-        );
+            (permission) => permission.code !== permissionCode
+          );
       return { ...prevUser, permissions: updatedPermissions };
     });
   };
@@ -193,7 +185,10 @@ export default function EditCreateUserPage() {
           onPermissionToggle={handlePermissionToggle}
         />
 
-        <Button title="Reset password" onPress={() => navigation.goBack()} />
+        <Button
+          title="Reset password"
+          onPress={() => setIsModalVisible(true)}
+        />
 
         <View style={styles.buttonContainer}>
           <Button title="Cancel" onPress={() => navigation.goBack()} />
@@ -204,6 +199,20 @@ export default function EditCreateUserPage() {
           />
         </View>
       </View>
+      <Modal
+        animationType="none"
+        transparent={true}
+        visible={isModalVisible}
+        onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
+      >
+        <View style={styles.modalOverlay}>
+          <View
+            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+          >
+            <ResetPasswordModal onClose={() => setIsModalVisible(false)} />
+          </View>
+        </View>
+      </Modal>
     </TemplateLayout>
   );
 }
@@ -215,7 +224,7 @@ const styles = StyleSheet.create({
   },
   scrollViewContainer: {
     flexGrow: 1,
-    paddingBottom: 100, // Ensure space for buttons at the bottom
+    paddingBottom: 100,
   },
   input: {
     height: 40,
@@ -236,7 +245,6 @@ const styles = StyleSheet.create({
   permissionItem: {
     padding: 10,
     borderBottomWidth: 1,
-    // borderBottomColor: "#ddd",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
@@ -251,7 +259,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buttonContainer: {
-    // paddingTop: 20,
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -267,5 +274,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     gap: 20,
     alignSelf: "center",
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    width: "100%",
+    maxWidth: 400,
+    minHeight: 300,
+    padding: 10,
+    borderRadius: 10,
   },
 });

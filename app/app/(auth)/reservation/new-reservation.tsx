@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
+import React, { Dispatch, ReactElement, SetStateAction, useRef, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,
@@ -7,6 +7,8 @@ import {
   View,
   FlatList,
   Pressable,
+  KeyboardAvoidingView,
+  TextInput,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
@@ -17,10 +19,26 @@ import dayjs from "dayjs";
 import CustomTextInput from "@/components/TextInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TextIconInput from "@/components/TextIconInput";
+import { KeyboardAwareFlatList, KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 interface ModalScreenProps {
   onClose: () => void;
   tables: Table[];
+}
+
+interface TextInputsProps {
+  label: string;
+  value: string;
+  isError: boolean;
+}
+
+type TextInputsKeys = "name" | "phone" | "email" | "amount";
+
+interface TextInputs {
+  name: TextInputsProps;
+  phone: TextInputsProps;
+  email: TextInputsProps;
+  amount: TextInputsProps;
 }
 
 /**
@@ -36,6 +54,7 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
   const [tableSelect, setTableSelect] = useState<number>(0);
   const [tableSelectNeed, setTableSelectNeed] = useState<number>(1);
   const [page, setPage] = useState(1);
+  const [textInputs, setTextInputs] = useState<TextInputs>({ amount: { label: "Amount of People", value: reservation.amount.toString(), isError: false }, email: { label: "Email", value: reservation.email, isError: false }, name: { label: "Name", value: reservation.name, isError: false }, phone: { label: "Phone", value: reservation.phone, isError: false } });
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -61,7 +80,7 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
       setErrorMessage("An error occurred while create reservation.");
     }
   };
-  
+
   /**
    * Create a reservation
    * @returns {Promise<string>}
@@ -95,32 +114,44 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
         page === 1 ?
           <>
             <CustomTextInput
-              label="Name"
+              label={textInputs.name.label}
               value={reservation?.name}
               inputMode="text"
               clearButtonMode="always"
               autoCapitalize="words"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(name) => setReservations({ ...reservation!, name })}
+              onChangeText={(name) => {
+                setReservations({ ...reservation!, name });
+                validateTextInput("name", name, setTextInputs);
+              }}
+              error={textInputs.name.isError}
             />
             <CustomTextInput
-              label="Phone"
+              label={textInputs.phone.label}
               value={reservation?.phone}
               inputMode="tel"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(phone) => setReservations({ ...reservation!, phone })}
+              onChangeText={(phone) => {
+                setReservations({ ...reservation!, phone });
+                validateTextInput("phone", phone, setTextInputs);
+              }}
+              error={textInputs.phone.isError}
             />
             <CustomTextInput
-              label="Email"
+              label={textInputs.email.label}
               value={reservation?.email}
               inputMode="email"
               clearButtonMode="always"
               enablesReturnKeyAutomatically={true}
-              onChangeText={(email) => setReservations({ ...reservation!, email })}
+              onChangeText={(email) => {
+                setReservations({ ...reservation!, email });
+                validateTextInput("email", email, setTextInputs);
+              }}
+              error={textInputs.email.isError}
             />
             <CustomTextInput
-              label="Amount of People"
+              label={textInputs.amount.label}
               value={reservation?.amount?.toString()}
               inputMode="numeric"
               clearButtonMode="always"
@@ -128,8 +159,9 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
               onChangeText={(partySize) => {
                 setReservations({ ...reservation!, amount: Number(partySize) });
                 setTableSelectNeed(Math.ceil(Number(partySize) / 2));
+                validateTextInput("amount", partySize, setTextInputs);
               }}
-
+              error={textInputs.amount.isError}
             />
             <TextIconInput
               label="Reservation Time"
@@ -162,7 +194,7 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
             ) : null}
           </>
           :
-          <FlatList ListHeaderComponent={<Text>Tables - {tableSelectNeed} out of {tableSelect} </Text>} numColumns={4} data={tables} renderItem={({ item }) => (
+          <KeyboardAwareFlatList ListHeaderComponent={<Text>Tables - {tableSelectNeed} out of {tableSelect} </Text>} numColumns={4} data={tables} renderItem={({ item }) => (
             <Item table={item} setTableSelect={setTableSelect} tableSelect={tableSelect} tableSelectNeed={tableSelectNeed} reservation={[reservation, setReservations]} />
           )} keyExtractor={(item) => item.number?.toString()} contentContainerStyle={styles.listContainer} style={styles.flatList} />
 
@@ -199,6 +231,43 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
   );
 }
 
+
+/**
+ * Check if all keys are defined in the object
+ * @param {TextInputsKeys} field - The field to validate
+ * @param {string} value - The value to validate
+ * @param {Dispatch<SetStateAction<TextInputs>>} setTextInputs - The state setter
+ */
+function validateTextInput(field: TextInputsKeys, value: string, setTextInputs: Dispatch<SetStateAction<TextInputs>>): void {
+  if (field === "email" && !value.includes("@")) {
+    setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+    return;
+  }
+  if (field === "phone") {
+    if (isNaN(Number(value)) && !value.startsWith("+")) {
+      setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+      return;
+    }
+    if (value.startsWith("+") && isNaN(Number(value.replace("+", "")))) {
+      setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+      return;
+    }
+    if (value.length < 5) {
+      setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+      return;
+    }
+  }
+  if (field === "amount" && isNaN(Number(value))) {
+    setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+    return;
+  }
+  if (field === "name" && value.length < 2) {
+    setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+    return;
+  }
+  setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: false } }));
+}
+
 /**
  * Table Props
  * @interface TableProps
@@ -218,7 +287,7 @@ interface TableProps {
  */
 function Item(props: TableProps) {
   const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
-  const selected = areItemselected(props.table, props.reservation[0]);
+  const selected = areItemSelected(props.table, props.reservation[0]);
   return (
     <Pressable
       style={selected ? { ...styles.item, backgroundColor: "blue" } : disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
@@ -264,7 +333,7 @@ function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: num
  * @param {Reservation} reservation
  * @returns {boolean}
  */
-function areItemselected(table: Table, reservation: Reservation): boolean {
+function areItemSelected(table: Table, reservation: Reservation): boolean {
   if (reservation.tables) {
     for (const key in reservation.tables) {
       if (reservation.tables[key].id === table.id) {

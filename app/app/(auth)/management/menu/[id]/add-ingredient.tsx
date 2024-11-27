@@ -8,12 +8,16 @@ import {
   TextInput,
   FlatList,
 } from "react-native";
-import { RawMaterial_MenuItems } from "../../../../../models/MenuModel";
-import { StockItemModel } from "../../../../../models/StorageModel";
+
+import { SafeAreaView } from "react-native-safe-area-context";
+
 import { useStock } from "@/hooks/useStock";
 import { useThemeColor } from "@/hooks/useThemeColor";
+
 import SearchBar from "@/components/SearchBar";
-import { SafeAreaView } from "react-native-safe-area-context";
+
+import { RawMaterial_MenuItems } from "@/models/MenuModel";
+import { StockItemModel } from "@/models/StorageModel";
 
 interface AddIngredientModalProps {
   onClose: () => void;

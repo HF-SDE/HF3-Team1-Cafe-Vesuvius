@@ -6,10 +6,13 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useState } from "react";
+
 import { useNavigation } from "@react-navigation/native";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+
 import TemplateLayout from "@/components/TemplateLayout";
+
 import {
   LineChart,
   BarChart,
@@ -18,7 +21,6 @@ import {
   ContributionGraph,
   StackedBarChart,
 } from "react-native-chart-kit";
-import { screensEnabled } from "react-native-screens";
 
 export default function StatsPage() {
   const BackgroundColor = useThemeColor({}, "background");
@@ -34,11 +36,7 @@ export default function StatsPage() {
     backgroundGradientFrom: PrimaryColor,
     backgroundGradientTo: PrimaryColor,
     decimalPlaces: 2,
-    // color: (opacity = 1) => `rgba(255, 000, 000, ${opacity})`
-    // color: (opacity = 1) => `(SecondaryColor, ${opacity})`,
     color: (opacity = 1) => SecondaryColor,
-    // labelColor: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-    // labelColor: (opacity = 1) => `rgba ${opacity})`,
     labelcolor: (opacity = 1) => SecondaryColor,
     style: {
       borderRadius: 16,
@@ -100,7 +98,7 @@ export default function StatsPage() {
           }}
           width={Dimensions.get("window").width - 40}
           height={220}
-          yAxisLabel="$"
+          yAxisLabel=""
           chartConfig={chartConfig}
           bezier
           style={styles.chart}
@@ -119,6 +117,8 @@ export default function StatsPage() {
           height={220}
           chartConfig={chartConfig}
           style={styles.chart}
+          yAxisLabel=""
+          yAxisSuffix=""
         />
 
         <PieChart
@@ -138,21 +138,6 @@ export default function StatsPage() {
           height={220}
           strokeWidth={16}
           radius={32}
-          chartConfig={chartConfig}
-          style={styles.chart}
-        />
-
-        <ContributionGraph
-          values={[
-            { date: "2023-11-01", count: 1 },
-            { date: "2023-11-02", count: 3 },
-            { date: "2023-11-03", count: 2 },
-            { date: "2023-11-04", count: 4 },
-          ]}
-          endDate={new Date("2023-11-30")}
-          numDays={30}
-          width={Dimensions.get("window").width - 40}
-          height={220}
           chartConfig={chartConfig}
           style={styles.chart}
         />

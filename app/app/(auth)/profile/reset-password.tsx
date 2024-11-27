@@ -1,19 +1,19 @@
 import React, { useState } from "react";
-import { StatusBar } from "expo-status-bar";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-//import apiClient from "../../../utils/apiClient"; // Import your API client
-import { useUserProfile } from "@/hooks/useUserProfile"; // Import the hook
-import PasswordInput from "../../../components/PasswordInput";
 
-import { Buffer } from "buffer";
+import { StatusBar } from "expo-status-bar";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useUserProfile } from "@/hooks/useUserProfile";
+
+import PasswordInput from "@/components/PasswordInput";
+
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ModalScreenProps {
@@ -21,7 +21,7 @@ interface ModalScreenProps {
 }
 
 export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
-  const { resetPassword } = useUserProfile(); // Use the hook
+  const { resetPassword } = useUserProfile();
 
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
@@ -45,11 +45,9 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     }
 
     try {
-      console.log(oldPassword + newPassword);
-
       const response = await resetPassword(oldPassword, newPassword);
       if (response === "success") {
-        onClose(); // Close the modal on success
+        onClose();
       } else {
         setErrorMessage(response || "An error occurred.");
       }
@@ -69,33 +67,18 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
       <PasswordInput
         value={oldPassword}
         onChangeText={setOldPassword}
-        //isInvalid={isPasswordEmpty}
-        //onSubmitEditing={handleLogin}
-        backgroundColor={BackgroundColor}
-        borderColor={PrimaryColor}
-        textColor={PrimaryColor}
         iconColor={SecondaryColor}
         placeholder="Old Password"
       />
       <PasswordInput
         value={newPassword}
         onChangeText={setNewPassword}
-        //isInvalid={isPasswordEmpty}
-        //onSubmitEditing={handleLogin}
-        backgroundColor={BackgroundColor}
-        borderColor={PrimaryColor}
-        textColor={PrimaryColor}
         iconColor={SecondaryColor}
         placeholder="New Password"
       />
       <PasswordInput
         value={confirmPassword}
         onChangeText={setConfirmPassword}
-        //isInvalid={isPasswordEmpty}
-        //onSubmitEditing={handleLogin}
-        backgroundColor={BackgroundColor}
-        borderColor={PrimaryColor}
-        textColor={PrimaryColor}
         iconColor={SecondaryColor}
         placeholder="Confirm New Password"
       />
@@ -166,7 +149,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    // color: "#fff",
     fontWeight: "bold",
   },
   errorText: {

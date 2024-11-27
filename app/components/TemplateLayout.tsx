@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import { StyleSheet, SafeAreaView, Text, View } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -59,14 +59,15 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   }
 
   return (
-    <SafeAreaView
-      style={[
-        styles.container,
-        { backgroundColor: BackgroundColor, borderColor: BackgroundColor },
-      ]}
-    >
-      {children}
-    </SafeAreaView>
+      <SafeAreaView
+        style={[
+          styles.container,
+          { backgroundColor: BackgroundColor, borderColor: BackgroundColor },
+        ]}
+      >
+        {children}
+
+      </SafeAreaView>
   );
 };
 
