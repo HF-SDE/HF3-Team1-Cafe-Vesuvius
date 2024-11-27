@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   ListRenderItemInfo,
   Modal,
+  FlatList,
 } from "react-native";
 import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 
@@ -22,6 +23,7 @@ import AddButton from "@/components/AddButton";
 import SaveResetButton from "@/components/SaveResetButton";
 import TemplateLayout from "@/components/TemplateLayout";
 import CheckPermission from "@/components/CheckPermission";
+import Pagination from "@/components/Pagination";
 
 import { StockItemModel } from "../../../../models/StorageModel";
 
@@ -40,8 +42,10 @@ export default function ManageUsersPage() {
   const AccentColor = useThemeColor({}, "accent");
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(3);
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
+
+  const totalPages = Math.ceil((stock?.length || 0) / itemsPerPage);
 
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
@@ -65,6 +69,23 @@ export default function ManageUsersPage() {
 
     checkPermissions();
   }, []);
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      scrollToTop();
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      scrollToTop();
+    }
+  };
+  const scrollToTop = () => {
+    //listViewRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
 
   const handleAddEditStockItem = useCallback(
     async (id?: string) => {
@@ -109,7 +130,6 @@ export default function ManageUsersPage() {
     setQuantities((prev) => {
       const currentQuantity = Number(prev[itemId]) || 0;
 
-      // Ensure quantity doesn't exceed 9999
       const newQuantity = Math.min(currentQuantity + 1, 9999);
 
       return {
@@ -174,16 +194,12 @@ export default function ManageUsersPage() {
         return;
       }
 
-      console.log(text);
-
       const parsedValue = parseFloat(text);
-      console.log(parsedValue);
 
       if (isNaN(parsedValue)) {
         setQuantities((prev) => ({ ...prev, [itemId]: "0" }));
         return;
       }
-      console.log(isLoading);
 
       const item = stock?.find((item) => item.id === itemId);
 
@@ -364,6 +380,9 @@ export default function ManageUsersPage() {
           setSearchQuery={setSearchQuery}
           placeholder="Search for item"
         />
+        <Text style={[styles.pageIndicator, { color: TextColor }]}>
+          Page {currentPage} of {totalPages}
+        </Text>
         {isLoading ? (
           <Text style={[styles.loadingText, { color: TextColor }]}>
             Loading...
@@ -377,6 +396,7 @@ export default function ManageUsersPage() {
             data={paginatedData}
             renderItem={renderItem}
             renderHiddenItem={(data, rowMap) => renderHiddenItem(data, rowMap)}
+            scrollsToTop={true}
             leftOpenValue={100}
             rightOpenValue={-100}
             stopLeftSwipe={150}
@@ -398,6 +418,12 @@ export default function ManageUsersPage() {
             }}
           />
         )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPrevPage={handlePrevPage}
+          onNextPage={handleNextPage}
+        />
         {!hasChanges && (
           <AddButton
             onPress={() => handleAddEditStockItem()}
@@ -548,5 +574,10 @@ const styles = StyleSheet.create({
 
     padding: 10,
     borderRadius: 10,
+  },
+  pageIndicator: {
+    fontSize: 16,
+    textAlign: "right",
+    marginBottom: 5,
   },
 });
