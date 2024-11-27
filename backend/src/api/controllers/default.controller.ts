@@ -11,7 +11,7 @@ function getModel(req: Request): prismaModels {
   return req.baseUrl.replace('/', '') as prismaModels;
 }
 
-type Config = Record<prismaModels, object>;
+type Config = Record<prismaModels, Record<string, unknown>>;
 const config: Config = configWithoutType as Config;
 
 /**
@@ -21,13 +21,11 @@ const config: Config = configWithoutType as Config;
  */
 export function getAll(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
-    const id = (req.params.id || req.query.id) as string | undefined;
-
     if (!model) model = getModel(req);
 
-    const modelConfig = config[model] ?? {};
+    const modelConfig = req.config || { ...config[model], where: req.query };
 
-    const response = await DefaultService.getAll(model, { id, ...modelConfig });
+    const response = await DefaultService.getAll(model, modelConfig);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };

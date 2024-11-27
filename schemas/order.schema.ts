@@ -20,3 +20,16 @@ export default Joi.object<OrderSchema>({
     .min(1)
     .required(),
 });
+
+interface AdditionalSearchQuery {
+  tableNumber?: number;
+  status?: string;
+}
+
+export const search = Joi.object<
+  Prisma.OrderWhereInput & AdditionalSearchQuery
+>({
+  id: UuidSchema.optional(),
+  tableNumber: Joi.number().optional(),
+  status: Joi.string().valid("cook", "completed", "deliver").optional(),
+}).options({ allowUnknown: false });
