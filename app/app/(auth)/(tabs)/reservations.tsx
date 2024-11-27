@@ -98,7 +98,7 @@ export default function ReservationsOverview(): ReactElement {
             data: section.data.filter((reservation) => reservation.email.toLowerCase().includes(text)),
           }
         }
-        if (text.includes("+")) {
+        if (text.includes("+") || !isNaN(Number(text))) {
           return {
             title: section.title,
             data: section.data.filter((reservation) => reservation.phone.toLowerCase().includes(text)),
@@ -145,8 +145,7 @@ export default function ReservationsOverview(): ReactElement {
           animationType="none"
           transparent={true}
           visible={isCreateModalVisible}
-          onRequestClose={() => setCreateModalVisible(false)} // Close modal on Android back button
-          
+          onRequestClose={() => setCreateModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
             <View
@@ -172,7 +171,6 @@ export default function ReservationsOverview(): ReactElement {
           </View>
         </Modal>
       </SafeAreaView>
-
     </TemplateLayout>
 
   );
