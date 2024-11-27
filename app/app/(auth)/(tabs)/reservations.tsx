@@ -76,9 +76,9 @@ export default function ReservationsOverview(): ReactElement {
         } />
         <Card.Content>
           <Text style={{ color: "white" }}>{dayjs(item.reservationTime).format("DD/MM/YYYY HH:mm")}</Text>
-          <Text style={{ color: "white" }}>Tables:
-            {item.tables ? item.tables.map((i) => (
-              i.number
+          <Text style={{ color: "white" }}>Tables:&nbsp;
+            {item.Tables ? item.Tables.map((i) => (
+              i.number + " "
             )) : null}
           </Text>
         </Card.Content>
@@ -112,6 +112,7 @@ export default function ReservationsOverview(): ReactElement {
       setReservationsData(filteredData);
       setReservationsLoading(false);
     } else {
+      console.log("hey")
       setReservationsData(sortReservations(reservations!));
     }
     setReservationsLoading(false);
@@ -121,7 +122,10 @@ export default function ReservationsOverview(): ReactElement {
   return (
     <TemplateLayout pageName="ReservationPage">
       <SafeAreaView style={[styles.container]}>
-        <Searchbar value={searchQuery} placeholder="Search" loading={reservationsLoading} onChange={(e) => onChangeSearch(e.nativeEvent.text)} />
+        <Searchbar value={searchQuery} placeholder="Search" loading={reservationsLoading} onChange={(e) => onChangeSearch(e.nativeEvent.text)} onClearIconPress={() => {
+          setReservationsData(sortReservations(reservations!))
+          setSearchQuery("");
+        }} />
         <SectionList
           sections={reservationsData || []}
           renderItem={renderReservationItem}

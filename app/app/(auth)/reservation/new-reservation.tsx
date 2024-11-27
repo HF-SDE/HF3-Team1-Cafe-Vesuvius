@@ -48,7 +48,7 @@ interface TextInputs {
  * @returns {ReactElement}
  */
 export default function NewReservationModal({ onClose, tables }: ModalScreenProps): ReactElement {
-  const [reservation, setReservations] = useState<Reservation>({ email: "", name: "", amount: 2, phone: "", reservationTime: dayjs().toDate(), tables: [] });
+  const [reservation, setReservations] = useState<Reservation>({ email: "", name: "", amount: 2, phone: "", reservationTime: dayjs().toDate(), Tables: [] });
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const [tableSelect, setTableSelect] = useState<number>(0);
@@ -94,7 +94,7 @@ export default function NewReservationModal({ onClose, tables }: ModalScreenProp
       amount: Number(reservation.amount),
       phone: reservation.phone,
       reservationTime: reservation.reservationTime,
-      tableIds: reservation.tables?.map((table) => table.id),
+      tableIds: reservation.Tables?.map((table) => table.id),
     };
 
     try {
@@ -292,7 +292,7 @@ function Item(props: TableProps) {
     <Pressable
       style={selected ? { ...styles.item, backgroundColor: "blue" } : disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
       onPress={() => {
-        props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables!, props.table] });
+        props.reservation[1]({ ...props.reservation[0], Tables: [...props.reservation[0].Tables!, props.table] });
         props.setTableSelect(props.tableSelect + 1)
       }}
       disabled={selected || disabled}>
@@ -311,9 +311,9 @@ function Item(props: TableProps) {
  * @returns {boolean} - True if the item should be disabled, false otherwise
  */
 function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: number, action: [Reservation, Dispatch<SetStateAction<Reservation>>]): boolean {
-  if (action[0].tables) {
-    for (const key in action[0].tables) {
-      if (action[0].tables[key].id === table.id) {
+  if (action[0].Tables) {
+    for (const key in action[0].Tables) {
+      if (action[0].Tables[key].id === table.id) {
         return true;
       }
     }
@@ -334,9 +334,9 @@ function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: num
  * @returns {boolean}
  */
 function areItemSelected(table: Table, reservation: Reservation): boolean {
-  if (reservation.tables) {
-    for (const key in reservation.tables) {
-      if (reservation.tables[key].id === table.id) {
+  if (reservation.Tables) {
+    for (const key in reservation.Tables) {
+      if (reservation.Tables[key].id === table.id) {
         return true;
       }
     }
