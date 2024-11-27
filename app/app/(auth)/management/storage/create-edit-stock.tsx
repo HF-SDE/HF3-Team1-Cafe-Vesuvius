@@ -75,7 +75,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
     }
   };
 
-  const handleChange = (field: string, value: any) => {
+  const handleChange = (field: string, value: string) => {
     if (value !== stockItem[field]) {
       setChangedFields((prev) => ({
         ...prev,
