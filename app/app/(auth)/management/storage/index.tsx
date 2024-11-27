@@ -1,3 +1,4 @@
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -6,17 +7,12 @@ import {
   TouchableOpacity,
   ListRenderItemInfo,
   Modal,
-  FlatList,
 } from "react-native";
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 
-import { RelativePathString } from "expo-router";
-import { RowMap, SwipeListView } from "react-native-swipe-list-view";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStock } from "@/hooks/useStock";
-
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import SearchBar from "@/components/SearchBar";
 import AddButton from "@/components/AddButton";
@@ -25,13 +21,13 @@ import TemplateLayout from "@/components/TemplateLayout";
 import CheckPermission from "@/components/CheckPermission";
 import Pagination from "@/components/Pagination";
 
-import { StockItemModel } from "../../../../models/StorageModel";
+import { StockItemModel } from "@/models/StorageModel";
 
 import { PermissionManager } from "@/utils/permissionManager";
 
 import EditCreateStockModal from "./create-edit-stock";
 
-import InputSpinner from "react-native-input-spinner";
+import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
   const { stock, isLoading, error, updateStock } = useStock();
@@ -99,7 +95,7 @@ export default function ManageUsersPage() {
       setItemInModal(itemToShow);
       setIsModalVisible(true);
     },
-    [stock] // Ensure the callback updates if stock changes
+    [stock]
   );
 
   const handleDeleteStockItem = useCallback(() => {}, []);
@@ -167,7 +163,6 @@ export default function ManageUsersPage() {
       if (decimalIndex !== -1 && text.length - decimalIndex > 3) {
         // Limit to two decimals
         return;
-        //text = text.substring(0, decimalIndex + 3);
       }
       if (text === "-" || text === "0-") {
         setQuantities((prev) => ({ ...prev, [itemId]: "-" }));
@@ -572,7 +567,6 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400,
     minHeight: 350,
-    // backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
   },

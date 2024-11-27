@@ -1,33 +1,24 @@
 import React, { useState, useEffect } from "react";
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  Dimensions,
-  ScrollView,
-  TouchableOpacity,
-  TextInput as RNTextInput,
-  NativeSyntheticEvent,
-  TextInputChangeEventData,
-} from "react-native";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
+import { StyleSheet, View, Text } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useMenu } from "@/hooks/useMenu";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
-import TextIconInput from "@/components/TextIconInput";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TemplateLayout from "@/components/TemplateLayout";
 import MenuTabView from "@/components/MenuTabView";
+import { RouteProp } from "@react-navigation/native";
 
 import { MenuModel } from "../../../../../models/MenuModel";
-import AddButton from "@/components/AddButton";
+
+type EditCreateUserRouteParams = {
+  id: string | "new" | undefined;
+};
 
 export default function EditCreateUserPage() {
-  const route = useRoute();
-  const { id } = route.params || {};
+  const route =
+    useRoute<RouteProp<{ params: EditCreateUserRouteParams }, "params">>();
+  const { id } = route.params || { id: undefined };
   const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
@@ -46,14 +37,9 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
-  const [newCategory, setNewCategory] = useState("");
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
-
-  const handleChangeCategory = (category: string) => {
-    setNewCategory(category);
-  };
 
   useEffect(() => {
     if (menu) {
@@ -77,9 +63,7 @@ export default function EditCreateUserPage() {
     // Update or create logic here
   };
 
-  const handleChange = (field: string, value: string) => {
-    console.log(field + " - " + value);
-
+  const handleChange = (field: keyof MenuModel, value: string) => {
     if (value !== menuItem[field]) {
       setChangedFields((prev) => ({ ...prev, [field]: value }));
     }
@@ -128,8 +112,6 @@ export default function EditCreateUserPage() {
 
           <View style={{ minHeight: "70%" }}>
             <MenuTabView
-              newCategory={newCategory} // Pass the state here
-              setNewCategory={handleChangeCategory} // Pass the setter here
               categories={menuItem.category}
               ingredients={menuItem.RawMaterial_MenuItems}
               onAddCategory={(category) => {

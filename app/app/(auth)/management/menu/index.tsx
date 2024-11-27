@@ -1,23 +1,25 @@
+import { useState } from "react";
 import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import TemplateLayout from "@/components/TemplateLayout";
-import { useMenu } from "@/hooks/useMenu";
-import AddButton from "@/components/AddButton";
+
 import { router } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
+
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
-import SearchBar from "@/components/SearchBar"; // Import the SearchBar
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useMenu } from "@/hooks/useMenu";
 
-import { MenuModel } from "../../../../models/MenuModel";
+import TemplateLayout from "@/components/TemplateLayout";
+import AddButton from "@/components/AddButton";
+import SearchBar from "@/components/SearchBar";
+
+import { MenuModel } from "@/models/MenuModel";
 
 export default function ManageUsersPage() {
   const { menu, isLoading, error } = useMenu();
@@ -25,7 +27,6 @@ export default function ManageUsersPage() {
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-  const navigation = useNavigation();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -114,7 +115,7 @@ const styles = StyleSheet.create({
   },
   userItem: {
     padding: 15,
-    borderRadius: 10, // Add rounded corners here
+    borderRadius: 10,
     marginBottom: 15,
     flex: 1,
     flexDirection: "row",
