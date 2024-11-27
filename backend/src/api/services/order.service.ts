@@ -76,7 +76,7 @@ export async function createOrder(data: IData): Promise<APIResponse<any>> {
 
     return {
       status: Status.Created,
-      message: 'Order created',
+      message: 'Created new order',
     };
   } catch (error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
