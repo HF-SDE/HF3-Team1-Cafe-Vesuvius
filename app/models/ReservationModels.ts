@@ -11,3 +11,8 @@ export interface Reservation {
   tables?: Table[];
   tableIds?: string[];
 }
+
+export interface ReservationSections {
+  title: string;
+  data: Reservation[];
+}

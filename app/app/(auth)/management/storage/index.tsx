@@ -29,6 +29,8 @@ import { PermissionManager } from "@/utils/permissionManager";
 
 import EditCreateStockModal from "./create-edit-stock";
 
+import InputSpinner from "react-native-input-spinner";
+
 export default function ManageUsersPage() {
   const { stock, isLoading, error, updateStock } = useStock();
   const BackgroundColor = useThemeColor({}, "background");
@@ -38,6 +40,9 @@ export default function ManageUsersPage() {
   const AccentColor = useThemeColor({}, "accent");
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [currentPage, setCurrentPage] = useState(3);
+  const itemsPerPage = 20;
+
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const [canDelete, setCanDelete] = useState(false);
@@ -100,12 +105,18 @@ export default function ManageUsersPage() {
   const resetChanges = useCallback(() => {
     setQuantities({});
   }, []);
-
   const handleIncrease = useCallback((itemId: string) => {
-    setQuantities((prev) => ({
-      ...prev,
-      [itemId]: ((Number(prev[itemId]) || 0) + 1).toString(),
-    }));
+    setQuantities((prev) => {
+      const currentQuantity = Number(prev[itemId]) || 0;
+
+      // Ensure quantity doesn't exceed 9999
+      const newQuantity = Math.min(currentQuantity + 1, 9999);
+
+      return {
+        ...prev,
+        [itemId]: newQuantity.toString(),
+      };
+    });
   }, []);
 
   const handleDecrease = useCallback(
@@ -118,7 +129,7 @@ export default function ManageUsersPage() {
           Number(
             Math.max(
               Number(prev[itemId]) || 0,
-              item ? Number(item.quantity) * -1 || 0 : 0
+              item ? Number(item.quantity) * -1 + 1 || 0 : 0
             )
           ) - 1
         ).toString(),
@@ -129,33 +140,65 @@ export default function ManageUsersPage() {
 
   const handleQuantityChange = useCallback(
     (itemId: string, text: string) => {
+      text = text.replace(",", ".");
+      // Check if the text already has a period or has two digits after the period
+
+      const decimalIndex = text.indexOf(".");
+      if (decimalIndex !== -1 && text.length - decimalIndex > 3) {
+        // Limit to two decimals
+        return;
+        //text = text.substring(0, decimalIndex + 3);
+      }
       if (text === "-" || text === "0-") {
         setQuantities((prev) => ({ ...prev, [itemId]: "-" }));
+        return;
+      }
+      if (text === "-.") {
+        setQuantities((prev) => ({ ...prev, [itemId]: "-0." }));
         return;
       }
       if (text === "") {
         setQuantities((prev) => ({ ...prev, [itemId]: "0" }));
         return;
       }
+      if (text === ".") {
+        setQuantities((prev) => ({ ...prev, [itemId]: "0." }));
+        return;
+      }
+      if (text.split(".").length - 1 >= 2) {
+        return;
+      }
 
-      const parsedValue = parseInt(text, 10);
+      if (text.charAt(text.length - 1) === ".") {
+        setQuantities((prev) => ({ ...prev, [itemId]: text }));
+        return;
+      }
+
+      console.log(text);
+
+      const parsedValue = parseFloat(text);
+      console.log(parsedValue);
+
       if (isNaN(parsedValue)) {
         setQuantities((prev) => ({ ...prev, [itemId]: "0" }));
         return;
       }
+      console.log(isLoading);
 
-      if (!stock) {
-        return;
-      }
+      const item = stock?.find((item) => item.id === itemId);
 
-      const item = stock.find((item) => item.id === itemId);
-      if (!item || !item.quantity) return;
+      if (!item) return;
 
       const clampedValue = Math.min(
-        Math.max(parsedValue, -item.quantity),
+        Math.max(parsedValue, -(item.quantity || 0)),
         9999
       );
-      setQuantities((prev) => ({ ...prev, [itemId]: clampedValue.toString() }));
+
+      const roundedValue = Math.round(clampedValue * 100) / 100;
+
+      console.log("Setting qty");
+
+      setQuantities((prev) => ({ ...prev, [itemId]: roundedValue.toString() }));
     },
     [stock]
   );
@@ -171,85 +214,86 @@ export default function ManageUsersPage() {
       : [];
   }, [stock, searchQuery]);
 
-  const renderItem = useCallback(
-    ({ item }: { item: StockItemModel }) => {
-      const adjustedQty = quantities[item.id as string]
-        ? quantities[item.id as string].toString()
-        : "0";
-      const newStock = (item.quantity || 0) + Number(adjustedQty);
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredUsers.slice(start, end);
+  }, [filteredUsers, currentPage, itemsPerPage]);
 
-      return (
-        <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
-          <View>
-            <Text style={[styles.itemName, { color: BackgroundColor }]}>
-              {item.name}
-            </Text>
-            <Text style={[styles.itemStock, { color: SecondaryColor }]}>
-              Stock: {item.quantity} {item.unit}
+  const renderItem = ({ item }: { item: StockItemModel }) => {
+    const adjustedQty = quantities[item.id as string]
+      ? quantities[item.id as string].toString()
+      : "0";
+    const newStock = (item.quantity || 0) + Number(adjustedQty);
+
+    return (
+      <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
+        <View>
+          <Text style={[styles.itemName, { color: BackgroundColor }]}>
+            {item.name}
+          </Text>
+          <Text style={[styles.itemStock, { color: SecondaryColor }]}>
+            Stock: {item.quantity} {item.unit}
+          </Text>
+        </View>
+        <CheckPermission requiredPermission={["stock:update"]}>
+          <View style={styles.inputContainer}>
+            <View style={styles.itemRow}>
+              <TouchableOpacity
+                onPress={() => handleDecrease(item.id as string)}
+              >
+                <FontAwesome6
+                  name="square-minus"
+                  size={45}
+                  color={SecondaryColor}
+                />
+              </TouchableOpacity>
+              <TextInput
+                style={[
+                  styles.textInput,
+                  { color: SecondaryColor, borderColor: SecondaryColor },
+                ]}
+                value={adjustedQty}
+                keyboardType="decimal-pad"
+                onChangeText={(text) =>
+                  handleQuantityChange(item.id as string, text)
+                }
+              />
+              <TouchableOpacity
+                onPress={() => handleIncrease(item.id as string)}
+              >
+                <FontAwesome6
+                  name="square-plus"
+                  size={45}
+                  color={SecondaryColor}
+                />
+              </TouchableOpacity>
+            </View>
+            <Text
+              style={[
+                styles.itemStock,
+                {
+                  color:
+                    newStock !== item.quantity ? SecondaryColor : "transparent",
+                  visibility: newStock !== item.quantity ? "visible" : "hidden",
+                },
+              ]}
+            >
+              New stock: {newStock} {item.unit}
             </Text>
           </View>
-          <CheckPermission requiredPermission={["stock:update"]}>
-            <View style={styles.inputContainer}>
-              <View style={styles.itemRow}>
-                <TouchableOpacity
-                  onPress={() => handleDecrease(item.id as string)}
-                >
-                  <FontAwesome6
-                    name="square-minus"
-                    size={45}
-                    color={SecondaryColor}
-                  />
-                </TouchableOpacity>
-                <TextInput
-                  style={[
-                    styles.textInput,
-                    { color: SecondaryColor, borderColor: SecondaryColor },
-                  ]}
-                  value={adjustedQty}
-                  keyboardType="number-pad"
-                  onChangeText={(text) =>
-                    handleQuantityChange(item.id as string, text)
-                  }
-                />
-                <TouchableOpacity
-                  onPress={() => handleIncrease(item.id as string)}
-                >
-                  <FontAwesome6
-                    name="square-plus"
-                    size={45}
-                    color={SecondaryColor}
-                  />
-                </TouchableOpacity>
-              </View>
-              <Text
-                style={[
-                  styles.itemStock,
-                  {
-                    color:
-                      newStock !== item.quantity
-                        ? SecondaryColor
-                        : "transparent",
-                    visibility:
-                      newStock !== item.quantity ? "visible" : "hidden",
-                  },
-                ]}
-              >
-                New stock: {newStock} {item.unit}
-              </Text>
-            </View>
-          </CheckPermission>
-        </View>
-      );
-    },
-    [quantities, PrimaryColor, BackgroundColor, SecondaryColor]
-  );
+        </CheckPermission>
+      </View>
+    );
+  };
 
   const renderHiddenItem = (
     data: ListRenderItemInfo<any>,
     rowMap: RowMap<any>
   ) => {
-    // rowMap[data.item.id] = rowMap[data.item.id] || data.item.id;
-
+    if (!stock) {
+      return <Text>Loading</Text>;
+    }
     return (
       <View style={styles.hiddenItemContainer}>
         <TouchableOpacity
@@ -330,7 +374,7 @@ export default function ManageUsersPage() {
           </Text>
         ) : (
           <SwipeListView
-            data={filteredUsers}
+            data={paginatedData}
             renderItem={renderItem}
             renderHiddenItem={(data, rowMap) => renderHiddenItem(data, rowMap)}
             leftOpenValue={100}

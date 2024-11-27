@@ -1,12 +1,12 @@
-import React, { Dispatch, SetStateAction, useCallback, useState } from "react";
+import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,
   StyleSheet,
   Text,
   View,
-  TouchableOpacity,
   FlatList,
+  Pressable,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
@@ -23,7 +23,13 @@ interface ModalScreenProps {
   tables: Table[];
 }
 
-export default function NewReservationModal({ onClose, tables}: ModalScreenProps) {
+/**
+ * New reservation modal
+ * @param {() => void} onClose - On close function
+ * @param {Table[]} tables - Tables
+ * @returns {ReactElement}
+ */
+export default function NewReservationModal({ onClose, tables }: ModalScreenProps): ReactElement {
   const [reservation, setReservations] = useState<Reservation>({ email: "", name: "", amount: 2, phone: "", reservationTime: dayjs().toDate(), tables: [] });
   const [datePicker, setDatePicker] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -39,7 +45,11 @@ export default function NewReservationModal({ onClose, tables}: ModalScreenProps
   const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "amount"], reservation);
   const disabledCreateButton = tableSelect !== tableSelectNeed;
 
-  async function handleCreate() {
+  /**
+   * Handle the create reservation
+   * @returns {Promise<void>}
+   */
+  async function handleCreate(): Promise<void> {
     try {
       const response = await createReservation();
       if (response === "success") {
@@ -51,7 +61,11 @@ export default function NewReservationModal({ onClose, tables}: ModalScreenProps
       setErrorMessage("An error occurred while create reservation.");
     }
   };
-
+  
+  /**
+   * Create a reservation
+   * @returns {Promise<string>}
+   */
   async function createReservation(): Promise<string> {
     if (!reservation) return "Something went wrong on our end. Please contact support";
 
@@ -154,29 +168,30 @@ export default function NewReservationModal({ onClose, tables}: ModalScreenProps
 
       }
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
+        <Pressable
           style={[styles.cancelButton, { backgroundColor: "#969696" }]}
           onPress={onClose}
+
         >
           <Text style={styles.buttonText}>cancel</Text>
-        </TouchableOpacity>
+        </Pressable>
         {page === 1
           ?
-          <TouchableOpacity
+          <Pressable
             style={[styles.mainButton, disabledButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
             onPress={() => setPage(2)}
             disabled={disabledButton}
           >
             <Text style={styles.buttonText}>Next</Text>
-          </TouchableOpacity>
+          </Pressable>
           :
-          <TouchableOpacity
+          <Pressable
             style={[styles.mainButton, disabledCreateButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
             onPress={handleCreate}
             disabled={disabledCreateButton}
           >
             <Text style={styles.buttonText}>Create</Text>
-          </TouchableOpacity>
+          </Pressable>
         }
       </View>
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
@@ -184,6 +199,11 @@ export default function NewReservationModal({ onClose, tables}: ModalScreenProps
   );
 }
 
+/**
+ * Table Props
+ * @interface TableProps
+ * @typedef {TableProps}
+ */
 interface TableProps {
   table: Table;
   tableSelect: number;
@@ -191,7 +211,6 @@ interface TableProps {
   setTableSelect: Dispatch<SetStateAction<number>>;
   reservation: [Reservation, Dispatch<SetStateAction<Reservation>>]
 }
-
 
 /**
  * The item component for the flatlist
@@ -201,7 +220,7 @@ function Item(props: TableProps) {
   const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
   const selected = areItemselected(props.table, props.reservation[0]);
   return (
-    <TouchableOpacity
+    <Pressable
       style={selected ? { ...styles.item, backgroundColor: "blue" } : disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
       onPress={() => {
         props.reservation[1]({ ...props.reservation[0], tables: [...props.reservation[0].tables!, props.table] });
@@ -209,7 +228,7 @@ function Item(props: TableProps) {
       }}
       disabled={selected || disabled}>
       <Text>{props.table.number}</Text>
-    </TouchableOpacity>
+    </Pressable>
   );
 }
 
@@ -238,6 +257,13 @@ function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: num
   return true;
 }
 
+
+/**
+ * Check if the item is selected
+ * @param {Table} table
+ * @param {Reservation} reservation
+ * @returns {boolean}
+ */
 function areItemselected(table: Table, reservation: Reservation): boolean {
   if (reservation.tables) {
     for (const key in reservation.tables) {

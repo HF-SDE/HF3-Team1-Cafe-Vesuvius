@@ -110,15 +110,16 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
           onChangeText={(value) => handleChange("name", value)}
           clearTextOnFocus={false}
         />
-
         <InputSpinner
+          type="float"
+          decimalSeparator="."
           step={1}
           color={PrimaryColor}
           textColor={PrimaryColor}
           value={stockItem.quantity}
           onChange={quantityChange}
-          leftButton={<FontAwesome6 name="square-minus" size={30} />}
-          rightButton={<FontAwesome6 name="square-plus" size={30} />}
+          //leftButton={<FontAwesome6 name="square-minus" size={30} />}
+          //rightButton={<FontAwesome6 name="square-plus" size={30} />}
           inputStyle={{ borderColor: PrimaryColor }}
           fontSize={20}
           buttonStyle={{
@@ -131,11 +132,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
           buttonTextColor={PrimaryColor}
           buttonFontSize={40}
           style={styles.spinner} // Apply compact styling here
-        >
-          <View>
-            <Text>{stockItem.unit}</Text>
-          </View>
-        </InputSpinner>
+        ></InputSpinner>
 
         <TextInput
           style={styles.input}
