@@ -112,7 +112,6 @@ export default function ReservationsOverview(): ReactElement {
       setReservationsData(filteredData);
       setReservationsLoading(false);
     } else {
-      console.log("hey")
       setReservationsData(sortReservations(reservations!));
     }
     setReservationsLoading(false);
