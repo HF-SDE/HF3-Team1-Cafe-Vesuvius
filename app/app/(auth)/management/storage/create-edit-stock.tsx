@@ -1,9 +1,11 @@
 import {
+  KeyboardAvoidingView,
   NativeSyntheticEvent,
   StyleSheet,
   Text,
   TextInputChangeEventData,
   View,
+  Platform,
 } from "react-native";
 import { useState, useEffect } from "react";
 import { useStock } from "@/hooks/useStock";
@@ -60,7 +62,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
     } else {
       console.log("Update/Create");
 
-      if (id !== "new") {
+      if (stockItem.id) {
         const updatedFields = { id: stockItem.id, ...changedFields };
         updateStock(updatedFields);
       } else {
@@ -101,63 +103,64 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   };
 
   return (
-    <SafeAreaView>
-      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-        <TextInput
-          style={styles.input}
-          label="Name"
-          value={stockItem.name}
-          onChangeText={(value) => handleChange("name", value)}
-          clearTextOnFocus={false}
-        />
-        <InputSpinner
-          type="float"
-          decimalSeparator="."
-          step={1}
-          color={PrimaryColor}
-          textColor={PrimaryColor}
-          value={stockItem.quantity}
-          onChange={quantityChange}
-          //leftButton={<FontAwesome6 name="square-minus" size={30} />}
-          //rightButton={<FontAwesome6 name="square-plus" size={30} />}
-          inputStyle={{ borderColor: PrimaryColor }}
-          fontSize={20}
-          buttonStyle={{
-            borderRadius: 10,
-            borderWidth: 3,
-            backgroundColor: "transparent",
-            borderColor: PrimaryColor,
-            padding: 5,
-          }}
-          buttonTextColor={PrimaryColor}
-          buttonFontSize={40}
-          style={styles.spinner} // Apply compact styling here
-        ></InputSpinner>
+    <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={[styles.container, { backgroundColor: BackgroundColor }]}
+    >
+      <TextInput
+        style={styles.input}
+        label="Name"
+        value={stockItem.name}
+        onChangeText={(value) => handleChange("name", value)}
+        clearTextOnFocus={false}
+      />
+      <InputSpinner
+        type="float"
+        decimalSeparator="."
+        step={1}
+        color={PrimaryColor}
+        textColor={PrimaryColor}
+        value={stockItem.quantity}
+        onChange={quantityChange}
+        //leftButton={<FontAwesome6 name="square-minus" size={30} />}
+        //rightButton={<FontAwesome6 name="square-plus" size={30} />}
+        inputStyle={{ borderColor: PrimaryColor }}
+        fontSize={20}
+        buttonStyle={{
+          borderRadius: 10,
+          borderWidth: 3,
+          backgroundColor: "transparent",
+          borderColor: PrimaryColor,
+          padding: 5,
+        }}
+        buttonTextColor={PrimaryColor}
+        buttonFontSize={40}
+        style={styles.spinner} // Apply compact styling here
+      ></InputSpinner>
 
-        <TextInput
-          style={styles.input}
-          label="Unit"
-          value={stockItem.unit}
-          onChangeText={(value) => handleChange("unit", value)}
-          clearTextOnFocus={false}
-        />
+      <TextInput
+        style={styles.input}
+        label="Unit"
+        value={stockItem.unit}
+        onChangeText={(value) => handleChange("unit", value)}
+        clearTextOnFocus={false}
+      />
 
-        <View style={styles.buttonContainer}>
-          <Button title="Cancel" onPress={onClose} />
-          <Button
-            title={stockItem.id ? "Save" : "Create"}
-            onPress={handleSave}
-          />
-        </View>
+      <View style={styles.buttonContainer}>
+        <Button title="Cancel" onPress={onClose} />
+        <Button title={stockItem.id ? "Save" : "Create"} onPress={handleSave} />
       </View>
-    </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    padding: 20,
     flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+    gap: 10,
   },
   input: {
     height: 40,
