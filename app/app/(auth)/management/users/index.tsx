@@ -12,6 +12,7 @@ import { useNavigation } from "@react-navigation/native";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useUsers } from "@/hooks/useUsers";
 import AddButton from "@/components/AddButton";
+import LoadingPage from "@/components/LoadingPage";
 import { router } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SearchBar from "@/components/SearchBar"; // Import the SearchBar
@@ -70,9 +71,7 @@ export default function ManageUsersPage() {
         />
         {/* Use the SearchBar component */}
         {isLoading ? (
-          <Text style={[styles.loadingText, { color: TextColor }]}>
-            Loading...
-          </Text>
+          <LoadingPage />
         ) : error ? (
           <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
         ) : (
@@ -125,11 +124,6 @@ const styles = StyleSheet.create({
   userEmail: {
     fontSize: 14,
     marginTop: 5,
-  },
-  loadingText: {
-    fontSize: 16,
-    textAlign: "center",
-    marginVertical: 20,
   },
   errorText: {
     fontSize: 16,
