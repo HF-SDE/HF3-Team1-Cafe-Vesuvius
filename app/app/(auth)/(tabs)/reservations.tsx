@@ -19,7 +19,8 @@ import dayjs from "dayjs";
 import { AntDesign } from "@expo/vector-icons";
 import InfoReservationModal from "../reservation/info-reservation";
 import { ReservationContext } from "@/context/ReservationContext";
-import { Card, Searchbar, Text } from "react-native-paper";
+import { Card, Text } from "react-native-paper";
+import SearchBar from "@/components/SearchBar";
 
 
 export default function ReservationsOverview(): ReactElement {
@@ -121,7 +122,7 @@ export default function ReservationsOverview(): ReactElement {
   return (
     <TemplateLayout pageName="ReservationPage">
       <SafeAreaView style={[styles.container]}>
-        <Searchbar value={searchQuery} placeholder="Search" loading={reservationsLoading} onChange={(e) => onChangeSearch(e.nativeEvent.text)} onClearIconPress={() => {
+        <SearchBar value={searchQuery} placeholder="Search" loading={reservationsLoading} onChange={(e) => onChangeSearch(e.nativeEvent.text)} onClearIconPress={() => {
           setReservationsData(sortReservations(reservations!))
           setSearchQuery("");
         }} />
