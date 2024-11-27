@@ -1,15 +1,22 @@
 import Joi from "./joi";
 
 import { UuidSchema } from "./general.schemas";
-import { Reservation } from "../backend/node_modules/.prisma/client";
+import { Reservation, Prisma } from "../backend/node_modules/.prisma/client";
 
-const schema = Joi.object<Reservation>({
-  reservationTime: Joi.date().required(),
+const schema = Joi.object<Prisma.ReservationCreateInput>({
+  reservationTime: Joi.date()
+    .greater(new Date().setHours(0, 0, 0, 0))
+    .message("{#label} should be in the future")
+    .required(),
   name: Joi.string().min(1).optional(),
   email: Joi.string().email().optional(),
   phone: Joi.string().optional(),
   amount: Joi.number().positive().required(),
-  tableIds: Joi.array().items(UuidSchema).min(1).required(),
+  Tables: Joi.object({
+    connect: Joi.array()
+      .items(Joi.object({ id: UuidSchema.required() }))
+      .optional(),
+  }).required(),
 });
 
 export default schema.or("email", "phone").messages({

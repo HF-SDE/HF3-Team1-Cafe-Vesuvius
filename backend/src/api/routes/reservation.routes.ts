@@ -8,11 +8,12 @@ import {
 } from '@controllers/default.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
+import { manageTables } from '@middlewares/reservation.mw';
 import { validateParams } from '@middlewares/validate.mw';
 
 const router = Router();
 
-router.post('/', create());
+router.post('/', manageTables, create());
 
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
