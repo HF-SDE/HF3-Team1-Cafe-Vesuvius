@@ -4,7 +4,6 @@ import {
   StyleSheet,
   Text,
   View,
-  TextInput,
   TouchableOpacity,
 } from "react-native";
 
@@ -15,14 +14,15 @@ import { useUserProfile } from "@/hooks/useUserProfile";
 
 import PasswordInput from "@/components/PasswordInput";
 
+import { SafeAreaView } from "react-native-safe-area-context";
+
 interface ModalScreenProps {
   onClose: () => void;
 }
 
 export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
-  const { resetPassword } = useUserProfile(); // Use the hook
+  const { resetPassword } = useUserProfile();
 
-  const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
@@ -34,7 +34,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
   const AccentColor = useThemeColor({}, "accent");
 
   const handleReset = async () => {
-    if (!oldPassword || !newPassword || !confirmPassword) {
+    if (!newPassword || !confirmPassword) {
       setErrorMessage("Please fill out all fields!");
       return;
     }
@@ -44,14 +44,12 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     }
 
     try {
-      console.log(oldPassword + newPassword);
-
-      const response = await resetPassword(oldPassword, newPassword);
-      if (response === "success") {
-        onClose(); // Close the modal on success
-      } else {
-        setErrorMessage(response || "An error occurred.");
-      }
+      // const response = await resetPassword(oldPassword, newPassword);
+      // if (response === "success") {
+      //   onClose();
+      // } else {
+      //   setErrorMessage(response || "An error occurred.");
+      // }
     } catch (error) {
       console.error(error);
 
@@ -60,15 +58,11 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: BackgroundColor }]}
+    >
       <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
 
-      <PasswordInput
-        value={oldPassword}
-        onChangeText={setOldPassword}
-        iconColor={SecondaryColor}
-        placeholder="Old Password"
-      />
       <PasswordInput
         value={newPassword}
         onChangeText={setNewPassword}
@@ -104,7 +98,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
       </View>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
-    </View>
+    </SafeAreaView>
   );
 }
 

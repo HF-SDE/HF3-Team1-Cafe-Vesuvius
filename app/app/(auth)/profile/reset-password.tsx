@@ -45,8 +45,6 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     }
 
     try {
-      console.log(oldPassword + newPassword);
-
       const response = await resetPassword(oldPassword, newPassword);
       if (response === "success") {
         onClose();
