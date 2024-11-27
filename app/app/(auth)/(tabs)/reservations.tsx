@@ -201,7 +201,7 @@ function sortReservations(reservations: Reservation[]): ReservationSections[] {
       }
     }
     // Check if reservation was today
-    if (dayjs(reservation.reservationTime).isAfter(dayjs().subtract(30, "minute"))) {
+    if (dayjs(reservation.reservationTime).isBefore(dayjs().subtract(30, "minute"))) {
       const section = reservationsSections.find((section) => section.title === "Was Today")
       if (section) {
         section.data.push(reservation);
