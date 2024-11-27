@@ -1,3 +1,4 @@
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   StyleSheet,
   View,
@@ -7,29 +8,26 @@ import {
   ListRenderItemInfo,
   Modal,
 } from "react-native";
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 
-import { RelativePathString } from "expo-router";
-import { RowMap, SwipeListView } from "react-native-swipe-list-view";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStock } from "@/hooks/useStock";
-
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import SearchBar from "@/components/SearchBar";
 import AddButton from "@/components/AddButton";
 import SaveResetButton from "@/components/SaveResetButton";
 import TemplateLayout from "@/components/TemplateLayout";
 import CheckPermission from "@/components/CheckPermission";
+import Pagination from "@/components/Pagination";
 
-import { StockItemModel } from "../../../../models/StorageModel";
+import { StockItemModel } from "@/models/StorageModel";
 
 import { PermissionManager } from "@/utils/permissionManager";
 
 import EditCreateStockModal from "./create-edit-stock";
 
-import InputSpinner from "react-native-input-spinner";
+import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
   const { stock, isLoading, error, updateStock } = useStock();
@@ -40,8 +38,10 @@ export default function ManageUsersPage() {
   const AccentColor = useThemeColor({}, "accent");
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(3);
+  const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
+
+  const totalPages = Math.ceil((stock?.length || 0) / itemsPerPage);
 
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
@@ -66,6 +66,23 @@ export default function ManageUsersPage() {
     checkPermissions();
   }, []);
 
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage((prev) => prev + 1);
+      scrollToTop();
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage((prev) => prev - 1);
+      scrollToTop();
+    }
+  };
+  const scrollToTop = () => {
+    //listViewRef.current?.scrollToOffset({ offset: 0, animated: true });
+  };
+
   const handleAddEditStockItem = useCallback(
     async (id?: string) => {
       if (!stock || stock.length === 0) {
@@ -78,7 +95,7 @@ export default function ManageUsersPage() {
       setItemInModal(itemToShow);
       setIsModalVisible(true);
     },
-    [stock] // Ensure the callback updates if stock changes
+    [stock]
   );
 
   const handleDeleteStockItem = useCallback(() => {}, []);
@@ -109,7 +126,6 @@ export default function ManageUsersPage() {
     setQuantities((prev) => {
       const currentQuantity = Number(prev[itemId]) || 0;
 
-      // Ensure quantity doesn't exceed 9999
       const newQuantity = Math.min(currentQuantity + 1, 9999);
 
       return {
@@ -147,7 +163,6 @@ export default function ManageUsersPage() {
       if (decimalIndex !== -1 && text.length - decimalIndex > 3) {
         // Limit to two decimals
         return;
-        //text = text.substring(0, decimalIndex + 3);
       }
       if (text === "-" || text === "0-") {
         setQuantities((prev) => ({ ...prev, [itemId]: "-" }));
@@ -174,16 +189,12 @@ export default function ManageUsersPage() {
         return;
       }
 
-      console.log(text);
-
       const parsedValue = parseFloat(text);
-      console.log(parsedValue);
 
       if (isNaN(parsedValue)) {
         setQuantities((prev) => ({ ...prev, [itemId]: "0" }));
         return;
       }
-      console.log(isLoading);
 
       const item = stock?.find((item) => item.id === itemId);
 
@@ -364,6 +375,9 @@ export default function ManageUsersPage() {
           setSearchQuery={setSearchQuery}
           placeholder="Search for item"
         />
+        <Text style={[styles.pageIndicator, { color: TextColor }]}>
+          Page {currentPage} of {totalPages}
+        </Text>
         {isLoading ? (
           <Text style={[styles.loadingText, { color: TextColor }]}>
             Loading...
@@ -377,6 +391,7 @@ export default function ManageUsersPage() {
             data={paginatedData}
             renderItem={renderItem}
             renderHiddenItem={(data, rowMap) => renderHiddenItem(data, rowMap)}
+            scrollsToTop={true}
             leftOpenValue={100}
             rightOpenValue={-100}
             stopLeftSwipe={150}
@@ -398,6 +413,12 @@ export default function ManageUsersPage() {
             }}
           />
         )}
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPrevPage={handlePrevPage}
+          onNextPage={handleNextPage}
+        />
         {!hasChanges && (
           <AddButton
             onPress={() => handleAddEditStockItem()}
@@ -545,8 +566,13 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "100%",
     maxWidth: 400,
-
+    minHeight: 350,
     padding: 10,
     borderRadius: 10,
+  },
+  pageIndicator: {
+    fontSize: 16,
+    textAlign: "right",
+    marginBottom: 5,
   },
 });

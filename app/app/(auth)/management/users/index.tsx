@@ -15,6 +15,7 @@ import AddButton from "@/components/AddButton";
 import { router } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import SearchBar from "@/components/SearchBar"; // Import the SearchBar
+import { UserProfile } from "@/models/userModels";
 
 export default function ManageUsersPage() {
   const { users, isLoading, error } = useUsers();
@@ -23,8 +24,6 @@ export default function ManageUsersPage() {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
   const AccentColor = useThemeColor({}, "accent");
-
-  const navigation = useNavigation();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -45,7 +44,7 @@ export default function ManageUsersPage() {
     router.navigate(`/management/users/${userId}`);
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = ({ item }: { item: UserProfile }) => (
     <TouchableOpacity onPress={() => handleUserPress(item.id)}>
       <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
         <View>
@@ -75,9 +74,7 @@ export default function ManageUsersPage() {
             Loading...
           </Text>
         ) : error ? (
-          <Text style={[styles.errorText, { color: TextColor }]}>
-            {error.message}
-          </Text>
+          <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
         ) : (
           <FlatList
             data={filteredUsers}

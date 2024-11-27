@@ -1,9 +1,13 @@
 import React, { useEffect, useState } from "react";
-import FontAwesome from "@expo/vector-icons/FontAwesome";
+
 import { Tabs } from "expo-router";
-import { useThemeColor } from "@/hooks/useThemeColor";
+
 import Entypo from "@expo/vector-icons/Entypo";
-import { PermissionManager } from "@/utils/permissionManager"; // Assuming the PermissionManager is saved in utils
+import FontAwesome from "@expo/vector-icons/FontAwesome";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+
+import { PermissionManager } from "@/utils/permissionManager";
 
 export default function TabLayout() {
   const BackgroundColor = useThemeColor({}, "background");

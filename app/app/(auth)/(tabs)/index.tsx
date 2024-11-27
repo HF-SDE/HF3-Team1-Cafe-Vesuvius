@@ -1,17 +1,11 @@
 import React, { useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-  Modal,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Modal } from "react-native";
 import { useSession } from "../../ctx";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import ResetPasswordModal from "../profile/reset-password";
+
 import TemplateLayout from "@/components/TemplateLayout";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function UserProfileScreen() {
@@ -27,7 +21,7 @@ export default function UserProfileScreen() {
   const { signOut, session } = useSession();
 
   if (isLoading) {
-    // Add loading screen
+    return <Text>Loading...</Text>;
   }
 
   return (
@@ -162,12 +156,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     height: "50%",
     minHeight: 400,
-    // backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });

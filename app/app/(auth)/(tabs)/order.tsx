@@ -9,8 +9,6 @@ import {
 import { Text } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import CheckPermission from "@/components/CheckPermission";
 import TemplateLayout from "@/components/TemplateLayout";
 import AddButton from "@/components/AddButton";
 
@@ -28,7 +26,6 @@ const sampleOrders: OrderItem[] = [
     items: [{ name: "Sandwich", quantity: 3, price: 5.0 }],
     total: 15.0,
   },
-  // Add more sample orders as needed
 ];
 
 export default function OrderOverview() {

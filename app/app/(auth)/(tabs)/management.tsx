@@ -1,40 +1,42 @@
 import React from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import TemplateLayout from "@/components/TemplateLayout";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons"; // Replace with your preferred icon library
-import CheckPageAccess from "@/components/CheckPageAccess";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRouter } from "expo-router";
 
-// Define your button data here
+import TemplateLayout from "@/components/TemplateLayout";
+import CheckPageAccess from "@/components/CheckPageAccess";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
+import { RelativePathString, useRouter } from "expo-router";
+
+// Define the button to show
 const buttonList = [
   {
     title: "Users",
     pageName: "UsersPage",
-    route: "/management/users",
+    route: "/management/users" as RelativePathString,
     icon: "users",
     size: 48,
-  }, // Example MaterialIcons name
+  },
   {
     title: "Menu",
     pageName: "MenuPage",
-    route: "management/menu",
+    route: "management/menu" as RelativePathString,
     icon: "table-list",
     size: 62,
   },
   {
     title: "Stats",
     pageName: "StatsPage",
-    route: "/management/statistics",
+    route: "/management/statistics" as RelativePathString,
     icon: "chart-simple",
     size: 62,
   },
   {
     title: "Storage",
     pageName: "StockPage",
-    route: "/management/storage",
+    route: "/management/storage" as RelativePathString,
     icon: "warehouse",
     size: 48,
   },
@@ -42,7 +44,6 @@ const buttonList = [
 
 export default function ManagementScreen() {
   const router = useRouter();
-  const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -54,7 +55,7 @@ export default function ManagementScreen() {
     <TemplateLayout pageName="ManagementPage">
       <View style={styles.content}>
         {buttonList.map((button, index) => (
-          <CheckPageAccess pageName={button.pageName}>
+          <CheckPageAccess pageName={button.pageName} key={button.pageName}>
             <TouchableOpacity
               key={index}
               style={[styles.button, { backgroundColor: PrimaryColor }]}
