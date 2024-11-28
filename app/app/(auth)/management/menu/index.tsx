@@ -45,7 +45,7 @@ export default function ManageUsersPage() {
   useEffect(() => {
     if (menu) {
       const lowercasedQuery = searchQuery.toLowerCase();
-      if (lowercasedQuery.length > 2) {
+      if (lowercasedQuery.length > 0) {
         const results = menu.filter((item) =>
           item.name.toLowerCase().includes(lowercasedQuery)
         );
