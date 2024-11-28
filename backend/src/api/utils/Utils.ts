@@ -53,6 +53,9 @@ export function getHttpStatusCode(status: Status): number {
       return 1011;
     case Status.WsForbidden:
       return 1013;
+    case Status.wsInvalidDetails:
+      return 4000;
+
   }
 }
 

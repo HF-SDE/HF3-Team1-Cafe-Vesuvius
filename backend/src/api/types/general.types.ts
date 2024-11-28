@@ -24,6 +24,7 @@ export enum Status {
   WsClose = "Close WebSocket",
   WsFailed = "Failed WebSocket",
   WsForbidden = "Forbidden WebSocket",
+  wsInvalidDetails = "Invalid Details WebSocket",
 }
 export interface APIResponse<T> {
   status: Status;
