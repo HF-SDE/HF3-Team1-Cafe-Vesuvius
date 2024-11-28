@@ -1,11 +1,5 @@
-import React, { useState } from "react";
-import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  Text,
-  StyleSheet,
-} from "react-native";
+import React, { useState, memo } from "react";
+import { View, TouchableOpacity, StyleSheet } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TextIconInput from "@/components/TextIconInput";
 
@@ -38,12 +32,7 @@ const NewCategoryInput = ({
         label={"New category"}
         icon="plus"
         iconColor={themeColors.primary}
-        onIconPress={() => {
-          if (newCategory.trim()) {
-            onAddCategory(newCategory.trim());
-            setNewCategory("");
-          }
-        }}
+        onIconPress={handleAddCategory}
         clearTextOnFocus={false}
       />
       <TouchableOpacity onPress={handleAddCategory}>
@@ -63,13 +52,6 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: 10,
   },
-  input: {
-    flex: 1,
-    padding: 10,
-    borderWidth: 2,
-    borderRadius: 8,
-    marginRight: 10,
-  },
 });
 
-export default NewCategoryInput;
+export default memo(NewCategoryInput);

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useMenu } from "@/hooks/useMenu";
@@ -37,9 +37,13 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
-  const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
-    {}
-  );
+  interface ChangedFields {
+    field?: keyof MenuModel;
+    originalValue?: any;
+    newValue?: any;
+  }
+
+  const [changedFields, setChangedFields] = useState<ChangedFields>({});
 
   useEffect(() => {
     if (menu) {
@@ -63,12 +67,18 @@ export default function EditCreateUserPage() {
     // Update or create logic here
   };
 
-  const handleChange = (field: keyof MenuModel, value: string) => {
-    if (value !== menuItem[field]) {
-      setChangedFields((prev) => ({ ...prev, [field]: value }));
-    }
-    setMenuItem((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleChange = useCallback(
+    (field: keyof MenuModel, value: string) => {
+      // Only update changedFields and menuItem if the value is different
+      if (value !== menuItem[field]) {
+        setChangedFields((prev) => ({ ...prev, [field]: value }));
+      }
+
+      // Update the menuItem state
+      setMenuItem((prev) => ({ ...prev, [field]: value }));
+    },
+    [menuItem]
+  );
 
   return (
     <TemplateLayout
