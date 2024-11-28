@@ -1,9 +1,9 @@
 import bodyParser from 'body-parser';
 import cors from 'cors';
-import express from 'express';
 import { rateLimit } from 'express-rate-limit';
 import helmet from 'helmet';
 import passport from 'passport';
+import { WebSocketExpress } from 'websocket-express';
 
 import config from '@config';
 import authRoutes from '@routes/auth.routes';
@@ -24,7 +24,7 @@ const limiter = rateLimit({
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
 });
 
-const app = express();
+const app = new WebSocketExpress();
 
 app.set('trust proxy', 1);
 app.set('json spaces', 4);
