@@ -7,36 +7,36 @@ export function useStock(id?: string | string[]) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const fetchStock = async () => {
-      try {
-        if (id === "new") {
-          return;
-        }
-        setIsLoading(true);
-        setError(null);
-        const endpoint = id ? `/stock?id=${id}` : "/stock";
-        const response = await apiClient.get(endpoint);
-
-        setStock(response.data.data);
-      } catch (err: any) {
-        console.log(err);
-
-        setError("Failed to load stock");
-      } finally {
-        setIsLoading(false);
+  const fetchStock = async () => {
+    try {
+      if (id === "new") {
+        return;
       }
-    };
+      setIsLoading(true);
+      setError(null);
+      const endpoint = id ? `/stock?id=${id}` : "/stock";
+      const response = await apiClient.get(endpoint);
 
+      setStock(response.data.data);
+    } catch (err: any) {
+      console.log(err);
+
+      setError("Failed to load stock");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStock();
   }, [id]);
 
   const createStock = async (newStock: StockItemModel) => {
     try {
       const response = await apiClient.post("/stock", newStock);
-      setStock((prevStock) =>
-        prevStock ? [...prevStock, response.data] : [response.data]
-      );
+      if (response.status === 201) {
+        await fetchStock();
+      }
     } catch (err: any) {
       setError("Failed to create stock");
     }

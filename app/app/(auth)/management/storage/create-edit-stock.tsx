@@ -1,35 +1,26 @@
-import {
-  KeyboardAvoidingView,
-  NativeSyntheticEvent,
-  StyleSheet,
-  Text,
-  TextInputChangeEventData,
-  View,
-  Platform,
-} from "react-native";
-import { useState, useEffect } from "react";
-import { useStock } from "@/hooks/useStock";
-import { useLocalSearchParams } from "expo-router";
+import { KeyboardAvoidingView, StyleSheet, View, Platform } from "react-native";
+import { useState, useCallback } from "react";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
-import QuantityInput from "@/components/QuantityInput";
 
 import { useNavigation } from "@react-navigation/native";
 import { StockItemModel } from "../../../../models/StorageModel";
 
-import { FontAwesome6 } from "@expo/vector-icons"; // Import FontAwesome6 icons
 import InputSpinner from "react-native-input-spinner";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface EditCreateUserPageProps {
   onClose: () => void;
-  stockItem: StockItemModel | undefined; // If undefined create a new empty one
+  stockItem: StockItemModel | undefined;
+  handleUpdateStock: (updateItem: StockItemModel) => void;
+  handleCreateStock: (updateItem: StockItemModel) => void;
 }
 
 const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   onClose,
   stockItem: propStockItem,
+  handleUpdateStock,
+  handleCreateStock,
 }) => {
   const navigation = useNavigation();
 
@@ -37,8 +28,6 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-
-  const { updateStock, createStock } = useStock(); // Assuming `stock` is fetched from useStock hook
 
   const [stockItem, setStockItem] = useState<StockItemModel>(
     propStockItem || {
@@ -58,21 +47,20 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
 
     if (changedFieldsCount === 0) {
       console.log("No changes");
-      navigation.goBack();
     } else {
       console.log("Update/Create");
 
       if (stockItem.id) {
         const updatedFields = { id: stockItem.id, ...changedFields };
-        updateStock(updatedFields);
+        handleUpdateStock(updatedFields);
       } else {
         const updatedFields: StockItemModel = { ...changedFields };
-        createStock(updatedFields);
+        handleCreateStock(updatedFields);
       }
 
       setChangedFields({});
-      navigation.goBack();
     }
+    onClose();
   };
 
   const handleChange = (field: keyof StockItemModel, value: string) => {
