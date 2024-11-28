@@ -69,6 +69,20 @@ export function useStock(id?: string | string[]) {
       setError("Failed to update stock");
     }
   };
+  const deleteStock = async (deleteStock: StockItemModel) => {
+    try {
+      // const response = await apiClient.delete("/stock", deleteStock);
+      // if (response.status === 201) {
+      //   await fetchStock();
+      // }
+      setStock(
+        (prevStock) =>
+          prevStock?.filter((item) => item.id !== deleteStock.id) ?? null
+      );
+    } catch (err: any) {
+      setError("Failed to update stock");
+    }
+  };
 
-  return { stock, isLoading, error, createStock, updateStock };
+  return { stock, isLoading, error, createStock, updateStock, deleteStock };
 }
