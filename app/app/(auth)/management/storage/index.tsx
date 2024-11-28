@@ -342,7 +342,7 @@ export default function ManageUsersPage() {
             name="edit"
             style={styles.iconStyle}
             size={36}
-            color={TextColor}
+            color="white"
           />
         </TouchableOpacity>
       </View>
