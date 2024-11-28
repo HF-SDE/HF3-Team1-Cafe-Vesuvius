@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -30,23 +30,31 @@ export default function ManageUsersPage() {
   const SecondaryColor = useThemeColor({}, "secondary");
 
   const [searchQuery, setSearchQuery] = useState("");
+  const [filteredMenu, setFilteredMenu] = useState<MenuModel[] | null>(null);
 
   const handleAddUser = () => {
     // Navigate to the edit/create user page (replace with your navigation logic)
     router.navigate("/management/menu/new");
   };
 
-  // Filter users based on the search query (case-insensitive)
-  const filteredUsers = menu
-    ? menu.filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
-
   const handleUserPress = (userId: string) => {
     // Navigate to the edit/create page for a specific user
     router.navigate(`/management/menu/${userId}`);
   };
+
+  useEffect(() => {
+    if (menu) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      if (lowercasedQuery.length > 0) {
+        const results = menu.filter((item) =>
+          item.name.toLowerCase().includes(lowercasedQuery)
+        );
+        setFilteredMenu(results);
+      } else {
+        setFilteredMenu(menu);
+      }
+    }
+  }, [menu, searchQuery]);
 
   const renderItem = ({ item }: { item: MenuModel }) => (
     <TouchableOpacity onPress={() => handleUserPress(item.id)}>
@@ -68,18 +76,19 @@ export default function ManageUsersPage() {
     <TemplateLayout pageName="MenuPage" title="Menu">
       <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
         <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          placeholder="Search for menu"
+          value={searchQuery}
+          placeholder="Search menu items"
+          loading={isLoading}
+          onChange={(e) => setSearchQuery(e.nativeEvent.text)}
+          onClearIconPress={() => setSearchQuery("")}
         />
-        {/* Use the SearchBar component */}
         {isLoading ? (
           <LoadingPage />
         ) : error ? (
           <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
         ) : (
           <FlatList
-            data={filteredUsers}
+            data={filteredMenu}
             renderItem={renderItem}
             keyExtractor={(item) => item.id.toString()}
             contentContainerStyle={styles.userList}

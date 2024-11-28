@@ -13,7 +13,8 @@ export const StockUpdateSchema = Joi.array()
       id: UuidSchema.required(),
       quantity: Joi.number().positive().allow(0),
       unit: Joi.string(),
-    }).or("quantity", "unit")
+      name: Joi.string().min(1),
+    }).or("quantity", "unit", "name")
   )
   .min(1)
   .unique("id")

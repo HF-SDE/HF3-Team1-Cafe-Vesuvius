@@ -34,7 +34,7 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       headerStyle: { backgroundColor: PrimaryColor },
       headerTintColor: BackgroundColor,
       headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
-      headerShadowVisible: false,
+      headerShadowVisible: true,
     });
   }, [navigation, title]);
 
@@ -59,15 +59,14 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   }
 
   return (
-      <SafeAreaView
-        style={[
-          styles.container,
-          { backgroundColor: BackgroundColor, borderColor: BackgroundColor },
-        ]}
-      >
-        {children}
-
-      </SafeAreaView>
+    <SafeAreaView
+      style={[
+        styles.container,
+        { backgroundColor: BackgroundColor, borderColor: BackgroundColor },
+      ]}
+    >
+      {children}
+    </SafeAreaView>
   );
 };
 

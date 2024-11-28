@@ -22,6 +22,8 @@ import CheckPermission from "@/components/CheckPermission";
 import Pagination from "@/components/Pagination";
 import LoadingPage from "@/components/LoadingPage";
 
+import Alert from "@/components/Alert";
+
 import { StockItemModel } from "@/models/StorageModel";
 
 import { PermissionManager } from "@/utils/permissionManager";
@@ -31,7 +33,8 @@ import EditCreateStockModal from "./create-edit-stock";
 import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
-  const { stock, isLoading, error, updateStock } = useStock();
+  const { stock, isLoading, error, updateStock, createStock, deleteStock } =
+    useStock();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -99,7 +102,41 @@ export default function ManageUsersPage() {
     [stock]
   );
 
-  const handleDeleteStockItem = useCallback(() => {}, []);
+  const handleUpdateStock = useCallback(
+    (updatedItem: StockItemModel) => {
+      updateStock(updatedItem);
+    },
+    [stock]
+  );
+  const handleCreateStock = useCallback(
+    (createItem: StockItemModel) => {
+      createStock(createItem);
+    },
+    [stock]
+  );
+  const handleDeleteStock = useCallback(
+    (deleteItem: StockItemModel) => {
+      Alert(
+        "Confirm Deletion",
+        `Are you sure you want to delete ${deleteItem.name}? \nIt will also be removed from all the menu's that uses it!`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: () => {
+              deleteStock(deleteItem);
+            },
+          },
+        ]
+      );
+    },
+    [stock]
+  );
 
   const handleSaveStockItems = useCallback(() => {
     if (hasChanges) {
@@ -314,7 +351,13 @@ export default function ManageUsersPage() {
             styles.hiddenButtonStart,
             styles.deleteButton,
           ]}
-          onPress={() => console.log("Delete", data.item.id)}
+          onPress={() => {
+            handleDeleteStock(data.item);
+            // Close the row after clicking the delete button
+            if (rowMap[data.item.id]) {
+              rowMap[data.item.id].closeRow();
+            }
+          }}
         >
           <FontAwesome6
             name="trash-alt"
@@ -342,7 +385,7 @@ export default function ManageUsersPage() {
             name="edit"
             style={styles.iconStyle}
             size={36}
-            color={TextColor}
+            color="white"
           />
         </TouchableOpacity>
       </View>
@@ -356,24 +399,16 @@ export default function ManageUsersPage() {
 
   const animationIsRunning = useRef(false);
 
-  const onSwipeValueChange = (swipeData: any) => {
-    const { key, value, setValue } = swipeData;
-
-    if (value <= -150 && !animationIsRunning.current) {
-      animationIsRunning.current = true;
-
-      //handleAddEditStockItem(key);
-
-      animationIsRunning.current = false;
-    }
-  };
+  const onSwipeValueChange = (swipeData: any) => {};
 
   return (
     <TemplateLayout pageName="StockPage" title="Storage">
       <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
         <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          //searchQuery={searchQuery}
+          //setSearchQuery={setSearchQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
           placeholder="Search for item"
         />
         <Text style={[styles.pageIndicator, { color: TextColor }]}>
@@ -402,14 +437,17 @@ export default function ManageUsersPage() {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-            onSwipeValueChange={onSwipeValueChange}
-            onRowOpen={(rowKey, rowMap) => {
-              console.log(`Row opened: ${rowKey}`);
-              if (rowMap[rowKey]) {
-                rowMap[rowKey].closeRow();
-              }
-              handleAddEditStockItem(rowKey);
-            }}
+            // onSwipeValueChange={onSwipeValueChange}
+            // onRowOpen={(rowKey, rowMap) => {
+            //   console.log(`Row opened: ${rowKey}`);
+            //   const direction: string = rowMap[rowKey].previousTrackedDirection;
+            //   if (direction === "left") {
+            //     if (rowMap[rowKey]) {
+            //       rowMap[rowKey].closeRow();
+            //     }
+            //     handleAddEditStockItem(rowKey);
+            //   }
+            // }}
           />
         )}
         <Pagination
@@ -445,6 +483,8 @@ export default function ManageUsersPage() {
             <EditCreateStockModal
               stockItem={itemInModal}
               onClose={() => setIsModalVisible(false)}
+              handleUpdateStock={(updateItem) => handleUpdateStock(updateItem)}
+              handleCreateStock={(updateItem) => handleCreateStock(updateItem)}
             />
           </View>
         </View>

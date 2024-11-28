@@ -109,7 +109,7 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
       };
     }
 
-    const transaction = data.map(({ quantity, unit, id }) => {
+    const transaction = data.map(({ quantity, unit, name, id }) => {
       return prisma.rawMaterial.update({
         where: {
           id,
@@ -117,6 +117,7 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
         data: {
           quantity,
           unit,
+          name,
         },
       });
     });

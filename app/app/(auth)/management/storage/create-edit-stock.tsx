@@ -1,44 +1,35 @@
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
-  NativeSyntheticEvent,
   StyleSheet,
-  Text,
-  TextInputChangeEventData,
   View,
+  Text,
   Platform,
 } from "react-native";
-import { useState, useEffect } from "react";
-import { useStock } from "@/hooks/useStock";
-import { useLocalSearchParams } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
-import QuantityInput from "@/components/QuantityInput";
 
-import { useNavigation } from "@react-navigation/native";
-import { StockItemModel } from "../../../../models/StorageModel";
+import { StockItemModel } from "@/models/StorageModel";
 
-import { FontAwesome6 } from "@expo/vector-icons"; // Import FontAwesome6 icons
 import InputSpinner from "react-native-input-spinner";
-import { SafeAreaView } from "react-native-safe-area-context";
 
 interface EditCreateUserPageProps {
   onClose: () => void;
-  stockItem: StockItemModel | undefined; // If undefined create a new empty one
+  stockItem: StockItemModel | undefined;
+  handleUpdateStock: (updateItem: StockItemModel) => void;
+  handleCreateStock: (updateItem: StockItemModel) => void;
 }
 
 const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   onClose,
   stockItem: propStockItem,
+  handleUpdateStock,
+  handleCreateStock,
 }) => {
-  const navigation = useNavigation();
-
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-
-  const { updateStock, createStock } = useStock(); // Assuming `stock` is fetched from useStock hook
 
   const [stockItem, setStockItem] = useState<StockItemModel>(
     propStockItem || {
@@ -53,26 +44,47 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
     {}
   );
 
+  const [errorMessage, setErrorMessage] = useState<string>("");
+
   const handleSave = () => {
+    // Collect fields with validation errors
+    let wrongFields: string[] = [];
+
+    if (!stockItem.name?.toString().trim()) {
+      wrongFields.push("Name");
+    }
+    if (!stockItem.unit?.toString().trim()) {
+      wrongFields.push("Unit");
+    }
+
+    if (wrongFields.length > 0) {
+      const formattedFields =
+        wrongFields.length > 1
+          ? `${wrongFields.slice(0, -1).join(", ")} & ${wrongFields.slice(-1)}`
+          : wrongFields[0];
+
+      setErrorMessage(`${formattedFields} cannot be empty.`);
+      return;
+    }
+
+    setErrorMessage(""); // Clear any existing error message
+
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
       console.log("No changes");
-      navigation.goBack();
     } else {
-      console.log("Update/Create");
-
       if (stockItem.id) {
         const updatedFields = { id: stockItem.id, ...changedFields };
-        updateStock(updatedFields);
+        handleUpdateStock(updatedFields);
       } else {
         const updatedFields: StockItemModel = { ...changedFields };
-        createStock(updatedFields);
+        handleCreateStock(updatedFields);
       }
 
       setChangedFields({});
-      navigation.goBack();
     }
+    onClose();
   };
 
   const handleChange = (field: keyof StockItemModel, value: string) => {
@@ -114,6 +126,15 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         onChangeText={(value) => handleChange("name", value)}
         clearTextOnFocus={false}
       />
+
+      <TextInput
+        style={styles.input}
+        label="Unit"
+        value={stockItem.unit}
+        onChangeText={(value) => handleChange("unit", value)}
+        clearTextOnFocus={false}
+      />
+
       <InputSpinner
         type="float"
         decimalSeparator="."
@@ -122,8 +143,6 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         textColor={PrimaryColor}
         value={stockItem.quantity}
         onChange={quantityChange}
-        //leftButton={<FontAwesome6 name="square-minus" size={30} />}
-        //rightButton={<FontAwesome6 name="square-plus" size={30} />}
         inputStyle={{ borderColor: PrimaryColor }}
         fontSize={20}
         buttonStyle={{
@@ -135,16 +154,14 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         }}
         buttonTextColor={PrimaryColor}
         buttonFontSize={40}
-        style={styles.spinner} // Apply compact styling here
-      ></InputSpinner>
-
-      <TextInput
-        style={styles.input}
-        label="Unit"
-        value={stockItem.unit}
-        onChangeText={(value) => handleChange("unit", value)}
-        clearTextOnFocus={false}
+        style={styles.spinner}
       />
+
+      {errorMessage ? (
+        <Text style={[styles.errorMessage, { color: "red" }]}>
+          {errorMessage}
+        </Text>
+      ) : null}
 
       <View style={styles.buttonContainer}>
         <Button title="Cancel" onPress={onClose} />
@@ -167,7 +184,7 @@ const styles = StyleSheet.create({
     marginBottom: 15,
   },
   spinner: {
-    height: 50, // Adjust height for compactness
+    height: 50,
     marginBottom: 15,
     alignSelf: "center",
     width: "100%",
@@ -177,6 +194,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+  },
+  errorMessage: {
+    marginVertical: 10,
+    textAlign: "center",
   },
 });
 
