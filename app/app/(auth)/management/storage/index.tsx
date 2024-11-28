@@ -31,7 +31,7 @@ import EditCreateStockModal from "./create-edit-stock";
 import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
-  const { stock, isLoading, error, updateStock } = useStock();
+  const { stock, isLoading, error, updateStock, createStock } = useStock();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -99,6 +99,18 @@ export default function ManageUsersPage() {
     [stock]
   );
 
+  const handleUpdateStock = useCallback(
+    (updatedItem: StockItemModel) => {
+      updateStock(updatedItem);
+    },
+    [stock]
+  );
+  const handleCreateStock = useCallback(
+    (updatedItem: StockItemModel) => {
+      createStock(updatedItem);
+    },
+    [stock]
+  );
   const handleDeleteStockItem = useCallback(() => {}, []);
 
   const handleSaveStockItems = useCallback(() => {
@@ -372,8 +384,10 @@ export default function ManageUsersPage() {
     <TemplateLayout pageName="StockPage" title="Storage">
       <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
         <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          //searchQuery={searchQuery}
+          //setSearchQuery={setSearchQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
           placeholder="Search for item"
         />
         <Text style={[styles.pageIndicator, { color: TextColor }]}>
@@ -445,6 +459,8 @@ export default function ManageUsersPage() {
             <EditCreateStockModal
               stockItem={itemInModal}
               onClose={() => setIsModalVisible(false)}
+              handleUpdateStock={(updateItem) => handleUpdateStock(updateItem)}
+              handleCreateStock={(updateItem) => handleCreateStock(updateItem)}
             />
           </View>
         </View>
