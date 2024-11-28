@@ -2,12 +2,11 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
   FlatList,
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import TemplateLayout from "@/components/TemplateLayout";
 import { useUsers } from "@/hooks/useUsers";
@@ -19,30 +18,44 @@ import SearchBar from "@/components/SearchBar"; // Import the SearchBar
 import { UserProfile } from "@/models/userModels";
 
 export default function ManageUsersPage() {
-  const { users, isLoading, error } = useUsers();
+  const { users, isLoading, error, refresh } = useUsers(); // Assume refresh is available
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
+
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
   const AccentColor = useThemeColor({}, "accent");
 
-  const [searchQuery, setSearchQuery] = useState("");
+  useEffect(() => {
+    if (users) {
+      filterUsers(searchQuery); // Filter on initial load
+    }
+  }, [users]);
 
   const handleAddUser = () => {
-    // Navigate to the edit/create user page (replace with your navigation logic)
+    // Navigate to the edit/create user page
     router.navigate("/management/users/new");
   };
 
-  // Filter users based on the search query (case-insensitive)
-  const filteredUsers = users
-    ? users.filter((user) =>
-        user.name.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : [];
-
   const handleUserPress = (userId: string) => {
-    // Navigate to the edit/create page for a specific user
     router.navigate(`/management/users/${userId}`);
+  };
+
+  const filterUsers = (query: string) => {
+    const text = query.toLowerCase();
+    if (text.length > 2) {
+      const filteredData = users?.filter(
+        (user) =>
+          user.name.toLowerCase().includes(text) ||
+          user.email.toLowerCase().includes(text)
+      );
+      setFilteredUsers(filteredData);
+    } else {
+      setFilteredUsers(users); // Reset to all users if query is too short
+    }
+    setSearchQuery(query);
   };
 
   const renderItem = ({ item }: { item: UserProfile }) => (
@@ -65,11 +78,12 @@ export default function ManageUsersPage() {
     <TemplateLayout pageName="UsersPage" title="Users">
       <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
         <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          placeholder="Search users"
+          value={searchQuery}
+          placeholder="Search users by name or email"
+          loading={isLoading}
+          onChange={(e) => filterUsers(e.nativeEvent.text)} // Handles text changes
+          onClearIconPress={() => filterUsers("")} // Resets on clear
         />
-        {/* Use the SearchBar component */}
         {isLoading ? (
           <LoadingPage />
         ) : error ? (
@@ -99,23 +113,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
-  },
   userList: {
     flexGrow: 1,
   },
   userItem: {
     padding: 15,
-    borderRadius: 10, // Add rounded corners here
+    borderRadius: 10,
     marginBottom: 15,
-    flex: 1,
-    justifyContent: "space-between",
     flexDirection: "row",
+    justifyContent: "space-between",
   },
   userName: {
     fontSize: 18,
