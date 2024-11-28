@@ -19,8 +19,12 @@ export enum Status {
   MissingCredentials = 'MissingCredentials',
   InvalidCredentials = 'InvalidCredentials',
   TooManyRequests = 'TooManyRequests',
-}
 
+  WsUnauthorized = "Unauthorized WebSocket",
+  WsClose = "Close WebSocket",
+  WsFailed = "Failed WebSocket",
+  WsForbidden = "Forbidden WebSocket",
+}
 export interface APIResponse<T> {
   status: Status;
   message?: string;
