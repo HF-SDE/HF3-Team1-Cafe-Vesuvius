@@ -285,7 +285,7 @@ interface TableProps {
  * The item component for the flatlist
  * @param {TableProps} props - The props for the item
  */
-function Item(props: TableProps) {
+function Item(props: TableProps): ReactElement {
   const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
   const selected = areItemSelected(props.table, props.reservation[0]);
   return (
