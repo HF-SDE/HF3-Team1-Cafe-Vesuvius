@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ExtendedWebSocket, WSResponse, isWebSocket } from 'websocket-express';
 
 import { ExpressFunction, Status } from '@api-types/general.types';
 import { prismaModels } from '@prisma-instance';
@@ -21,7 +22,11 @@ const config: Config = configWithoutType as Config;
  * @returns {ExpressFunction} The response object
  */
 export function getAll(model?: prismaModels): ExpressFunction {
-  return async (req, res) => {
+  return async (req, res: Response | WSResponse) => {
+    let ws: ExtendedWebSocket;
+    if (isWebSocket(res)) {
+      ws = await res.accept();
+    }
     if (!model) model = getModel(req);
 
     req.query.id ??= req.params.id;
@@ -29,18 +34,33 @@ export function getAll(model?: prismaModels): ExpressFunction {
     const { error } = UuidSchema.validate(req.query.id);
 
     if (error) {
-      res
-        .status(400)
-        .json({ status: Status.InvalidDetails, message: error.message })
-        .end();
-
+      if (isWebSocket(res)) {
+        res.sendError(
+          getHttpStatusCode(Status.InvalidDetails),
+          getHttpStatusCode(Status.wsInvalidDetails),
+          JSON.stringify({
+            status: Status.InvalidDetails,
+            message: error.message,
+          }),
+        );
+      } else {
+        res
+          .status(400)
+          .json({ status: Status.InvalidDetails, message: error.message })
+          .end();
+      }
       return;
     }
 
     const modelConfig = req.config || { ...config[model], where: req.query };
 
     const response = await DefaultService.getAll(model, modelConfig);
-
+    if (isWebSocket(res)) {
+      ws!.send(JSON.stringify(response));
+      setInterval(() => {
+        ws.send(JSON.stringify(response));
+      }, 12000);
+    }
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
 }
