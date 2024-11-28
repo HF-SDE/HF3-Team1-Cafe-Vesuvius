@@ -45,7 +45,7 @@ export default function ManageUsersPage() {
 
   const filterUsers = (query: string) => {
     const text = query.toLowerCase();
-    if (text.length > 2) {
+    if (text.length > 0) {
       const filteredData = users?.filter(
         (user) =>
           user.name.toLowerCase().includes(text) ||
