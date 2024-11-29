@@ -66,15 +66,11 @@ export default function Index() {
     }
   }, [username, password]);
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: BackgroundColor }]}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
       <View style={styles.logoContainer}>
         <Logo width={340} height={340} />
@@ -118,12 +114,12 @@ export default function Index() {
         <TouchableOpacity
           style={[
             styles.button,
-            { backgroundColor: PrimaryColor, opacity: isLoading ? 0.5 : 1 },
+            { backgroundColor: theme.primary, opacity: isLoading ? 0.5 : 1 },
           ]}
           onPress={handleLogin}
           disabled={isLoading}
         >
-          <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+          <Text style={[styles.buttonText, { color: theme.background }]}>
             Sign In
           </Text>
         </TouchableOpacity>

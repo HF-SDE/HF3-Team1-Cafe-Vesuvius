@@ -35,11 +35,7 @@ import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 export default function ManageUsersPage() {
   const { stock, isLoading, error, updateStock, createStock, deleteStock } =
     useStock();
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -278,12 +274,12 @@ export default function ManageUsersPage() {
     const newStock = (item.quantity || 0) + Number(adjustedQty);
 
     return (
-      <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
+      <View style={[styles.userItem, { backgroundColor: theme.primary }]}>
         <View>
-          <Text style={[styles.itemName, { color: BackgroundColor }]}>
+          <Text style={[styles.itemName, { color: theme.background }]}>
             {item.name}
           </Text>
-          <Text style={[styles.itemStock, { color: SecondaryColor }]}>
+          <Text style={[styles.itemStock, { color: theme.secondary }]}>
             Stock: {item.quantity} {item.unit}
           </Text>
         </View>
@@ -296,13 +292,13 @@ export default function ManageUsersPage() {
                 <FontAwesome6
                   name="square-minus"
                   size={45}
-                  color={SecondaryColor}
+                  color={theme.secondary}
                 />
               </TouchableOpacity>
               <TextInput
                 style={[
                   styles.textInput,
-                  { color: SecondaryColor, borderColor: SecondaryColor },
+                  { color: theme.secondary, borderColor: theme.secondary },
                 ]}
                 value={adjustedQty}
                 keyboardType="decimal-pad"
@@ -316,7 +312,7 @@ export default function ManageUsersPage() {
                 <FontAwesome6
                   name="square-plus"
                   size={45}
-                  color={SecondaryColor}
+                  color={theme.secondary}
                 />
               </TouchableOpacity>
             </View>
@@ -325,7 +321,9 @@ export default function ManageUsersPage() {
                 styles.itemStock,
                 {
                   color:
-                    newStock !== item.quantity ? SecondaryColor : "transparent",
+                    newStock !== item.quantity
+                      ? theme.secondary
+                      : "transparent",
                   visibility: newStock !== item.quantity ? "visible" : "hidden",
                 },
               ]}
@@ -373,7 +371,7 @@ export default function ManageUsersPage() {
             styles.hiddenButton,
             styles.hiddenButtonEnd,
             styles.editButton,
-            { backgroundColor: AccentColor },
+            { backgroundColor: theme.accent },
           ]}
           onPress={() => {
             handleAddEditStockItem(data.item.id);
@@ -405,7 +403,7 @@ export default function ManageUsersPage() {
 
   return (
     <TemplateLayout pageName="StockPage" title="Storage">
-      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         <SearchBar
           //searchQuery={searchQuery}
           //setSearchQuery={setSearchQuery}
@@ -414,13 +412,13 @@ export default function ManageUsersPage() {
           placeholder="Search for item"
           loading={isLoading}
         />
-        <Text style={[styles.pageIndicator, { color: TextColor }]}>
+        <Text style={[styles.pageIndicator, { color: theme.text }]}>
           Page {currentPage} of {totalPages}
         </Text>
         {isLoading ? (
           <LoadingPage />
         ) : error ? (
-          <Text style={[styles.errorText, { color: TextColor }]}>
+          <Text style={[styles.errorText, { color: theme.text }]}>
             Something went wrong!
           </Text>
         ) : (
@@ -481,7 +479,7 @@ export default function ManageUsersPage() {
       >
         <View style={styles.modalOverlay}>
           <View
-            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+            style={[styles.modalContent, { backgroundColor: theme.primary }]}
           >
             <EditCreateStockModal
               stockItem={itemInModal}

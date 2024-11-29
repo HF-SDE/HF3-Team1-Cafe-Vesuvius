@@ -45,11 +45,7 @@ const buttonList = [
 export default function ManagementScreen() {
   const router = useRouter();
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   return (
     <TemplateLayout pageName="ManagementPage">
@@ -58,7 +54,7 @@ export default function ManagementScreen() {
           <CheckPageAccess pageName={button.pageName} key={button.pageName}>
             <TouchableOpacity
               key={index}
-              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              style={[styles.button, { backgroundColor: theme.primary }]}
               onPress={() => router.navigate(button.route)}
             >
               <View style={styles.buttonContent}>
@@ -66,11 +62,11 @@ export default function ManagementScreen() {
                   <FontAwesome6
                     name={button.icon}
                     size={button.size}
-                    color={BackgroundColor}
+                    color={theme.background}
                     style={styles.icon}
                   />
                 )}
-                <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+                <Text style={[styles.buttonText, { color: theme.background }]}>
                   {button.title}
                 </Text>
               </View>
