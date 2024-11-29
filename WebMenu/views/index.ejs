@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/style.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vesuvius menu card.">
+  <script src="main.js" defer></script>
+</head>
+
+<body>
+  <div class="menu-container">
+    <h1><%= title %></h1>
+
+    <!-- Filter Buttons -->
+    <div class="filter-container">
+      <form action="/" method="get">
+        <button type="submit" name="category" value="" <%=!category ? 'class="active"' : '' %>>All</button>
+        <% categories.forEach(categoryOption => { %>
+          <button type="submit" name="category" value="<%= categoryOption %>" <%= categoryOption === category ? 'class="active"' : '' %>>
+            <%= categoryOption %>
+          </button>
+        <% }); %>
+      </form>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="menu-grid">
+      <% items.map((item) => { %>
+        <div class="menu-item">
+          <div class="menu-header">
+            <h2><%= item.name %></h2>
+            <h3 class="price"><%= item.price %>,-</h3>
+          </div>
+
+
+
+          <div>
+            <img src="/images/<%= item.name %>.webp" alt="<%= item.name %>" width="250" height="250" style="border-radius: 2rem;" />
+          </div>
+          <span>
+            <%= item.RawMaterial_MenuItems.map(rawMaterialMenuItem => rawMaterialMenuItem.RawMaterial.name).join(", ") %>
+          </span>
+        </div>
+      <% }) %>
+    </div>
+  </div>
+</body>
+
+</html>

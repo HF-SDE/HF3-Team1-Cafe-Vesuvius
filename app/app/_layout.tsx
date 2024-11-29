@@ -4,6 +4,15 @@ import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import SessionProvider from "./ctx";
 
+import isBetween from "dayjs/plugin/isBetween";
+import isToday from "dayjs/plugin/isToday";
+import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
+import isTomorrow from "dayjs/plugin/isTomorrow";
+dayjs.extend(isBetween);
+dayjs.extend(isSameOrBefore);
+dayjs.extend(isToday);
+dayjs.extend(isTomorrow);
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -41,11 +50,15 @@ export default function RootLayout() {
   return <RootLayoutNav />;
 }
 import { Slot } from "expo-router";
+import dayjs from "dayjs";
+import ReservationComponent from "@/context/ReservationContext";
 
 function RootLayoutNav() {
   return (
     <SessionProvider>
-      <Slot />
+      <ReservationComponent>
+        <Slot />
+      </ReservationComponent>
     </SessionProvider>
   );
 }

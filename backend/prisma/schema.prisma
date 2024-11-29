@@ -43,7 +43,7 @@ model Session {
 
 model Token {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  sessionId    String   @unique @db.ObjectId
+  sessionId    String   @db.ObjectId
   session      Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
   accessToken  String   @unique
   refreshToken String   @unique
@@ -94,7 +94,7 @@ model Reservation {
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
 
-  Table Table @relation(fields: [tableIds], references: [id])
+  Tables Table[] @relation(fields: [tableIds], references: [id])
 }
 
 model Table {
@@ -104,14 +104,14 @@ model Table {
   capacity  Int      @default(2)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  reservationIds String[] @db.ObjectId
 
   Orders      Order[]
-  Reservation Reservation[]
+  Reservations Reservation[] @relation(fields: [reservationIds], references: [id])
 }
 
 model Order {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  status    String   @default("cook")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   tableId   String   @db.ObjectId
@@ -123,6 +123,7 @@ model Order {
 
 model Order_Menu {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  status        String  @default("cook")
   quantity      Int     @default(1)
   note          String?
   menuItemPrice Float   @default(1)
@@ -163,7 +164,7 @@ model RawMaterial_MenuItem {
   menuItemId    String @db.ObjectId
 
   RawMaterial RawMaterial @relation(fields: [rawMaterialId], references: [id])
-  MenuItem    MenuItem    @relation(fields: [menuItemId], references: [id])
+  MenuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 }
 
 model RawMaterial {

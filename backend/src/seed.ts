@@ -1,13 +1,137 @@
 import { hash } from 'argon2';
 
 import { PrismaClient } from '@prisma/client';
+import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
 
 const prisma = new PrismaClient();
+const prismaPSQL = new PrismaClientPSQL();
 
 /**
- * Used for generating test data to the database
+ * Menu items
  */
-async function main() {
+const menu = [
+  {
+    name: 'Nachos Supreme',
+    price: 129,
+    category: ['Food'],
+  },
+  {
+    name: 'Caesar Salad',
+    price: 139,
+    category: ['Food'],
+  },
+  {
+    name: "Tiger's Prawn Salad",
+    price: 139,
+    category: ['Food', 'Salad'],
+  },
+  {
+    name: "Vegan's salad",
+    price: 119,
+    category: ['Food', 'Salad'],
+  },
+  {
+    name: 'Club Sandwich',
+    price: 139,
+    category: ['Food', 'Sandwich'],
+  },
+  {
+    name: 'Salmon Sandwich',
+    price: 149,
+    category: ['Food', 'Sandwich'],
+  },
+  {
+    name: 'Spicy Steak Sandwich',
+    price: 149,
+    category: ['Food', 'Sandwich'],
+  },
+  {
+    name: 'Tuna Sandwich',
+    price: 139,
+    category: ['Food', 'Sandwich'],
+  },
+  {
+    name: 'Vesuvius Burger',
+    price: 139,
+    category: ['Food', 'Burger'],
+  },
+  {
+    name: 'Spicy Burger',
+    price: 139,
+    category: ['Food', 'Burger'],
+  },
+  {
+    name: 'Crispy Chicken Burger',
+    price: 139,
+    category: ['Food', 'Burger'],
+  },
+  {
+    name: 'Tomato Soup',
+    price: 99,
+    category: ['Food', 'Soup'],
+  },
+  {
+    name: 'Pasta with Chicken',
+    price: 169,
+    category: ['Food', 'Pasta'],
+  },
+  {
+    name: 'Pasta with Beef tenderloin',
+    price: 179,
+    category: ['Food', 'Pasta'],
+  },
+  {
+    name: 'Pasta with tiger prawn',
+    price: 179,
+    category: ['Food', 'Pasta'],
+  },
+  {
+    name: 'Aperol Spritz',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Espresso Martini',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Dark & Stormy',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Mojito',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Gin Tonic',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Moscow Mule',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Strawberry Daiquiri',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+  {
+    name: 'Gin Hass',
+    price: 85,
+    category: ['Drink', 'Alcohol'],
+  },
+];
+
+/**
+ * Used for generating test data to mongo database
+ * Mongo database is used in the app and management side
+ */
+async function generateMongo() {
   // Create Permission Groups
   await prisma.permissionGroup.createMany({
     data: [
@@ -119,6 +243,11 @@ async function main() {
         description: 'Create stock',
       },
       {
+        code: 'stock:delete',
+        permissionGroupId: await findPermissionGroup('Stock'),
+        description: 'Delete stock',
+      },
+      {
         code: 'table:view',
         permissionGroupId: await findPermissionGroup('Table'),
         description: 'View tables',
@@ -152,6 +281,11 @@ async function main() {
         code: 'reservation:delete',
         permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'Delete reservation',
+      },
+      {
+        code: 'permission:view',
+        permissionGroupId: await findPermissionGroup('Administrator'),
+        description: 'View permissions',
       },
     ],
   });
@@ -201,18 +335,7 @@ async function main() {
   });
 
   // Assign permissions to super admin user
-  const adminPermission = await prisma.permission.findMany({
-    where: {
-      OR: [
-        { code: { startsWith: 'administrator' } },
-        { code: { startsWith: 'order' } },
-        { code: { startsWith: 'menu' } },
-        { code: { startsWith: 'stock' } },
-        { code: { startsWith: 'table' } },
-        { code: { startsWith: 'reservation' } },
-      ],
-    },
-  });
+  const adminPermission = await prisma.permission.findMany();
 
   if (adminPermission) {
     adminPermission.forEach(async (permission) => {
@@ -706,123 +829,7 @@ async function main() {
 
   // Menu
   await prisma.menuItem.createMany({
-    data: [
-      {
-        name: 'Nachos Supreme',
-        price: 129,
-        category: ['Food'],
-      },
-      {
-        name: 'Caesar Salad',
-        price: 139,
-        category: ['Food'],
-      },
-      {
-        name: "Tiger's Prawn Salad",
-        price: 139,
-        category: ['Food', 'Salad'],
-      },
-      {
-        name: "Vegan's salad",
-        price: 119,
-        category: ['Food', 'Salad'],
-      },
-      {
-        name: 'Club Sandwich',
-        price: 139,
-        category: ['Food', 'Sandwich'],
-      },
-      {
-        name: 'Salmon Sandwich',
-        price: 149,
-        category: ['Food', 'Sandwich'],
-      },
-      {
-        name: 'Spicy Steak Sandwich',
-        price: 149,
-        category: ['Food', 'Sandwich'],
-      },
-      {
-        name: 'Tuna Sandwich',
-        price: 139,
-        category: ['Food', 'Sandwich'],
-      },
-      {
-        name: 'Vesuvius Burger',
-        price: 139,
-        category: ['Food', 'Burger'],
-      },
-      {
-        name: 'Spicy Burger',
-        price: 139,
-        category: ['Food', 'Burger'],
-      },
-      {
-        name: 'Crispy Chicken Burger',
-        price: 139,
-        category: ['Food', 'Burger'],
-      },
-      {
-        name: 'Tomato Soup',
-        price: 99,
-        category: ['Food', 'Soup'],
-      },
-      {
-        name: 'Pasta with Chicken',
-        price: 169,
-        category: ['Food', 'Pasta'],
-      },
-      {
-        name: 'Pasta with Beef tenderloin',
-        price: 179,
-        category: ['Food', 'Pasta'],
-      },
-      {
-        name: 'Pasta with tiger prawn',
-        price: 179,
-        category: ['Food', 'Pasta'],
-      },
-      {
-        name: 'Aperol Spritz',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Espresso Martini',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Dark & Stormy',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Mojito',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Gin Tonic',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Moscow Mule',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Strawberry Daiquiri',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-      {
-        name: 'Gin Hass',
-        price: 85,
-        category: ['Drink', 'Alcohol'],
-      },
-    ],
+    data: menu,
   });
 
   // RawMaterial_MenuItem
@@ -1656,6 +1663,16 @@ async function main() {
 }
 
 /**
+ * Generating PostgreSQL data
+ */
+async function generatingPSQL() {
+  // Menu
+  await prismaPSQL.menu.createMany({
+    data: menu,
+  });
+}
+
+/**
  * Find permission group id by name
  * @async
  * @param {string} name Permission group name
@@ -1681,7 +1698,7 @@ async function findPermissionGroup(name: string): Promise<string> {
 }
 
 /**
- * Find menu item id by name
+ * Help function - Find menu item id by name
  * @async
  * @param {string} name Menu item name
  * @returns {Promise<string>} Menu item id
@@ -1706,7 +1723,7 @@ async function findMenuItem(name: string): Promise<string> {
 }
 
 /**
- * Find RawMaterial item id by name
+ * Help function - Find RawMaterial item id by name
  * @async
  * @param {string} name RawMaterial item name
  * @returns {Promise<string>} RawMaterial item id
@@ -1730,12 +1747,30 @@ async function findRawMaterialItem(name: string): Promise<string> {
   }
 }
 
-main()
+/**
+ * Generate data to mongodb
+ */
+generateMongo()
   .then(async () => {
     await prisma.$disconnect();
+    await prismaPSQL.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
+    await prismaPSQL.$disconnect();
+    process.exit(1);
+  });
+
+/**
+ * Generate data to PostgreSQL
+ */
+generatingPSQL()
+  .then(async () => {
+    await prismaPSQL.$disconnect();
+  })
+  .catch(async (e) => {
+    console.error(e);
+    await prismaPSQL.$disconnect();
     process.exit(1);
   });

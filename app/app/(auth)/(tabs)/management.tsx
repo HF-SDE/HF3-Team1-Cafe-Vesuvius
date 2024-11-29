@@ -1,44 +1,49 @@
 import React from "react";
 import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
-import TemplateLayout from "@/components/TemplateLayout";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useNavigation } from "@react-navigation/native";
-import { MaterialIcons } from "@expo/vector-icons"; // Replace with your preferred icon library
-import CheckPageAccess from "@/components/CheckPageAccess";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import { useRouter } from "expo-router";
 
-// Define your button data here
+import TemplateLayout from "@/components/TemplateLayout";
+import CheckPageAccess from "@/components/CheckPageAccess";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
+import { RelativePathString, useRouter } from "expo-router";
+
+// Define the button to show
 const buttonList = [
   {
     title: "Users",
     pageName: "UsersPage",
-    route: "/management/users",
+    route: "/management/users" as RelativePathString,
     icon: "users",
-  }, // Example MaterialIcons name
+    size: 48,
+  },
   {
     title: "Menu",
     pageName: "MenuPage",
-    route: "management/menu",
+    route: "management/menu" as RelativePathString,
     icon: "table-list",
+    size: 62,
   },
   {
     title: "Stats",
     pageName: "StatsPage",
-    route: "/management/statistics",
+    route: "/management/statistics" as RelativePathString,
     icon: "chart-simple",
+    size: 62,
   },
   {
     title: "Storage",
     pageName: "StockPage",
-    route: "/management/storage",
+    route: "/management/storage" as RelativePathString,
     icon: "warehouse",
+    size: 48,
   },
 ];
 
 export default function ManagementScreen() {
   const router = useRouter();
-  const navigation = useNavigation();
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -47,10 +52,10 @@ export default function ManagementScreen() {
   const AccentColor = useThemeColor({}, "accent");
 
   return (
-    <TemplateLayout pageName="ManagmentPage">
+    <TemplateLayout pageName="ManagementPage">
       <View style={styles.content}>
         {buttonList.map((button, index) => (
-          <CheckPageAccess pageName={button.pageName}>
+          <CheckPageAccess pageName={button.pageName} key={button.pageName}>
             <TouchableOpacity
               key={index}
               style={[styles.button, { backgroundColor: PrimaryColor }]}
@@ -60,7 +65,7 @@ export default function ManagementScreen() {
                 {button.icon && (
                   <FontAwesome6
                     name={button.icon}
-                    size={50}
+                    size={button.size}
                     color={BackgroundColor}
                     style={styles.icon}
                   />
@@ -83,14 +88,16 @@ const styles = StyleSheet.create({
     alignItems: "stretch",
     paddingHorizontal: 20,
     paddingVertical: 20,
+    gap: 25,
+    marginBottom: 10,
   },
   button: {
     flexDirection: "row",
     alignItems: "center",
     paddingVertical: 15,
     paddingHorizontal: 20,
-    marginBottom: 20,
     borderRadius: 8,
+    flex: 1,
   },
   buttonContent: {
     flexDirection: "row",
@@ -98,10 +105,10 @@ const styles = StyleSheet.create({
     width: "100%",
   },
   icon: {
-    marginRight: 20,
     width: 70,
+    marginRight: 20,
     justifyContent: "center",
-    alignItems: "center",
+    alignSelf: "center",
   },
   buttonText: {
     fontSize: 50,

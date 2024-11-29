@@ -1,22 +1,17 @@
 import React, { useState } from "react";
-import {
-  Button,
-  StyleSheet,
-  View,
-  Text,
-  TouchableOpacity,
-  SafeAreaView,
-  Modal,
-} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity, Modal } from "react-native";
 import { useSession } from "../../ctx";
-import { useThemeColor } from "@/hooks/useThemeColor";
 import ResetPasswordModal from "../profile/reset-password";
+
 import TemplateLayout from "@/components/TemplateLayout";
+import LoadingPage from "@/components/LoadingPage";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 export default function UserProfileScreen() {
   const { userProfile, isLoading, error } = useUserProfile();
-  const [isModalVisible, setModalVisible] = useState(false); // State to control modal visibility
+  const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
 
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
@@ -27,17 +22,7 @@ export default function UserProfileScreen() {
   const { signOut, session } = useSession();
 
   if (isLoading) {
-    // Add loading screen
-  }
-
-  if (error) {
-    return (
-      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-        <Text style={[styles.errorText, { color: TextColor }]}>
-          Error: {error}
-        </Text>
-      </View>
-    );
+    return <LoadingPage />;
   }
 
   return (
@@ -66,7 +51,7 @@ export default function UserProfileScreen() {
           <View style={styles.buttonContainer}>
             <TouchableOpacity
               style={[styles.button, { backgroundColor: PrimaryColor }]}
-              onPress={() => setModalVisible(true)} // Show modal on press
+              onPress={() => setIsModalVisible(true)} // Show modal on press
             >
               <Text style={[styles.buttonText, { color: BackgroundColor }]}>
                 Reset Password
@@ -88,13 +73,13 @@ export default function UserProfileScreen() {
           animationType="none"
           transparent={true}
           visible={isModalVisible}
-          onRequestClose={() => setModalVisible(false)} // Close modal on Android back button
+          onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
         >
           <View style={styles.modalOverlay}>
             <View
               style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
             >
-              <ResetPasswordModal onClose={() => setModalVisible(false)} />
+              <ResetPasswordModal onClose={() => setIsModalVisible(false)} />
             </View>
           </View>
         </Modal>
@@ -172,12 +157,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     height: "50%",
     minHeight: 400,
-    // backgroundColor: "white",
     padding: 10,
     borderRadius: 10,
-  },
-  errorText: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });

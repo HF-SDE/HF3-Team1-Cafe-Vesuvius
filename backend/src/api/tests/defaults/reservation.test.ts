@@ -1,13 +1,6 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { AxiosError } from 'axios';
-import {
-  afterAll,
-  afterEach,
-  beforeAll,
-  describe,
-  expect,
-  expectTypeOf,
-  it,
-} from 'vitest';
+import { afterAll, afterEach, beforeAll, describe, expect, it } from 'vitest';
 
 import { APIResponse } from '@api-types/general.types';
 import prisma from '@prisma-instance';
@@ -15,6 +8,42 @@ import { Reservation } from '@prisma/client';
 
 import { Response, axiosInstance as axios } from './axiosInstance';
 import { login, logout } from './util';
+
+/**
+ * @param {string[]} cleanupList - List of reservation IDs to clean up
+ * @param {number} amount - The amount of reservations to create
+ * @returns {Promise<Reservation>} A new reservation
+ */
+async function dummyReservation(
+  cleanupList: string[],
+  amount: number = 1,
+): Promise<Reservation> {
+  const newReservation = await prisma.reservation.create({
+    data: {
+      amount,
+      name: 'John Doe',
+      reservationTime: new Date('2025-01-01T12:00:00.000Z'),
+      tableIds: await randomTableIds(amount / 2),
+    },
+  });
+
+  cleanupList.push(newReservation.id);
+
+  return newReservation;
+}
+
+/**
+ * @param {number} amount - The amount of tables to get
+ * @returns {Promise<string[]>} A random table ID
+ */
+async function randomTableIds(amount: number = 1): Promise<string[]> {
+  const randomTables = await prisma.table.findMany({
+    where: { Reservations: { none: {} } },
+    take: amount,
+  });
+
+  return randomTables.map((table) => table.id);
+}
 
 describe('API defaults (reservations)', () => {
   const addedReservations: string[] = [];
@@ -35,55 +64,76 @@ describe('API defaults (reservations)', () => {
     );
 
     expect(response.status).toBe(200);
-    expectTypeOf(response.data.data).toEqualTypeOf<
-      APIResponse<Reservation[]>
-    >();
+    expect(response.data).toEqual({
+      data: expect.arrayContaining([]),
+      status: 'Found',
+      message: 'Reservation(s) found',
+    });
   });
 
   it('should get 1 or no reservation', async () => {
-    const { id: randomId } = await prisma.reservation.findFirstOrThrow({});
+    const newReservation = await dummyReservation(addedReservations);
 
     const response = await axios.get<{ data: APIResponse<Reservation[]> }>(
-      `/reservation/${randomId}`,
+      `/reservation/${newReservation.id}`,
     );
 
     expect(response.status).toBe(200);
-    expectTypeOf(response.data.data).toEqualTypeOf<
-      APIResponse<Reservation[]>
-    >();
+    expect(response.data).toEqual({
+      data: expect.arrayContaining([]),
+      status: 'Found',
+      message: 'Reservation(s) found',
+    });
   });
 
   //* Create cases
-  it('should create a new reservation', async () => {
+  it('should create a new reservation in the future', async () => {
     const response = await axios.post<unknown>('/reservation', {
       amount: 1,
       name: 'John Doe',
-      tableIds: ['6731b8a84b08b93c2df43f96'],
-      reservationTime: '2022-01-01T12:00:00.000Z',
+      email: 'johndoe@email.com',
+      tableIds: await randomTableIds(),
+      reservationTime: '2025-01-01T12:00:00.000Z',
     });
 
-    const {
-      data: {
-        data: { id },
-      },
-    }: any = response;
+    expect(response.status).toBe(201);
+    expect(response.data).toStrictEqual({
+      status: 'Created',
+      message: 'Created new reservation',
+    });
+  });
 
-    addedReservations.push(id as string);
+  it('should create a new reservation right now', async () => {
+    const response = await axios.post<unknown>('/reservation', {
+      amount: 1,
+      name: 'John Doe',
+      email: 'johndoe@email.com',
+      tableIds: await randomTableIds(),
+      reservationTime: new Date(),
+    });
 
     expect(response.status).toBe(201);
+    expect(response.data).toStrictEqual({
+      status: 'Created',
+      message: 'Created new reservation',
+    });
   });
 
   //* Update cases
   it('should update a reservation', async () => {
-    const { id: randomId } = await prisma.reservation.findFirstOrThrow({});
+    const newReservation = await dummyReservation(addedReservations);
 
-    const response = await axios.put(`/reservation/${randomId}`, {
+    const response = await axios.put(`/reservation/${newReservation.id}`, {
       amount: 2,
       name: 'Jane Doe',
-      reservationTime: '2022-02-01T14:00:00.000Z',
+      reservationTime: '2025-02-01T14:00:00.000Z',
     });
 
     expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual({
+      status: 'Updated',
+      message: 'Updated reservation',
+    });
   });
 
   //* Delete cases
@@ -92,14 +142,18 @@ describe('API defaults (reservations)', () => {
       data: {
         amount: 1,
         name: 'John Doe',
-        reservationTime: new Date('2022-01-01T12:00:00.000Z'),
-        tableIds: ['6731b8a84b08b93c2df43f96'],
+        reservationTime: new Date('2025-01-01T12:00:00.000Z'),
+        tableIds: await randomTableIds(),
       },
     });
 
     const response = await axios.delete(`/reservation/${newReservation.id}`);
 
     expect(response.status).toBe(200);
+    expect(response.data).toStrictEqual({
+      status: 'Deleted',
+      message: 'Deleted reservation',
+    });
   });
 });
 
@@ -110,20 +164,7 @@ describe('API defaults (reservations) [Errors]', () => {
   afterAll(logout);
 
   beforeAll(async () => {
-    const response = await axios.post<unknown>('/reservation', {
-      amount: 1,
-      name: 'John Doe',
-      tableIds: ['6731b8a84b08b93c2df43f96'],
-      reservationTime: '2022-01-01T12:00:00.000Z',
-    });
-
-    const {
-      data: {
-        data: { id },
-      },
-    }: any = response;
-
-    addedReservations.push(id as string);
+    await dummyReservation(addedReservations);
   });
 
   afterAll(async () => {
@@ -146,16 +187,16 @@ describe('API defaults (reservations) [Errors]', () => {
     const promise = axios.put('/reservation/0000a0a00a00a00a0aa00a00', {
       amount: 2,
       name: 'Jane Doe',
-      reservationTime: '2022-02-01T14:00:00.000Z',
+      reservationTime: '2025-02-01T14:00:00.000Z',
     });
 
-    void expect(promise).rejects.toThrow();
+    await expect(promise).rejects.toThrow();
 
     const response = await promise.catch((error: AxiosError) => error.response);
 
     expect(response?.data).toStrictEqual({
       status: 'UpdateFailed',
-      message: 'Record not found',
+      message: 'Reservation not found',
     });
   });
 
@@ -163,16 +204,17 @@ describe('API defaults (reservations) [Errors]', () => {
     const promise = axios.put(`/reservation/${addedReservations[0]}`, {
       amount: 0,
       name: 'Jane Doe',
-      reservationTime: 'invalid date string',
+      reservationTime: 'tomorrow',
     });
 
-    void expect(promise).rejects.toThrow();
+    await expect(promise).rejects.toThrow();
 
     const response = await promise.catch((error: AxiosError) => error.response);
 
     expect(response?.data).toStrictEqual({
-      status: 'MissingDetails',
-      message: 'Invalid input',
+      status: 'InvalidDetails',
+      message:
+        '(reservationTime) must be a valid date. (amount) must be a positive number',
     });
   });
 
@@ -180,13 +222,13 @@ describe('API defaults (reservations) [Errors]', () => {
   it('should not delete a reservation [Not found]', async () => {
     const promise = axios.delete('/reservation/0000a0a00a00a00a0aa00a00');
 
-    void expect(promise).rejects.toThrow();
+    await expect(promise).rejects.toThrow();
 
     const response = await promise.catch((error: AxiosError) => error.response);
 
     expect(response?.data).toStrictEqual({
       status: 'DeletionFailed',
-      message: 'Record not found',
+      message: 'Reservation not found',
     });
   });
 });

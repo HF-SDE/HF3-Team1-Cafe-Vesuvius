@@ -1,43 +1,105 @@
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
   Text,
-  TextInput,
-  Button,
   FlatList,
   TouchableOpacity,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLayoutEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import TemplateLayout from "@/components/TemplateLayout";
 
-export default function AddOrderScreen() {
+import { router } from "expo-router";
+import { useNavigation } from "@react-navigation/native";
+
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+import { useMenu } from "@/hooks/useMenu";
+
+import TemplateLayout from "@/components/TemplateLayout";
+import AddButton from "@/components/AddButton";
+import SearchBar from "@/components/SearchBar";
+import LoadingPage from "@/components/LoadingPage";
+
+import { MenuModel } from "@/models/MenuModel";
+
+export default function ManageUsersPage() {
+  const { menu, isLoading, error } = useMenu();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-  const navigation = useNavigation();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const [filteredMenu, setFilteredMenu] = useState<MenuModel[] | null>(null);
+
+  const handleAddUser = () => {
+    // Navigate to the edit/create user page (replace with your navigation logic)
+    router.navigate("/management/menu/new");
+  };
+
+  const handleUserPress = (userId: string) => {
+    // Navigate to the edit/create page for a specific user
+    router.navigate(`/management/menu/${userId}`);
+  };
+
+  useEffect(() => {
+    if (menu) {
+      const lowercasedQuery = searchQuery.toLowerCase();
+      if (lowercasedQuery.length > 0) {
+        const results = menu.filter((item) =>
+          item.name.toLowerCase().includes(lowercasedQuery)
+        );
+        setFilteredMenu(results);
+      } else {
+        setFilteredMenu(menu);
+      }
+    }
+  }, [menu, searchQuery]);
+
+  const renderItem = ({ item }: { item: MenuModel }) => (
+    <TouchableOpacity onPress={() => handleUserPress(item.id)}>
+      <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
+        <View>
+          <Text style={[styles.ItemName, { color: BackgroundColor }]}>
+            {item.name}
+          </Text>
+          <Text style={[styles.itemPrice, { color: SecondaryColor }]}>
+            {item.price},-
+          </Text>
+        </View>
+        <FontAwesome6 name="edit" size={48} color={SecondaryColor} />
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <TemplateLayout pageName="MenuPage" title="Menu">
-      <View style={[styles.container]}>
-        <View style={styles.spacer} />
-
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
-        </View>
+      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+        <SearchBar
+          value={searchQuery}
+          placeholder="Search menu items"
+          loading={isLoading}
+          onChange={(e) => setSearchQuery(e.nativeEvent.text)}
+          onClearIconPress={() => setSearchQuery("")}
+        />
+        {isLoading ? (
+          <LoadingPage />
+        ) : error ? (
+          <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
+        ) : (
+          <FlatList
+            data={filteredMenu}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id.toString()}
+            contentContainerStyle={styles.userList}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+        <AddButton
+          onPress={handleAddUser}
+          requiredPermission={["order:create"]}
+        />
       </View>
     </TemplateLayout>
   );
@@ -56,36 +118,30 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingLeft: 10,
   },
-  dropdown: {
-    position: "absolute",
-    backgroundColor: "white",
-    width: "100%",
-    maxHeight: 150,
-    elevation: 5,
-    zIndex: 1000,
+  userList: {
+    flexGrow: 1,
   },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
-  },
-  buttonContainer: {
+  userItem: {
+    padding: 15,
+    borderRadius: 10,
+    marginBottom: 15,
+    flex: 1,
     flexDirection: "row",
     justifyContent: "space-between",
-    width: "100%",
   },
-  button: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 5,
-    margin: 5,
-  },
-  buttonText: {
-    fontSize: 24,
+  ItemName: {
+    fontSize: 18,
     fontWeight: "bold",
   },
-  spacer: {
-    flex: 1,
+  itemPrice: {
+    fontSize: 14,
+    marginTop: 5,
+    fontWeight: "bold",
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+    color: "red",
   },
 });

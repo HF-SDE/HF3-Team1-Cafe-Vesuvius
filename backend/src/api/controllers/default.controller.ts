@@ -1,16 +1,20 @@
 import { Request, Response } from 'express';
+import { ExtendedWebSocket, WSResponse, isWebSocket } from 'websocket-express';
 
-import { ExpressFunction } from '@api-types/general.types';
-import { Prisma } from '@prisma/client';
+import { ExpressFunction, Status } from '@api-types/general.types';
+import { prismaModels } from '@prisma-instance';
+import { UuidSchema } from '@schemas/general.schemas';
 import * as DefaultService from '@services/default.service';
 import { getHttpStatusCode } from '@utils/Utils';
-
-type prismaModels = Uncapitalize<Prisma.ModelName>;
+import * as configWithoutType from '@utils/configs';
 
 // eslint-disable-next-line jsdoc/require-jsdoc
 function getModel(req: Request): prismaModels {
   return req.baseUrl.replace('/', '') as prismaModels;
 }
+
+type Config = Record<prismaModels, Record<string, unknown>>;
+const config: Config = configWithoutType as Config;
 
 /**
  * Controller to get all
@@ -18,11 +22,45 @@ function getModel(req: Request): prismaModels {
  * @returns {ExpressFunction} The response object
  */
 export function getAll(model?: prismaModels): ExpressFunction {
-  return async (req, res): Promise<void> => {
-    const { id } = req.params;
+  return async (req, res: Response | WSResponse) => {
+    let ws: ExtendedWebSocket;
+    if (isWebSocket(res)) {
+      ws = await res.accept();
+    }
+    if (!model) model = getModel(req);
 
-    const response = await DefaultService.getAll(model ?? getModel(req), id);
+    req.query.id ??= req.params.id;
 
+    const { error } = UuidSchema.validate(req.query.id);
+
+    if (error) {
+      if (isWebSocket(res)) {
+        res.sendError(
+          getHttpStatusCode(Status.InvalidDetails),
+          getHttpStatusCode(Status.wsInvalidDetails),
+          JSON.stringify({
+            status: Status.InvalidDetails,
+            message: error.message,
+          }),
+        );
+      } else {
+        res
+          .status(400)
+          .json({ status: Status.InvalidDetails, message: error.message })
+          .end();
+      }
+      return;
+    }
+
+    const modelConfig = req.config || { ...config[model], where: req.query };
+
+    const response = await DefaultService.getAll(model, modelConfig);
+    if (isWebSocket(res)) {
+      ws!.send(JSON.stringify(response));
+      setInterval(() => {
+        ws.send(JSON.stringify(response));
+      }, 12000);
+    }
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
 }
@@ -50,13 +88,11 @@ export function create(model?: prismaModels): ExpressFunction {
  */
 export function update(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
-    const { id } = req.params;
+    const id = (req.params.id || req.query.id) as string;
 
-    const response = await DefaultService.update(
-      model ?? getModel(req),
-      id,
-      req.body,
-    );
+    if (!model) model = getModel(req);
+
+    const response = await DefaultService.update(model, id, req.body);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
@@ -69,12 +105,11 @@ export function update(model?: prismaModels): ExpressFunction {
  */
 export function deleteRecord(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
-    const { id } = req.params;
+    const id = (req.params.id || req.query.id) as string;
 
-    const response = await DefaultService.deleteRecord(
-      model ?? getModel(req),
-      id,
-    );
+    if (!model) model = getModel(req);
+
+    const response = await DefaultService.deleteRecord(model, id);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };

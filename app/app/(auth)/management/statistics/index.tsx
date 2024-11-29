@@ -2,43 +2,152 @@ import {
   StyleSheet,
   View,
   Text,
-  TextInput,
-  Button,
-  FlatList,
+  ScrollView,
   TouchableOpacity,
+  Dimensions,
 } from "react-native";
-import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLayoutEffect, useState } from "react";
+
 import { useNavigation } from "@react-navigation/native";
+
+import { useThemeColor } from "@/hooks/useThemeColor";
+
 import TemplateLayout from "@/components/TemplateLayout";
 
-export default function AddOrderScreen() {
+import LoadingPage from "@/components/LoadingPage";
+
+import {
+  LineChart,
+  BarChart,
+  PieChart,
+  ProgressChart,
+  ContributionGraph,
+  StackedBarChart,
+} from "react-native-chart-kit";
+
+export default function StatsPage() {
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
+  const AccentColor = useThemeColor({}, "accent");
+
   const navigation = useNavigation();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const chartConfig = {
+    backgroundColor: AccentColor,
+    backgroundGradientFrom: PrimaryColor,
+    backgroundGradientTo: PrimaryColor,
+    decimalPlaces: 2,
+    color: (opacity = 1) => SecondaryColor,
+    labelcolor: (opacity = 1) => SecondaryColor,
+    style: {
+      borderRadius: 16,
+    },
+    propsForDots: {
+      r: "6",
+      strokeWidth: "2",
+      stroke: PrimaryColor,
+    },
+  };
+
+  const progressData = {
+    labels: ["Swim", "Bike", "Run"],
+    data: [0.4, 0.6, 0.8],
+  };
+
+  const pieData = [
+    {
+      name: "Groceries",
+      population: 40,
+      color: BackgroundColor,
+      legendFontColor: TextColor,
+      legendFontSize: 12,
+    },
+    {
+      name: "Bills",
+      population: 30,
+      color: SecondaryColor,
+      legendFontColor: TextColor,
+      legendFontSize: 12,
+    },
+    {
+      name: "Entertainment",
+      population: 20,
+      color: AccentColor,
+      legendFontColor: TextColor,
+      legendFontSize: 12,
+    },
+    {
+      name: "Savings",
+      population: 10,
+      color: TextColor,
+      legendFontColor: TextColor,
+      legendFontSize: 12,
+    },
+  ];
 
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
-      <View style={[styles.container]}>
-        <View style={styles.spacer} />
+      <ScrollView
+        contentContainerStyle={styles.container}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+      >
+        <LineChart
+          data={{
+            labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+            datasets: [
+              {
+                data: Array.from({ length: 6 }, () => Math.random() * 100),
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width - 40}
+          height={220}
+          yAxisLabel=""
+          chartConfig={chartConfig}
+          bezier
+          style={styles.chart}
+        />
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => navigation.goBack()}
-          >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+        <BarChart
+          data={{
+            labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+            datasets: [
+              {
+                data: Array.from({ length: 4 }, () => Math.random() * 100),
+              },
+            ],
+          }}
+          width={Dimensions.get("window").width - 40}
+          height={220}
+          chartConfig={chartConfig}
+          style={styles.chart}
+          yAxisLabel=""
+          yAxisSuffix=""
+        />
+
+        <PieChart
+          data={pieData}
+          width={Dimensions.get("window").width - 40}
+          height={220}
+          chartConfig={chartConfig}
+          accessor={"population"}
+          backgroundColor={PrimaryColor}
+          paddingLeft={"15"}
+          style={styles.chart}
+        />
+
+        <ProgressChart
+          data={progressData}
+          width={Dimensions.get("window").width - 40}
+          height={220}
+          strokeWidth={16}
+          radius={32}
+          chartConfig={chartConfig}
+          style={styles.chart}
+        />
+      </ScrollView>
     </TemplateLayout>
   );
 }
@@ -46,46 +155,9 @@ export default function AddOrderScreen() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    flex: 1,
-    justifyContent: "space-between",
   },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
-  },
-  dropdown: {
-    position: "absolute",
-    backgroundColor: "white",
-    width: "100%",
-    maxHeight: 150,
-    elevation: 5,
-    zIndex: 1000,
-  },
-  dropdownItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    width: "100%",
-  },
-  button: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
-    borderRadius: 5,
-    margin: 5,
-  },
-  buttonText: {
-    fontSize: 24,
-    fontWeight: "bold",
-  },
-  spacer: {
-    flex: 1,
+  chart: {
+    marginVertical: 8,
+    borderRadius: 16,
   },
 });

@@ -19,18 +19,13 @@ export enum Status {
   MissingCredentials = 'MissingCredentials',
   InvalidCredentials = 'InvalidCredentials',
   TooManyRequests = 'TooManyRequests',
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  WSSuccess = "Success",
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  WSFound = "Found",
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  WSUnauthorized = "Unauthorized",
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  WSForbidden = "Forbidden",
-  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
-  WSFailed = "Failed"
-}
 
+  WsUnauthorized = "Unauthorized WebSocket",
+  WsClose = "Close WebSocket",
+  WsFailed = "Failed WebSocket",
+  WsForbidden = "Forbidden WebSocket",
+  wsInvalidDetails = "Invalid Details WebSocket",
+}
 export interface APIResponse<T> {
   status: Status;
   message?: string;

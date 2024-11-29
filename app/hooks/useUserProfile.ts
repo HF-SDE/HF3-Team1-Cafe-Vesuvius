@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
+import { Buffer } from "buffer";
 
 interface UserProfile {
   username: string;
@@ -19,7 +20,11 @@ export function useUserProfile() {
         setIsLoading(true);
         setError(null);
 
-        const response = await apiClient.get("/profile");
+        //const response = await apiClient.get("/profile");
+
+        const response = await apiClient.get("/profile", {
+          validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+        });
 
         setUserProfile(response.data.data);
       } catch (err: any) {
@@ -32,5 +37,23 @@ export function useUserProfile() {
     fetchUserProfile();
   }, []);
 
-  return { userProfile, isLoading, error };
+  const resetPassword = async (
+    oldPassword: string,
+    newPassword: string
+  ): Promise<string> => {
+    const payload = {
+      oldPassword: Buffer.from(oldPassword).toString("base64"),
+      newPassword: Buffer.from(newPassword).toString("base64"),
+    };
+
+    try {
+      const response = await apiClient.put("/profile/reset", payload, {
+        validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+      });
+      return response.status === 200 ? "success" : response.data.message;
+    } catch {
+      return "Something went wrong on our end. Please contact support";
+    }
+  };
+  return { userProfile, isLoading, error, resetPassword };
 }

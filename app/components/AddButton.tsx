@@ -5,13 +5,15 @@ import CheckPermission from "@/components/CheckPermission";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface AddButtonProps {
-  onPress: () => void;
+  onPress?: () => void;
   requiredPermission: string[];
+  icon?: string;
 }
 
 const AddButton: React.FC<AddButtonProps> = ({
   onPress,
   requiredPermission,
+  icon,
 }) => {
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
@@ -19,10 +21,17 @@ const AddButton: React.FC<AddButtonProps> = ({
   return (
     <CheckPermission requiredPermission={requiredPermission}>
       <TouchableOpacity
-        style={[styles.addButton, { backgroundColor: PrimaryColor }]}
+        style={[
+          styles.addButton,
+          { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+        ]}
         onPress={onPress}
       >
-        <FontAwesome6 name="plus" size={60} color={SecondaryColor} />
+        <FontAwesome6
+          name={icon ? icon : "plus"}
+          size={60}
+          color={SecondaryColor}
+        />
       </TouchableOpacity>
     </CheckPermission>
   );
@@ -38,6 +47,8 @@ const styles = StyleSheet.create({
     position: "absolute",
     bottom: 30,
     alignSelf: "center",
+    borderWidth: 5,
+    borderStyle: "solid",
   },
 });
 

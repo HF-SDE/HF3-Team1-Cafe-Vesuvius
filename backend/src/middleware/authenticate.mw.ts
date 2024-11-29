@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import passport from 'passport';
+import { WSResponse, isWebSocket } from 'websocket-express';
 
 import { Status } from '@api-types/general.types';
 import { defaultResponse, getHttpStatusCode } from '@utils/Utils';
@@ -15,7 +16,7 @@ import '../passport';
  */
 export async function verifyJWT(
   req: Request,
-  res: Response,
+  res: Response | WSResponse,
   next: NextFunction,
 ): Promise<void> {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
@@ -28,13 +29,20 @@ export async function verifyJWT(
       if (errResponse) return res.status(err).json(errResponse);
 
       if (!user) {
+        if (isWebSocket(res)) {
+          void res.accept();
+          return res.sendError(
+            getHttpStatusCode(Status.Unauthorized),
+            getHttpStatusCode(Status.WsUnauthorized),
+            JSON.stringify(defaultResponse(401)),
+          );
+        }
         return res
           .status(getHttpStatusCode(Status.Unauthorized))
           .json(defaultResponse(401));
       }
 
       req.user = user;
-
       next();
     },
   )(req, res, next);

@@ -1,117 +1,449 @@
+import React, { Dispatch, ReactElement, SetStateAction, useRef, useState } from "react";
+import { StatusBar } from "expo-status-bar";
 import {
+  Platform,
   StyleSheet,
-  View,
   Text,
-  TextInput,
-  Button,
+  View,
   FlatList,
-  TouchableOpacity,
+  Pressable,
+  KeyboardAvoidingView,
+  TextInput,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { useLayoutEffect, useState } from "react";
-import { useNavigation } from "@react-navigation/native";
-import TemplateLayout from "@/components/TemplateLayout";
+import apiClient from "../../../utils/apiClient";
+import { Table } from "@/models/TableModels";
+import { Reservation } from "@/models/ReservationModels";
+import DateTimePicker from "react-native-ui-datepicker";
+import dayjs from "dayjs";
+import CustomTextInput from "@/components/TextInput";
+import { SafeAreaView } from "react-native-safe-area-context";
+import TextIconInput from "@/components/TextIconInput";
+import { KeyboardAwareFlatList, KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
-export default function AddOrderScreen() {
+interface ModalScreenProps {
+  onClose: () => void;
+  tables: Table[];
+}
+
+interface TextInputsProps {
+  label: string;
+  value: string;
+  isError: boolean;
+}
+
+type TextInputsKeys = "name" | "phone" | "email" | "amount";
+
+interface TextInputs {
+  name: TextInputsProps;
+  phone: TextInputsProps;
+  email: TextInputsProps;
+  amount: TextInputsProps;
+}
+
+/**
+ * New reservation modal
+ * @param {() => void} onClose - On close function
+ * @param {Table[]} tables - Tables
+ * @returns {ReactElement}
+ */
+export default function NewReservationModal({ onClose, tables }: ModalScreenProps): ReactElement {
+  const [reservation, setReservations] = useState<Reservation>({ email: "", name: "", amount: 2, phone: "", reservationTime: dayjs().toDate(), Tables: [] });
+  const [datePicker, setDatePicker] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [tableSelect, setTableSelect] = useState<number>(0);
+  const [tableSelectNeed, setTableSelectNeed] = useState<number>(1);
+  const [page, setPage] = useState(1);
+  const [textInputs, setTextInputs] = useState<TextInputs>({ amount: { label: "Amount of People", value: reservation.amount.toString(), isError: false }, email: { label: "Email", value: reservation.email, isError: false }, name: { label: "Name", value: reservation.name, isError: false }, phone: { label: "Phone", value: reservation.phone, isError: false } });
+
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
   const SecondaryColor = useThemeColor({}, "secondary");
-  const navigation = useNavigation();
 
-  const [selectedReservation, setSelectedReservation] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showDropdown, setShowDropdown] = useState(false);
+  const disabledButton = areKeysDefined<Reservation>(["name", "phone", "email", "amount"], reservation);
+  const disabledCreateButton = tableSelect !== tableSelectNeed;
 
-  // Example reservations (replace with your actual data)
-  const reservations = [
-    { id: 1, name: "Reservation 1" },
-    { id: 2, name: "Reservation 2" },
-    { id: 3, name: "Reservation 3" },
-  ];
-
-  const handleOrderSubmission = () => {
-    console.log("Order Submitted:", {
-      reservation: selectedReservation,
-      // Add productName, quantity, and price if needed
-    });
+  /**
+   * Handle the create reservation
+   * @returns {Promise<void>}
+   */
+  async function handleCreate(): Promise<void> {
+    try {
+      const response = await createReservation();
+      if (response === "success") {
+        onClose(); // Close the modal on success
+      } else {
+        setErrorMessage(response || "An error occurred.");
+      }
+    } catch (error) {
+      setErrorMessage("An error occurred while create reservation.");
+    }
   };
 
-  const filteredReservations = reservations.filter((reservation) =>
-    reservation.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  /**
+   * Create a reservation
+   * @returns {Promise<string>}
+   */
+  async function createReservation(): Promise<string> {
+    if (!reservation) return "Something went wrong on our end. Please contact support";
+
+    const payload: Reservation = {
+      email: reservation.email,
+      name: reservation.name,
+      amount: Number(reservation.amount),
+      phone: reservation.phone,
+      reservationTime: reservation.reservationTime,
+      tableIds: reservation.Tables?.map((table) => table.id),
+    };
+
+    try {
+      const response = await apiClient.post("/reservation", payload, {
+        validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
+      });
+      return response.status === 201 ? "success" : response.data.message;
+    } catch {
+      return "Something went wrong on our end. Please contact support";
+    }
+  };
 
   return (
-    <TemplateLayout pageName="ReservationCreatePage" title="New reservation">
-      <View style={[styles.container]}>
-        <View style={styles.spacer} />
+    <SafeAreaView style={[styles.container, { backgroundColor: BackgroundColor }]}>
+      <Text style={[styles.title, { color: TextColor }]}>New Reservations</Text>
+      {
+        page === 1 ?
+          <>
+            <CustomTextInput
+              label={textInputs.name.label}
+              value={reservation?.name}
+              inputMode="text"
+              clearButtonMode="always"
+              autoCapitalize="words"
+              enablesReturnKeyAutomatically={true}
+              onChangeText={(name) => {
+                setReservations({ ...reservation!, name });
+                validateTextInput("name", name, setTextInputs);
+              }}
+              error={textInputs.name.isError}
+            />
+            <CustomTextInput
+              label={textInputs.phone.label}
+              value={reservation?.phone}
+              inputMode="tel"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChangeText={(phone) => {
+                setReservations({ ...reservation!, phone });
+                validateTextInput("phone", phone, setTextInputs);
+              }}
+              error={textInputs.phone.isError}
+            />
+            <CustomTextInput
+              label={textInputs.email.label}
+              value={reservation?.email}
+              inputMode="email"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChangeText={(email) => {
+                setReservations({ ...reservation!, email });
+                validateTextInput("email", email, setTextInputs);
+              }}
+              error={textInputs.email.isError}
+            />
+            <CustomTextInput
+              label={textInputs.amount.label}
+              value={reservation?.amount?.toString()}
+              inputMode="numeric"
+              clearButtonMode="always"
+              enablesReturnKeyAutomatically={true}
+              onChangeText={(partySize) => {
+                setReservations({ ...reservation!, amount: Number(partySize) });
+                setTableSelectNeed(Math.ceil(Number(partySize) / 2));
+                validateTextInput("amount", partySize, setTextInputs);
+              }}
+              error={textInputs.amount.isError}
+            />
+            <TextIconInput
+              label="Reservation Time"
+              value={dayjs(reservation?.reservationTime).format("YYYY-MM-DD HH:mm") ?? dayjs().format("YYYY-MM-DD HH:mm")}
+              placeholderTextColor={SecondaryColor}
+              icon="calendar"
+              editable={false}
+              onIconPress={() => setDatePicker(!datePicker)}
+              onChangeText={(email) => setReservations({ ...reservation!, email })}
+            />
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={() => navigation.goBack()}
+            {
+              datePicker
+              &&
+              <View style={styles.dateTimePicker}>
+                <DateTimePicker
+                  mode="single"
+                  onChange={(date) => { setReservations({ ...reservation!, reservationTime: dayjs(date.date) }); setDatePicker(false) }}
+                  date={dayjs(reservation?.reservationTime) ?? dayjs().toDate()}
+                  firstDayOfWeek={1}
+                  timePicker={true}
+                  maxDate={dayjs().add(1, "year").toDate()}
+                  minDate={dayjs().toDate()}
+                />
+              </View>
+            }
+
+            {errorMessage ? (
+              <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
+            ) : null}
+          </>
+          :
+          <KeyboardAwareFlatList ListHeaderComponent={<Text>Tables - {tableSelectNeed} out of {tableSelect} </Text>} numColumns={4} data={tables} renderItem={({ item }) => (
+            <Item table={item} setTableSelect={setTableSelect} tableSelect={tableSelect} tableSelectNeed={tableSelectNeed} reservation={[reservation, setReservations]} />
+          )} keyExtractor={(item) => item.number?.toString()} contentContainerStyle={styles.listContainer} style={styles.flatList} />
+
+      }
+      <View style={styles.buttonContainer}>
+        <Pressable
+          style={[styles.cancelButton, { backgroundColor: "#969696" }]}
+          onPress={onClose}
+
+        >
+          <Text style={styles.buttonText}>cancel</Text>
+        </Pressable>
+        {page === 1
+          ?
+          <Pressable
+            style={[styles.mainButton, disabledButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
+            onPress={() => setPage(2)}
+            disabled={disabledButton}
           >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Back
-            </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
-            onPress={handleOrderSubmission}
+            <Text style={styles.buttonText}>Next</Text>
+          </Pressable>
+          :
+          <Pressable
+            style={[styles.mainButton, disabledCreateButton ? { backgroundColor: SecondaryColor } : { backgroundColor: PrimaryColor }]}
+            onPress={handleCreate}
+            disabled={disabledCreateButton}
           >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-              Submit Order
-            </Text>
-          </TouchableOpacity>
-        </View>
+            <Text style={styles.buttonText}>Create</Text>
+          </Pressable>
+        }
       </View>
-    </TemplateLayout>
+      <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
+    </SafeAreaView>
   );
 }
 
+
+/**
+ * Check if all keys are defined in the object
+ * @param {TextInputsKeys} field - The field to validate
+ * @param {string} value - The value to validate
+ * @param {Dispatch<SetStateAction<TextInputs>>} setTextInputs - The state setter
+ */
+function validateTextInput(field: TextInputsKeys, value: string, setTextInputs: Dispatch<SetStateAction<TextInputs>>): void {
+  if (field === "email" && !value.includes("@")) {
+    setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+    return;
+  }
+  if (field === "phone") {
+    if (isNaN(Number(value)) && !value.startsWith("+")) {
+      setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+      return;
+    }
+    if (value.startsWith("+") && isNaN(Number(value.replace("+", "")))) {
+      setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+      return;
+    }
+    if (value.length < 5) {
+      setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+      return;
+    }
+  }
+  if (field === "amount" && isNaN(Number(value))) {
+    setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+    return;
+  }
+  if (field === "name" && value.length < 2) {
+    setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: true } }));
+    return;
+  }
+  setTextInputs((prev) => ({ ...prev, [field]: { ...prev[field], isError: false } }));
+}
+
+/**
+ * Table Props
+ * @interface TableProps
+ * @typedef {TableProps}
+ */
+interface TableProps {
+  table: Table;
+  tableSelect: number;
+  tableSelectNeed: number;
+  setTableSelect: Dispatch<SetStateAction<number>>;
+  reservation: [Reservation, Dispatch<SetStateAction<Reservation>>]
+}
+
+/**
+ * The item component for the flatlist
+ * @param {TableProps} props - The props for the item
+ */
+function Item(props: TableProps): ReactElement {
+  const disabled = areItemDisabled(props.table, props.tableSelect, props.tableSelectNeed, [props.reservation[0], props.reservation[1]]);
+  const selected = areItemSelected(props.table, props.reservation[0]);
+  return (
+    <Pressable
+      style={selected ? { ...styles.item, backgroundColor: "blue" } : disabled ? { ...styles.item, backgroundColor: "#969696" } : styles.item}
+      onPress={() => {
+        props.reservation[1]({ ...props.reservation[0], Tables: [...props.reservation[0].Tables!, props.table] });
+        props.setTableSelect(props.tableSelect + 1)
+      }}
+      disabled={selected || disabled}>
+      <Text>{props.table.number}</Text>
+    </Pressable>
+  );
+}
+
+
+/**
+ * Check if the item need to be disabled
+ * @param {Table} table - The table to check
+ * @param {number} tableSelect - The number of tables selected
+ * @param {number} tableSelectNeed - The number of tables needed
+ * @param {[Reservation, Dispatch<SetStateAction<Reservation>>]} action - The action to update the reservation
+ * @returns {boolean} - True if the item should be disabled, false otherwise
+ */
+function areItemDisabled(table: Table, tableSelect: number, tableSelectNeed: number, action: [Reservation, Dispatch<SetStateAction<Reservation>>]): boolean {
+  if (action[0].Tables) {
+    for (const key in action[0].Tables) {
+      if (action[0].Tables[key].id === table.id) {
+        return true;
+      }
+    }
+    if (tableSelect === tableSelectNeed) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  return true;
+}
+
+
+/**
+ * Check if the item is selected
+ * @param {Table} table
+ * @param {Reservation} reservation
+ * @returns {boolean}
+ */
+function areItemSelected(table: Table, reservation: Reservation): boolean {
+  if (reservation.Tables) {
+    for (const key in reservation.Tables) {
+      if (reservation.Tables[key].id === table.id) {
+        return true;
+      }
+    }
+    return false;
+  }
+  return true;
+}
+
+
+/**
+ * Check if all keys are defined in the object
+ * @template {Record<string, any>} T - The type of the object
+ * @param {string[]} keys - The keys to check
+ * @param {(T | undefined)} obj - The object to check
+ * @returns {boolean} - True if all keys are defined, false otherwise
+ */
+function areKeysDefined<T extends Record<string, any>>(keys: string[], obj: T | undefined): boolean {
+  if (!obj) return true;
+  if (keys.every(key => key in obj)) {
+    return !keys.every(key => obj[key] !== undefined && obj[key] !== null && obj[key] !== "");
+  }
+  return true;
+}
+
 const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    flex: 1,
-    justifyContent: "space-between",
-  },
-  input: {
-    height: 40,
-    borderColor: "gray",
-    borderWidth: 1,
-    marginBottom: 20,
-    paddingLeft: 10,
-  },
-  dropdown: {
+  dateTimePicker: {
     position: "absolute",
     backgroundColor: "white",
-    width: "100%",
-    maxHeight: 150,
-    elevation: 5,
-    zIndex: 1000,
-  },
-  dropdownItem: {
+    zIndex: 2,
+    borderRadius: 20,
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: "lightgray",
+  },
+  item: {
+    flex: 1,
+    maxWidth: "25%",
+    alignItems: "center",
+    width: "100%",
+
+    padding: 10,
+    backgroundColor: "rgba(249, 180, 45, 0.25)",
+    borderWidth: 1.5,
+    borderColor: "#fff"
+  },
+  itemDisabled: {
+    flex: 1,
+    maxWidth: "25%", // 100% devided by the number of rows you want
+    alignItems: "center",
+    width: "100%",
+
+    // my visual styles; not important for the grid
+    padding: 10,
+    backgroundColor: "rgba(249, 180, 45, 0.25)",
+    borderWidth: 1.5,
+    borderColor: "#fff"
+  },
+  listContainer: {
+    padding: 16,
+  },
+  flatList: {
+    flex: 1,
+    alignContent: "center",
+    width: "100%", // Ensures the FlatList spans the full width
+  },
+  container: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    paddingHorizontal: 20,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  input: {
+    width: "100%",
+    padding: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    marginVertical: 10,
   },
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
+    marginTop: 20,
   },
-  button: {
+  cancelButton: {
     flex: 1,
-    paddingVertical: 10,
-    alignItems: "center",
+    padding: 10,
     borderRadius: 5,
-    margin: 5,
+    alignItems: "center",
+    marginRight: 10,
+  },
+  mainButton: {
+    flex: 1,
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
   },
   buttonText: {
-    fontSize: 24,
+    color: "#fff",
     fontWeight: "bold",
   },
-  spacer: {
-    flex: 1,
+  errorText: {
+    marginTop: 10,
+    fontSize: 14,
+    textAlign: "center",
   },
 });

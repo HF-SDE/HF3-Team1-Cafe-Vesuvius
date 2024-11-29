@@ -3,54 +3,56 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import Joi from 'joi';
+
 import { APIResponse, Status } from '@api-types/general.types';
-import prisma, { errorResponse } from '@prisma-instance';
+import prisma, { errorResponse, prismaModels } from '@prisma-instance';
 import { Prisma } from '@prisma/client';
-import { UuidSchema } from '@schemas/general.schemas';
+import { capitalize, getSchema } from '@utils/Utils';
 
 type Result = any;
-type prismaModels = Uncapitalize<Prisma.ModelName>;
 
 /**
  * Service to get all records from a collection
  * @async
  * @param {prismaModels} prismaModel - The Prisma model to get the records from.
- * @param {string} id - The id of the record to get.
+ * @param {Record<string, unknown>} config - The parameters to filter the records by.
  * @returns {Promise<APIResponse<Result>>} A promise that resolves to an object containing the data, status, and message.
  */
 export async function getAll(
   prismaModel: prismaModels,
-  id?: string,
+  config: Record<string, unknown> = {},
 ): Promise<APIResponse<Result>> {
-  const validate = UuidSchema.validate(id);
+  const whereSchema = getSchema(prismaModel, { type: 'where' });
 
-  if (validate.error) {
-    return {
-      data: undefined,
-      status: Status.MissingDetails,
-      message: validate.error.message,
-    };
+  if (whereSchema) {
+    const validatedWhere = whereSchema.validate(config.where);
+
+    if (validatedWhere.error) {
+      return {
+        status: Status.InvalidDetails,
+        message: validatedWhere.error.message,
+      };
+    }
+
+    config.where = validatedWhere.value;
   }
-
-  const where = id ? { id } : undefined;
 
   const prismaType = prisma[prismaModel] as any;
 
-  if (!prismaType)
+  if (!prismaType) {
     return {
-      data: undefined,
       status: Status.Failed,
       message: `Database collection not found`,
     };
+  }
 
-  const results = await prismaType.findMany({
-    where,
-  });
+  const results = await prismaType.findMany(config);
 
   return {
     data: results,
-    status: Status.Success,
-    message: `Found ${results.length} result(s)`,
+    status: Status.Found,
+    message: `${capitalize(prismaModel)}(s) found`,
   };
 }
 
@@ -59,27 +61,39 @@ export async function getAll(
  * @async
  * @param {prismaModels} prismaModel - The Prisma model to create the record with.
  * @param {any} data - The data to create a record with.
+ * @param {Joi.ObjectSchema} schema - The schema to validate the data against.
  * @returns {Promise<APIResponse<Result>>} A promise that resolves to an object containing the record data, status, and message.
  */
 export async function create(
   prismaModel: prismaModels,
   data: unknown,
+  schema: Joi.ObjectSchema | undefined = getSchema(prismaModel),
 ): Promise<APIResponse<Result>> {
   try {
     const prismaType = prisma[prismaModel] as any;
 
-    const results = await prismaType.create({
-      data,
-    });
+    if (schema) {
+      const { value, error } = schema.validate(data);
+
+      if (error) {
+        return {
+          status: Status.InvalidDetails,
+          message: error.message,
+        };
+      }
+
+      data = value;
+    }
+
+    await prismaType.create({ data });
 
     return {
-      data: results,
       status: Status.Created,
-      message: 'Record created',
+      message: `Created new ${prismaModel}`,
     };
   } catch (error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
-    return errorResponse(prismaError, 'CreationFailed');
+    return errorResponse(prismaError, prismaModel, 'CreationFailed');
   }
 }
 
@@ -89,29 +103,41 @@ export async function create(
  * @param {prismaModels} prismaModel - The Prisma model to update the record from.
  * @param {string} id - The id of the record to update.
  * @param {any} data - The data to update the record with.
+ * @param {Joi.ObjectSchema} schema - The schema to validate the data against.
  * @returns {Promise<APIResponse<Result>>} A promise that resolves to an object containing the record data, status, and message.
  */
 export async function update(
   prismaModel: prismaModels,
   id: string,
-  data: any,
+  data: unknown,
+  schema: Joi.ObjectSchema | undefined = getSchema(prismaModel, {
+    type: 'optional',
+  }),
 ): Promise<APIResponse<Result>> {
   const prismaType = prisma[prismaModel] as any;
 
   try {
-    const record = await prismaType.update({
-      where: { id },
-      data,
-    });
+    if (schema) {
+      const { value, error } = schema.validate(data);
+
+      if (error) {
+        return {
+          status: Status.InvalidDetails,
+          message: error.message,
+        };
+      }
+
+      data = value;
+    }
+    await prismaType.update({ where: { id }, data });
 
     return {
-      data: record,
-      status: Status.Success,
-      message: 'Record updated',
+      status: Status.Updated,
+      message: `Updated ${prismaModel}`,
     };
   } catch (error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
-    return errorResponse(prismaError, 'UpdateFailed');
+    return errorResponse(prismaError, prismaModel, 'UpdateFailed');
   }
 }
 
@@ -129,15 +155,14 @@ export async function deleteRecord(
   const prismaType = prisma[prismaModel] as any;
 
   try {
-    const deletedRow = await prismaType.delete({ where: { id } });
+    await prismaType.delete({ where: { id } });
 
     return {
-      data: deletedRow,
-      status: Status.Success,
-      message: 'Record deleted',
+      status: Status.Deleted,
+      message: `Deleted ${prismaModel}`,
     };
   } catch (error) {
     const prismaError = error as Prisma.PrismaClientKnownRequestError;
-    return errorResponse(prismaError, 'DeleteFailed');
+    return errorResponse(prismaError, prismaModel, 'DeleteFailed');
   }
 }

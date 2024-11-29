@@ -13,31 +13,24 @@ import { StockCreateSchema, StockUpdateSchema } from '@schemas/stock.schemas';
  */
 export async function get(id?: string): Promise<APIResponse<StockResult>> {
   try {
-    let result: StockResult | null;
     if (id) {
       // Validate the id
       const validate = UuidSchema.validate(id);
       if (validate.error) {
         return {
-          data: undefined,
           status: Status.InvalidDetails,
           message: validate.error.message,
         };
       }
-
-      // Find the stock item by id
-      result = await prisma.rawMaterial.findUnique({
-        where: {
-          id,
-        },
-      });
-    } else {
-      result = await prisma.rawMaterial.findMany();
     }
+    const result = await prisma.rawMaterial.findMany({
+      where: {
+        id,
+      },
+    });
 
     if (!result) {
       return {
-        data: undefined,
         status: Status.NotFound,
         message: 'Stocks item(s) not found',
       };
@@ -50,7 +43,6 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
     };
   } catch {
     return {
-      data: undefined,
       status: Status.Failed,
       message: 'Something went wrong on our end',
     };
@@ -117,7 +109,7 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
       };
     }
 
-    const transaction = data.map(({ quantity, unit, id }) => {
+    const transaction = data.map(({ quantity, unit, name, id }) => {
       return prisma.rawMaterial.update({
         where: {
           id,
@@ -125,6 +117,7 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
         data: {
           quantity,
           unit,
+          name,
         },
       });
     });

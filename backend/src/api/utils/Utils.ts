@@ -1,4 +1,7 @@
+import Joi from 'joi';
+
 import { Status } from '@api-types/general.types';
+import { prismaModels } from '@prisma-instance';
 
 /**
  * Returns the HTTP status code for a given Status
@@ -42,14 +45,17 @@ export function getHttpStatusCode(status: Status): number {
       return 401;
     case Status.TooManyRequests:
       return 429;
-    case Status.WSSuccess:
-      return 1000;
-    case Status.WSUnauthorized:
+    case Status.WsUnauthorized:
       return 1008;
-    case Status.WSForbidden:
-      return 1013;
-    case Status.WSFailed:
+    case Status.WsClose:
+      return 1000;
+    case Status.WsFailed:
       return 1011;
+    case Status.WsForbidden:
+      return 1013;
+    case Status.wsInvalidDetails:
+      return 4000;
+
   }
 }
 
@@ -63,8 +69,44 @@ export function defaultResponse(code: number | string) {
     case Status.Unauthorized:
     case getHttpStatusCode(Status.Unauthorized):
       return {
-        stats: 'Unauthorized',
+        status: 'Unauthorized',
         message: 'Unauthorized',
       };
   }
+}
+
+interface ISchemaOptions {
+  type?: "default" | "optional" | "where";
+}
+
+/**
+ * Returns the schema for a given model
+ * @param {prismaModels} schemaName - The name of the schema to return
+ * @param {ISchemaOptions} options - The options for the schema
+ * @returns {Joi.ObjectSchema} The schema for the given model
+ */
+export function getSchema(
+  schemaName: prismaModels,
+  { type = 'default' }: ISchemaOptions = {},
+): Joi.ObjectSchema | undefined {
+  // import schema file from schemas folder by schemaName
+  try {
+    const filePath = `../../../schemas/${schemaName}.schema.ts`;
+
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+    const schema = require(filePath)[type] as Joi.ObjectSchema;
+
+    return schema;
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * Capitalizes the first letter of a string
+ * @param {string} string - The string to capitalize
+ * @returns {string} The string with the first letter capitalized
+ */
+export function capitalize(string: string): string {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useLayoutEffect } from "react";
-import { StyleSheet, SafeAreaView, Text, View } from "react-native";
+import { StyleSheet, SafeAreaView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -34,7 +34,7 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       headerStyle: { backgroundColor: PrimaryColor },
       headerTintColor: BackgroundColor,
       headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
-      headerShadowVisible: false,
+      headerShadowVisible: true,
     });
   }, [navigation, title]);
 

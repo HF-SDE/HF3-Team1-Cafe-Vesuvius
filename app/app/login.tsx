@@ -7,15 +7,16 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
-  TextInput,
 } from "react-native";
 import LogoLight from "../components/icons/CaféVesuviusLogo2.svg";
 import LogoDark from "../components/icons/CaféVesuviusLogo3.svg";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { router } from "expo-router";
 import { useSession } from "./ctx";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useColorScheme } from "react-native";
+import PasswordInput from "../components/PasswordInput";
+
+import TextInput from "../components/TextInput";
 
 export default function Index() {
   const { signIn } = useSession();
@@ -31,15 +32,21 @@ export default function Index() {
   const Logo = colorScheme === "dark" ? LogoDark : LogoLight; // Choose logo based on theme
 
   const handleLogin = async () => {
-    const isUsernameValid = username.trim() !== "";
-    const isPasswordValid = password.trim() !== "";
+    const trimedUsername = username.trim();
+    const trimedPassword = password.trim();
+
+    setUsername(trimedUsername);
+    setPassword(trimedPassword);
+
+    const isUsernameValid = trimedUsername !== "";
+    const isPasswordValid = trimedPassword !== "";
 
     setIsUsernameEmpty(!isUsernameValid);
     setIsPasswordEmpty(!isPasswordValid);
 
     if (isUsernameValid && isPasswordValid) {
       setIsLoading(true);
-      const signInResult = await signIn(username, password);
+      const signInResult = await signIn(trimedUsername, trimedPassword);
 
       if (signInResult === "authenticated") {
         setErrorMessage("");
@@ -78,16 +85,7 @@ export default function Index() {
       >
         <View style={styles.input_block}>
           <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isUsernameEmpty ? "red" : PrimaryColor,
-                color: PrimaryColor,
-                backgroundColor: BackgroundColor,
-              },
-            ]}
-            placeholder="Username"
-            placeholderTextColor="gray"
+            label="Username"
             autoCorrect={false}
             autoCapitalize="none"
             value={username}
@@ -96,41 +94,22 @@ export default function Index() {
               setIsUsernameEmpty(false);
             }}
             onSubmitEditing={handleLogin}
+            clearTextOnFocus={false}
+            autoComplete="off"
+            isHighlighted={isUsernameEmpty}
           />
         </View>
         <View style={[styles.input_block]}>
-          <TextInput
-            style={[
-              styles.input,
-              {
-                borderColor: isPasswordEmpty ? "red" : PrimaryColor,
-                color: PrimaryColor,
-                backgroundColor: BackgroundColor,
-                paddingRight: 45,
-              },
-            ]}
-            placeholder="Password"
-            placeholderTextColor="gray"
-            autoCorrect={false}
-            secureTextEntry={!showPassword}
-            autoCapitalize="none"
+          <PasswordInput
             value={password}
             onChangeText={(text) => {
               setPassword(text);
               setIsPasswordEmpty(false);
             }}
+            isInvalid={isPasswordEmpty}
             onSubmitEditing={handleLogin}
+            isHighlighted={isPasswordEmpty}
           />
-          <TouchableOpacity
-            onPress={() => setShowPassword((previous) => !previous)}
-            style={styles.icon_container}
-          >
-            <MaterialCommunityIcons
-              name={showPassword ? "eye-off" : "eye"}
-              size={24}
-              style={{ color: SecondaryColor }}
-            />
-          </TouchableOpacity>
         </View>
 
         {errorMessage ? (
@@ -167,6 +146,7 @@ const styles = StyleSheet.create({
     width: "90%",
     maxWidth: 400,
     padding: 20,
+    gap: 10,
   },
   input: {
     height: 50,

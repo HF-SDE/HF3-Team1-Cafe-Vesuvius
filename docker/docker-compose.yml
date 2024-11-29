@@ -9,17 +9,33 @@ services:
       target: base
     expose:
       - "3001"
-    ports:
-      - "3001:3001"
-    command: npm run dev
+    command: ["npm", "run", "dev"]
     depends_on:
       - db
     env_file:
-      - ../config/environment-variables/backend.dev.env
+      - ../config/environment-variables/.env.backend.dev
     volumes:
       - ../backend/src:/usr/src/app/src
       - ../schemas:/usr/src/app/schemas
       - ../backend/nodemon.json:/usr/src/app/nodemon.json
+    networks:
+      - internal
+
+  web:
+    container_name: web
+    build:
+      context: ../WebMenu/
+      dockerfile: Dockerfile
+      target: base
+    expose:
+      - "3000"
+    command: ["npm", "run", "dev"]
+    depends_on:
+      - backend
+    environment:
+      - BACKEND_URL=http://reverse-proxy/api
+    volumes:
+      - ../WebMenu/src:/usr/src/app/src
     networks:
       - internal
 
@@ -46,10 +62,25 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
     env_file:
-      - ../config/environment-variables/db.dev.env
+      - ../config/environment-variables/.env.db.dev
     volumes:
       - "mongo1_data:/data/db"
       - "mongo1_config:/data/configdb"
+    networks:
+      - public
+      - internal
+
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    expose:
+      - "5432"
+    ports:
+      - 5432:5432
+    env_file:
+      - ../config/environment-variables/.env.db.dev
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - public
       - internal
@@ -60,7 +91,6 @@ services:
       context: ..
       dockerfile: docker/nginx.Dockerfile
     ports:
-      - 443:443
       - 80:80
     depends_on:
       - backend
@@ -70,16 +100,13 @@ services:
       - internal
 
   ngrok:
+    container_name: ngrok
     image: ngrok/ngrok:latest
-    restart: unless-stopped
-    command:
-      - "http"
-      - "--url=https://<your-url>.ngrok-free.app"
-      - "http://reverse-proxy:80"
     ports:
       - 4040:4040
+    command: ["http", "http://reverse-proxy:80", "--url=${NGROK_URL}"]
     env_file:
-      - ../config/environment-variables/grok.dev.env
+      - ../config/environment-variables/.env.grok.dev
     networks:
       - public
       - internal
@@ -94,3 +121,4 @@ networks:
 volumes:
   mongo1_data: {}
   mongo1_config: {}
+  postgres_data: {}
