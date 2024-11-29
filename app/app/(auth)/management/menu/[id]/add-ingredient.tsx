@@ -32,11 +32,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
   themeColors,
   excitingStockItems,
 }) => {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -67,10 +63,10 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
   const renderItem = ({ item }: { item: StockItemModel }) => (
     <TouchableOpacity
-      style={[styles.itemContainer, { borderColor: PrimaryColor }]}
+      style={[styles.itemContainer, { borderColor: theme.primary }]}
       onPress={() => handleSelectItem(item)}
     >
-      <Text style={[styles.itemText, { color: TextColor }]}>
+      <Text style={[styles.itemText, { color: theme.text }]}>
         {item.name} ({item.unit})
       </Text>
     </TouchableOpacity>
@@ -78,10 +74,10 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: BackgroundColor }]}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
       <View style={[styles.modalContent]}>
-        <Text style={[styles.title, { color: TextColor }]}>
+        <Text style={[styles.title, { color: theme.text }]}>
           Add New Ingredient
         </Text>
         <SearchBar
@@ -100,10 +96,10 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
         <View style={styles.modalButtonContainer}>
           <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: PrimaryColor }]}
+            style={[styles.modalButton, { backgroundColor: theme.primary }]}
             onPress={onClose}
           >
-            <Text style={[styles.modalButtonText, { color: BackgroundColor }]}>
+            <Text style={[styles.modalButtonText, { color: theme.background }]}>
               Cancel
             </Text>
           </TouchableOpacity>

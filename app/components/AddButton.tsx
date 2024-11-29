@@ -15,22 +15,21 @@ const AddButton: React.FC<AddButtonProps> = ({
   requiredPermission,
   icon,
 }) => {
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   return (
     <CheckPermission requiredPermission={requiredPermission}>
       <TouchableOpacity
         style={[
           styles.addButton,
-          { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+          { backgroundColor: theme.primary, borderColor: theme.secondary },
         ]}
         onPress={onPress}
       >
         <FontAwesome6
           name={icon ? icon : "plus"}
           size={60}
-          color={SecondaryColor}
+          color={theme.secondary}
         />
       </TouchableOpacity>
     </CheckPermission>

@@ -9,7 +9,7 @@ import TemplateLayout from "@/components/TemplateLayout";
 import MenuTabView from "@/components/MenuTabView";
 import { RouteProp } from "@react-navigation/native";
 
-import { MenuModel } from "../../../../../models/MenuModel";
+import { MenuModel } from "@/models/MenuModel";
 
 type EditCreateUserRouteParams = {
   id: string | "new" | undefined;
@@ -27,7 +27,8 @@ export default function EditCreateUserPage() {
   const SecondaryColor = useThemeColor({}, "secondary");
   const AccentColor = useThemeColor({}, "accent");
 
-  const { menu } = useMenu(id as string);
+  const { menu, isLoading, error, createMenu, updateMenu, deleteMenu } =
+    useMenu(id as string);
 
   const [menuItem, setMenuItem] = useState<MenuModel>({
     id: "",
@@ -43,8 +44,10 @@ export default function EditCreateUserPage() {
     newValue?: any;
   }
 
-  const [changedFields, setChangedFields] = useState<ChangedFields>({});
-
+  //  const [changedFields, setChangedFields] = useState<ChangedFields>({});
+  const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
+    {}
+  );
   useEffect(() => {
     if (menu) {
       const foundMenuItem = menu[0];
@@ -60,11 +63,21 @@ export default function EditCreateUserPage() {
   const handleSave = () => {
     if (Object.keys(changedFields).length === 0) {
       console.log("No changes");
-      navigation.goBack();
-      return;
+    } else {
+      console.log("Changes:", changedFields);
+
+      if (id !== "new") {
+        // Update
+        const updatedFields: MenuModel = {
+          id: menuItem.id,
+          ...changedFields,
+        };
+        updateMenu(updatedFields);
+      } else {
+        // Create
+      }
     }
-    console.log("Changes:", changedFields);
-    // Update or create logic here
+    navigation.goBack();
   };
 
   const handleChange = useCallback(
@@ -83,30 +96,33 @@ export default function EditCreateUserPage() {
   const memoizedMenuTabView = useMemo(
     () => (
       <MenuTabView
-        categories={menuItem.category}
-        ingredients={menuItem.RawMaterial_MenuItems}
+        categories={menuItem.category || []}
+        ingredients={menuItem.RawMaterial_MenuItems || []}
         onAddCategory={(category) => {
           setMenuItem((prev) => ({
             ...prev,
-            category: [...prev.category, category],
+            category: [...(prev.category || []), category],
           }));
         }}
         onDeleteCategory={(category) => {
           setMenuItem((prev) => ({
             ...prev,
-            category: prev.category.filter((cat) => cat !== category),
+            category: (prev.category || []).filter((cat) => cat !== category),
           }));
         }}
         onAddIngredient={(ingredient) => {
           setMenuItem((prev) => ({
             ...prev,
-            RawMaterial_MenuItems: [...prev.RawMaterial_MenuItems, ingredient],
+            RawMaterial_MenuItems: [
+              ...(prev.RawMaterial_MenuItems || []),
+              ingredient,
+            ],
           }));
         }}
         onDeleteIngredient={(id) => {
           setMenuItem((prev) => ({
             ...prev,
-            RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
+            RawMaterial_MenuItems: (prev.RawMaterial_MenuItems || []).filter(
               (item) => item.id !== id
             ),
           }));
@@ -114,8 +130,8 @@ export default function EditCreateUserPage() {
         onUpdateIngredientQuantity={(id, quantity) => {
           setMenuItem((prev) => ({
             ...prev,
-            RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map((item) =>
-              item.id === id ? { ...item, quantity } : item
+            RawMaterial_MenuItems: (prev.RawMaterial_MenuItems || []).map(
+              (item) => (item.id === id ? { ...item, quantity } : item)
             ),
           }));
         }}
@@ -157,7 +173,7 @@ export default function EditCreateUserPage() {
             />
             <TextInput
               label="Price"
-              value={menuItem.price.toString()}
+              value={menuItem.price?.toString()}
               onChangeText={(text) => {
                 // Replace commas with periods
                 let formattedText = text.replace(/,/g, ".");

@@ -25,28 +25,24 @@ import {
 } from "react-native-chart-kit";
 
 export default function StatsPage() {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const navigation = useNavigation();
 
   const chartConfig = {
-    backgroundColor: AccentColor,
-    backgroundGradientFrom: PrimaryColor,
-    backgroundGradientTo: PrimaryColor,
+    backgroundColor: theme.accent,
+    backgroundGradientFrom: theme.primary,
+    backgroundGradientTo: theme.primary,
     decimalPlaces: 2,
-    color: (opacity = 1) => SecondaryColor,
-    labelcolor: (opacity = 1) => SecondaryColor,
+    color: (opacity = 1) => theme.secondary,
+    labelcolor: (opacity = 1) => theme.secondary,
     style: {
       borderRadius: 16,
     },
     propsForDots: {
       r: "6",
       strokeWidth: "2",
-      stroke: PrimaryColor,
+      stroke: theme.primary,
     },
   };
 
@@ -59,29 +55,29 @@ export default function StatsPage() {
     {
       name: "Groceries",
       population: 40,
-      color: BackgroundColor,
-      legendFontColor: TextColor,
+      color: theme.background,
+      legendFontColor: theme.text,
       legendFontSize: 12,
     },
     {
       name: "Bills",
       population: 30,
-      color: SecondaryColor,
-      legendFontColor: TextColor,
+      color: theme.secondary,
+      legendFontColor: theme.text,
       legendFontSize: 12,
     },
     {
       name: "Entertainment",
       population: 20,
-      color: AccentColor,
-      legendFontColor: TextColor,
+      color: theme.accent,
+      legendFontColor: theme.text,
       legendFontSize: 12,
     },
     {
       name: "Savings",
       population: 10,
-      color: TextColor,
-      legendFontColor: TextColor,
+      color: theme.text,
+      legendFontColor: theme.text,
       legendFontSize: 12,
     },
   ];
@@ -133,7 +129,7 @@ export default function StatsPage() {
           height={220}
           chartConfig={chartConfig}
           accessor={"population"}
-          backgroundColor={PrimaryColor}
+          backgroundColor={theme.primary}
           paddingLeft={"15"}
           style={styles.chart}
         />

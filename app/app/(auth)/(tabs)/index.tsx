@@ -13,11 +13,7 @@ export default function UserProfileScreen() {
   const { userProfile, isLoading, error } = useUserProfile();
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const { signOut, session } = useSession();
 
@@ -33,36 +29,39 @@ export default function UserProfileScreen() {
             <View
               style={[
                 styles.avatar,
-                { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+                {
+                  backgroundColor: theme.primary,
+                  borderColor: theme.secondary,
+                },
               ]}
             >
-              <Text style={[styles.avatarText, { color: BackgroundColor }]}>
+              <Text style={[styles.avatarText, { color: theme.background }]}>
                 {userProfile?.initials || "?"}
               </Text>
             </View>
-            <Text style={[styles.nameText, { color: TextColor }]}>
+            <Text style={[styles.nameText, { color: theme.text }]}>
               Hi, {userProfile?.name || "N/A"}
             </Text>
-            <Text style={[styles.infoText, { color: TextColor }]}>
+            <Text style={[styles.infoText, { color: theme.text }]}>
               Email: {userProfile?.email || "N/A"}
             </Text>
           </View>
 
           <View style={styles.buttonContainer}>
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              style={[styles.button, { backgroundColor: theme.primary }]}
               onPress={() => setIsModalVisible(true)} // Show modal on press
             >
-              <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+              <Text style={[styles.buttonText, { color: theme.background }]}>
                 Reset Password
               </Text>
             </TouchableOpacity>
             <View style={styles.spacer} />
             <TouchableOpacity
-              style={[styles.button, { backgroundColor: PrimaryColor }]}
+              style={[styles.button, { backgroundColor: theme.primary }]}
               onPress={signOut}
             >
-              <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+              <Text style={[styles.buttonText, { color: theme.background }]}>
                 Log Out
               </Text>
             </TouchableOpacity>
@@ -77,7 +76,7 @@ export default function UserProfileScreen() {
         >
           <View style={styles.modalOverlay}>
             <View
-              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+              style={[styles.modalContent, { backgroundColor: theme.primary }]}
             >
               <ResetPasswordModal onClose={() => setIsModalVisible(false)} />
             </View>
