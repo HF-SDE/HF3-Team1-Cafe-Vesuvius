@@ -235,7 +235,7 @@ export default function NewReservationModal({
                 selectedItemColor={BackgroundColor}
                 calendarTextStyle={{ color: BackgroundColor }}
                 timePickerTextStyle={{ color: BackgroundColor }}
-                selectedTextStyle={{ color: BackgroundColor }}
+                selectedTextStyle={{ color: PrimaryColor }}
                 headerTextStyle={{ color: BackgroundColor }}
                 headerButtonColor={SecondaryColor}
                 weekDaysTextStyle={{ color: BackgroundColor }}
