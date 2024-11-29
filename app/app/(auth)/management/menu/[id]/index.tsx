@@ -34,12 +34,6 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
-  interface ChangedFields {
-    field?: keyof MenuModel;
-    originalValue?: any;
-    newValue?: any;
-  }
-
   //  const [changedFields, setChangedFields] = useState<ChangedFields>({});
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
@@ -57,34 +51,64 @@ export default function EditCreateUserPage() {
   ];
 
   const handleSave = () => {
-    if (Object.keys(changedFields).length === 0) {
+    const changedFieldsCount = Object.keys(changedFields).length;
+
+    if (changedFieldsCount === 0) {
       console.log("No changes");
     } else {
-      console.log("Changes:", changedFields);
+      console.log("Update/Create");
 
       if (id !== "new") {
-        // Update
-        const updatedFields: MenuModel = {
-          id: menuItem.id,
-          ...changedFields,
-        };
-        updateMenu(updatedFields);
+        // Update user logic here
+        const updatedFields = Object.keys(changedFields).reduce(
+          (acc, field) => {
+            acc[field] = menuItem[field];
+            return acc;
+          },
+          {} as Partial<MenuModel>
+        );
+        updateMenu({ id: menuItem.id, ...updatedFields });
+        console.log(changedFields);
+        console.log(menuItem);
+
+        console.log(updatedFields);
       } else {
-        // Create
+        // Create new user logic here
       }
     }
+
     navigation.goBack();
   };
 
   const handleChange = useCallback(
     (field: keyof MenuModel, value: any) => {
-      // Only update changedFields and menuItem if the value is different
-      if (value !== menuItem[field]) {
-        setChangedFields((prev) => ({ ...prev, [field]: value }));
-      }
+      setMenuItem((prevMenu) => ({
+        ...prevMenu,
+        [field]: value,
+      }));
 
-      // Update the menuItem state
-      setMenuItem((prev) => ({ ...prev, [field]: value }));
+      setChangedFields((prevChangedFields) => {
+        let origValue = menuItem[field] || ""; // Original value of the field in menuItem
+
+        if (prevChangedFields[field] === undefined) {
+          // Step 2: If no entry exists, create one using the current value from menuItem[field]
+          return {
+            ...prevChangedFields,
+            [field]: origValue,
+          };
+        } else {
+          origValue = prevChangedFields[field];
+        }
+
+        // Step 3: If entry exists and value matches the original value, remove it
+        if (value === origValue) {
+          const { [field]: _, ...rest } = prevChangedFields; // Remove the field
+          return rest;
+        }
+
+        // Step 3b: If value doesn't match the original value, leave changedFields unchanged
+        return prevChangedFields;
+      });
     },
     [menuItem]
   );
