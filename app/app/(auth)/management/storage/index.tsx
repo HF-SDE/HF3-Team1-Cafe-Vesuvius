@@ -45,8 +45,6 @@ export default function ManageUsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  const totalPages = Math.ceil((stock?.length || 0) / itemsPerPage);
-
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const [canDelete, setCanDelete] = useState(false);
@@ -56,6 +54,23 @@ export default function ManageUsersPage() {
   const [itemInModal, setItemInModal] = useState<StockItemModel | undefined>(
     undefined
   );
+
+  const filteredStockItems = useMemo(() => {
+    return stock
+      ? stock.filter((user) =>
+          user.name
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        )
+      : [];
+  }, [stock, searchQuery]);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredStockItems.slice(start, end);
+  }, [filteredStockItems, currentPage, itemsPerPage]);
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -69,6 +84,10 @@ export default function ManageUsersPage() {
 
     checkPermissions();
   }, []);
+
+  const totalPages = Math.ceil(
+    (filteredStockItems?.length || 0) / itemsPerPage
+  );
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -252,23 +271,6 @@ export default function ManageUsersPage() {
     [stock]
   );
 
-  const filteredUsers = useMemo(() => {
-    return stock
-      ? stock.filter((user) =>
-          user.name
-            ?.toString()
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
-      : [];
-  }, [stock, searchQuery]);
-
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredUsers.slice(start, end);
-  }, [filteredUsers, currentPage, itemsPerPage]);
-
   const renderItem = ({ item }: { item: StockItemModel }) => {
     const adjustedQty = quantities[item.id as string]
       ? quantities[item.id as string].toString()
@@ -410,6 +412,7 @@ export default function ManageUsersPage() {
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Search for item"
+          loading={isLoading}
         />
         <Text style={[styles.pageIndicator, { color: TextColor }]}>
           Page {currentPage} of {totalPages}
