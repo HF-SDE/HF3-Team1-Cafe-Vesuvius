@@ -9,6 +9,9 @@ export function useMenu(id?: string | string[]) {
 
   const fetchMenu = async () => {
     try {
+      if (id === "new") {
+        return;
+      }
       setIsLoading(true);
       setError(null);
       const endpoint = id ? `/menu?id=${id}` : "/menu";

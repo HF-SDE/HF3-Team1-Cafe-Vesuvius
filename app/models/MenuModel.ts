@@ -1,6 +1,6 @@
 import { StockItemModel } from "./StorageModel";
 export interface MenuModel {
-  id: string;
+  id?: string;
   category?: string[];
   name?: string;
   price?: number;

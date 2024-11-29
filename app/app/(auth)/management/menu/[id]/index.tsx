@@ -8,6 +8,8 @@ import TextInput from "@/components/TextInput";
 import TemplateLayout from "@/components/TemplateLayout";
 import MenuTabView from "@/components/MenuTabView";
 import { RouteProp } from "@react-navigation/native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import { router } from "expo-router";
 
 import { MenuModel } from "@/models/MenuModel";
 
@@ -26,6 +28,9 @@ export default function EditCreateUserPage() {
   const { menu, isLoading, error, createMenu, updateMenu, deleteMenu } =
     useMenu(id as string);
 
+  if (error) {
+    router.navigate("/management/menu");
+  }
   const [menuItem, setMenuItem] = useState<MenuModel>({
     id: "",
     name: "",
@@ -44,6 +49,27 @@ export default function EditCreateUserPage() {
       if (id && foundMenuItem) setMenuItem(foundMenuItem);
     }
   }, [id, menu]);
+  useEffect(() => {
+    // Add a trashcan button to the header
+    if (id !== "new") {
+      navigation.setOptions({
+        headerRight: () => (
+          <FontAwesome6
+            name="trash-alt"
+            size={24}
+            color={theme.secondary}
+            onPress={async () => {
+              if (id && id !== "new") {
+                await deleteMenu(id);
+                navigation.goBack();
+              }
+            }}
+            style={{ marginRight: 16 }}
+          />
+        ),
+      });
+    }
+  }, [navigation, theme.primary, id, deleteMenu]);
 
   const routes = [
     { key: "categories", title: "Categories" },
@@ -58,22 +84,17 @@ export default function EditCreateUserPage() {
     } else {
       console.log("Update/Create");
 
+      const updatedFields = Object.keys(changedFields).reduce((acc, field) => {
+        acc[field] = menuItem[field];
+        return acc;
+      }, {} as Partial<MenuModel>);
       if (id !== "new") {
         // Update user logic here
-        const updatedFields = Object.keys(changedFields).reduce(
-          (acc, field) => {
-            acc[field] = menuItem[field];
-            return acc;
-          },
-          {} as Partial<MenuModel>
-        );
-        await updateMenu({ id: menuItem.id, ...updatedFields });
-        console.log(changedFields);
-        console.log(menuItem);
 
-        console.log(updatedFields);
+        await updateMenu({ id: menuItem.id, ...updatedFields });
       } else {
         // Create new user logic here
+        await createMenu(updatedFields);
       }
     }
 
@@ -128,14 +149,14 @@ export default function EditCreateUserPage() {
           );
         }}
         onAddIngredient={(ingredient) => {
-          handleChange("RawMaterial_MenuItems", [
+          handleChange("materials", [
             ...(menuItem.RawMaterial_MenuItems || []),
             ingredient,
           ]);
         }}
         onDeleteIngredient={(id) => {
           handleChange(
-            "RawMaterial_MenuItems",
+            "materials",
             (menuItem.RawMaterial_MenuItems || []).filter(
               (item) => item.id !== id
             )
@@ -143,7 +164,7 @@ export default function EditCreateUserPage() {
         }}
         onUpdateIngredientQuantity={(id, quantity) => {
           handleChange(
-            "RawMaterial_MenuItems",
+            "materials",
             (menuItem.RawMaterial_MenuItems || []).map((item) =>
               item.id === id ? { ...item, quantity } : item
             )
