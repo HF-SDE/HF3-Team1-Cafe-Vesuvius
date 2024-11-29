@@ -13,7 +13,7 @@ export default Joi.object<OrderSchema>({
     .items(
       Joi.object<Order_Menu>({
         menuItemId: UuidSchema.required(),
-        quantity: Joi.number().positive().required(),
+        quantity: Joi.number().positive().optional(),
         note: Joi.string().optional(),
       })
     )

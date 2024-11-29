@@ -8,6 +8,7 @@ import {
   Dimensions,
   TextInput as RNTextInput,
   Modal,
+  TextInput,
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -58,13 +59,16 @@ const MenuTabView = React.memo(
       { key: "ingredients", title: "Ingredients" },
     ];
 
+    React.useEffect(() => {
+      console.log("MenuTabView rendered");
+    });
+
     const CategoriesTab = () => (
       <View style={styles.section}>
         <NewCategoryInput
           onAddCategory={onAddCategory}
           themeColors={themeColors}
         />
-
         <FlatList
           data={categories}
           keyExtractor={(item) => item}

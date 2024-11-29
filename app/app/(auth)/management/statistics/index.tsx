@@ -147,18 +147,6 @@ export default function StatsPage() {
           chartConfig={chartConfig}
           style={styles.chart}
         />
-
-        <TouchableOpacity
-          style={[
-            styles.button,
-            { backgroundColor: PrimaryColor, borderColor: BackgroundColor },
-          ]}
-          onPress={() => navigation.goBack()}
-        >
-          <Text style={[styles.buttonText, { color: BackgroundColor }]}>
-            Back
-          </Text>
-        </TouchableOpacity>
       </ScrollView>
     </TemplateLayout>
   );
@@ -167,25 +155,9 @@ export default function StatsPage() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
-    paddingBottom: 50,
   },
   chart: {
     marginVertical: 8,
     borderRadius: 16,
-  },
-  button: {
-    marginTop: 20,
-    padding: 10,
-    borderRadius: 8,
-    alignItems: "center",
-    position: "sticky",
-    marginHorizontal: "auto",
-    width: "95%",
-    bottom: 15,
-    borderWidth: 2,
-  },
-  buttonText: {
-    fontSize: 18,
-    fontWeight: "bold",
   },
 });

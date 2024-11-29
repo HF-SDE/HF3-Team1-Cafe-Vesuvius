@@ -1,3 +1,6 @@
+import { Response } from 'express';
+import { WSResponse, isWebSocket } from 'websocket-express';
+
 import { ExpressFunction, Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { getHttpStatusCode } from '@utils/Utils';
@@ -8,14 +11,26 @@ import { getHttpStatusCode } from '@utils/Utils';
  * @returns {ExpressFunction} The middleware function to check permissions.
  */
 export function isAllowed(permissions: string[]): ExpressFunction {
-  return async (req, res, next) => {
+  return async (req, res: Response | WSResponse, next) => {
     const user = req.user;
 
     if (!user) {
-      res.status(getHttpStatusCode(Status.Unauthorized)).json({
-        status: 'Unauthorized',
-        message: 'Unauthorized',
-      });
+      if (isWebSocket(res)) {
+        void res.accept();
+        return res.sendError(
+          getHttpStatusCode(Status.Unauthorized),
+          getHttpStatusCode(Status.WsUnauthorized),
+          JSON.stringify({
+            status: 'Unauthorized',
+            message: 'Unauthorized',
+          }),
+        );
+      } else {
+        res.status(getHttpStatusCode(Status.Unauthorized)).json({
+          status: 'Unauthorized',
+          message: 'Unauthorized',
+        });
+      }
 
       return;
     }
@@ -31,10 +46,22 @@ export function isAllowed(permissions: string[]): ExpressFunction {
 
     if (Permissions.length) return next();
 
-    res.status(getHttpStatusCode(Status.Forbidden)).json({
-      status: 'Forbidden',
-      message: 'Forbidden',
-    });
+    if (isWebSocket(res)) {
+      void res.accept();
+      res.sendError(
+        getHttpStatusCode(Status.Forbidden),
+        getHttpStatusCode(Status.WsForbidden),
+        JSON.stringify({
+          status: 'Forbidden',
+          message: 'Forbidden',
+        }),
+      );
+    } else {
+      res.status(getHttpStatusCode(Status.Forbidden)).json({
+        status: 'Forbidden',
+        message: 'Forbidden',
+      });
+    }
 
     return;
   };

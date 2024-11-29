@@ -22,6 +22,8 @@ import CheckPermission from "@/components/CheckPermission";
 import Pagination from "@/components/Pagination";
 import LoadingPage from "@/components/LoadingPage";
 
+import Alert from "@/components/Alert";
+
 import { StockItemModel } from "@/models/StorageModel";
 
 import { PermissionManager } from "@/utils/permissionManager";
@@ -31,7 +33,8 @@ import EditCreateStockModal from "./create-edit-stock";
 import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
 export default function ManageUsersPage() {
-  const { stock, isLoading, error, updateStock, createStock } = useStock();
+  const { stock, isLoading, error, updateStock, createStock, deleteStock } =
+    useStock();
   const BackgroundColor = useThemeColor({}, "background");
   const TextColor = useThemeColor({}, "text");
   const PrimaryColor = useThemeColor({}, "primary");
@@ -42,8 +45,6 @@ export default function ManageUsersPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 20;
 
-  const totalPages = Math.ceil((stock?.length || 0) / itemsPerPage);
-
   const [quantities, setQuantities] = useState<Record<string, string>>({});
 
   const [canDelete, setCanDelete] = useState(false);
@@ -53,6 +54,23 @@ export default function ManageUsersPage() {
   const [itemInModal, setItemInModal] = useState<StockItemModel | undefined>(
     undefined
   );
+
+  const filteredStockItems = useMemo(() => {
+    return stock
+      ? stock.filter((user) =>
+          user.name
+            ?.toString()
+            .toLowerCase()
+            .includes(searchQuery.toLowerCase())
+        )
+      : [];
+  }, [stock, searchQuery]);
+
+  const paginatedData = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    return filteredStockItems.slice(start, end);
+  }, [filteredStockItems, currentPage, itemsPerPage]);
 
   useEffect(() => {
     const checkPermissions = async () => {
@@ -66,6 +84,10 @@ export default function ManageUsersPage() {
 
     checkPermissions();
   }, []);
+
+  const totalPages = Math.ceil(
+    (filteredStockItems?.length || 0) / itemsPerPage
+  );
 
   const handleNextPage = () => {
     if (currentPage < totalPages) {
@@ -106,12 +128,34 @@ export default function ManageUsersPage() {
     [stock]
   );
   const handleCreateStock = useCallback(
-    (updatedItem: StockItemModel) => {
-      createStock(updatedItem);
+    (createItem: StockItemModel) => {
+      createStock(createItem);
     },
     [stock]
   );
-  const handleDeleteStockItem = useCallback(() => {}, []);
+  const handleDeleteStock = useCallback(
+    (deleteItem: StockItemModel) => {
+      Alert(
+        "Confirm Deletion",
+        `Are you sure you want to delete ${deleteItem.name}? \nIt will also be removed from all the menu's that uses it!`,
+        [
+          {
+            text: "Cancel",
+            style: "cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Delete",
+            style: "destructive",
+            onPress: () => {
+              deleteStock(deleteItem);
+            },
+          },
+        ]
+      );
+    },
+    [stock]
+  );
 
   const handleSaveStockItems = useCallback(() => {
     if (hasChanges) {
@@ -227,23 +271,6 @@ export default function ManageUsersPage() {
     [stock]
   );
 
-  const filteredUsers = useMemo(() => {
-    return stock
-      ? stock.filter((user) =>
-          user.name
-            ?.toString()
-            .toLowerCase()
-            .includes(searchQuery.toLowerCase())
-        )
-      : [];
-  }, [stock, searchQuery]);
-
-  const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * itemsPerPage;
-    const end = start + itemsPerPage;
-    return filteredUsers.slice(start, end);
-  }, [filteredUsers, currentPage, itemsPerPage]);
-
   const renderItem = ({ item }: { item: StockItemModel }) => {
     const adjustedQty = quantities[item.id as string]
       ? quantities[item.id as string].toString()
@@ -326,7 +353,13 @@ export default function ManageUsersPage() {
             styles.hiddenButtonStart,
             styles.deleteButton,
           ]}
-          onPress={() => console.log("Delete", data.item.id)}
+          onPress={() => {
+            handleDeleteStock(data.item);
+            // Close the row after clicking the delete button
+            if (rowMap[data.item.id]) {
+              rowMap[data.item.id].closeRow();
+            }
+          }}
         >
           <FontAwesome6
             name="trash-alt"
@@ -368,17 +401,7 @@ export default function ManageUsersPage() {
 
   const animationIsRunning = useRef(false);
 
-  const onSwipeValueChange = (swipeData: any) => {
-    const { key, value, setValue } = swipeData;
-
-    if (value <= -150 && !animationIsRunning.current) {
-      animationIsRunning.current = true;
-
-      //handleAddEditStockItem(key);
-
-      animationIsRunning.current = false;
-    }
-  };
+  const onSwipeValueChange = (swipeData: any) => {};
 
   return (
     <TemplateLayout pageName="StockPage" title="Storage">
@@ -389,6 +412,7 @@ export default function ManageUsersPage() {
           value={searchQuery}
           onChangeText={setSearchQuery}
           placeholder="Search for item"
+          loading={isLoading}
         />
         <Text style={[styles.pageIndicator, { color: TextColor }]}>
           Page {currentPage} of {totalPages}
@@ -416,14 +440,17 @@ export default function ManageUsersPage() {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-            onSwipeValueChange={onSwipeValueChange}
-            onRowOpen={(rowKey, rowMap) => {
-              console.log(`Row opened: ${rowKey}`);
-              if (rowMap[rowKey]) {
-                rowMap[rowKey].closeRow();
-              }
-              handleAddEditStockItem(rowKey);
-            }}
+            // onSwipeValueChange={onSwipeValueChange}
+            // onRowOpen={(rowKey, rowMap) => {
+            //   console.log(`Row opened: ${rowKey}`);
+            //   const direction: string = rowMap[rowKey].previousTrackedDirection;
+            //   if (direction === "left") {
+            //     if (rowMap[rowKey]) {
+            //       rowMap[rowKey].closeRow();
+            //     }
+            //     handleAddEditStockItem(rowKey);
+            //   }
+            // }}
           />
         )}
         <Pagination

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { StyleSheet, View, Text } from "react-native";
 import { useRoute, useNavigation } from "@react-navigation/native";
 import { useMenu } from "@/hooks/useMenu";
@@ -37,9 +37,13 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
-  const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
-    {}
-  );
+  interface ChangedFields {
+    field?: keyof MenuModel;
+    originalValue?: any;
+    newValue?: any;
+  }
+
+  const [changedFields, setChangedFields] = useState<ChangedFields>({});
 
   useEffect(() => {
     if (menu) {
@@ -63,12 +67,73 @@ export default function EditCreateUserPage() {
     // Update or create logic here
   };
 
-  const handleChange = (field: keyof MenuModel, value: string) => {
-    if (value !== menuItem[field]) {
-      setChangedFields((prev) => ({ ...prev, [field]: value }));
-    }
-    setMenuItem((prev) => ({ ...prev, [field]: value }));
-  };
+  const handleChange = useCallback(
+    (field: keyof MenuModel, value: string) => {
+      // Only update changedFields and menuItem if the value is different
+      if (value !== menuItem[field]) {
+        setChangedFields((prev) => ({ ...prev, [field]: value }));
+      }
+
+      // Update the menuItem state
+      setMenuItem((prev) => ({ ...prev, [field]: value }));
+    },
+    [menuItem]
+  );
+
+  const memoizedMenuTabView = useMemo(
+    () => (
+      <MenuTabView
+        categories={menuItem.category}
+        ingredients={menuItem.RawMaterial_MenuItems}
+        onAddCategory={(category) => {
+          setMenuItem((prev) => ({
+            ...prev,
+            category: [...prev.category, category],
+          }));
+        }}
+        onDeleteCategory={(category) => {
+          setMenuItem((prev) => ({
+            ...prev,
+            category: prev.category.filter((cat) => cat !== category),
+          }));
+        }}
+        onAddIngredient={(ingredient) => {
+          setMenuItem((prev) => ({
+            ...prev,
+            RawMaterial_MenuItems: [...prev.RawMaterial_MenuItems, ingredient],
+          }));
+        }}
+        onDeleteIngredient={(id) => {
+          setMenuItem((prev) => ({
+            ...prev,
+            RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
+              (item) => item.id !== id
+            ),
+          }));
+        }}
+        onUpdateIngredientQuantity={(id, quantity) => {
+          setMenuItem((prev) => ({
+            ...prev,
+            RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map((item) =>
+              item.id === id ? { ...item, quantity } : item
+            ),
+          }));
+        }}
+        themeColors={{
+          primary: PrimaryColor,
+          text: TextColor,
+          accent: AccentColor,
+        }}
+      />
+    ),
+    [
+      menuItem.category,
+      menuItem.RawMaterial_MenuItems,
+      PrimaryColor,
+      TextColor,
+      AccentColor,
+    ]
+  );
 
   return (
     <TemplateLayout
@@ -110,54 +175,7 @@ export default function EditCreateUserPage() {
             />
           </View>
 
-          <View style={{ minHeight: "70%" }}>
-            <MenuTabView
-              categories={menuItem.category}
-              ingredients={menuItem.RawMaterial_MenuItems}
-              onAddCategory={(category) => {
-                setMenuItem((prev) => ({
-                  ...prev,
-                  category: [...prev.category, category],
-                }));
-              }}
-              onDeleteCategory={(category) => {
-                setMenuItem((prev) => ({
-                  ...prev,
-                  category: prev.category.filter((cat) => cat !== category),
-                }));
-              }}
-              onAddIngredient={(ingredient) => {
-                setMenuItem((prev) => ({
-                  ...prev,
-                  RawMaterial_MenuItems: [
-                    ...prev.RawMaterial_MenuItems,
-                    ingredient,
-                  ],
-                }));
-              }}
-              onDeleteIngredient={(id) => {
-                setMenuItem((prev) => ({
-                  ...prev,
-                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.filter(
-                    (item) => item.id !== id
-                  ),
-                }));
-              }}
-              onUpdateIngredientQuantity={(id, quantity) => {
-                setMenuItem((prev) => ({
-                  ...prev,
-                  RawMaterial_MenuItems: prev.RawMaterial_MenuItems.map(
-                    (item) => (item.id === id ? { ...item, quantity } : item)
-                  ),
-                }));
-              }}
-              themeColors={{
-                primary: PrimaryColor,
-                text: TextColor,
-                accent: AccentColor,
-              }}
-            />
-          </View>
+          <View style={{ minHeight: "70%" }}>{memoizedMenuTabView}</View>
         </View>
 
         <View style={styles.buttonContainer}>
