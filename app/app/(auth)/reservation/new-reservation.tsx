@@ -534,7 +534,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-    minHeight: "100%",
+    // minHeight: "100%",
     gap: 10,
   },
   title: {
