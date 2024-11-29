@@ -34,12 +34,6 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
-  interface ChangedFields {
-    field?: keyof MenuModel;
-    originalValue?: any;
-    newValue?: any;
-  }
-
   //  const [changedFields, setChangedFields] = useState<ChangedFields>({});
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
@@ -57,36 +51,59 @@ export default function EditCreateUserPage() {
   ];
 
   const handleSave = () => {
-    if (Object.keys(changedFields).length === 0) {
+    const changedFieldsCount = Object.keys(changedFields).length;
+
+    if (changedFieldsCount === 0) {
       console.log("No changes");
     } else {
-      console.log("Changes:", changedFields);
+      console.log("Update/Create");
 
       if (id !== "new") {
-        // Update
+        // Update user logic here
         const updatedFields: MenuModel = {
           id: menuItem.id,
           ...changedFields,
         };
-        updateMenu(updatedFields);
+        //updateMenu(updatedFields);
+        console.log(changedFields);
+        console.log(menuItem);
       } else {
-        // Create
+        // Create new user logic here
       }
     }
+
     navigation.goBack();
   };
 
   const handleChange = useCallback(
     (field: keyof MenuModel, value: any) => {
-      // Only update changedFields and menuItem if the value is different
-      if (value !== menuItem[field]) {
-        setChangedFields((prev) => ({ ...prev, [field]: value }));
+      // // Only update changedFields and menuItem if the value is different
+      // if (value !== menuItem[field]) {
+      //   setChangedFields((prev) => ({ ...prev, [field]: value }));
+      // }
+
+      // // Update the menuItem state
+      // setMenuItem((prev) => ({ ...prev, [field]: value }));
+
+      if (value !== changedFields[field]) {
+        const origValue = menuItem[field] || "";
+        setChangedFields((prev) => ({
+          ...prev,
+          [field]: origValue,
+        }));
+      } else {
+        // If the value is changed back to original, remove from changedFields
+        const updatedChangedFields = { ...changedFields };
+        delete updatedChangedFields[field];
+        setChangedFields(updatedChangedFields);
       }
 
-      // Update the menuItem state
-      setMenuItem((prev) => ({ ...prev, [field]: value }));
+      setMenuItem((prevMenu) => ({
+        ...prevMenu,
+        [field]: value,
+      }));
     },
-    [menuItem]
+    [menuItem, changedFields]
   );
 
   const memoizedMenuTabView = useMemo(
