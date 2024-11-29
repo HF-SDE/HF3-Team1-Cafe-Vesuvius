@@ -26,6 +26,10 @@ export function useMenu(id?: string | string[]) {
     fetchMenu();
   }, [id]);
 
+  const refreshMenu = async () => {
+    await fetchMenu();
+  };
+
   const createMenu = async (newMenu: MenuModel) => {
     try {
       const { id, ...payload } = newMenu;
@@ -73,5 +77,13 @@ export function useMenu(id?: string | string[]) {
     }
   };
 
-  return { menu, isLoading, error, createMenu, updateMenu, deleteMenu };
+  return {
+    menu,
+    isLoading,
+    error,
+    createMenu,
+    updateMenu,
+    deleteMenu,
+    refreshMenu,
+  };
 }

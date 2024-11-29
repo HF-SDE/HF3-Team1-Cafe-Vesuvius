@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   StyleSheet,
   View,
@@ -8,7 +8,7 @@ import {
 } from "react-native";
 
 import { router } from "expo-router";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useFocusEffect } from "@react-navigation/native";
 
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
@@ -23,8 +23,9 @@ import LoadingPage from "@/components/LoadingPage";
 import { MenuModel } from "@/models/MenuModel";
 
 export default function ManageUsersPage() {
-  const { menu, isLoading, error } = useMenu();
+  const { menu, isLoading, error, refreshMenu } = useMenu();
   const theme = useThemeColor();
+  const navigation = useNavigation();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMenu, setFilteredMenu] = useState<MenuModel[] | null>(null);
@@ -38,6 +39,19 @@ export default function ManageUsersPage() {
     // Navigate to the edit/create page for a specific user
     router.navigate(`/management/menu/${userId}`);
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // Trigger the refetch whenever the screen comes into focus
+      console.log("FOCUS");
+
+      refreshMenu();
+      console.log(menu);
+    });
+
+    // Cleanup the listener
+    return unsubscribe;
+  }, [navigation]);
 
   useEffect(() => {
     if (menu) {

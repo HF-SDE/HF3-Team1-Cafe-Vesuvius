@@ -50,7 +50,7 @@ export default function EditCreateUserPage() {
     { key: "ingredients", title: "Ingredients" },
   ];
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
@@ -67,7 +67,7 @@ export default function EditCreateUserPage() {
           },
           {} as Partial<MenuModel>
         );
-        updateMenu({ id: menuItem.id, ...updatedFields });
+        await updateMenu({ id: menuItem.id, ...updatedFields });
         console.log(changedFields);
         console.log(menuItem);
 
