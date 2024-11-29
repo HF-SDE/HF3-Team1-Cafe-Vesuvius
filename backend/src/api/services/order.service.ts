@@ -37,6 +37,8 @@ export async function createOrder(data: IData): Promise<APIResponse<any>> {
     const menuItem = menuItems.find((mi) => mi.id === orderMenu.menuItemId);
     if (!menuItem) continue;
 
+    orderMenu.quantity ??= 1;
+
     orderMenu.menuItemPrice = menuItem.price;
 
     for (const { quantity, RawMaterial } of menuItem.RawMaterial_MenuItems) {
