@@ -437,7 +437,7 @@ const styles = StyleSheet.create({
     width: "100%",
     maxWidth: 400,
     height: "70%",
-    // minHeight: 400,
+    minHeight: 400,
     // backgroundColor: SecondaryColor,
     padding: 10,
     borderRadius: 10,
