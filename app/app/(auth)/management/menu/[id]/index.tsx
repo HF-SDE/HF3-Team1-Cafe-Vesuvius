@@ -81,7 +81,7 @@ export default function EditCreateUserPage() {
   };
 
   const handleChange = useCallback(
-    (field: keyof MenuModel, value: string) => {
+    (field: keyof MenuModel, value: any) => {
       // Only update changedFields and menuItem if the value is different
       if (value !== menuItem[field]) {
         setChangedFields((prev) => ({ ...prev, [field]: value }));
@@ -182,7 +182,8 @@ export default function EditCreateUserPage() {
                 const regex = /^\d*\.?\d{0,2}$/;
 
                 if (regex.test(formattedText)) {
-                  handleChange("price", formattedText);
+                  const newPrice: number = Number(formattedText);
+                  handleChange("price", newPrice);
                 }
               }}
               inputMode="decimal"
