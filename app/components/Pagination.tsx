@@ -17,8 +17,7 @@ const Pagination: React.FC<PaginationProps> = ({
   onNextPage,
 }) => {
   const disabledColor = "#ccc";
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   const isPrevDisabled = currentPage === 1;
   const isNextDisabled = currentPage === totalPages;
@@ -30,14 +29,14 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={isPrevDisabled}
         style={[
           styles.paginationButton,
-          { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+          { backgroundColor: theme.primary, borderColor: theme.secondary },
           isPrevDisabled && styles.disabledButton,
         ]}
       >
         <FontAwesome6
           name="arrow-left"
           size={30}
-          color={isPrevDisabled ? disabledColor : SecondaryColor}
+          color={isPrevDisabled ? disabledColor : theme.secondary}
         />
       </TouchableOpacity>
 
@@ -46,14 +45,14 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={isNextDisabled}
         style={[
           styles.paginationButton,
-          { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+          { backgroundColor: theme.primary, borderColor: theme.secondary },
           isNextDisabled && styles.disabledButton,
         ]}
       >
         <FontAwesome6
           name="arrow-right"
           size={30}
-          color={isNextDisabled ? disabledColor : SecondaryColor}
+          color={isNextDisabled ? disabledColor : theme.secondary}
         />
       </TouchableOpacity>
     </View>

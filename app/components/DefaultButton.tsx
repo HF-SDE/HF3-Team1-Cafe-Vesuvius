@@ -8,15 +8,14 @@ interface ButtonProps {
 }
 
 const SubmitButton: React.FC<ButtonProps> = ({ onPress, title }) => {
-  const BackgroundColor = useThemeColor({}, "background");
-  const PrimaryColor = useThemeColor({}, "primary");
+  const theme = useThemeColor();
 
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: PrimaryColor }]}
+      style={[styles.button, { backgroundColor: theme.primary }]}
       onPress={onPress}
     >
-      <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+      <Text style={[styles.buttonText, { color: theme.background }]}>
         {title}
       </Text>
     </TouchableOpacity>

@@ -22,10 +22,7 @@ export default function EditCreateUserPage() {
 
   const navigation = useNavigation();
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -164,7 +161,7 @@ export default function EditCreateUserPage() {
             clearTextOnFocus={false}
           />
           <View style={styles.activeSwitchContainer}>
-            <Text style={[styles.permissionsTitle, { color: TextColor }]}>
+            <Text style={[styles.permissionsTitle, { color: theme.text }]}>
               Active
             </Text>
 
@@ -175,7 +172,7 @@ export default function EditCreateUserPage() {
           </View>
         </View>
 
-        <Text style={{ color: TextColor, fontSize: 18, fontWeight: "bold" }}>
+        <Text style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}>
           Permissions
         </Text>
 
@@ -207,7 +204,7 @@ export default function EditCreateUserPage() {
       >
         <View style={styles.modalOverlay}>
           <View
-            style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+            style={[styles.modalContent, { backgroundColor: theme.primary }]}
           >
             <ResetPasswordModal onClose={() => setIsModalVisible(false)} />
           </View>

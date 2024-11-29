@@ -1,5 +1,10 @@
 import React, { ReactElement } from "react";
-import { HelperText, HelperTextProps, TextInput, TextInputProps } from "react-native-paper";
+import {
+  HelperText,
+  HelperTextProps,
+  TextInput,
+  TextInputProps,
+} from "react-native-paper";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { TextInputLabelProp } from "react-native-paper/lib/typescript/components/TextInput/types";
 import {
@@ -88,11 +93,7 @@ export default function CustomTextInput({
   editable = true,
   error = false,
 }: CustomTextInputProps): ReactElement {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   return (
     <>
@@ -100,13 +101,13 @@ export default function CustomTextInput({
         style={[
           style,
           styles.inputBlock,
-          { backgroundColor: BackgroundColor, color: TextColor },
+          { backgroundColor: theme.background, color: theme.text },
         ]}
         label={label}
         mode="outlined"
         value={value}
-        activeOutlineColor={TextColor}
-        outlineColor={isHighlighted ? highlighOutlineColor : PrimaryColor}
+        activeOutlineColor={theme.text}
+        outlineColor={isHighlighted ? highlighOutlineColor : theme.primary}
         outlineStyle={{ borderWidth: 2 }}
         onChangeText={onChange}
         clearButtonMode={clearButtonMode}
@@ -119,16 +120,16 @@ export default function CustomTextInput({
         editable={editable}
         theme={{
           colors: {
-            text: TextColor,
-            placeholder: PrimaryColor,
+            text: theme.text,
+            placeholder: theme.primary,
             background: "transparent",
-            onSurfaceVariant: PrimaryColor,
-            primary: TextColor,
-            outline: PrimaryColor,
+            onSurfaceVariant: theme.primary,
+            primary: theme.text,
+            outline: theme.primary,
           },
         }}
         contentStyle={{
-          color: PrimaryColor,
+          color: theme.primary,
         }}
         onSubmitEditing={onSubmitEditing}
         onKeyPress={onKeyPress}

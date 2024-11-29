@@ -23,11 +23,7 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
 }) => {
   const [index, setIndex] = useState(0);
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   // Define categories based on permission prefixes
   const categories = Array.from(
@@ -61,9 +57,9 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     );
     return (
       <View
-        style={[styles.permissionItem, { borderBottomColor: PrimaryColor }]}
+        style={[styles.permissionItem, { borderBottomColor: theme.primary }]}
       >
-        <Text style={[styles.permissionDescription, { color: TextColor }]}>
+        <Text style={[styles.permissionDescription, { color: theme.text }]}>
           {item.description}
         </Text>
         <Switch
@@ -96,13 +92,13 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
           {...props}
           indicatorStyle={[
             styles.tabIndicator,
-            { backgroundColor: PrimaryColor },
+            { backgroundColor: theme.primary },
           ]}
-          style={[styles.tabBar, { backgroundColor: AccentColor }]}
-          labelStyle={[styles.tabLabel, { color: TextColor }]}
+          style={[styles.tabBar, { backgroundColor: theme.accent }]}
+          labelStyle={[styles.tabLabel, { color: theme.text }]}
           scrollEnabled={true}
-          activeColor={TextColor}
-          inactiveColor={PrimaryColor}
+          activeColor={theme.text}
+          inactiveColor={theme.primary}
         />
       )}
     />

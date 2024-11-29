@@ -26,8 +26,7 @@ export default function PasswordInput({
   isHighlighted = false,
 }: PasswordInputProps) {
   const [showPassword, setShowPassword] = useState(false);
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const PrimaryColor = useThemeColor({}, "primary");
+  const theme = useThemeColor();
 
   return (
     <TextIconInput
@@ -42,7 +41,7 @@ export default function PasswordInput({
       highlighOutlineColor={highlighOutlineColor}
       isHighlighted={isHighlighted}
       onSubmitEditing={onSubmitEditing}
-      iconColor={iconColor || SecondaryColor}
+      iconColor={iconColor || theme.secondary}
       autoCapitalize="none"
       autoComplete="off"
     />
