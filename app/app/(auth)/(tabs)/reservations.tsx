@@ -45,10 +45,7 @@ export default function ReservationsOverview(): ReactElement {
   } = useContext(ReservationContext);
 
   const router = useRouter();
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   useEffect(() => {
     if (reservations) {
@@ -81,13 +78,13 @@ export default function ReservationsOverview(): ReactElement {
   }): ReactElement {
     return (
       <Card
-        style={[styles.orderItem, { backgroundColor: PrimaryColor }]}
+        style={[styles.orderItem, { backgroundColor: theme.primary }]}
         mode="contained"
         onPress={() => reservationSelect(item.email, item.phone)}
       >
         <Card.Title
           title={item.name}
-          titleStyle={{ color: BackgroundColor, fontWeight: "bold" }}
+          titleStyle={{ color: theme.background, fontWeight: "bold" }}
           titleVariant={"titleLarge"}
           right={() => (
             <Card.Actions>
@@ -100,17 +97,17 @@ export default function ReservationsOverview(): ReactElement {
                 <FontAwesome5
                   name="info-circle"
                   size={40}
-                  color={SecondaryColor}
+                  color={theme.secondary}
                 />
               </Pressable>
             </Card.Actions>
           )}
         />
         <Card.Content>
-          <Text style={{ color: SecondaryColor }}>
+          <Text style={{ color: theme.secondary }}>
             {dayjs(item.reservationTime).format("DD/MM/YYYY HH:mm")}
           </Text>
-          <Text style={{ color: SecondaryColor }}>
+          <Text style={{ color: theme.secondary }}>
             Tables:&nbsp;
             {item.Tables ? item.Tables.map((i) => i.number + " ") : null}
           </Text>
@@ -195,7 +192,7 @@ export default function ReservationsOverview(): ReactElement {
         >
           <View style={styles.modalOverlay}>
             <View
-              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+              style={[styles.modalContent, { backgroundColor: theme.primary }]}
             >
               <NewReservationModal
                 tables={table!}
@@ -213,7 +210,7 @@ export default function ReservationsOverview(): ReactElement {
         >
           <View style={styles.modalOverlay}>
             <View
-              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+              style={[styles.modalContent, { backgroundColor: theme.primary }]}
             >
               <InfoReservationModal
                 email={selectedReservations.email}
@@ -438,7 +435,7 @@ const styles = StyleSheet.create({
     maxWidth: 400,
     height: "70%",
     minHeight: 400,
-    // backgroundColor: SecondaryColor,
+    // backgroundColor: theme.secondary,
     padding: 10,
     borderRadius: 10,
   },

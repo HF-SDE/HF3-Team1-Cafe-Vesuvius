@@ -21,11 +21,7 @@ export default function EditCreateUserPage() {
   const { id } = route.params || { id: undefined };
   const navigation = useNavigation();
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const { menu, isLoading, error, createMenu, updateMenu, deleteMenu } =
     useMenu(id as string);
@@ -136,18 +132,18 @@ export default function EditCreateUserPage() {
           }));
         }}
         themeColors={{
-          primary: PrimaryColor,
-          text: TextColor,
-          accent: AccentColor,
+          primary: theme.primary,
+          text: theme.text,
+          accent: theme.accent,
         }}
       />
     ),
     [
       menuItem.category,
       menuItem.RawMaterial_MenuItems,
-      PrimaryColor,
-      TextColor,
-      AccentColor,
+      theme.primary,
+      theme.text,
+      theme.accent,
     ]
   );
 
@@ -160,7 +156,7 @@ export default function EditCreateUserPage() {
       <View style={styles.container}>
         <View>
           <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: PrimaryColor }]}>
+            <Text style={[styles.sectionTitle, { color: theme.primary }]}>
               Menu Info
             </Text>
             <TextInput

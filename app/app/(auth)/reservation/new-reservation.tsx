@@ -85,11 +85,7 @@ export default function NewReservationModal({
     phone: { label: "Phone", value: reservation.phone, isError: false },
   });
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const disabledButton = areKeysDefined<Reservation>(
     ["name", "phone", "email", "amount"],
@@ -143,9 +139,11 @@ export default function NewReservationModal({
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: BackgroundColor }]}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <Text style={[styles.title, { color: TextColor }]}>New Reservations</Text>
+      <Text style={[styles.title, { color: theme.text }]}>
+        New Reservations
+      </Text>
       {page === 1 ? (
         <>
           <CustomTextInput
@@ -204,9 +202,9 @@ export default function NewReservationModal({
               dayjs(reservation?.reservationTime).format("YYYY-MM-DD HH:mm") ??
               dayjs().format("YYYY-MM-DD HH:mm")
             }
-            placeholderTextColor={SecondaryColor}
+            placeholderTextColor={theme.secondary}
             icon="calendar"
-            iconColor={PrimaryColor}
+            iconColor={theme.primary}
             editable={false}
             onIconPress={() => setDatePicker(!datePicker)}
             onChangeText={(email) =>
@@ -216,7 +214,10 @@ export default function NewReservationModal({
 
           {datePicker && (
             <View
-              style={[styles.dateTimePicker, { backgroundColor: PrimaryColor }]}
+              style={[
+                styles.dateTimePicker,
+                { backgroundColor: theme.primary },
+              ]}
             >
               <DateTimePicker
                 mode="single"
@@ -232,13 +233,13 @@ export default function NewReservationModal({
                 timePicker={true}
                 maxDate={dayjs().add(1, "year").toDate()}
                 minDate={dayjs().toDate()}
-                selectedItemColor={BackgroundColor}
-                calendarTextStyle={{ color: BackgroundColor }}
-                timePickerTextStyle={{ color: BackgroundColor }}
-                selectedTextStyle={{ color: PrimaryColor }}
-                headerTextStyle={{ color: BackgroundColor }}
-                headerButtonColor={SecondaryColor}
-                weekDaysTextStyle={{ color: BackgroundColor }}
+                selectedItemColor={theme.background}
+                calendarTextStyle={{ color: theme.background }}
+                timePickerTextStyle={{ color: theme.background }}
+                selectedTextStyle={{ color: theme.primary }}
+                headerTextStyle={{ color: theme.background }}
+                headerButtonColor={theme.secondary}
+                weekDaysTextStyle={{ color: theme.background }}
               />
             </View>
           )}
@@ -274,10 +275,10 @@ export default function NewReservationModal({
       )}
       <View style={styles.buttonContainer}>
         <Pressable
-          style={[styles.cancelButton, { backgroundColor: PrimaryColor }]}
+          style={[styles.cancelButton, { backgroundColor: theme.primary }]}
           onPress={onClose}
         >
-          <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+          <Text style={[styles.buttonText, { color: theme.background }]}>
             cancel
           </Text>
         </Pressable>
@@ -286,21 +287,21 @@ export default function NewReservationModal({
             style={[
               styles.mainButton,
               disabledButton
-                ? { backgroundColor: SecondaryColor }
-                : { backgroundColor: AccentColor },
+                ? { backgroundColor: theme.secondary }
+                : { backgroundColor: theme.accent },
             ]}
             onPress={() => setPage(2)}
             disabled={disabledButton}
           >
-            <Text style={[styles.buttonText, { color: TextColor }]}>Next</Text>
+            <Text style={[styles.buttonText, { color: theme.text }]}>Next</Text>
           </Pressable>
         ) : (
           <Pressable
             style={[
               styles.mainButton,
               disabledCreateButton
-                ? { backgroundColor: SecondaryColor }
-                : { backgroundColor: PrimaryColor },
+                ? { backgroundColor: theme.secondary }
+                : { backgroundColor: theme.primary },
             ]}
             onPress={handleCreate}
             disabled={disabledCreateButton}
