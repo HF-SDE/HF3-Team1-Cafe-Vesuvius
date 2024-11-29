@@ -192,7 +192,11 @@ export default function ReservationsOverview(): ReactElement {
         >
           <View style={styles.modalOverlay}>
             <View
-              style={[styles.modalContent, { backgroundColor: theme.primary }]}
+              style={[
+                styles.modalContent,
+                styles.modalsizing,
+                { backgroundColor: theme.primary },
+              ]}
             >
               <NewReservationModal
                 tables={table!}
@@ -210,7 +214,11 @@ export default function ReservationsOverview(): ReactElement {
         >
           <View style={styles.modalOverlay}>
             <View
-              style={[styles.modalContent, { backgroundColor: theme.primary }]}
+              style={[
+                styles.modalContent,
+                styles.modalsizing2,
+                { backgroundColor: theme.primary },
+              ]}
             >
               <InfoReservationModal
                 email={selectedReservations.email}
@@ -432,13 +440,23 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "100%",
-    maxWidth: 400,
-    height: "70%",
-    minHeight: 400,
     // backgroundColor: theme.secondary,
     padding: 10,
     borderRadius: 10,
   },
+
+  modalsizing: {
+    maxWidth: 400,
+    height: "70%",
+    minHeight: 500,
+  },
+
+  modalsizing2: {
+    maxWidth: 300,
+    height: "35%",
+    minHeight: 300,
+  },
+
   button: {
     paddingVertical: 10,
     alignItems: "center",

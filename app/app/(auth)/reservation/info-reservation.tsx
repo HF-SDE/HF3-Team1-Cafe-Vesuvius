@@ -48,27 +48,32 @@ export default function InfoReservationModal({
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <View>
+      <View style={{ display: "flex", gap: 20 }}>
         <Text style={[styles.title, { color: theme.text }]}>
           Reservations Info
         </Text>
-        <Text style={{ color: theme.text }}>
+        <Text style={{ color: theme.text, fontSize: 18 }}>
           Email:{" "}
-          <Text style={styles.link} onPress={handleEmailPress}>
+          <Text style={{ color: theme.primary }} onPress={handleEmailPress}>
             {email}
           </Text>
         </Text>
-        <Text style={{ color: theme.text }}>
+        <Text style={{ color: theme.text, fontSize: 18 }}>
           Phone:{" "}
-          <Text style={styles.link} onPress={handlePhonePress}>
+          <Text style={{ color: theme.primary }} onPress={handlePhonePress}>
             {phone}
           </Text>
         </Text>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: "red" }]}
+          style={[
+            styles.cancelButton,
+            { backgroundColor: theme.primary, width: "100%" },
+          ]}
           onPress={onClose}
         >
-          <Text style={styles.buttonText}>close</Text>
+          <Text style={[styles.buttonText, { color: theme.background }]}>
+            close
+          </Text>
         </TouchableOpacity>
         <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
       </View>
@@ -77,9 +82,6 @@ export default function InfoReservationModal({
 }
 
 const styles = StyleSheet.create({
-  link: {
-    color: "blue",
-  },
   dateTimePicker: {
     position: "absolute",
     backgroundColor: "white",
@@ -111,7 +113,7 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
   },
   listContainer: {
-    padding: 16,
+    padding: 10,
   },
   flatList: {
     flex: 1,
@@ -122,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 20,
+    paddingHorizontal: 10,
   },
   title: {
     fontSize: 24,
@@ -155,12 +157,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
     fontWeight: "bold",
   },
   errorText: {
     marginTop: 10,
-    fontSize: 14,
+    fontSize: 16,
     textAlign: "center",
   },
 });
