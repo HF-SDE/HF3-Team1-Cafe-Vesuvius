@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { deleteRecord } from '@controllers/default.controller';
 import * as StockController from '@controllers/stock.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
@@ -19,5 +20,6 @@ router.put(
   isAllowed(['stock:update']),
   StockController.updateStock,
 );
+//router.delete('/:id', verifyJWT, isAllowed(['stock:delete']), deleteRecord());
 
 export default router;

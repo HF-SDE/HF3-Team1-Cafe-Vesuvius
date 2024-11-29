@@ -398,7 +398,8 @@ function sortReservations(reservations: Reservation[]): ReservationSections[] {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    // padding: 20,
+    margin: 20,
   },
   reservationList: {
     flex: 1,
@@ -435,8 +436,8 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "100%",
     maxWidth: 400,
-    height: "50%",
-    minHeight: 400,
+    height: "70%",
+    // minHeight: 400,
     // backgroundColor: SecondaryColor,
     padding: 10,
     borderRadius: 10,
