@@ -75,7 +75,10 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
       console.log("No changes");
     } else {
       if (stockItem.id) {
-        const updatedFields = { id: stockItem.id, ...changedFields };
+        const updatedFields: StockItemModel = {
+          id: stockItem.id,
+          ...changedFields,
+        };
         handleUpdateStock(updatedFields);
       } else {
         const updatedFields: StockItemModel = { ...changedFields };
