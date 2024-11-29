@@ -7,7 +7,7 @@ import { APIResponse } from '@api-types/general.types';
 
 import config from '../../config';
 
-const BASE_URL = 'https://localhost:3001'; // HTTPS URL
+const BASE_URL = process.env.VITE_API_URL; // HTTPS URL
 
 // Create an HTTPS agent with 'rejectUnauthorized' set to false to allow self-signed certificates
 const httpsAgent = new https.Agent({
