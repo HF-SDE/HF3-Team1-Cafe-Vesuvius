@@ -28,11 +28,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const handleReset = async () => {
     if (!oldPassword || !newPassword || !confirmPassword) {
@@ -60,26 +56,26 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
 
   return (
     <SafeAreaView
-      style={[styles.container, { backgroundColor: BackgroundColor }]}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <Text style={[styles.title, { color: TextColor }]}>Reset Password</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Reset Password</Text>
 
       <PasswordInput
         value={oldPassword}
         onChangeText={setOldPassword}
-        iconColor={SecondaryColor}
+        iconColor={theme.secondary}
         placeholder="Old Password"
       />
       <PasswordInput
         value={newPassword}
         onChangeText={setNewPassword}
-        iconColor={SecondaryColor}
+        iconColor={theme.secondary}
         placeholder="New Password"
       />
       <PasswordInput
         value={confirmPassword}
         onChangeText={setConfirmPassword}
-        iconColor={SecondaryColor}
+        iconColor={theme.secondary}
         placeholder="Confirm New Password"
       />
 
@@ -89,16 +85,16 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
 
       <View style={styles.buttonContainer}>
         <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: AccentColor }]}
+          style={[styles.cancelButton, { backgroundColor: theme.accent }]}
           onPress={onClose}
         >
-          <Text style={[styles.buttonText, { color: TextColor }]}>Cancel</Text>
+          <Text style={[styles.buttonText, { color: theme.text }]}>Cancel</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: PrimaryColor }]}
+          style={[styles.resetButton, { backgroundColor: theme.primary }]}
           onPress={handleReset}
         >
-          <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+          <Text style={[styles.buttonText, { color: theme.background }]}>
             Reset
           </Text>
         </TouchableOpacity>

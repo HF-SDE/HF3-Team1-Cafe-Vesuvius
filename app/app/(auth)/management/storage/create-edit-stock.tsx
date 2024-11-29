@@ -27,9 +27,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   handleUpdateStock,
   handleCreateStock,
 }) => {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
+  const theme = useThemeColor();
 
   const [stockItem, setStockItem] = useState<StockItemModel>(
     propStockItem || {
@@ -75,7 +73,10 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
       console.log("No changes");
     } else {
       if (stockItem.id) {
-        const updatedFields = { id: stockItem.id, ...changedFields };
+        const updatedFields: StockItemModel = {
+          id: stockItem.id,
+          ...changedFields,
+        };
         handleUpdateStock(updatedFields);
       } else {
         const updatedFields: StockItemModel = { ...changedFields };
@@ -117,7 +118,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   return (
     <KeyboardAvoidingView
       behavior={Platform.OS === "ios" ? "padding" : "height"}
-      style={[styles.container, { backgroundColor: BackgroundColor }]}
+      style={[styles.container, { backgroundColor: theme.background }]}
     >
       <TextInput
         style={styles.input}
@@ -139,20 +140,20 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         type="float"
         decimalSeparator="."
         step={1}
-        color={PrimaryColor}
-        textColor={PrimaryColor}
+        color={theme.primary}
+        textColor={theme.primary}
         value={stockItem.quantity}
         onChange={quantityChange}
-        inputStyle={{ borderColor: PrimaryColor }}
+        inputStyle={{ borderColor: theme.primary }}
         fontSize={20}
         buttonStyle={{
           borderRadius: 10,
           borderWidth: 3,
           backgroundColor: "transparent",
-          borderColor: PrimaryColor,
+          borderColor: theme.primary,
           padding: 5,
         }}
-        buttonTextColor={PrimaryColor}
+        buttonTextColor={theme.primary}
         buttonFontSize={40}
         style={styles.spinner}
       />

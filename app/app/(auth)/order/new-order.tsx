@@ -13,10 +13,7 @@ import { useNavigation } from "@react-navigation/native";
 import TemplateLayout from "@/components/TemplateLayout";
 
 export default function AddOrderScreen() {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
   const navigation = useNavigation();
 
   const [selectedReservation, setSelectedReservation] = useState(null);
@@ -48,18 +45,18 @@ export default function AddOrderScreen() {
 
         <View style={styles.buttonContainer}>
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
+            style={[styles.button, { backgroundColor: theme.primary }]}
             onPress={() => navigation.goBack()}
           >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+            <Text style={[styles.buttonText, { color: theme.background }]}>
               Back
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
-            style={[styles.button, { backgroundColor: PrimaryColor }]}
+            style={[styles.button, { backgroundColor: theme.primary }]}
             onPress={handleOrderSubmission}
           >
-            <Text style={[styles.buttonText, { color: BackgroundColor }]}>
+            <Text style={[styles.buttonText, { color: theme.background }]}>
               Submit Order
             </Text>
           </TouchableOpacity>

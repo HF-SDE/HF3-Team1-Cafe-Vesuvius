@@ -9,10 +9,7 @@ interface OrderCardProps {
 }
 
 export default function OrderCard({ order }: OrderCardProps) {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   const statusColors = {
     cook: "#007FFF",
@@ -25,7 +22,7 @@ export default function OrderCard({ order }: OrderCardProps) {
       style={{
         display: "flex",
         alignItems: "center",
-        backgroundColor: PrimaryColor,
+        backgroundColor: theme.primary,
         paddingVertical: 20,
         borderRadius: 20,
         gap: 12,
@@ -33,7 +30,7 @@ export default function OrderCard({ order }: OrderCardProps) {
     >
       <Text
         style={{
-          color: BackgroundColor,
+          color: theme.background,
           fontSize: 38,
           fontWeight: "bold",
         }}
@@ -49,13 +46,13 @@ export default function OrderCard({ order }: OrderCardProps) {
             justifyContent: "space-between",
             alignItems: "center",
             padding: 10,
-            backgroundColor: BackgroundColor,
+            backgroundColor: theme.background,
             borderRadius: 50,
             width: "90%",
           }}
         >
           <Text
-            style={{ color: TextColor, fontSize: 19, paddingHorizontal: 5 }}
+            style={{ color: theme.text, fontSize: 19, paddingHorizontal: 5 }}
           >
             {orderMenu.Menu.name} x {orderMenu.quantity}
           </Text>

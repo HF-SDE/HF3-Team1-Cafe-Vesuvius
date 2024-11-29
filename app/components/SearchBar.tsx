@@ -6,10 +6,7 @@ import { Searchbar, SearchbarProps } from "react-native-paper";
 export function SearchBar(props: SearchbarProps) {
   const [isFocused, setIsFocused] = useState(false);
 
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const PrimaryColor = useThemeColor({}, "primary");
+  const theme = useThemeColor();
 
   const { placeholder } = props;
 
@@ -18,19 +15,19 @@ export function SearchBar(props: SearchbarProps) {
       style={[
         styles.input,
         {
-          backgroundColor: BackgroundColor,
-          borderColor: isFocused ? TextColor : PrimaryColor,
+          backgroundColor: theme.background,
+          borderColor: isFocused ? theme.text : theme.primary,
         },
       ]}
       inputStyle={[
         {
-          color: TextColor,
+          color: theme.text,
         },
       ]}
       placeholder={placeholder}
-      placeholderTextColor={PrimaryColor}
+      placeholderTextColor={theme.primary}
       {...props}
-      iconColor={PrimaryColor}
+      iconColor={theme.primary}
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
     />

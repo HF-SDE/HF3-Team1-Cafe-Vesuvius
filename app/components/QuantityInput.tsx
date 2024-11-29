@@ -20,7 +20,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
   initialQty,
   onQuantityChange,
 }) => {
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   // Local state to manage the quantity
   const [quantity, setQuantity] = useState<number>(initialQty);
@@ -47,13 +47,13 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
     <View style={styles.inputContainer}>
       <View style={styles.itemRow}>
         <TouchableOpacity onPress={onDecrease}>
-          <FontAwesome6 name="square-minus" size={45} color={SecondaryColor} />
+          <FontAwesome6 name="square-minus" size={45} color={theme.secondary} />
         </TouchableOpacity>
 
         <TextInput
           style={[
             styles.textInput,
-            { color: SecondaryColor, borderColor: SecondaryColor },
+            { color: theme.secondary, borderColor: theme.secondary },
           ]}
           value={quantity.toString()}
           keyboardType="number-pad"
@@ -67,7 +67,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
         />
 
         <TouchableOpacity onPress={onIncrease}>
-          <FontAwesome6 name="square-plus" size={45} color={SecondaryColor} />
+          <FontAwesome6 name="square-plus" size={45} color={theme.secondary} />
         </TouchableOpacity>
       </View>
       <Text>Current stock {initialQty}</Text>

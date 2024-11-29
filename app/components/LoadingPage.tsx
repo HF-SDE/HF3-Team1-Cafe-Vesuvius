@@ -4,15 +4,11 @@ import { View, Text, ActivityIndicator, StyleSheet } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 const LoadingPage: React.FC = () => {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
   return (
-    <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
-      <ActivityIndicator size={50} color={PrimaryColor} />
-      <Text style={[styles.text, { color: TextColor }]}>Loading...</Text>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
+      <ActivityIndicator size={50} color={theme.primary} />
+      <Text style={[styles.text, { color: theme.text }]}>Loading...</Text>
     </View>
   );
 };

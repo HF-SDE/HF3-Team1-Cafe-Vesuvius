@@ -48,11 +48,7 @@ const MenuTabView = React.memo(
     const [index, setIndex] = React.useState(0);
     const [isModalVisible, setIsModalVisible] = useState(false);
 
-    const BackgroundColor = useThemeColor({}, "background");
-    const TextColor = useThemeColor({}, "text");
-    const PrimaryColor = useThemeColor({}, "primary");
-    const SecondaryColor = useThemeColor({}, "secondary");
-    const AccentColor = useThemeColor({}, "accent");
+    const theme = useThemeColor();
 
     const routes = [
       { key: "categories", title: "Categories" },
@@ -74,14 +70,14 @@ const MenuTabView = React.memo(
           keyExtractor={(item) => item}
           renderItem={({ item }) => (
             <View
-              style={[styles.categoryItem, { backgroundColor: PrimaryColor }]}
+              style={[styles.categoryItem, { backgroundColor: theme.primary }]}
             >
               <Text style={styles.categoryText}>{item}</Text>
               <TouchableOpacity onPress={() => onDeleteCategory(item)}>
                 <FontAwesome6
                   name="trash-alt"
                   size={18}
-                  color={SecondaryColor}
+                  color={theme.secondary}
                 />
               </TouchableOpacity>
             </View>
@@ -108,18 +104,21 @@ const MenuTabView = React.memo(
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
             <View
-              style={[styles.ingredientItem, { backgroundColor: PrimaryColor }]}
+              style={[
+                styles.ingredientItem,
+                { backgroundColor: theme.primary },
+              ]}
             >
               <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
               <RNTextInput
-                style={[styles.quantityInput, { borderColor: SecondaryColor }]}
+                style={[styles.quantityInput, { borderColor: theme.secondary }]}
                 value={item.quantity.toString()}
                 keyboardType="numeric"
                 onChangeText={(value) =>
                   onUpdateIngredientQuantity(item.id, Number(value))
                 }
               />
-              <Text style={{ width: 30, color: BackgroundColor }}>
+              <Text style={{ width: 30, color: theme.background }}>
                 {item.RawMaterial.unit}
               </Text>
 
@@ -127,7 +126,7 @@ const MenuTabView = React.memo(
                 <FontAwesome6
                   name="trash-alt"
                   size={18}
-                  color={SecondaryColor}
+                  color={theme.secondary}
                 />
               </TouchableOpacity>
             </View>
@@ -154,12 +153,12 @@ const MenuTabView = React.memo(
               {...props}
               indicatorStyle={[
                 styles.tabIndicator,
-                { backgroundColor: PrimaryColor },
+                { backgroundColor: theme.primary },
               ]}
-              style={[styles.tabBar, { backgroundColor: AccentColor }]}
-              labelStyle={[styles.tabLabel, { color: TextColor }]}
-              activeColor={TextColor}
-              inactiveColor={PrimaryColor}
+              style={[styles.tabBar, { backgroundColor: theme.accent }]}
+              labelStyle={[styles.tabLabel, { color: theme.text }]}
+              activeColor={theme.text}
+              inactiveColor={theme.primary}
             />
           )}
         />
@@ -171,7 +170,7 @@ const MenuTabView = React.memo(
         >
           <View style={styles.modalOverlay}>
             <View
-              style={[styles.modalContent, { backgroundColor: PrimaryColor }]}
+              style={[styles.modalContent, { backgroundColor: theme.primary }]}
             >
               <AddIngredientModal
                 onClose={() => setIsModalVisible(false)}

@@ -16,22 +16,21 @@ const SaveResetButton: React.FC<SaveResetButtonProps> = ({
   onPressReset: onPressReset,
   requiredPermission,
 }) => {
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   return (
     <CheckPermission requiredPermission={requiredPermission}>
       <View
         style={[
           styles.buttonContainer,
-          { backgroundColor: PrimaryColor, borderColor: SecondaryColor },
+          { backgroundColor: theme.primary, borderColor: theme.secondary },
         ]}
       >
         <TouchableOpacity style={styles.button} onPress={onPressSave}>
           <FontAwesome6
             name={"cloud-arrow-up"}
             size={45}
-            color={SecondaryColor}
+            color={theme.secondary}
           />
         </TouchableOpacity>
 
@@ -39,7 +38,7 @@ const SaveResetButton: React.FC<SaveResetButtonProps> = ({
           <MaterialCommunityIcons
             name="arrow-u-left-top-bold"
             size={50}
-            color={SecondaryColor}
+            color={theme.secondary}
           />
         </TouchableOpacity>
       </View>

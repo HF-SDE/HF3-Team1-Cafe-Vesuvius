@@ -17,37 +17,53 @@ interface ModalScreenProps {
   phone: string;
 }
 
-export default function InfoReservationModal({ onClose, email, phone }: ModalScreenProps): ReactElement {
-
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+export default function InfoReservationModal({
+  onClose,
+  email,
+  phone,
+}: ModalScreenProps): ReactElement {
+  const theme = useThemeColor();
 
   function handleEmailPress(): void {
-    const subject = 'Reservation Info Café Vesuvius';
-    const body = 'Hello, ';
-    const url = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const subject = "Reservation Info Café Vesuvius";
+    const body = "Hello, ";
+    const url = `mailto:${email}?subject=${encodeURIComponent(
+      subject
+    )}&body=${encodeURIComponent(body)}`;
 
     Linking.openURL(url).catch((err) =>
-      console.error('Error opening email client:', err)
+      console.error("Error opening email client:", err)
     );
-  };
+  }
 
   function handlePhonePress(): void {
     const url = `tel:${phone}`;
 
     Linking.openURL(url).catch((err) =>
-      console.error('Error opening Phone client:', err)
+      console.error("Error opening Phone client:", err)
     );
-  };
+  }
 
   return (
-    <SafeAreaView style={[styles.container, { backgroundColor: BackgroundColor }]}>
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: theme.background }]}
+    >
       <View>
-        <Text style={[styles.title, { color: TextColor }]}>Reservations Info</Text>
-        <Text style={{ color: TextColor }}>Email: <Text style={styles.link} onPress={handleEmailPress}>{email}</Text></Text>
-        <Text style={{ color: TextColor }}>Phone: <Text style={styles.link} onPress={handlePhonePress}>{phone}</Text></Text>
+        <Text style={[styles.title, { color: theme.text }]}>
+          Reservations Info
+        </Text>
+        <Text style={{ color: theme.text }}>
+          Email:{" "}
+          <Text style={styles.link} onPress={handleEmailPress}>
+            {email}
+          </Text>
+        </Text>
+        <Text style={{ color: theme.text }}>
+          Phone:{" "}
+          <Text style={styles.link} onPress={handlePhonePress}>
+            {phone}
+          </Text>
+        </Text>
         <TouchableOpacity
           style={[styles.cancelButton, { backgroundColor: "red" }]}
           onPress={onClose}
@@ -62,7 +78,7 @@ export default function InfoReservationModal({ onClose, email, phone }: ModalScr
 
 const styles = StyleSheet.create({
   link: {
-    color: 'blue',
+    color: "blue",
   },
   dateTimePicker: {
     position: "absolute",
@@ -80,7 +96,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(249, 180, 45, 0.25)",
     borderWidth: 1.5,
-    borderColor: "#fff"
+    borderColor: "#fff",
   },
   itemDisabled: {
     flex: 1,
@@ -92,7 +108,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(249, 180, 45, 0.25)",
     borderWidth: 1.5,
-    borderColor: "#fff"
+    borderColor: "#fff",
   },
   listContainer: {
     padding: 16,

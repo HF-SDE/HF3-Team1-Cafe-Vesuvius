@@ -18,10 +18,7 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   title,
   buttonTitle = "Back",
 }) => {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
   const navigation = useNavigation();
 
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
@@ -31,8 +28,8 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
       title: title,
       headerBackTitle: buttonTitle,
       headerTitleAlign: "center",
-      headerStyle: { backgroundColor: PrimaryColor },
-      headerTintColor: BackgroundColor,
+      headerStyle: { backgroundColor: theme.primary },
+      headerTintColor: theme.background,
       headerTitleStyle: { fontWeight: "bold", fontSize: 25 },
       headerShadowVisible: true,
     });
@@ -62,7 +59,7 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
     <SafeAreaView
       style={[
         styles.container,
-        { backgroundColor: BackgroundColor, borderColor: BackgroundColor },
+        { backgroundColor: theme.background, borderColor: theme.background },
       ]}
     >
       {children}

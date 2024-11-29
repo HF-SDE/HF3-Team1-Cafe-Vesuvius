@@ -24,10 +24,7 @@ import { MenuModel } from "@/models/MenuModel";
 
 export default function ManageUsersPage() {
   const { menu, isLoading, error } = useMenu();
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
+  const theme = useThemeColor();
 
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredMenu, setFilteredMenu] = useState<MenuModel[] | null>(null);
@@ -58,23 +55,23 @@ export default function ManageUsersPage() {
 
   const renderItem = ({ item }: { item: MenuModel }) => (
     <TouchableOpacity onPress={() => handleUserPress(item.id)}>
-      <View style={[styles.userItem, { backgroundColor: PrimaryColor }]}>
+      <View style={[styles.userItem, { backgroundColor: theme.primary }]}>
         <View>
-          <Text style={[styles.ItemName, { color: BackgroundColor }]}>
+          <Text style={[styles.ItemName, { color: theme.background }]}>
             {item.name}
           </Text>
-          <Text style={[styles.itemPrice, { color: SecondaryColor }]}>
+          <Text style={[styles.itemPrice, { color: theme.secondary }]}>
             {item.price},-
           </Text>
         </View>
-        <FontAwesome6 name="edit" size={48} color={SecondaryColor} />
+        <FontAwesome6 name="edit" size={48} color={theme.secondary} />
       </View>
     </TouchableOpacity>
   );
 
   return (
     <TemplateLayout pageName="MenuPage" title="Menu">
-      <View style={[styles.container, { backgroundColor: BackgroundColor }]}>
+      <View style={[styles.container, { backgroundColor: theme.background }]}>
         <SearchBar
           value={searchQuery}
           placeholder="Search menu items"
@@ -85,7 +82,7 @@ export default function ManageUsersPage() {
         {isLoading ? (
           <LoadingPage />
         ) : error ? (
-          <Text style={[styles.errorText, { color: TextColor }]}>{error}</Text>
+          <Text style={[styles.errorText, { color: theme.text }]}>{error}</Text>
         ) : (
           <FlatList
             data={filteredMenu}

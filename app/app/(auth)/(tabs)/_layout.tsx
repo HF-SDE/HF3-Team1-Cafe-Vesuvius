@@ -10,11 +10,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { PermissionManager } from "@/utils/permissionManager";
 
 export default function TabLayout() {
-  const BackgroundColor = useThemeColor({}, "background");
-  const TextColor = useThemeColor({}, "text");
-  const PrimaryColor = useThemeColor({}, "primary");
-  const SecondaryColor = useThemeColor({}, "secondary");
-  const AccentColor = useThemeColor({}, "accent");
+  const theme = useThemeColor();
 
   const [hasOrderPermission, setHasOrderPermission] = useState(false);
   const [hasReservationPermission, setHasReservationPermission] =
@@ -47,7 +43,7 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: PrimaryColor,
+          backgroundColor: theme.primary,
           height: 88,
           paddingTop: 10,
           borderTopWidth: 0,
@@ -57,7 +53,7 @@ export default function TabLayout() {
           overflow: "hidden",
         },
         headerStyle: {
-          backgroundColor: PrimaryColor,
+          backgroundColor: theme.primary,
           elevation: 0,
         },
         tabBarShowLabel: false,
@@ -81,7 +77,7 @@ export default function TabLayout() {
               <Entypo
                 name="list"
                 size={42}
-                style={{ color: focused ? AccentColor : SecondaryColor }}
+                style={{ color: focused ? theme.accent : theme.secondary }}
               />
             ),
           }}
@@ -99,7 +95,7 @@ export default function TabLayout() {
               <Entypo
                 name="calendar"
                 size={38}
-                style={{ color: focused ? AccentColor : SecondaryColor }}
+                style={{ color: focused ? theme.accent : theme.secondary }}
               />
             ),
           }}
@@ -117,7 +113,7 @@ export default function TabLayout() {
               <Entypo
                 name="info-with-circle"
                 size={38}
-                style={{ color: focused ? AccentColor : SecondaryColor }}
+                style={{ color: focused ? theme.accent : theme.secondary }}
               />
             ),
           }}
@@ -134,7 +130,7 @@ export default function TabLayout() {
             <FontAwesome
               name="user"
               size={38}
-              style={{ color: focused ? AccentColor : SecondaryColor }}
+              style={{ color: focused ? theme.accent : theme.secondary }}
             />
           ),
         }}
