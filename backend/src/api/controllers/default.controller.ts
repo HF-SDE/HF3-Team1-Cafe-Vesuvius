@@ -60,8 +60,9 @@ export function getAll(model?: prismaModels): ExpressFunction {
       setInterval(() => {
         ws.send(JSON.stringify(response));
       }, 12000);
+    } else {
+      res.status(getHttpStatusCode(response.status)).json(response).end();
     }
-    res.status(getHttpStatusCode(response.status)).json(response).end();
   };
 }
 
