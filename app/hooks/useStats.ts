@@ -12,7 +12,7 @@ export function useStats() {
       setIsLoading(true);
       setError(null);
 
-      const response = await apiClient.get("/menu");
+      const response = await apiClient.get("/stats");
       //const response = await apiClient.get("/manage/user");
 
       setStats(response.data.data);

@@ -4,6 +4,7 @@ import {
   ScrollView,
   useWindowDimensions,
   Text,
+  RefreshControl,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -19,7 +20,7 @@ import {
   PieChart,
   ProgressChart,
 } from "react-native-chart-kit";
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 
 export default function StatsPage() {
   const theme = useThemeColor();
@@ -45,6 +46,17 @@ export default function StatsPage() {
 
   // Use the useStats hook directly
   const { stats, isLoading, error, refreshStats } = useStats();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshStats();
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const lineChartData = useMemo(
     () => ({
@@ -134,6 +146,13 @@ export default function StatsPage() {
         contentContainerStyle={styles.container}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.secondary}
+          />
+        }
       >
         <View style={styles.statItem}>
           <LineChart

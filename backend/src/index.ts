@@ -12,6 +12,7 @@ import menuRoutes from '@routes/menu.routes';
 import orderRoutes from '@routes/order.routes';
 import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
+import statsRoutes from '@routes/stats.route';
 import stockRoutes from '@routes/stock.routes';
 import tableRoutes from '@routes/table.routes';
 
@@ -45,6 +46,7 @@ app.use(`/order`, orderRoutes);
 app.use(`/manage`, manageRoutes);
 app.use(`/profile`, profileRoutes);
 app.use(`/menu`, menuRoutes);
+app.use(`/stats`, statsRoutes);
 
 app.get('/ping', (req, res) => {
   res.json({
