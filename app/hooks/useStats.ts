@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-import { UserProfile } from "../models/userModels";
+import { StatsModel } from "../models/StatsModel";
 
 export function useStats() {
-  const [stats, setStats] = useState<UserProfile[] | null>(null);
+  const [stats, setStats] = useState<StatsModel | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
