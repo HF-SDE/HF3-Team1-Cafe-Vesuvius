@@ -30,12 +30,12 @@ export default function UserProfileScreen() {
               style={[
                 styles.avatar,
                 {
-                  backgroundColor: theme.primary,
-                  borderColor: theme.secondary,
+                  backgroundColor: theme.accent,
+                  borderColor: theme.primary,
                 },
               ]}
             >
-              <Text style={[styles.avatarText, { color: theme.background }]}>
+              <Text style={[styles.avatarText, { color: theme.text }]}>
                 {userProfile?.initials || "?"}
               </Text>
             </View>
