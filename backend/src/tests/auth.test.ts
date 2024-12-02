@@ -5,7 +5,7 @@ import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 //import { AccessResult } from '@api-types/auth.types';
 import { APIResponse } from '@api-types/general.types';
 
-import config from '../../config';
+import config from '../config';
 
 const BASE_URL = process.env.VITE_API_URL; // HTTPS URL
 
