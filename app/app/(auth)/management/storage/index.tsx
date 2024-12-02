@@ -613,11 +613,10 @@ const styles = StyleSheet.create({
   },
   pageIndicator: {
     fontSize: 16,
-    // textAlign: "right",
     textAlign: "center",
     marginBottom: 5,
     position: "absolute",
-    left: "45%",
+    alignSelf: "center",
   },
   StockPageNavigator: {
     marginBottom: 15,
