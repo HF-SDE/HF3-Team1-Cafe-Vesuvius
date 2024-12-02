@@ -2,9 +2,9 @@
  * Interface for the economy statistics
  */
 interface EconomyStats {
-  totalSales: number;
+  salesTotal: number;
+  salesToday: number;
   valuta: string;
-  avgOrderValue: number;
   salesMonth: {
     month: string;
     sales: number;
@@ -26,10 +26,10 @@ interface ReservationStats {
  * Interface for orders statistics
  */
 interface OrderStats {
-  total: number;
-  today: number;
-  completed: number;
-  pending: number;
+  ordersTotal: number;
+  ordersToday: number;
+  avgOrderValueTotal: number;
+  avgOrderValueToday: number;
 }
 
 /**
@@ -37,8 +37,7 @@ interface OrderStats {
  */
 interface MenuItemStats {
   total: number;
-  mostOrdered: { name: string; count: number }[];
-  leastOrdered: { name: string; count: number }[];
+  orderedStats: { name: string; count: number }[];
 }
 
 /**

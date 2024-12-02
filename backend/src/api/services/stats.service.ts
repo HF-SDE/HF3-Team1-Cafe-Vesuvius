@@ -9,6 +9,21 @@ import { StatsResponse } from '../types/stats.types';
  */
 export async function stats(): Promise<APIResponse<StatsResponse>> {
   try {
+    const today = new Date();
+    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+    const ordersForToday = await prisma.order.findMany({
+      where: {
+        createdAt: {
+          gte: startOfDay, // Orders created after or at the start of today
+          lte: endOfDay, // Orders created before or at the end of today
+        },
+      },
+      select: {
+        id: true, // Make sure to get the order ID to link with order_menu
+      },
+    });
+
     const orderMenuItems = await prisma.order_Menu.findMany({
       select: {
         menuItemPrice: true,
@@ -16,20 +31,25 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       },
     });
 
-    const totalSales = orderMenuItems.reduce(
+    // Filter the orderMenuItems to only include those that belong to today's orders
+    const orderMenuItemsForToday = orderMenuItems.filter((item) =>
+      ordersForToday.some((order) => order.id === item.orderId),
+    );
+
+    // Calculate total sales for all orders
+    const salesTotal = orderMenuItems.reduce(
       (sum, item) => sum + item.menuItemPrice * item.quantity,
       0,
     );
 
-    const totalOrders = await prisma.order.count();
-    const completedOrders = 2;
-    const pendingOrders = 3;
-    // const completedOrders = await prisma.order.count({
-    //   where: { status: 'completed' },
-    // });
-    // const pendingOrders = await prisma.order.count({
-    //   where: { status: 'pending' },
-    // });
+    // Calculate today's sales
+    const salesToday = orderMenuItemsForToday.reduce(
+      (sum, item) => sum + item.menuItemPrice * item.quantity,
+      0,
+    );
+
+    const ordersTotal = await prisma.order.count();
+    const ordersToday = ordersForToday.length;
 
     const totalReservations = await prisma.reservation.count();
     const todayReservations = await prisma.reservation.count({
@@ -84,7 +104,7 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
     }));
 
     const MenuItemsCount = await prisma.menuItem.count();
-    const mostOrderedItems = await prisma.order_Menu.groupBy({
+    const orderedItems = await prisma.order_Menu.groupBy({
       by: ['menuItemId'],
       _count: {
         id: true,
@@ -94,20 +114,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
           id: 'desc',
         },
       },
-      take: 3,
-    });
-
-    const leastOrderedItems = await prisma.order_Menu.groupBy({
-      by: ['menuItemId'],
-      _count: {
-        id: true,
-      },
-      orderBy: {
-        _count: {
-          id: 'asc',
-        },
-      },
-      take: 3,
     });
 
     const lowStock = await prisma.rawMaterial.findMany({
@@ -120,9 +126,9 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
 
     const response: StatsResponse = {
       economy: {
-        totalSales: totalSales,
+        salesTotal: salesTotal,
+        salesToday: salesToday,
         valuta: 'DKK',
-        avgOrderValue: totalSales / totalOrders || 0,
         salesMonth,
       },
       reservations: {
@@ -131,18 +137,14 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
         upcoming: upcomingReservations,
       },
       orders: {
-        total: totalOrders,
-        today: pendingOrders,
-        completed: completedOrders,
-        pending: pendingOrders,
+        ordersTotal: ordersTotal,
+        ordersToday: ordersToday,
+        avgOrderValueTotal: salesTotal / ordersTotal || 0,
+        avgOrderValueToday: salesToday / ordersToday || 0,
       },
       menuItems: {
         total: MenuItemsCount,
-        mostOrdered: mostOrderedItems.map((item) => ({
-          name: item.menuItemId,
-          count: item._count.id,
-        })),
-        leastOrdered: leastOrderedItems.map((item) => ({
+        orderedStats: orderedItems.map((item) => ({
           name: item.menuItemId,
           count: item._count.id,
         })),

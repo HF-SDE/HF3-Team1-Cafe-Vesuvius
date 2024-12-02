@@ -5,6 +5,7 @@ import {
   useWindowDimensions,
   Text,
   RefreshControl,
+  FlatList,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
@@ -139,6 +140,16 @@ export default function StatsPage() {
       </TemplateLayout>
     );
   }
+  console.log(stats);
+
+  const renderItem = ({ item }: { item: any }) => (
+    <View>
+      <Text>{item.name}</Text>
+      <Text>
+        Quantity: {item.quantity} {item.unit}
+      </Text>
+    </View>
+  );
 
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
@@ -154,6 +165,21 @@ export default function StatsPage() {
           />
         }
       >
+        <View>
+          <View>
+            <Text>Sales Total</Text>
+            <Text>
+              {stats?.economy.salesTotal} {stats?.economy.valuta}
+            </Text>
+          </View>
+          <View>
+            <Text>Sales Today</Text>
+            <Text>
+              {stats?.economy.salesToday} {stats?.economy.valuta}
+            </Text>
+          </View>
+        </View>
+
         <View style={styles.statItem}>
           <LineChart
             data={lineChartData}
@@ -166,40 +192,62 @@ export default function StatsPage() {
           />
         </View>
 
-        <View style={styles.statItem}>
-          <BarChart
-            data={barChartData}
-            width={width - 40} // Dynamically calculate width
-            height={220}
-            chartConfig={chartConfig}
-            style={styles.chart}
-            yAxisLabel=""
-            yAxisSuffix=""
-          />
+        <View>
+          <Text>Order</Text>
+          <View>
+            <Text>Total orders: {stats?.orders.ordersTotal}</Text>
+            <Text>Today orders: {stats?.orders.ordersToday}</Text>
+          </View>
+          <View>
+            <Text>Avg orders total: {stats?.orders.avgOrderValueTotal}</Text>
+            <Text>Avg orders today: {stats?.orders.avgOrderValueToday}</Text>
+          </View>
         </View>
 
-        <View style={styles.statItem}>
-          <PieChart
-            data={pieData}
-            width={width - 40} // Dynamically calculate width
-            height={220}
-            chartConfig={chartConfig}
-            accessor={"population"}
-            backgroundColor={theme.primary}
-            paddingLeft={"15"}
-            style={styles.chart}
-          />
+        <View>
+          <Text>Reservation</Text>
+          <View>
+            <Text>Total reservations: {stats?.reservations.total}</Text>
+          </View>
+          <View>
+            <Text>Today reservations: {stats?.reservations.today}</Text>
+            <Text>Upcoming reservations: {stats?.reservations.upcoming}</Text>
+          </View>
+          <View style={styles.statItem}>
+            <PieChart
+              data={pieData}
+              width={width - 40} // Dynamically calculate width
+              height={220}
+              chartConfig={chartConfig}
+              accessor={"population"}
+              backgroundColor={theme.primary}
+              paddingLeft={"15"}
+              style={styles.chart}
+            />
+          </View>
         </View>
 
-        <View style={styles.statItem}>
-          <ProgressChart
-            data={progressData}
-            width={width - 40} // Dynamically calculate width
-            height={220}
-            strokeWidth={16}
-            radius={32}
-            chartConfig={chartConfig}
-            style={styles.chart}
+        <View>
+          <Text>Most ordered</Text>
+          <View style={styles.statItem}>
+            <BarChart
+              data={barChartData}
+              width={width - 40} // Dynamically calculate width
+              height={220}
+              chartConfig={chartConfig}
+              style={styles.chart}
+              yAxisLabel=""
+              yAxisSuffix=""
+            />
+          </View>
+        </View>
+
+        <View>
+          <Text>Low storage</Text>
+          <FlatList
+            data={stats?.rawMaterials.lowStock}
+            keyExtractor={(item, index) => index.toString()}
+            renderItem={renderItem}
           />
         </View>
       </ScrollView>
