@@ -33,7 +33,7 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
       }
     });
 
-    if (!result) {
+    if (!result || result.length === 0 && id) {
       return {
         status: Status.NotFound,
         message: 'Stocks item(s) not found',
@@ -108,7 +108,7 @@ export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
     const validate = StockUpdateSchema.validate(data);
     if (validate.error) {
       return {
-        status: Status.Failed,
+        status: Status.InvalidDetails,
         message: validate.error.message,
       };
     }

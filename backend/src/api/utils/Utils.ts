@@ -55,7 +55,6 @@ export function getHttpStatusCode(status: Status): number {
       return 1013;
     case Status.wsInvalidDetails:
       return 4000;
-
   }
 }
 
@@ -76,7 +75,7 @@ export function defaultResponse(code: number | string) {
 }
 
 interface ISchemaOptions {
-  type?: "default" | "optional" | "where";
+  type?: 'default' | 'optional' | 'where' | 'patch';
 }
 
 /**
