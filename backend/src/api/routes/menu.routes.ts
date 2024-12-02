@@ -9,6 +9,7 @@ import {
 import { transformMenusItems } from '@controllers/menu.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
+import { transformPatch } from '@middlewares/menu.mw';
 import { validateParams } from '@middlewares/validate.mw';
 
 const router = Router();
@@ -26,6 +27,12 @@ router.post(
   create('menuItem'),
 );
 router.put('/:id', isAllowed(['menu:update']), update('menuItem'));
+router.patch(
+  '/:id',
+  isAllowed(['menu:update']),
+  transformPatch,
+  update('menuItem'),
+);
 router.delete('/:id', isAllowed(['menu:delete']), deleteRecord('menuItem'));
 
 export default router;

@@ -103,6 +103,7 @@ export async function create(
  * @param {prismaModels} prismaModel - The Prisma model to update the record from.
  * @param {string} id - The id of the record to update.
  * @param {any} data - The data to update the record with.
+ * @param {boolean} isPatch - Whether to update the record with a patch.
  * @param {Joi.ObjectSchema} schema - The schema to validate the data against.
  * @returns {Promise<APIResponse<Result>>} A promise that resolves to an object containing the record data, status, and message.
  */
@@ -110,8 +111,9 @@ export async function update(
   prismaModel: prismaModels,
   id: string,
   data: unknown,
+  isPatch: boolean = false,
   schema: Joi.ObjectSchema | undefined = getSchema(prismaModel, {
-    type: 'optional',
+    type: isPatch ? 'patch' : 'optional',
   }),
 ): Promise<APIResponse<Result>> {
   const prismaType = prisma[prismaModel] as any;

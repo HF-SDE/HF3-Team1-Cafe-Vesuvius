@@ -12,7 +12,7 @@ import menuRoutes from '@routes/menu.routes';
 import orderRoutes from '@routes/order.routes';
 import profileRoutes from '@routes/profile.routes';
 import reservationRoutes from '@routes/reservation.routes';
-import statsRoutes from '@routes/stats.route';
+import statsRoutes from '@routes/stats.routes';
 import stockRoutes from '@routes/stock.routes';
 import tableRoutes from '@routes/table.routes';
 
