@@ -221,3 +221,26 @@ async function checkValidSeatability(
 
   return {};
 }
+
+/**
+ * Middleware to transform the filters
+ * @param {Request} req - The request object
+ * @param {Response} res - The response object
+ * @param {NextFunction} next - The next middleware function in the chain
+ * @returns {void}
+ */
+export function transformFilters(
+  req: Request,
+  res: Response,
+  next: NextFunction,
+): void {
+  req.query ??= {};
+
+  const today = new Date().setHours(0, 0, 0, 0);
+
+  req.query.reservationTime ??= {
+    gte: new Date(today).toISOString(),
+  };
+
+  next();
+}
