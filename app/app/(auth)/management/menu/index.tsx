@@ -43,10 +43,7 @@ export default function ManageUsersPage() {
   useEffect(() => {
     const unsubscribe = navigation.addListener("focus", () => {
       // Trigger the refetch whenever the screen comes into focus
-      console.log("FOCUS");
-
       refreshMenu();
-      console.log(menu);
     });
 
     // Cleanup the listener

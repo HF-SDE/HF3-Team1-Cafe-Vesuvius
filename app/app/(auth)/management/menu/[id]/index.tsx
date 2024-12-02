@@ -80,10 +80,7 @@ export default function EditCreateUserPage() {
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
-      console.log("No changes");
     } else {
-      console.log("Update/Create");
-
       const updatedFields = Object.keys(changedFields).reduce((acc, field) => {
         acc[field] = menuItem[field];
         return acc;
