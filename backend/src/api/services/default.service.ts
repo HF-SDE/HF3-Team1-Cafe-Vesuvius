@@ -25,7 +25,7 @@ export async function getAll(
 
   const { err, prismaType, validatedData } = Validate(
     prismaModel,
-    config,
+    config.where,
     schema,
   );
   if (err) return err;
