@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router } from 'websocket-express';
 
 import {
   create,
@@ -12,13 +12,15 @@ import { isAllowed } from '@middlewares/isAllowed.mw';
 import { transformPatch } from '@middlewares/menu.mw';
 import { validateParams } from '@middlewares/validate.mw';
 
-const router = Router();
+const router = new Router();
 
 router.use('/', validateParams);
 
 router.get(['/', '/:id'], getAll('menuItem'));
 
 router.use('/', verifyJWT);
+
+router.ws('/', isAllowed(['menu:view']), getAll('menuItem'));
 
 router.post(
   '/',
