@@ -92,7 +92,9 @@ export function update(model?: prismaModels): ExpressFunction {
 
     if (!model) model = getModel(req);
 
-    const response = await DefaultService.update(model, id, req.body);
+    const isPatch = req.method === 'PATCH';
+
+    const response = await DefaultService.update(model, id, req.body, isPatch);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
