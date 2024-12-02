@@ -412,9 +412,18 @@ export default function ManageUsersPage() {
           placeholder="Search for item"
           loading={isLoading}
         />
-        <Text style={[styles.pageIndicator, { color: theme.text }]}>
-          Page {currentPage} of {totalPages}
-        </Text>
+        <View style={styles.StockPageNavigator}>
+          <Text style={[styles.pageIndicator, { color: theme.text }]}>
+            Page {currentPage} of {totalPages}
+          </Text>
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPrevPage={handlePrevPage}
+            onNextPage={handleNextPage}
+          />
+        </View>
+
         {isLoading ? (
           <LoadingPage />
         ) : error ? (
@@ -451,12 +460,7 @@ export default function ManageUsersPage() {
             // }}
           />
         )}
-        <Pagination
-          currentPage={currentPage}
-          totalPages={totalPages}
-          onPrevPage={handlePrevPage}
-          onNextPage={handleNextPage}
-        />
+
         {!hasChanges && (
           <AddButton
             onPress={() => handleAddEditStockItem()}
@@ -609,7 +613,13 @@ const styles = StyleSheet.create({
   },
   pageIndicator: {
     fontSize: 16,
-    textAlign: "right",
+    // textAlign: "right",
+    textAlign: "center",
     marginBottom: 5,
+    position: "absolute",
+    left: "45%",
+  },
+  StockPageNavigator: {
+    marginBottom: 15,
   },
 });

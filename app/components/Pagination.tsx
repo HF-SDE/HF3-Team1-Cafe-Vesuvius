@@ -29,14 +29,17 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={isPrevDisabled}
         style={[
           styles.paginationButton,
-          { backgroundColor: theme.primary, borderColor: theme.secondary },
+          {
+            // backgroundColor: theme.primary,
+            borderColor: "transparent",
+          },
           isPrevDisabled && styles.disabledButton,
         ]}
       >
         <FontAwesome6
           name="arrow-left"
-          size={30}
-          color={isPrevDisabled ? disabledColor : theme.secondary}
+          size={20}
+          color={isPrevDisabled ? disabledColor : theme.text}
         />
       </TouchableOpacity>
 
@@ -45,14 +48,17 @@ const Pagination: React.FC<PaginationProps> = ({
         disabled={isNextDisabled}
         style={[
           styles.paginationButton,
-          { backgroundColor: theme.primary, borderColor: theme.secondary },
+          {
+            // backgroundColor: theme.primary,
+            borderColor: "transparent",
+          },
           isNextDisabled && styles.disabledButton,
         ]}
       >
         <FontAwesome6
           name="arrow-right"
-          size={30}
-          color={isNextDisabled ? disabledColor : theme.secondary}
+          size={20}
+          color={isNextDisabled ? disabledColor : theme.text}
         />
       </TouchableOpacity>
     </View>
@@ -65,17 +71,17 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     width: "100%",
-    height: 70,
-    position: "absolute",
-    bottom: 30,
+    height: 30,
+    // position: "absolute",
+    // bottom: 30,
     alignSelf: "center",
     paddingHorizontal: 10,
   },
   paginationButton: {
-    padding: 10,
-    marginHorizontal: 5,
+    // padding: 10,
+    // marginHorizontal: 5,
     borderRadius: 10,
-    backgroundColor: "#f0f0f0",
+    // backgroundColor: "#f0f0f0",
     borderWidth: 5,
     borderStyle: "solid",
   },
