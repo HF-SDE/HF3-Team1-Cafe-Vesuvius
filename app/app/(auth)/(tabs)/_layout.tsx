@@ -8,7 +8,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 import { PermissionManager } from "@/utils/permissionManager";
-
+import { LinearGradient } from "expo-linear-gradient";
+import { StyleSheet } from "react-native";
 export default function TabLayout() {
   const theme = useThemeColor();
 
@@ -39,6 +40,16 @@ export default function TabLayout() {
     checkPermissions();
   }, []);
 
+  const HeaderBackground = () => (
+    <LinearGradient
+      colors={[theme.primary, theme.primary, theme.accent, theme.accent]}
+      start={{ x: 0, y: 0 }}
+      end={{ x: 0, y: 1 }}
+      locations={[0, 0.9, 0.9, 1]}
+      style={styles.headerBackground}
+    />
+  );
+
   return (
     <Tabs
       screenOptions={{
@@ -52,10 +63,7 @@ export default function TabLayout() {
           shadowOpacity: 0,
           overflow: "hidden",
         },
-        headerStyle: {
-          backgroundColor: theme.primary,
-          elevation: 0,
-        },
+        headerBackground: () => <HeaderBackground />,
         tabBarShowLabel: false,
         headerTitleAlign: "center",
         tabBarItemStyle: { display: "none" },
@@ -138,3 +146,9 @@ export default function TabLayout() {
     </Tabs>
   );
 }
+
+const styles = StyleSheet.create({
+  headerBackground: {
+    flex: 1,
+  },
+});

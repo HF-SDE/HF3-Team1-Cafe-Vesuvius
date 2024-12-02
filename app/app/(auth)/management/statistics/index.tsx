@@ -3,12 +3,14 @@ import {
   View,
   ScrollView,
   useWindowDimensions,
+  Text,
+  RefreshControl,
 } from "react-native";
 
 import { useNavigation } from "@react-navigation/native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-
 import { useStats } from "@/hooks/useStats";
+import LoadingPage from "@/components/LoadingPage";
 
 import TemplateLayout from "@/components/TemplateLayout";
 
@@ -18,13 +20,11 @@ import {
   PieChart,
   ProgressChart,
 } from "react-native-chart-kit";
+import { useState, useMemo } from "react";
 
 export default function StatsPage() {
   const theme = useThemeColor();
-  const { stats, isLoading, error, refreshStats } = useStats();
   const navigation = useNavigation();
-
-  // Get current window dimensions
   const { width } = useWindowDimensions();
 
   const chartConfig = {
@@ -44,41 +44,101 @@ export default function StatsPage() {
     },
   };
 
-  const progressData = {
-    labels: ["Swim", "Bike", "Run"],
-    data: [0.4, 0.6, 0.8],
+  // Use the useStats hook directly
+  const { stats, isLoading, error, refreshStats } = useStats();
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    try {
+      await refreshStats();
+    } finally {
+      setRefreshing(false);
+    }
   };
 
-  const pieData = [
-    {
-      name: "Groceries",
-      population: 40,
-      color: theme.background,
-      legendFontColor: theme.text,
-      legendFontSize: 12,
-    },
-    {
-      name: "Bills",
-      population: 30,
-      color: theme.secondary,
-      legendFontColor: theme.text,
-      legendFontSize: 12,
-    },
-    {
-      name: "Entertainment",
-      population: 20,
-      color: theme.accent,
-      legendFontColor: theme.text,
-      legendFontSize: 12,
-    },
-    {
-      name: "Savings",
-      population: 10,
-      color: theme.text,
-      legendFontColor: theme.text,
-      legendFontSize: 12,
-    },
-  ];
+  const lineChartData = useMemo(
+    () => ({
+      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
+      datasets: [
+        {
+          data: Array.from({ length: 6 }, () => Math.random() * 100),
+        },
+      ],
+    }),
+    []
+  );
+
+  const barChartData = useMemo(
+    () => ({
+      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+      datasets: [
+        {
+          data: Array.from({ length: 4 }, () => Math.random() * 100),
+        },
+      ],
+    }),
+    []
+  );
+
+  const progressData = useMemo(
+    () => ({
+      labels: ["Swim", "Bike", "Run"],
+      data: [0.4, 0.6, 0.8],
+    }),
+    []
+  );
+
+  const pieData = useMemo(
+    () => [
+      {
+        name: "Groceries",
+        population: 40,
+        color: theme.background,
+        legendFontColor: theme.text,
+        legendFontSize: 12,
+      },
+      {
+        name: "Bills",
+        population: 30,
+        color: theme.secondary,
+        legendFontColor: theme.text,
+        legendFontSize: 12,
+      },
+      {
+        name: "Entertainment",
+        population: 20,
+        color: theme.accent,
+        legendFontColor: theme.text,
+        legendFontSize: 12,
+      },
+      {
+        name: "Savings",
+        population: 10,
+        color: theme.text,
+        legendFontColor: theme.text,
+        legendFontSize: 12,
+      },
+    ],
+    []
+  );
+
+  if (isLoading) {
+    return <LoadingPage />;
+  }
+
+  if (error) {
+    return (
+      <TemplateLayout pageName="StatsPage" title="Statistics">
+        <View style={styles.container}>
+          <View style={styles.statItem}>
+            <Text>{error}</Text>
+          </View>
+        </View>
+      </TemplateLayout>
+    );
+  }
 
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
@@ -86,17 +146,17 @@ export default function StatsPage() {
         contentContainerStyle={styles.container}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={handleRefresh}
+            tintColor={theme.secondary}
+          />
+        }
       >
         <View style={styles.statItem}>
           <LineChart
-            data={{
-              labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-              datasets: [
-                {
-                  data: Array.from({ length: 6 }, () => Math.random() * 100),
-                },
-              ],
-            }}
+            data={lineChartData}
             width={width - 40} // Dynamically calculate width
             height={500}
             yAxisLabel=""
@@ -108,14 +168,7 @@ export default function StatsPage() {
 
         <View style={styles.statItem}>
           <BarChart
-            data={{
-              labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
-              datasets: [
-                {
-                  data: Array.from({ length: 4 }, () => Math.random() * 100),
-                },
-              ],
-            }}
+            data={barChartData}
             width={width - 40} // Dynamically calculate width
             height={220}
             chartConfig={chartConfig}

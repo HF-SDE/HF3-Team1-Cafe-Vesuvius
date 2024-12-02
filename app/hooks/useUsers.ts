@@ -7,25 +7,23 @@ export function useUsers(id?: string | string[]) {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const fetchUsers = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      const endpoint = id ? `/manage/user?id=${id}` : "/manage/user";
+      const response = await apiClient.get(endpoint);
+      //const response = await apiClient.get("/manage/user");
+
+      setUsers(response.data.data);
+    } catch (err: any) {
+      setError("Failed to load user/users");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const test = "673aeeb3fbd2517ae3ab94f3";
-
-        const endpoint = id ? `/manage/user?id=${id}` : "/manage/user";
-        const response = await apiClient.get(endpoint);
-        //const response = await apiClient.get("/manage/user");
-
-        setUsers(response.data.data);
-      } catch (err: any) {
-        setError("Failed to load user/users");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchUsers();
   }, [id]);
 
