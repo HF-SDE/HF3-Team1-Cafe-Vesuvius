@@ -96,8 +96,8 @@ export default function StatsPage() {
       {
         name: "Groceries",
         population: 40,
-        color: theme.background,
-        legendFontColor: theme.background,
+        color: theme.primary,
+        legendFontColor: theme.primary,
         legendFontSize: 12,
       },
       {
@@ -165,18 +165,28 @@ export default function StatsPage() {
           />
         }
       >
-        <View>
-          <View>
-            <Text>Sales Total</Text>
-            <Text>
-              {stats?.economy.salesTotal} {stats?.economy.valuta}
-            </Text>
-          </View>
-          <View>
-            <Text>Sales Today</Text>
-            <Text>
-              {stats?.economy.salesToday} {stats?.economy.valuta}
-            </Text>
+        <View
+          style={[
+            styles.SectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <Text style={[styles.SectionTitle, { color: theme.text }]}>
+            Sales
+          </Text>
+          <View style={styles.SectionSpacer}>
+            <View>
+              <Text style={[styles.SectionText, { color: theme.primary }]}>
+                Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
+              </Text>
+            </View>
+            <View>
+              <Text style={[styles.SectionText, { color: theme.primary }]}>
+                Today: {stats?.economy.salesToday} {stats?.economy.valuta}
+              </Text>
+            </View>
           </View>
         </View>
 
@@ -191,27 +201,56 @@ export default function StatsPage() {
             style={styles.chart}
           />
         </View>
-
-        <View>
-          <Text>Order</Text>
-          <View>
-            <Text>Total orders: {stats?.orders.ordersTotal}</Text>
-            <Text>Today orders: {stats?.orders.ordersToday}</Text>
+        <View
+          style={[
+            styles.SectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <Text style={[styles.SectionTitle, { color: theme.text }]}>
+            Orders
+          </Text>
+          <View style={styles.SectionSpacer}>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Total: {stats?.orders.ordersTotal}
+            </Text>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Today: {stats?.orders.ordersToday}
+            </Text>
           </View>
-          <View>
-            <Text>Avg orders total: {stats?.orders.avgOrderValueTotal}</Text>
-            <Text>Avg orders today: {stats?.orders.avgOrderValueToday}</Text>
+          <View style={styles.SectionSpacer}>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Avg total: {stats?.orders.avgOrderValueTotal}
+            </Text>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Avg today: {stats?.orders.avgOrderValueToday}
+            </Text>
           </View>
         </View>
 
-        <View>
-          <Text>Reservation</Text>
-          <View>
-            <Text>Total reservations: {stats?.reservations.total}</Text>
-          </View>
-          <View>
-            <Text>Today reservations: {stats?.reservations.today}</Text>
-            <Text>Upcoming reservations: {stats?.reservations.upcoming}</Text>
+        <View
+          style={[
+            styles.SectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <Text style={[styles.SectionTitle, { color: theme.text }]}>
+            Reservation
+          </Text>
+          <View style={styles.SectionSpacer}>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Total: {stats?.reservations.total}
+            </Text>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Today: {stats?.reservations.today}
+            </Text>
+            <Text style={[styles.SectionText, { color: theme.primary }]}>
+              Upcoming: {stats?.reservations.upcoming}
+            </Text>
           </View>
           <View style={styles.statItem}>
             <PieChart
@@ -220,15 +259,24 @@ export default function StatsPage() {
               height={220}
               chartConfig={chartConfig}
               accessor={"population"}
-              backgroundColor={theme.primary}
+              backgroundColor={"transparent"}
               paddingLeft={"15"}
               style={styles.chart}
             />
           </View>
         </View>
 
-        <View>
-          <Text>Most ordered</Text>
+        <View
+          style={[
+            styles.SectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <Text style={[styles.SectionTitle, { color: theme.text }]}>
+            Most ordered
+          </Text>
           <View style={styles.statItem}>
             <BarChart
               data={barChartData}
@@ -242,8 +290,17 @@ export default function StatsPage() {
           </View>
         </View>
 
-        <View>
-          <Text>Low storage</Text>
+        <View
+          style={[
+            styles.SectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <Text style={[styles.SectionTitle, { color: theme.text }]}>
+            Low storage
+          </Text>
           <FlatList
             data={stats?.rawMaterials.lowStock}
             keyExtractor={(item, index) => index.toString()}
@@ -258,6 +315,7 @@ export default function StatsPage() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    gap: 20,
   },
   statItem: {
     width: "100%",
@@ -265,5 +323,23 @@ const styles = StyleSheet.create({
   },
   chart: {
     borderRadius: 16,
+  },
+  SectionContainer: {
+    borderWidth: 2,
+    borderRadius: 20,
+    padding: 20,
+  },
+  SectionTitle: {
+    fontSize: 30,
+    textAlign: "center",
+  },
+  SectionSpacer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    gap: 5,
+  },
+  SectionText: {
+    fontSize: 22,
   },
 });

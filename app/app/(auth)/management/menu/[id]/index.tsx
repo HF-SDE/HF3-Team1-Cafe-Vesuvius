@@ -80,10 +80,7 @@ export default function EditCreateUserPage() {
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
-      console.log("No changes");
     } else {
-      console.log("Update/Create");
-
       const updatedFields = Object.keys(changedFields).reduce((acc, field) => {
         acc[field] = menuItem[field];
         return acc;
@@ -91,7 +88,7 @@ export default function EditCreateUserPage() {
       if (id !== "new") {
         // Update user logic here
 
-        await updateMenu({ id: menuItem.id, ...updatedFields });
+        await updateMenu(menuItem);
       } else {
         // Create new user logic here
         await createMenu(updatedFields);
@@ -158,7 +155,7 @@ export default function EditCreateUserPage() {
           handleChange(
             "RawMaterial_MenuItems",
             (menuItem.RawMaterial_MenuItems || []).filter(
-              (item) => item.id !== id
+              (item) => item.RawMaterial.id !== id
             )
           );
         }}
@@ -166,7 +163,7 @@ export default function EditCreateUserPage() {
           handleChange(
             "RawMaterial_MenuItems",
             (menuItem.RawMaterial_MenuItems || []).map((item) =>
-              item.id === id ? { ...item, quantity } : item
+              item.RawMaterial.id === id ? { ...item, quantity } : item
             )
           );
         }}

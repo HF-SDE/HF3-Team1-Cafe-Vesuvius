@@ -4,7 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { PermissionManager } from "@/utils/permissionManager";
-import { LinearGradient } from "expo-linear-gradient";
+import HeaderBackground from "@/components/HeaderBackground";
 
 type TemplateLayoutProps = {
   children: React.ReactNode; // Content to render within the template
@@ -23,16 +23,6 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   const navigation = useNavigation();
 
   const [hasAccess, setHasAccess] = useState<boolean | null>(null);
-
-  const HeaderBackground = () => (
-    <LinearGradient
-      colors={[theme.primary, theme.primary, theme.accent, theme.accent]}
-      start={{ x: 0, y: 0 }}
-      end={{ x: 0, y: 1 }}
-      locations={[0, 0.9, 0.9, 1]}
-      style={styles.headerBackground}
-    />
-  );
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -80,9 +70,6 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-  },
-  headerBackground: {
     flex: 1,
   },
 });

@@ -260,8 +260,6 @@ export default function ManageUsersPage() {
 
       const roundedValue = Math.round(clampedValue * 100) / 100;
 
-      console.log("Setting qty");
-
       setQuantities((prev) => ({ ...prev, [itemId]: roundedValue.toString() }));
     },
     [stock]

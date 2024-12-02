@@ -12,95 +12,83 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 type QuantityInputProps = {
   itemId: string;
   initialQty: number; // Change adjustedQty to initialQty for better clarity
-  onQuantityChange?: (itemId: string, newQty: number) => void;
+  onQuantityChanged?: (id: string, quantity: number) => void;
 };
 
 const QuantityInput: React.FC<QuantityInputProps> = ({
   itemId,
   initialQty,
-  onQuantityChange,
+  onQuantityChanged,
 }) => {
   const theme = useThemeColor();
 
   // Local state to manage the quantity
-  const [quantity, setQuantity] = useState<number>(initialQty);
+  const [quantity, setQuantity] = useState<string>(initialQty.toString());
 
-  // Function to handle increasing the quantity
-  const onIncrease = () => {
-    const newQty = quantity + 1;
-    setQuantity(newQty);
-    if (onQuantityChange) {
-      onQuantityChange(itemId, newQty);
+  const handleBlur = () => {
+    // Convert quantity to a number when the input loses focus
+    const numericQuantity = parseFloat(quantity);
+    if (onQuantityChanged) {
+      onQuantityChanged(itemId, numericQuantity); // Optionally handle quantity change
     }
-  };
-
-  // Function to handle decreasing the quantity
-  const onDecrease = () => {
-    const newQty = quantity > 0 ? quantity - 1 : 0;
-    setQuantity(newQty);
-    if (onQuantityChange) {
-      onQuantityChange(itemId, newQty);
-    }
+    console.log("LEAVE");
   };
 
   return (
-    <View style={styles.inputContainer}>
-      <View style={styles.itemRow}>
-        <TouchableOpacity onPress={onDecrease}>
-          <FontAwesome6 name="square-minus" size={45} color={theme.secondary} />
-        </TouchableOpacity>
+    <TextInput
+      style={[styles.quantityInput, { borderColor: theme.secondary }]}
+      value={quantity.toString()}
+      keyboardType="decimal-pad"
+      onChangeText={(text) => {
+        text = text.replace(",", ".");
 
-        <TextInput
-          style={[
-            styles.textInput,
-            { color: theme.secondary, borderColor: theme.secondary },
-          ]}
-          value={quantity.toString()}
-          keyboardType="number-pad"
-          onChangeText={(text) => {
-            const newQty = parseInt(text, 10);
-            if (!isNaN(newQty)) {
-              setQuantity(newQty);
-              onQuantityChange(itemId, newQty);
-            }
-          }}
-        />
+        const decimalIndex = text.indexOf(".");
+        if (decimalIndex !== -1 && text.length - decimalIndex > 3) {
+          // Limit to two decimals
+          return;
+        }
 
-        <TouchableOpacity onPress={onIncrease}>
-          <FontAwesome6 name="square-plus" size={45} color={theme.secondary} />
-        </TouchableOpacity>
-      </View>
-      <Text>Current stock {initialQty}</Text>
-      <Text>New stock {initialQty + quantity}</Text>
-    </View>
+        if (text === "") {
+          setQuantity("0");
+          return;
+        }
+        if (text === ".") {
+          setQuantity("0.");
+          return;
+        }
+        if (text.split(".").length - 1 >= 2) {
+          return;
+        }
+
+        if (text.charAt(text.length - 1) === ".") {
+          setQuantity(text);
+          return;
+        }
+
+        const parsedValue = parseFloat(text);
+
+        if (isNaN(parsedValue)) {
+          setQuantity("0");
+          return;
+        }
+
+        const clampedValue = Math.min(parsedValue, 9999);
+
+        const roundedValue = Math.round(clampedValue * 100) / 100;
+        setQuantity(roundedValue.toString());
+      }}
+      onBlur={handleBlur}
+    />
   );
 };
 
 const styles = StyleSheet.create({
-  inputContainer: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  itemRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    alignSelf: "flex-end",
-  },
-  textInput: {
+  quantityInput: {
     width: 60,
-    height: 40,
-    fontSize: 18,
-    fontWeight: "bold",
+    borderWidth: 2,
+    borderRadius: 8,
+    padding: 8,
     textAlign: "center",
-    borderWidth: 3,
-    borderRadius: 5,
-    marginHorizontal: 5,
-  },
-  itemStock: {
-    fontSize: 14,
-    marginTop: 5,
-    marginRight: 5,
-    fontWeight: "bold",
   },
 });
 
