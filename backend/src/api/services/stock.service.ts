@@ -27,6 +27,10 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
       where: {
         id,
       },
+      omit: {
+        createdAt: true,
+        updatedAt: true,
+      }
     });
 
     if (!result) {
