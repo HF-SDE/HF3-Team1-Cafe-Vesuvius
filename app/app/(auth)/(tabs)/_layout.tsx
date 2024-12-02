@@ -45,7 +45,7 @@ export default function TabLayout() {
       colors={[theme.primary, theme.primary, theme.accent, theme.accent]}
       start={{ x: 0, y: 0 }}
       end={{ x: 0, y: 1 }}
-      locations={[0, 0.9, 0.900001, 1]}
+      locations={[0, 0.9, 0.9, 1]}
       style={styles.headerBackground}
     />
   );
