@@ -18,7 +18,7 @@ import SearchBar from "@/components/SearchBar"; // Import the SearchBar
 import { UserProfile } from "@/models/userModels";
 
 export default function ManageUsersPage() {
-  const { users, isLoading, error, refresh } = useUsers(); // Assume refresh is available
+  const { users, isLoading, error } = useUsers(); // Assume refresh is available
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
 

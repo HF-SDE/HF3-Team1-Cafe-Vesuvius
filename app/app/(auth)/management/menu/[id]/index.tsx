@@ -149,14 +149,14 @@ export default function EditCreateUserPage() {
           );
         }}
         onAddIngredient={(ingredient) => {
-          handleChange("materials", [
+          handleChange("RawMaterial_MenuItems", [
             ...(menuItem.RawMaterial_MenuItems || []),
             ingredient,
           ]);
         }}
         onDeleteIngredient={(id) => {
           handleChange(
-            "materials",
+            "RawMaterial_MenuItems",
             (menuItem.RawMaterial_MenuItems || []).filter(
               (item) => item.id !== id
             )
@@ -164,7 +164,7 @@ export default function EditCreateUserPage() {
         }}
         onUpdateIngredientQuantity={(id, quantity) => {
           handleChange(
-            "materials",
+            "RawMaterial_MenuItems",
             (menuItem.RawMaterial_MenuItems || []).map((item) =>
               item.id === id ? { ...item, quantity } : item
             )

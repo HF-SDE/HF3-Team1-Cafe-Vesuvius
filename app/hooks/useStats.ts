@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-import { StatsModel } from "../models/StatsModel";
+import { UserProfile } from "../models/userModels";
 
 export function useStats() {
-  const [stats, setStats] = useState<StatsModel | null>(null);
+  const [stats, setStats] = useState<UserProfile[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -11,7 +11,9 @@ export function useStats() {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await apiClient.get("/stats");
+
+      const response = await apiClient.get("/menu");
+      //const response = await apiClient.get("/manage/user");
 
       setStats(response.data.data);
     } catch (err: any) {
@@ -20,19 +22,13 @@ export function useStats() {
       setIsLoading(false);
     }
   };
-
   useEffect(() => {
     fetchStats();
-  });
+  }, []);
 
   const refreshStats = async () => {
     await fetchStats();
   };
 
-  return {
-    stats,
-    isLoading,
-    error,
-    refreshStats,
-  };
+  return { stats, isLoading, error, refreshStats };
 }
