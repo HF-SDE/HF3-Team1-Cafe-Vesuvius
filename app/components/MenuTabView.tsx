@@ -17,6 +17,7 @@ import AddIngredientModal from "../app/(auth)/management/menu/[id]/add-ingredien
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NewCategoryInput from "./NewCategoryInput";
+import QuantityInput from "./QuantityInput";
 
 type CategoryIngredientTabsProps = {
   categories: string[];
@@ -54,10 +55,6 @@ const MenuTabView = React.memo(
       { key: "categories", title: "Categories" },
       { key: "ingredients", title: "Ingredients" },
     ];
-
-    React.useEffect(() => {
-      console.log("MenuTabView rendered");
-    });
 
     const CategoriesTab = () => (
       <View style={styles.section}>
@@ -101,7 +98,7 @@ const MenuTabView = React.memo(
         </TouchableOpacity>
         <FlatList
           data={ingredients}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.RawMaterial.id as string}
           renderItem={({ item }) => (
             <View
               style={[
@@ -110,19 +107,21 @@ const MenuTabView = React.memo(
               ]}
             >
               <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
-              <RNTextInput
-                style={[styles.quantityInput, { borderColor: theme.secondary }]}
-                value={item.quantity.toString()}
-                keyboardType="numeric"
-                onChangeText={(value) =>
-                  onUpdateIngredientQuantity(item.id, Number(value))
-                }
+              <QuantityInput
+                itemId={item.RawMaterial.id as string}
+                initialQty={item.quantity}
+                onQuantityChanged={onUpdateIngredientQuantity}
               />
+
               <Text style={{ width: 30, color: theme.background }}>
                 {item.RawMaterial.unit}
               </Text>
 
-              <TouchableOpacity onPress={() => onDeleteIngredient(item.id)}>
+              <TouchableOpacity
+                onPress={() =>
+                  onDeleteIngredient(item.RawMaterial.id as string)
+                }
+              >
                 <FontAwesome6
                   name="trash-alt"
                   size={18}
@@ -222,13 +221,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: 10,
   },
-  quantityInput: {
-    width: 60,
-    borderWidth: 2,
-    borderRadius: 8,
-    padding: 8,
-    textAlign: "center",
-  },
+
   addIcon: {
     alignItems: "center",
     paddingTop: 5,
