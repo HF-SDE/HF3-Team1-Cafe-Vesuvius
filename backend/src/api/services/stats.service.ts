@@ -28,6 +28,7 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       select: {
         menuItemPrice: true,
         quantity: true,
+        orderId: true,
       },
     });
 
@@ -35,6 +36,8 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
     const orderMenuItemsForToday = orderMenuItems.filter((item) =>
       ordersForToday.some((order) => order.id === item.orderId),
     );
+
+    console.log(orderMenuItemsForToday);
 
     // Calculate total sales for all orders
     const salesTotal = orderMenuItems.reduce(

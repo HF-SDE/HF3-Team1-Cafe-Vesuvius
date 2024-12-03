@@ -60,36 +60,43 @@ export default function StatsPage() {
   };
 
   const lineChartData = useMemo(
-    () => ({
-      labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-      datasets: [
-        {
-          data: Array.from({ length: 6 }, () => Math.random() * 100),
-        },
-      ],
-    }),
-    []
+    () => {
+      const salesMonth = stats?.economy.salesMonth || [];
+
+      const sortedSalesMonth = salesMonth
+        .map((item) => ({
+          ...item,
+          monthDate: new Date(item.month), // Parse the month string into a Date object
+        }))
+        .sort((a, b) => a.monthDate - b.monthDate); // Sort by the Date object in ascending order
+
+      const months = sortedSalesMonth.map((item) => item.month);
+      const sales = sortedSalesMonth.map((item) => item.sales);
+
+      return {
+        labels: months, // Use months from salesMonth
+        datasets: [
+          {
+            data: sales, // Use sales data for the line chart
+          },
+        ],
+      };
+    },
+    [stats] // Re-run when stats change
   );
 
-  const barChartData = useMemo(
-    () => ({
-      labels: ["Week 1", "Week 2", "Week 3", "Week 4"],
+  const barChartData = useMemo(() => {
+    const orderedStats = stats?.menuItems?.orderedStats || [];
+
+    return {
+      labels: orderedStats.map((item) => item.name), // Use 'name' for the labels
       datasets: [
         {
-          data: Array.from({ length: 4 }, () => Math.random() * 100),
+          data: orderedStats.map((item) => item.count), // Use 'count' for the data values
         },
       ],
-    }),
-    []
-  );
-
-  const progressData = useMemo(
-    () => ({
-      labels: ["Swim", "Bike", "Run"],
-      data: [0.4, 0.6, 0.8],
-    }),
-    []
-  );
+    };
+  }, [stats]);
 
   const pieData = useMemo(
     () => [
@@ -199,7 +206,7 @@ export default function StatsPage() {
             <LineChart
               data={lineChartData}
               width={width - 43} // Dynamically calculate width
-              height={500}
+              height={350}
               yAxisLabel=""
               chartConfig={chartConfig}
               bezier
@@ -299,6 +306,7 @@ export default function StatsPage() {
                 style={styles.chart}
                 yAxisLabel=""
                 yAxisSuffix=""
+                //verticalLabelRotation={30}
               />
             </View>
           </View>
