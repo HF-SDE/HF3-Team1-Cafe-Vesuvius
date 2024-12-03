@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router } from 'websocket-express';
 
 import {
   create,
@@ -11,7 +11,7 @@ import { isAllowed } from '@middlewares/isAllowed.mw';
 import { manageTables, transformFilters } from '@middlewares/reservation.mw';
 import { validateParams } from '@middlewares/validate.mw';
 
-const router = Router();
+const router = new Router();
 
 router.post('/', manageTables, create());
 
@@ -24,6 +24,7 @@ router.get(
   isAllowed(['reservation:view']),
   getAll(),
 );
+router.ws('/', isAllowed(['reservation:view']), getAll());
 router.put('/:id', isAllowed(['reservation:update']), update());
 router.delete('/:id', isAllowed(['reservation:delete']), deleteRecord());
 
