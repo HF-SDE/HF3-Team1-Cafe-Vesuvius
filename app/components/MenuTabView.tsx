@@ -17,6 +17,7 @@ import AddIngredientModal from "../app/(auth)/management/menu/[id]/add-ingredien
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NewCategoryInput from "./NewCategoryInput";
+import QuantityInput from "./QuantityInput";
 
 type CategoryIngredientTabsProps = {
   categories: string[];
@@ -50,14 +51,12 @@ const MenuTabView = React.memo(
 
     const theme = useThemeColor();
 
-    const routes = [
-      { key: "categories", title: "Categories" },
-      { key: "ingredients", title: "Ingredients" },
-    ];
+    console.log("Rerender");
 
-    React.useEffect(() => {
-      console.log("MenuTabView rendered");
-    });
+    const routes = [
+      { key: "ingredients", title: "Ingredients" },
+      { key: "categories", title: "Categories" },
+    ];
 
     const CategoriesTab = () => (
       <View style={styles.section}>
@@ -82,6 +81,12 @@ const MenuTabView = React.memo(
               </TouchableOpacity>
             </View>
           )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              No categories added yet. Type the category you want to add, and
+              tap the '+' icon to add it.
+            </Text>
+          }
           style={styles.listContainer}
         />
       </View>
@@ -101,7 +106,7 @@ const MenuTabView = React.memo(
         </TouchableOpacity>
         <FlatList
           data={ingredients}
-          keyExtractor={(item) => item.id}
+          keyExtractor={(item) => item.RawMaterial.id as string}
           renderItem={({ item }) => (
             <View
               style={[
@@ -110,19 +115,21 @@ const MenuTabView = React.memo(
               ]}
             >
               <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
-              <RNTextInput
-                style={[styles.quantityInput, { borderColor: theme.secondary }]}
-                value={item.quantity.toString()}
-                keyboardType="numeric"
-                onChangeText={(value) =>
-                  onUpdateIngredientQuantity(item.id, Number(value))
-                }
+              <QuantityInput
+                itemId={item.RawMaterial.id as string}
+                initialQty={item.quantity}
+                onQuantityChanged={onUpdateIngredientQuantity}
               />
+
               <Text style={{ width: 30, color: theme.background }}>
                 {item.RawMaterial.unit}
               </Text>
 
-              <TouchableOpacity onPress={() => onDeleteIngredient(item.id)}>
+              <TouchableOpacity
+                onPress={() => {
+                  onDeleteIngredient(item.RawMaterial.id as string);
+                }}
+              >
                 <FontAwesome6
                   name="trash-alt"
                   size={18}
@@ -131,6 +138,18 @@ const MenuTabView = React.memo(
               </TouchableOpacity>
             </View>
           )}
+          ListEmptyComponent={
+            <Text
+              style={[
+                styles.emptyText,
+                {
+                  color: "red",
+                },
+              ]}
+            >
+              No ingredients added yet. Tap the '+' icon to add one.
+            </Text>
+          }
           style={styles.listContainer}
         />
       </View>
@@ -174,7 +193,9 @@ const MenuTabView = React.memo(
             >
               <AddIngredientModal
                 onClose={() => setIsModalVisible(false)}
-                onAddIngredient={onAddIngredient}
+                onAddIngredient={(ingredient) => {
+                  onAddIngredient(ingredient);
+                }}
                 themeColors={themeColors}
                 excitingStockItems={ingredients.flatMap(
                   (ingredient) => ingredient.RawMaterial
@@ -222,13 +243,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     width: 10,
   },
-  quantityInput: {
-    width: 60,
-    borderWidth: 2,
-    borderRadius: 8,
-    padding: 8,
-    textAlign: "center",
-  },
+
   addIcon: {
     alignItems: "center",
     paddingTop: 5,
@@ -256,6 +271,12 @@ const styles = StyleSheet.create({
     minHeight: 600,
     padding: 10,
     borderRadius: 10,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
+    marginTop: 20,
   },
 });
 

@@ -31,5 +31,13 @@ export const where = Joi.object<Prisma.ReservationWhereInput>({
   name: Joi.string().optional(),
   email: Joi.string().email().optional(),
   phone: Joi.string().optional(),
-  reservationTime: Joi.date().optional(),
-}).options({ allowUnknown: false })
+  reservationTime: Joi.alternatives()
+    .try(
+      Joi.date(),
+      Joi.object().pattern(
+        Joi.string().valid("lte", "gte", "lt", "gt"),
+        Joi.date().required()
+      )
+    )
+    .optional(),
+}).options({ allowUnknown: false });

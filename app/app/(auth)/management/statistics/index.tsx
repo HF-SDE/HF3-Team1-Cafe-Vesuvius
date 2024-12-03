@@ -167,25 +167,27 @@ export default function StatsPage() {
       >
         <View
           style={[
-            styles.SectionContainer,
+            styles.sectionContainer,
             {
               borderColor: theme.primary,
             },
           ]}
         >
-          <Text style={[styles.SectionTitle, { color: theme.text }]}>
-            Sales
-          </Text>
-          <View style={styles.SectionSpacer}>
-            <View>
-              <Text style={[styles.SectionText, { color: theme.primary }]}>
-                Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
-              </Text>
-            </View>
-            <View>
-              <Text style={[styles.SectionText, { color: theme.primary }]}>
-                Today: {stats?.economy.salesToday} {stats?.economy.valuta}
-              </Text>
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Sales
+            </Text>
+            <View style={styles.sectionSpacer}>
+              <View>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
+                </Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Today: {stats?.economy.salesToday} {stats?.economy.valuta}
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -193,7 +195,7 @@ export default function StatsPage() {
         <View style={styles.statItem}>
           <LineChart
             data={lineChartData}
-            width={width - 40} // Dynamically calculate width
+            width={width - 43} // Dynamically calculate width
             height={500}
             yAxisLabel=""
             chartConfig={chartConfig}
@@ -203,59 +205,64 @@ export default function StatsPage() {
         </View>
         <View
           style={[
-            styles.SectionContainer,
+            styles.sectionContainer,
             {
               borderColor: theme.primary,
             },
           ]}
         >
-          <Text style={[styles.SectionTitle, { color: theme.text }]}>
-            Orders
-          </Text>
-          <View style={styles.SectionSpacer}>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Total: {stats?.orders.ordersTotal}
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Orders
             </Text>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Today: {stats?.orders.ordersToday}
-            </Text>
-          </View>
-          <View style={styles.SectionSpacer}>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Avg total: {stats?.orders.avgOrderValueTotal}
-            </Text>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Avg today: {stats?.orders.avgOrderValueToday}
-            </Text>
+            <View style={styles.sectionSpacer}>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Total: {stats?.orders.ordersTotal}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Today: {stats?.orders.ordersToday}
+              </Text>
+            </View>
+            <View style={styles.sectionSpacer}>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Avg total: {stats?.orders.avgOrderValueTotal}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Avg today: {stats?.orders.avgOrderValueToday}
+              </Text>
+            </View>
           </View>
         </View>
 
         <View
           style={[
-            styles.SectionContainer,
+            styles.sectionContainer,
             {
               borderColor: theme.primary,
             },
           ]}
         >
-          <Text style={[styles.SectionTitle, { color: theme.text }]}>
-            Reservation
-          </Text>
-          <View style={styles.SectionSpacer}>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Total: {stats?.reservations.total}
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Reservation
             </Text>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Today: {stats?.reservations.today}
-            </Text>
-            <Text style={[styles.SectionText, { color: theme.primary }]}>
-              Upcoming: {stats?.reservations.upcoming}
-            </Text>
+            <View style={styles.sectionSpacer}>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Total: {stats?.reservations.total}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Today: {stats?.reservations.today}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Upcoming: {stats?.reservations.upcoming}
+              </Text>
+            </View>
           </View>
+
           <View style={styles.statItem}>
             <PieChart
               data={pieData}
-              width={width - 40} // Dynamically calculate width
+              width={width - 43} // Dynamically calculate width
               height={220}
               chartConfig={chartConfig}
               accessor={"population"}
@@ -268,19 +275,22 @@ export default function StatsPage() {
 
         <View
           style={[
-            styles.SectionContainer,
+            styles.sectionContainer,
             {
               borderColor: theme.primary,
             },
           ]}
         >
-          <Text style={[styles.SectionTitle, { color: theme.text }]}>
-            Most ordered
-          </Text>
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Most ordered
+            </Text>
+          </View>
+
           <View style={styles.statItem}>
             <BarChart
               data={barChartData}
-              width={width - 40} // Dynamically calculate width
+              width={width - 43} // Dynamically calculate width
               height={220}
               chartConfig={chartConfig}
               style={styles.chart}
@@ -292,20 +302,27 @@ export default function StatsPage() {
 
         <View
           style={[
-            styles.SectionContainer,
+            styles.sectionContainer,
             {
               borderColor: theme.primary,
             },
           ]}
         >
-          <Text style={[styles.SectionTitle, { color: theme.text }]}>
-            Low storage
-          </Text>
-          <FlatList
-            data={stats?.rawMaterials.lowStock}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderItem}
-          />
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Low storage
+            </Text>
+            <FlatList
+              data={stats?.rawMaterials.lowStock}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderItem}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>
+                  There are currently no items with low storage.
+                </Text>
+              }
+            />
+          </View>
         </View>
       </ScrollView>
     </TemplateLayout>
@@ -324,22 +341,30 @@ const styles = StyleSheet.create({
   chart: {
     borderRadius: 16,
   },
-  SectionContainer: {
+  sectionContainer: {
     borderWidth: 2,
     borderRadius: 20,
+  },
+  sectionContainerText: {
     padding: 20,
   },
-  SectionTitle: {
+  sectionTitle: {
     fontSize: 30,
     textAlign: "center",
   },
-  SectionSpacer: {
+  sectionSpacer: {
     display: "flex",
     flexDirection: "row",
     justifyContent: "space-evenly",
     gap: 5,
   },
-  SectionText: {
+  sectionText: {
     fontSize: 22,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
+    marginTop: 20,
   },
 });

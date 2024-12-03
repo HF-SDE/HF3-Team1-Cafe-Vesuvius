@@ -1,12 +1,20 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
-import { Prisma, RawMaterial_MenuItem } from '@prisma/client';
+import { Prisma, RawMaterial, RawMaterial_MenuItem } from '@prisma/client';
+
+interface CustomRawMaterialMenuItem {
+  quantity: number;
+  RawMaterial?: RawMaterial;
+}
 
 interface MenuRequest extends Request {
   body: {
-    materials?: RawMaterial_MenuItem[];
-  } & Prisma.MenuItemCreateInput
+    RawMaterial_MenuItems:
+      | (CustomRawMaterialMenuItem & RawMaterial_MenuItem)[]
+      | Prisma.MenuItemCreateInput['RawMaterial_MenuItems'];
+  };
 }
 
 /**
@@ -22,26 +30,36 @@ export async function transformMenusItems(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { materials } = req.body;
-  delete req.body.materials;
+  const RawMaterialMenuItems = req.body
+    .RawMaterial_MenuItems as (CustomRawMaterialMenuItem &
+    RawMaterial_MenuItem)[];
 
-  if (!materials) {
+  if (!RawMaterialMenuItems) {
     res.status(400).json({
-      status: 'Failed',
+      status: Status.MissingDetails,
       message: 'No materials provided',
     });
 
     return;
   }
 
-  for (const material of materials) {
+  // const ids = RawMaterialMenuItems.map((material) => material.rawMaterialId);
+
+  // await prisma.rawMaterial.findMany({ where: { id: { in: ids } } });
+
+  for (const material of RawMaterialMenuItems) {
+    if ('RawMaterial' in material) {
+      material.rawMaterialId = material.RawMaterial!.id;
+      delete material.RawMaterial;
+    }
+
     const menuItem = await prisma.rawMaterial.findUnique({
       where: { id: material.rawMaterialId },
     });
 
     if (!menuItem) {
       res.status(400).json({
-        status: 'Failed',
+        status: Status.NotFound,
         message: 'Menu item not found: ' + material.rawMaterialId,
       });
 
@@ -49,7 +67,9 @@ export async function transformMenusItems(
     }
   }
 
-  req.body.RawMaterial_MenuItems = { createMany: { data: materials } };
+  req.body.RawMaterial_MenuItems = {
+    createMany: { data: RawMaterialMenuItems },
+  };
 
   next();
 }

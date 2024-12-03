@@ -52,7 +52,10 @@ export function getAll(model?: prismaModels): ExpressFunction {
       return;
     }
 
-    const modelConfig = req.config || { ...config[model], where: req.query };
+    const modelConfig = req.config || {
+      ...config[model],
+      where: Object.assign({}, req.query, config[model]?.where),
+    };
 
     const response = await DefaultService.getAll(model, modelConfig);
     if (isWebSocket(res)) {
