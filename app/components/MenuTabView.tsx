@@ -51,6 +51,8 @@ const MenuTabView = React.memo(
 
     const theme = useThemeColor();
 
+    console.log("Rerender");
+
     const routes = [
       { key: "ingredients", title: "Ingredients" },
       { key: "categories", title: "Categories" },
@@ -79,6 +81,12 @@ const MenuTabView = React.memo(
               </TouchableOpacity>
             </View>
           )}
+          ListEmptyComponent={
+            <Text style={styles.emptyText}>
+              No categories added yet. Type the category you want to add, and
+              tap the '+' icon to add it.
+            </Text>
+          }
           style={styles.listContainer}
         />
       </View>
@@ -118,9 +126,9 @@ const MenuTabView = React.memo(
               </Text>
 
               <TouchableOpacity
-                onPress={() =>
-                  onDeleteIngredient(item.RawMaterial.id as string)
-                }
+                onPress={() => {
+                  onDeleteIngredient(item.RawMaterial.id as string);
+                }}
               >
                 <FontAwesome6
                   name="trash-alt"
@@ -130,6 +138,18 @@ const MenuTabView = React.memo(
               </TouchableOpacity>
             </View>
           )}
+          ListEmptyComponent={
+            <Text
+              style={[
+                styles.emptyText,
+                {
+                  color: "red",
+                },
+              ]}
+            >
+              No ingredients added yet. Tap the '+' icon to add one.
+            </Text>
+          }
           style={styles.listContainer}
         />
       </View>
@@ -173,7 +193,9 @@ const MenuTabView = React.memo(
             >
               <AddIngredientModal
                 onClose={() => setIsModalVisible(false)}
-                onAddIngredient={onAddIngredient}
+                onAddIngredient={(ingredient) => {
+                  onAddIngredient(ingredient);
+                }}
                 themeColors={themeColors}
                 excitingStockItems={ingredients.flatMap(
                   (ingredient) => ingredient.RawMaterial
@@ -249,6 +271,12 @@ const styles = StyleSheet.create({
     minHeight: 600,
     padding: 10,
     borderRadius: 10,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
+    marginTop: 20,
   },
 });
 
