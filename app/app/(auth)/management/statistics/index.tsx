@@ -390,12 +390,12 @@ const styles = StyleSheet.create({
   },
   lowStockItemName: {
     fontSize: 22,
-    fontWeight: "bold", // Make the name bold
-    flex: 1, // Ensure the name takes available space
+    fontWeight: "bold",
+    flex: 1,
   },
   lowStockItemQuantity: {
     fontSize: 20,
-    flexShrink: 1, // Ensure the quantity doesn't overflow
+    flexShrink: 1,
   },
   errorText: {
     fontSize: 16,

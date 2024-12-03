@@ -835,57 +835,6 @@ async function generateMongo() {
     data: menu,
   });
 
-  // Test data for stats :3
-  await prisma.order.createMany({
-    data: [
-      {
-        id: '1a2b3c4d5e6f7890abcd1234', // Unique order ID
-        tableId: '1a2b3c4d5e6f7890abcd1234', // Relating to the Table
-        createdAt: new Date('2024-01-01T12:00:00Z'),
-        updatedAt: new Date('2024-01-01T12:15:00Z'),
-      },
-      {
-        id: '1a2b3c4d5e6f7890abcd1235',
-        tableId: '1a2b3c4d5e6f7890abcd1235',
-        createdAt: new Date('2024-01-01T12:10:00Z'),
-        updatedAt: new Date('2024-01-01T12:20:00Z'),
-      },
-    ],
-  });
-
-  // Order_Menu seed data
-  await prisma.order_Menu.createMany({
-    data: [
-      {
-        id: '1a2b3c4d5e6f7890abcd1234',
-        orderId: '1a2b3c4d5e6f7890abcd1234', // Relating to the Order
-        menuItemId: '1a2b3c4d5e6f7890abcd1234', // Relating to the Menu Item
-        status: 'completed', // Status of the order menu item
-        quantity: 2, // Quantity ordered
-        note: 'Extra cheese, no onions', // Special notes for the order
-        menuItemPrice: 129, // Price of the menu item
-      },
-      {
-        id: '1a2b3c4d5e6f7890abcd1235',
-        orderId: '1a2b3c4d5e6f7890abcd1234',
-        menuItemId: '1a2b3c4d5e6f7890abcd1235',
-        status: 'pending',
-        quantity: 1,
-        note: '',
-        menuItemPrice: 139,
-      },
-      {
-        id: '1a2b3c4d5e6f7890abcd1236',
-        orderId: '1a2b3c4d5e6f7890abcd1235',
-        menuItemId: '1a2b3c4d5e6f7890abcd1236',
-        status: 'delivered',
-        quantity: 3,
-        note: 'Make it spicy',
-        menuItemPrice: 85,
-      },
-    ],
-  });
-
   const menuItems = [
     { name: 'Nachos Supreme', price: 129 },
     { name: 'Caesar Salad', price: 139 },
@@ -929,17 +878,17 @@ async function generateMongo() {
    * This function creates orders and associated menu items for the past 50 days.
    */
   async function seedData() {
-    for (let day = 0; day < 50; day++) {
+    for (let day = 0; day < 200; day++) {
       const date = new Date(startDate); // Copy the startDate
       date.setDate(startDate.getDate() - day); // Decrease date by 'day'
 
-      const orderCount = Math.floor(Math.random() * 31) + 1; // Random number between 20 and 50
+      const orderCount = Math.floor(Math.random() * 5) + 1; // Random number between 1 and 5
 
       for (let i = 0; i < orderCount; i++) {
         const tableId = generateHexId(); // Generate a random 12-byte hex string for tableId
 
         // Create the order (Let Prisma handle the ID)
-        await prisma.order.create({
+        const newOrder = await prisma.order.create({
           data: {
             tableId: tableId,
             createdAt: date,
@@ -961,12 +910,12 @@ async function generateMongo() {
           });
 
           if (menuItemId) {
-            const orderId = generateHexId(); // Generate a random 12-byte hex string for orderId
+            //const orderId = generateHexId(); // Generate a random 12-byte hex string for orderId
 
             // Create the order_Menu (Let Prisma handle the ID)
             await prisma.order_Menu.create({
               data: {
-                orderId: orderId, // Use the 12-byte hex orderId
+                orderId: newOrder.id, // Use the 12-byte hex orderId
                 menuItemId: menuItemId.id,
                 status: ['pending', 'completed', 'delivered'][
                   Math.floor(Math.random() * 3)
