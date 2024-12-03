@@ -211,6 +211,7 @@ export default function StatsPage() {
               chartConfig={chartConfig}
               bezier
               style={styles.chart}
+              verticalLabelRotation={30}
             />
           </View>
           <View

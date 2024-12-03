@@ -38,8 +38,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
     );
 
     console.log(orderMenuItemsForToday);
-    console.log(ordersForToday);
-    console.log(orderMenuItems);
 
     // Calculate total sales for all orders
     const salesTotal = orderMenuItems.reduce(
@@ -77,7 +75,7 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
         },
       },
       orderBy: {
-        createdAt: 'desc',
+        createdAt: 'asc',
       },
     });
 
