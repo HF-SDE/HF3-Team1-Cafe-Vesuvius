@@ -52,8 +52,8 @@ const MenuTabView = React.memo(
     const theme = useThemeColor();
 
     const routes = [
-      { key: "categories", title: "Categories" },
       { key: "ingredients", title: "Ingredients" },
+      { key: "categories", title: "Categories" },
     ];
 
     const CategoriesTab = () => (

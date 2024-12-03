@@ -71,11 +71,6 @@ export default function EditCreateUserPage() {
     }
   }, [navigation, theme.primary, id, deleteMenu]);
 
-  const routes = [
-    { key: "categories", title: "Categories" },
-    { key: "ingredients", title: "Ingredients" },
-  ];
-
   const handleSave = async () => {
     const changedFieldsCount = Object.keys(changedFields).length;
 
