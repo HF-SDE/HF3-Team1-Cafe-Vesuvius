@@ -886,39 +886,49 @@ async function generateMongo() {
     ],
   });
 
-  (async () => {
-    const menuItems = [
-      { name: 'Nachos Supreme', price: 129 },
-      { name: 'Caesar Salad', price: 139 },
-      { name: "Tiger's Prawn Salad", price: 139 },
-      { name: "Vegan's salad", price: 119 },
-      { name: 'Club Sandwich', price: 139 },
-      { name: 'Salmon Sandwich', price: 149 },
-      { name: 'Spicy Steak Sandwich', price: 149 },
-      { name: 'Tuna Sandwich', price: 139 },
-      { name: 'Vesuvius Burger', price: 139 },
-      { name: 'Spicy Burger', price: 139 },
-      { name: 'Crispy Chicken Burger', price: 139 },
-      { name: 'Tomato Soup', price: 99 },
-      { name: 'Pasta with Chicken', price: 169 },
-      { name: 'Pasta with Beef tenderloin', price: 179 },
-      { name: 'Pasta with tiger prawn', price: 179 },
-      { name: 'Aperol Spritz', price: 85 },
-      { name: 'Espresso Martini', price: 85 },
-      { name: 'Dark & Stormy', price: 85 },
-      { name: 'Mojito', price: 85 },
-      { name: 'Gin Tonic', price: 85 },
-      { name: 'Moscow Mule', price: 85 },
-      { name: 'Strawberry Daiquiri', price: 85 },
-      { name: 'Gin Hass', price: 85 },
-    ];
+  const menuItems = [
+    { name: 'Nachos Supreme', price: 129 },
+    { name: 'Caesar Salad', price: 139 },
+    { name: "Tiger's Prawn Salad", price: 139 },
+    { name: "Vegan's salad", price: 119 },
+    { name: 'Club Sandwich', price: 139 },
+    { name: 'Salmon Sandwich', price: 149 },
+    { name: 'Spicy Steak Sandwich', price: 149 },
+    { name: 'Tuna Sandwich', price: 139 },
+    { name: 'Vesuvius Burger', price: 139 },
+    { name: 'Spicy Burger', price: 139 },
+    { name: 'Crispy Chicken Burger', price: 139 },
+    { name: 'Tomato Soup', price: 99 },
+    { name: 'Pasta with Chicken', price: 169 },
+    { name: 'Pasta with Beef tenderloin', price: 179 },
+    { name: 'Pasta with tiger prawn', price: 179 },
+    { name: 'Aperol Spritz', price: 85 },
+    { name: 'Espresso Martini', price: 85 },
+    { name: 'Dark & Stormy', price: 85 },
+    { name: 'Mojito', price: 85 },
+    { name: 'Gin Tonic', price: 85 },
+    { name: 'Moscow Mule', price: 85 },
+    { name: 'Strawberry Daiquiri', price: 85 },
+    { name: 'Gin Hass', price: 85 },
+  ];
 
-    // Use today's date as the start date
-    const startDate = new Date(); // This will be today's date
+  // Use today's date as the start date
+  const startDate = new Date(); // This will be today's date
 
-    // Helper function to generate a 12-byte hex string
-    const generateHexId = () => randomBytes(12).toString('hex');
+  /**
+   * Generates a random 12-byte hexadecimal string.
+   * This is used for generating table IDs and order IDs.
+   * @returns {string} A 12-byte hexadecimal string.
+   */
+  function generateHexId(): string {
+    return randomBytes(12).toString('hex');
+  }
 
+  /**
+   * Seed the database with sample data.
+   * This function creates orders and associated menu items for the past 50 days.
+   */
+  async function seedData() {
     for (let day = 0; day < 50; day++) {
       const date = new Date(startDate); // Copy the startDate
       date.setDate(startDate.getDate() - day); // Decrease date by 'day'
@@ -970,7 +980,12 @@ async function generateMongo() {
         }
       }
     }
-  })();
+  }
+
+  // Invoke the seedData function
+  seedData().catch((error) => {
+    console.error('Error seeding data:', error);
+  });
 
   // RawMaterial_MenuItem
   await prisma.rawMaterial_MenuItem.createMany({
