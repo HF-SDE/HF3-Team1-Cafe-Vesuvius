@@ -27,6 +27,7 @@ export default function StatsPage() {
   const theme = useThemeColor();
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
+  const chartOffset = 100;
 
   const chartConfig = {
     backgroundColor: theme.primary,
@@ -85,14 +86,34 @@ export default function StatsPage() {
     [stats] // Re-run when stats change
   );
 
-  const barChartData = useMemo(() => {
+  const barChartLowest = useMemo(() => {
     const orderedStats = stats?.menuItems?.orderedStats || [];
 
+    const bottom10Stats = [...orderedStats]
+      .sort((a, b) => a.count - b.count)
+      .slice(0, 5);
+
     return {
-      labels: orderedStats.map((item) => item.name), // Use 'name' for the labels
+      labels: bottom10Stats.map((item) => item.name), // Use 'name' for the labels
       datasets: [
         {
-          data: orderedStats.map((item) => item.count), // Use 'count' for the data values
+          data: bottom10Stats.map((item) => item.count), // Use 'count' for the data values
+        },
+      ],
+    };
+  }, [stats]);
+  const barChartHighest = useMemo(() => {
+    const orderedStats = stats?.menuItems?.orderedStats || [];
+
+    const top10Stats = [...orderedStats]
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 5);
+
+    return {
+      labels: top10Stats.map((item) => item.name), // Use 'name' for the labels
+      datasets: [
+        {
+          data: top10Stats.map((item) => item.count), // Use 'count' for the data values
         },
       ],
     };
@@ -101,31 +122,17 @@ export default function StatsPage() {
   const pieData = useMemo(
     () => [
       {
-        name: "Groceries",
-        population: 40,
-        color: theme.primary,
-        legendFontColor: theme.primary,
-        legendFontSize: 12,
-      },
-      {
-        name: "Bills",
-        population: 30,
+        name: "Used tables",
+        population: 20,
         color: theme.secondary,
         legendFontColor: theme.secondary,
         legendFontSize: 12,
       },
       {
-        name: "Entertainment",
-        population: 20,
-        color: theme.accent,
-        legendFontColor: theme.accent,
-        legendFontSize: 12,
-      },
-      {
-        name: "Savings",
-        population: 10,
-        color: theme.text,
-        legendFontColor: theme.text,
+        name: "Unused tables",
+        population: 80,
+        color: theme.primary,
+        legendFontColor: theme.primary,
         legendFontSize: 12,
       },
     ],
@@ -187,7 +194,12 @@ export default function StatsPage() {
               <Text style={[styles.sectionTitle, { color: theme.text }]}>
                 Sales
               </Text>
-              <View style={styles.sectionSpacer}>
+              <View
+                style={[
+                  styles.sectionSpacer,
+                  width < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                ]}
+              >
                 <View>
                   <Text style={[styles.sectionText, { color: theme.primary }]}>
                     Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
@@ -205,7 +217,7 @@ export default function StatsPage() {
           <View style={styles.statItem}>
             <LineChart
               data={lineChartData}
-              width={width - 43} // Dynamically calculate width
+              width={width - chartOffset} // Dynamically calculate width
               height={350}
               yAxisLabel=""
               chartConfig={chartConfig}
@@ -226,7 +238,12 @@ export default function StatsPage() {
               <Text style={[styles.sectionTitle, { color: theme.text }]}>
                 Orders
               </Text>
-              <View style={styles.sectionSpacer}>
+              <View
+                style={[
+                  styles.sectionSpacer,
+                  width < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                ]}
+              >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   Total: {stats?.orders.ordersTotal}
                 </Text>
@@ -234,7 +251,12 @@ export default function StatsPage() {
                   Today: {stats?.orders.ordersToday}
                 </Text>
               </View>
-              <View style={styles.sectionSpacer}>
+              <View
+                style={[
+                  styles.sectionSpacer,
+                  width < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                ]}
+              >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   Avg total: {stats?.orders.avgOrderValueTotal}
                 </Text>
@@ -257,7 +279,12 @@ export default function StatsPage() {
               <Text style={[styles.sectionTitle, { color: theme.text }]}>
                 Reservation
               </Text>
-              <View style={styles.sectionSpacer}>
+              <View
+                style={[
+                  styles.sectionSpacer,
+                  width < 700 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                ]}
+              >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   Total: {stats?.reservations.total}
                 </Text>
@@ -273,7 +300,7 @@ export default function StatsPage() {
             <View style={styles.statItem}>
               <PieChart
                 data={pieData}
-                width={width - 43} // Dynamically calculate width
+                width={width - chartOffset}
                 height={220}
                 chartConfig={chartConfig}
                 accessor={"population"}
@@ -294,14 +321,26 @@ export default function StatsPage() {
           >
             <View style={styles.sectionContainerText}>
               <Text style={[styles.sectionTitle, { color: theme.text }]}>
-                Most ordered
+                Ordered
               </Text>
             </View>
 
             <View style={styles.statItem}>
               <BarChart
-                data={barChartData}
-                width={width - 43} // Dynamically calculate width
+                data={barChartHighest}
+                width={width - chartOffset} // Dynamically calculate width
+                height={220}
+                chartConfig={chartConfig}
+                style={styles.chart}
+                yAxisLabel=""
+                yAxisSuffix=""
+                verticalLabelRotation={30}
+              />
+            </View>
+            <View style={styles.statItem}>
+              <BarChart
+                data={barChartLowest}
+                width={width - chartOffset} // Dynamically calculate width
                 height={220}
                 chartConfig={chartConfig}
                 style={styles.chart}
@@ -371,13 +410,14 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   statItem: {
-    margin: 10,
     width: "100%",
-    marginVertical: 8,
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "center",
   },
   chart: {
-    margin: -10,
     borderRadius: 16,
+    overflow: "visible",
   },
   sectionContainer: {
     borderWidth: 2,
@@ -395,6 +435,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     gap: 5,
+  },
+  sectionSpacerStack: {
+    flexDirection: "column", // Change to column for stacking
+    alignItems: "center", // Align text when stacked
   },
   sectionText: {
     fontSize: 22,
