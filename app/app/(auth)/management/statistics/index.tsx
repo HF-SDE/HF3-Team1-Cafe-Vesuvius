@@ -316,6 +316,11 @@ export default function StatsPage() {
               data={stats?.rawMaterials.lowStock}
               keyExtractor={(item, index) => index.toString()}
               renderItem={renderItem}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>
+                  There are currently no items with low storage.
+                </Text>
+              }
             />
           </View>
         </View>
@@ -355,5 +360,11 @@ const styles = StyleSheet.create({
   },
   sectionText: {
     fontSize: 22,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
+    marginTop: 20,
   },
 });
