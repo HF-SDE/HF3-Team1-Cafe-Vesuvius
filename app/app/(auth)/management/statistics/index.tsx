@@ -307,7 +307,7 @@ export default function StatsPage() {
                 style={styles.chart}
                 yAxisLabel=""
                 yAxisSuffix=""
-                //verticalLabelRotation={30}
+                verticalLabelRotation={30}
               />
             </View>
           </View>
@@ -324,16 +324,39 @@ export default function StatsPage() {
               <Text style={[styles.sectionTitle, { color: theme.text }]}>
                 Low storage
               </Text>
-              <FlatList
-                data={stats?.rawMaterials.lowStock}
-                keyExtractor={(item, index) => index.toString()}
-                renderItem={renderItem}
-                ListEmptyComponent={
-                  <Text style={styles.emptyText}>
-                    There are currently no items with low storage.
-                  </Text>
-                }
-              />
+              {stats?.rawMaterials?.lowStock?.length &&
+              stats?.rawMaterials.lowStock.length > 0 ? (
+                stats.rawMaterials.lowStock.map((item, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.lowStockItem,
+                      { borderColor: theme.primary },
+                    ]}
+                  >
+                    <Text
+                      style={[
+                        styles.lowStockItemName,
+                        { color: theme.primary },
+                      ]}
+                    >
+                      {item.name}
+                    </Text>
+                    <Text
+                      style={[
+                        styles.lowStockItemQuantity,
+                        { color: theme.primary },
+                      ]}
+                    >
+                      Quantity: {item.quantity} {item.unit} ⚠️
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <Text style={styles.emptyText}>
+                  There are currently no items with low storage.
+                </Text>
+              )}
             </View>
           </View>
         </ScrollView>
