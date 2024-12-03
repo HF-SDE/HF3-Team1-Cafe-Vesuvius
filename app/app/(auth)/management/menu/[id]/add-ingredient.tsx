@@ -80,8 +80,8 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           Add New Ingredient
         </Text>
         <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
           placeholder="Search for menu"
         />
 
