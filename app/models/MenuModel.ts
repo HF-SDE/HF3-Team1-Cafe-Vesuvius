@@ -8,7 +8,7 @@ export interface MenuModel {
 }
 
 export interface RawMaterial_MenuItems {
-  id: string;
+  id?: string;
   quantity: number;
   RawMaterial: StockItemModel;
 }

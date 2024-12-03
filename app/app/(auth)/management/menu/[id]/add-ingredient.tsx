@@ -53,7 +53,6 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
   const handleSelectItem = (item: StockItemModel) => {
     const selectedIngredient: RawMaterial_MenuItems = {
-      id: `${Date.now()}`,
       quantity: 1, // Use the quantity from input
       RawMaterial: item,
     };
@@ -81,8 +80,8 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           Add New Ingredient
         </Text>
         <SearchBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
           placeholder="Search for menu"
         />
 

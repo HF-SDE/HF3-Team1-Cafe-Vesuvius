@@ -96,8 +96,8 @@ export default function StatsPage() {
       {
         name: "Groceries",
         population: 40,
-        color: theme.background,
-        legendFontColor: theme.background,
+        color: theme.primary,
+        legendFontColor: theme.primary,
         legendFontSize: 12,
       },
       {
@@ -165,25 +165,37 @@ export default function StatsPage() {
           />
         }
       >
-        <View>
-          <View>
-            <Text>Sales Total</Text>
-            <Text>
-              {stats?.economy.salesTotal} {stats?.economy.valuta}
+        <View
+          style={[
+            styles.sectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Sales
             </Text>
-          </View>
-          <View>
-            <Text>Sales Today</Text>
-            <Text>
-              {stats?.economy.salesToday} {stats?.economy.valuta}
-            </Text>
+            <View style={styles.sectionSpacer}>
+              <View>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
+                </Text>
+              </View>
+              <View>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Today: {stats?.economy.salesToday} {stats?.economy.valuta}
+                </Text>
+              </View>
+            </View>
           </View>
         </View>
 
         <View style={styles.statItem}>
           <LineChart
             data={lineChartData}
-            width={width - 40} // Dynamically calculate width
+            width={width - 43} // Dynamically calculate width
             height={500}
             yAxisLabel=""
             chartConfig={chartConfig}
@@ -191,48 +203,94 @@ export default function StatsPage() {
             style={styles.chart}
           />
         </View>
-
-        <View>
-          <Text>Order</Text>
-          <View>
-            <Text>Total orders: {stats?.orders.ordersTotal}</Text>
-            <Text>Today orders: {stats?.orders.ordersToday}</Text>
-          </View>
-          <View>
-            <Text>Avg orders total: {stats?.orders.avgOrderValueTotal}</Text>
-            <Text>Avg orders today: {stats?.orders.avgOrderValueToday}</Text>
+        <View
+          style={[
+            styles.sectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Orders
+            </Text>
+            <View style={styles.sectionSpacer}>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Total: {stats?.orders.ordersTotal}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Today: {stats?.orders.ordersToday}
+              </Text>
+            </View>
+            <View style={styles.sectionSpacer}>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Avg total: {stats?.orders.avgOrderValueTotal}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Avg today: {stats?.orders.avgOrderValueToday}
+              </Text>
+            </View>
           </View>
         </View>
 
-        <View>
-          <Text>Reservation</Text>
-          <View>
-            <Text>Total reservations: {stats?.reservations.total}</Text>
+        <View
+          style={[
+            styles.sectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Reservation
+            </Text>
+            <View style={styles.sectionSpacer}>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Total: {stats?.reservations.total}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Today: {stats?.reservations.today}
+              </Text>
+              <Text style={[styles.sectionText, { color: theme.primary }]}>
+                Upcoming: {stats?.reservations.upcoming}
+              </Text>
+            </View>
           </View>
-          <View>
-            <Text>Today reservations: {stats?.reservations.today}</Text>
-            <Text>Upcoming reservations: {stats?.reservations.upcoming}</Text>
-          </View>
+
           <View style={styles.statItem}>
             <PieChart
               data={pieData}
-              width={width - 40} // Dynamically calculate width
+              width={width - 43} // Dynamically calculate width
               height={220}
               chartConfig={chartConfig}
               accessor={"population"}
-              backgroundColor={theme.primary}
+              backgroundColor={"transparent"}
               paddingLeft={"15"}
               style={styles.chart}
             />
           </View>
         </View>
 
-        <View>
-          <Text>Most ordered</Text>
+        <View
+          style={[
+            styles.sectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Most ordered
+            </Text>
+          </View>
+
           <View style={styles.statItem}>
             <BarChart
               data={barChartData}
-              width={width - 40} // Dynamically calculate width
+              width={width - 43} // Dynamically calculate width
               height={220}
               chartConfig={chartConfig}
               style={styles.chart}
@@ -242,13 +300,29 @@ export default function StatsPage() {
           </View>
         </View>
 
-        <View>
-          <Text>Low storage</Text>
-          <FlatList
-            data={stats?.rawMaterials.lowStock}
-            keyExtractor={(item, index) => index.toString()}
-            renderItem={renderItem}
-          />
+        <View
+          style={[
+            styles.sectionContainer,
+            {
+              borderColor: theme.primary,
+            },
+          ]}
+        >
+          <View style={styles.sectionContainerText}>
+            <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              Low storage
+            </Text>
+            <FlatList
+              data={stats?.rawMaterials.lowStock}
+              keyExtractor={(item, index) => index.toString()}
+              renderItem={renderItem}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>
+                  There are currently no items with low storage.
+                </Text>
+              }
+            />
+          </View>
         </View>
       </ScrollView>
     </TemplateLayout>
@@ -258,6 +332,7 @@ export default function StatsPage() {
 const styles = StyleSheet.create({
   container: {
     padding: 20,
+    gap: 20,
   },
   statItem: {
     width: "100%",
@@ -265,5 +340,31 @@ const styles = StyleSheet.create({
   },
   chart: {
     borderRadius: 16,
+  },
+  sectionContainer: {
+    borderWidth: 2,
+    borderRadius: 20,
+  },
+  sectionContainerText: {
+    padding: 20,
+  },
+  sectionTitle: {
+    fontSize: 30,
+    textAlign: "center",
+  },
+  sectionSpacer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    gap: 5,
+  },
+  sectionText: {
+    fontSize: 22,
+  },
+  emptyText: {
+    textAlign: "center",
+    fontSize: 16,
+    color: "#888",
+    marginTop: 20,
   },
 });

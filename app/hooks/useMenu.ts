@@ -48,7 +48,12 @@ export function useMenu(id?: string | string[]) {
   const updateMenu = async (updatedMenu: MenuModel) => {
     try {
       const { id, ...payload } = updatedMenu;
-      const response = await apiClient.put(`/menu/${updatedMenu.id}`, payload);
+      console.log(payload);
+
+      const response = await apiClient.patch(
+        `/menu/${updatedMenu.id}`,
+        payload
+      );
 
       if (response.status === 200) {
         setMenu(

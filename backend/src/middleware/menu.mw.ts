@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { Status } from '@api-types/general.types';
 import { MenuItem, Prisma, RawMaterial_MenuItem } from '@prisma/client';
+import { getHttpStatusCode } from '@utils/Utils';
 
 interface RawMaterialMenuItem {
   id?: string;
@@ -30,6 +32,19 @@ export async function transformPatch(
   next: NextFunction,
 ): Promise<void> {
   const RawMaterialMenuItems = req.body.RawMaterial_MenuItems;
+
+  if (!RawMaterialMenuItems) {
+    next();
+  }
+
+  if (RawMaterialMenuItems.length === 0) {
+    res.status(getHttpStatusCode(Status.MissingDetails)).json({
+      status: Status.MissingDetails,
+      message: 'RawMaterial_MenuItems cannot be empty',
+    });
+
+    return;
+  }
 
   for (const material of RawMaterialMenuItems) {
     if (material.RawMaterial) material.rawMaterialId = material.RawMaterial.id;
