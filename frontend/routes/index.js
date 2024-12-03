@@ -3,7 +3,7 @@ import axios from "axios";
 const router = Router();
 
 /* GET home page. */
-router.get("/", async (req, res, next) => {
+router.get("/menu", async (req, res, next) => {
   const { category } = req.query; // Extract category from query string
 
   const { data } = await axios
@@ -25,11 +25,19 @@ router.get("/", async (req, res, next) => {
     items = items.filter((item) => item.category.includes(category));
   }
 
-  res.render("index", {
+  res.render("menu", {
     title: "Menu",
     items,
     categories, // Pass categories for dynamic filtering
     category, // Pass the selected category for active class
+  });
+});
+
+/* GET . */
+router.get("/", async (req, res, next) => {
+
+  res.render("index", {
+    title: "Home",
   });
 });
 
