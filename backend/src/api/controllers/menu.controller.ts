@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 
+import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { Prisma, RawMaterial_MenuItem } from '@prisma/client';
 
@@ -29,12 +30,16 @@ export async function transformMenusItems(
 
   if (!RawMaterialMenuItems) {
     res.status(400).json({
-      status: 'Failed',
+      status: Status.MissingDetails,
       message: 'No materials provided',
     });
 
     return;
   }
+
+  // const ids = RawMaterialMenuItems.map((material) => material.rawMaterialId);
+
+  // await prisma.rawMaterial.findMany({ where: { id: { in: ids } } });
 
   for (const material of RawMaterialMenuItems) {
     const menuItem = await prisma.rawMaterial.findUnique({
@@ -43,7 +48,7 @@ export async function transformMenusItems(
 
     if (!menuItem) {
       res.status(400).json({
-        status: 'Failed',
+        status: Status.NotFound,
         message: 'Menu item not found: ' + material.rawMaterialId,
       });
 
