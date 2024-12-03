@@ -29,12 +29,12 @@ export default function StatsPage() {
   const { width } = useWindowDimensions();
 
   const chartConfig = {
-    backgroundColor: theme.accent,
-    backgroundGradientFrom: theme.primary,
-    backgroundGradientTo: theme.primary,
+    backgroundColor: theme.primary,
+    backgroundGradientFrom: theme.background,
+    backgroundGradientTo: theme.background,
     decimalPlaces: 2,
-    color: (opacity = 1) => theme.secondary,
-    labelcolor: (opacity = 1) => theme.secondary,
+    color: (opacity = 1) => theme.primary,
+    labelcolor: (opacity = 1) => theme.primary,
     style: {
       borderRadius: 16,
     },
@@ -348,10 +348,12 @@ const styles = StyleSheet.create({
     gap: 20,
   },
   statItem: {
+    margin: 10,
     width: "100%",
     marginVertical: 8,
   },
   chart: {
+    margin: -10,
     borderRadius: 16,
   },
   sectionContainer: {
@@ -368,7 +370,7 @@ const styles = StyleSheet.create({
   sectionSpacer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-evenly",
+    justifyContent: "space-between",
     gap: 5,
   },
   sectionText: {
