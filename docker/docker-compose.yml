@@ -24,7 +24,7 @@ services:
   web:
     container_name: web
     build:
-      context: ../WebMenu/
+      context: ../frontend/
       dockerfile: Dockerfile
       target: base
     expose:
@@ -35,7 +35,7 @@ services:
     environment:
       - BACKEND_URL=http://reverse-proxy/api
     volumes:
-      - ../WebMenu/src:/usr/src/app/src
+      - ../frontend:/usr/src/app
     networks:
       - internal
 

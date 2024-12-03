@@ -15,7 +15,7 @@
 
     <!-- Filter Buttons -->
     <div class="filter-container">
-      <form action="/" method="get">
+      <form action="/menu" method="get">
         <button type="submit" name="category" value="" <%=!category ? 'class="active"' : '' %>>All</button>
         <% categories.forEach(categoryOption => { %>
           <button type="submit" name="category" value="<%= categoryOption %>" <%= categoryOption === category ? 'class="active"' : '' %>>
@@ -37,7 +37,7 @@
 
 
           <div>
-            <img src="/images/<%= item.name %>.webp" alt="<%= item.name %>" width="250" height="250" style="border-radius: 2rem;" />
+            <img src="/images/menu/<%= item.name %>.webp" alt="<%= item.name %>" width="250" height="250" style="border-radius: 2rem;" />
           </div>
           <span>
             <%= item.RawMaterial_MenuItems.map(rawMaterialMenuItem => rawMaterialMenuItem.RawMaterial.name).join(", ") %>
