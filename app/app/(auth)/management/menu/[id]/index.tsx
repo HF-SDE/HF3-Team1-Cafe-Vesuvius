@@ -39,6 +39,12 @@ export default function EditCreateUserPage() {
     RawMaterial_MenuItems: [],
   });
 
+  const [validationErrors, setValidationErrors] = useState({
+    name: false,
+    price: false,
+    ingredients: false,
+  });
+
   //  const [changedFields, setChangedFields] = useState<ChangedFields>({});
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
@@ -72,6 +78,18 @@ export default function EditCreateUserPage() {
   }, [navigation, theme.primary, id, deleteMenu]);
 
   const handleSave = async () => {
+    const errors = {
+      name: !(menuItem.name as string).trim(), // Check if the name is empty
+      price: Number(menuItem.price) <= 0, // Check if the price is greater than 0
+      ingredients: (menuItem.RawMaterial_MenuItems || []).length === 0, // Check if there's at least one ingredient
+    };
+
+    setValidationErrors(errors);
+
+    if (Object.values(errors).some((error) => error)) {
+      return;
+    }
+
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
@@ -99,6 +117,18 @@ export default function EditCreateUserPage() {
         ...prevMenu,
         [field]: value,
       }));
+
+      // Validate the field dynamically
+      setValidationErrors((prevErrors) => {
+        const newErrors = { ...prevErrors };
+        if (field === "name") {
+          newErrors.name = !value.trim(); // Name cannot be empty
+        }
+        if (field === "price") {
+          newErrors.price = value <= 0; // Price must be greater than 0
+        }
+        return newErrors;
+      });
 
       setChangedFields((prevChangedFields) => {
         let origValue = menuItem[field] || ""; // Original value of the field in menuItem
@@ -197,6 +227,7 @@ export default function EditCreateUserPage() {
               onChangeText={(text) => handleChange("name", text)}
               clearTextOnFocus={false}
               selectTextOnFocus={false}
+              isHighlighted={validationErrors.name}
             />
             <TextInput
               label="Price"
@@ -216,6 +247,7 @@ export default function EditCreateUserPage() {
               inputMode="decimal"
               clearTextOnFocus={false}
               selectTextOnFocus={false}
+              isHighlighted={validationErrors.price}
             />
           </View>
 
