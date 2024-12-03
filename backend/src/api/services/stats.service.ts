@@ -119,6 +119,24 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       },
     });
 
+    // Step 2: Fetch related data from the 'MenuItem' model based on menuItemId
+    const menuItems = await prisma.menuItem.findMany({
+      where: {
+        id: {
+          in: orderedItems.map((item) => item.menuItemId),
+        },
+      },
+    });
+
+    // Combine the data
+    const orderedItemsWithMenuInfo = orderedItems.map((item) => {
+      const menuItem = menuItems.find((menu) => menu.id === item.menuItemId);
+      return {
+        ...item,
+        menuItemName: menuItem ? menuItem.name : null, // Include any other fields you need from menuItem
+      };
+    });
+
     const lowStock = await prisma.rawMaterial.findMany({
       where: {
         quantity: {
@@ -148,9 +166,9 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
           parseFloat((salesToday / ordersToday).toFixed(2)) || 0,
       },
       menuItems: {
-        total: orderedItems.length, // MenuItemsCount
-        orderedStats: orderedItems.map((item) => ({
-          name: item.menuItemId,
+        total: orderedItemsWithMenuInfo.length, // MenuItemsCount
+        orderedStats: orderedItemsWithMenuInfo.map((item) => ({
+          name: item.menuItemName as string,
           count: item._count.id,
         })),
       },
