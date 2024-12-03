@@ -10,6 +10,7 @@ import MenuTabView from "@/components/MenuTabView";
 import { RouteProp } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { router } from "expo-router";
+import LoadingPage from "@/components/LoadingPage";
 
 import { MenuModel } from "@/models/MenuModel";
 
@@ -214,54 +215,60 @@ export default function EditCreateUserPage() {
       title={id !== "new" ? "Edit Menu Item" : "Create Menu Item"}
       buttonTitle="Cancel"
     >
-      <View style={styles.container}>
-        <View>
-          <View style={styles.section}>
-            <Text style={[styles.sectionTitle, { color: theme.primary }]}>
-              Menu Info
-            </Text>
-            <TextInput
-              style={{ marginBottom: 10 }}
-              label="Name"
-              value={menuItem.name}
-              onChangeText={(text) => handleChange("name", text)}
-              clearTextOnFocus={false}
-              selectTextOnFocus={false}
-              isHighlighted={validationErrors.name}
-            />
-            <TextInput
-              label="Price"
-              value={menuItem.price?.toString()}
-              onChangeText={(text) => {
-                // Replace commas with periods
-                let formattedText = text.replace(/,/g, ".");
+      {isLoading ? (
+        <LoadingPage />
+      ) : error ? (
+        <Text style={[styles.errorText, { color: theme.text }]}>{error}</Text>
+      ) : (
+        <View style={styles.container}>
+          <View>
+            <View style={styles.section}>
+              <Text style={[styles.sectionTitle, { color: theme.primary }]}>
+                Menu Info
+              </Text>
+              <TextInput
+                style={{ marginBottom: 10 }}
+                label="Name"
+                value={menuItem.name}
+                onChangeText={(text) => handleChange("name", text)}
+                clearTextOnFocus={false}
+                selectTextOnFocus={false}
+                isHighlighted={validationErrors.name}
+              />
+              <TextInput
+                label="Price"
+                value={menuItem.price?.toString()}
+                onChangeText={(text) => {
+                  // Replace commas with periods
+                  let formattedText = text.replace(/,/g, ".");
 
-                // Validate the input and ensure only two decimal places are allowed
-                const regex = /^\d*\.?\d{0,2}$/;
+                  // Validate the input and ensure only two decimal places are allowed
+                  const regex = /^\d*\.?\d{0,2}$/;
 
-                if (regex.test(formattedText)) {
-                  const newPrice: number = Number(formattedText);
-                  handleChange("price", newPrice);
-                }
-              }}
-              inputMode="decimal"
-              clearTextOnFocus={false}
-              selectTextOnFocus={false}
-              isHighlighted={validationErrors.price}
-            />
+                  if (regex.test(formattedText)) {
+                    const newPrice: number = Number(formattedText);
+                    handleChange("price", newPrice);
+                  }
+                }}
+                inputMode="decimal"
+                clearTextOnFocus={false}
+                selectTextOnFocus={false}
+                isHighlighted={validationErrors.price}
+              />
+            </View>
+
+            <View style={{ minHeight: "70%" }}>{memoizedMenuTabView}</View>
           </View>
 
-          <View style={{ minHeight: "70%" }}>{memoizedMenuTabView}</View>
+          <View style={styles.buttonContainer}>
+            <Button title="Cancel" onPress={() => navigation.goBack()} />
+            <Button
+              title={id !== "new" ? "Save" : "Create"}
+              onPress={handleSave}
+            />
+          </View>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <Button title="Cancel" onPress={() => navigation.goBack()} />
-          <Button
-            title={id !== "new" ? "Save" : "Create"}
-            onPress={handleSave}
-          />
-        </View>
-      </View>
+      )}
     </TemplateLayout>
   );
 }
@@ -286,5 +293,11 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+    color: "red",
   },
 });
