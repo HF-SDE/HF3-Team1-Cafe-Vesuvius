@@ -15,6 +15,8 @@ import LoadingPage from "@/components/LoadingPage";
 
 import TemplateLayout from "@/components/TemplateLayout";
 
+import LineChartCustom from "@/components/LineChart";
+
 import {
   LineChart,
   BarChart,
@@ -28,6 +30,22 @@ export default function StatsPage() {
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const chartOffset = 100;
+  const data = [
+    { value: 10, name: "Jan 2024" },
+    { value: 30, name: "Feb 2024" },
+    { value: 15, name: "Mar 2024" },
+
+    { value: 54, name: "Apr 2024" },
+    { value: 78, name: "Maj 2024" },
+    { value: 34, name: "Jun 2024" },
+    { value: 56, name: "Jul 2024" },
+    { value: 86, name: "Aug 2024" },
+    { value: 43, name: "Sep 2024" },
+    { value: 21, name: "Ock 2024" },
+    { value: 9, name: "Nov 2024" },
+    { value: 54, name: "Dec 2024" },
+    // more data
+  ];
 
   const chartConfig = {
     backgroundColor: theme.primary,
@@ -59,32 +77,21 @@ export default function StatsPage() {
       setRefreshing(false);
     }
   };
+  const lineChartData = useMemo(() => {
+    const salesMonth = stats?.economy.salesMonth || [];
 
-  const lineChartData = useMemo(
-    () => {
-      const salesMonth = stats?.economy.salesMonth || [];
+    const sortedSalesMonth = salesMonth
+      .map((item) => ({
+        ...item,
+        monthDate: new Date(item.month), // Parse the month string into a Date object
+      }))
+      .sort((a, b) => a.monthDate - b.monthDate); // Sort by the Date object in ascending order
 
-      const sortedSalesMonth = salesMonth
-        .map((item) => ({
-          ...item,
-          monthDate: new Date(item.month), // Parse the month string into a Date object
-        }))
-        .sort((a, b) => a.monthDate - b.monthDate); // Sort by the Date object in ascending order
-
-      const months = sortedSalesMonth.map((item) => item.month);
-      const sales = sortedSalesMonth.map((item) => item.sales);
-
-      return {
-        labels: months, // Use months from salesMonth
-        datasets: [
-          {
-            data: sales, // Use sales data for the line chart
-          },
-        ],
-      };
-    },
-    [stats] // Re-run when stats change
-  );
+    return sortedSalesMonth.map((item) => ({
+      value: item.sales, // Map `sales` to `value`
+      name: item.month, // Map `month` to `name`
+    }));
+  }, [stats]);
 
   const barChartLowest = useMemo(() => {
     const orderedStats = stats?.menuItems?.orderedStats || [];
@@ -214,17 +221,8 @@ export default function StatsPage() {
             </View>
           </View>
 
-          <View style={styles.statItem}>
-            <LineChart
-              data={lineChartData}
-              width={width - chartOffset} // Dynamically calculate width
-              height={350}
-              yAxisLabel=""
-              chartConfig={chartConfig}
-              bezier
-              style={styles.chart}
-              verticalLabelRotation={30}
-            />
+          <View style={[styles.statItem]}>
+            <LineChartCustom data={lineChartData} width={width - 100} />
           </View>
           <View
             style={[
