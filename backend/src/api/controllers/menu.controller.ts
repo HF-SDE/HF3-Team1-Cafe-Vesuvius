@@ -5,8 +5,10 @@ import { Prisma, RawMaterial_MenuItem } from '@prisma/client';
 
 interface MenuRequest extends Request {
   body: {
-    materials?: RawMaterial_MenuItem[];
-  } & Prisma.MenuItemCreateInput
+    RawMaterial_MenuItems:
+      | RawMaterial_MenuItem[]
+      | Prisma.MenuItemCreateInput['RawMaterial_MenuItems'];
+  };
 }
 
 /**
@@ -22,10 +24,10 @@ export async function transformMenusItems(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const { materials } = req.body;
-  delete req.body.materials;
+  const RawMaterialMenuItems = req.body
+    .RawMaterial_MenuItems as RawMaterial_MenuItem[];
 
-  if (!materials) {
+  if (!RawMaterialMenuItems) {
     res.status(400).json({
       status: 'Failed',
       message: 'No materials provided',
@@ -34,7 +36,7 @@ export async function transformMenusItems(
     return;
   }
 
-  for (const material of materials) {
+  for (const material of RawMaterialMenuItems) {
     const menuItem = await prisma.rawMaterial.findUnique({
       where: { id: material.rawMaterialId },
     });
@@ -49,7 +51,9 @@ export async function transformMenusItems(
     }
   }
 
-  req.body.RawMaterial_MenuItems = { createMany: { data: materials } };
+  req.body.RawMaterial_MenuItems = {
+    createMany: { data: RawMaterialMenuItems },
+  };
 
   next();
 }
