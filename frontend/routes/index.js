@@ -25,7 +25,7 @@ router.get("/menu", async (req, res, next) => {
     items = items.filter((item) => item.category.includes(category));
   }
 
-  res.render("menu", {
+  res.render("site/menu", {
     title: "Menu",
     items,
     categories, // Pass categories for dynamic filtering
@@ -36,7 +36,7 @@ router.get("/menu", async (req, res, next) => {
 /* GET . */
 router.get("/", async (req, res, next) => {
 
-  res.render("index", {
+  res.render("site/index", {
     title: "Home",
   });
 });
