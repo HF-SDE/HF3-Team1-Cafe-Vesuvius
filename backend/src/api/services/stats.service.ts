@@ -126,8 +126,8 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
 
     const response: StatsResponse = {
       economy: {
-        salesTotal: salesTotal,
-        salesToday: salesToday,
+        salesTotal: parseFloat(salesTotal.toFixed(2)),
+        salesToday: parseFloat(salesToday.toFixed(2)),
         valuta: 'DKK',
         salesMonth,
       },
@@ -139,11 +139,13 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       orders: {
         ordersTotal: ordersTotal,
         ordersToday: ordersToday,
-        avgOrderValueTotal: salesTotal / ordersTotal || 0,
-        avgOrderValueToday: salesToday / ordersToday || 0,
+        avgOrderValueTotal:
+          parseFloat((salesTotal / ordersTotal).toFixed(2)) || 0,
+        avgOrderValueToday:
+          parseFloat((salesToday / ordersToday).toFixed(2)) || 0,
       },
       menuItems: {
-        total: MenuItemsCount,
+        total: orderedItems.length, // MenuItemsCount
         orderedStats: orderedItems.map((item) => ({
           name: item.menuItemId,
           count: item._count.id,

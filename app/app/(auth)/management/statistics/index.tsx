@@ -125,10 +125,6 @@ export default function StatsPage() {
     []
   );
 
-  if (isLoading) {
-    return <LoadingPage />;
-  }
-
   if (error) {
     return (
       <TemplateLayout pageName="StatsPage" title="Statistics">
@@ -143,188 +139,196 @@ export default function StatsPage() {
   console.log(stats);
 
   const renderItem = ({ item }: { item: any }) => (
-    <View>
-      <Text>{item.name}</Text>
-      <Text>
-        Quantity: {item.quantity} {item.unit}
+    <View style={[styles.lowStockItem, { borderColor: theme.primary }]}>
+      <Text style={[styles.lowStockItemName, { color: theme.primary }]}>
+        {item.name}
+      </Text>
+      <Text style={[styles.lowStockItemQuantity, { color: theme.primary }]}>
+        Quantity: {item.quantity} {item.unit} ⚠️
       </Text>
     </View>
   );
 
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
-      <ScrollView
-        contentContainerStyle={styles.container}
-        showsHorizontalScrollIndicator={false}
-        showsVerticalScrollIndicator={false}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={handleRefresh}
-            tintColor={theme.secondary}
-          />
-        }
-      >
-        <View
-          style={[
-            styles.sectionContainer,
-            {
-              borderColor: theme.primary,
-            },
-          ]}
-        >
-          <View style={styles.sectionContainerText}>
-            <Text style={[styles.sectionTitle, { color: theme.text }]}>
-              Sales
-            </Text>
-            <View style={styles.sectionSpacer}>
-              <View>
-                <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
-                </Text>
-              </View>
-              <View>
-                <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Today: {stats?.economy.salesToday} {stats?.economy.valuta}
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
-
-        <View style={styles.statItem}>
-          <LineChart
-            data={lineChartData}
-            width={width - 43} // Dynamically calculate width
-            height={500}
-            yAxisLabel=""
-            chartConfig={chartConfig}
-            bezier
-            style={styles.chart}
-          />
-        </View>
-        <View
-          style={[
-            styles.sectionContainer,
-            {
-              borderColor: theme.primary,
-            },
-          ]}
-        >
-          <View style={styles.sectionContainerText}>
-            <Text style={[styles.sectionTitle, { color: theme.text }]}>
-              Orders
-            </Text>
-            <View style={styles.sectionSpacer}>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Total: {stats?.orders.ordersTotal}
-              </Text>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Today: {stats?.orders.ordersToday}
-              </Text>
-            </View>
-            <View style={styles.sectionSpacer}>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Avg total: {stats?.orders.avgOrderValueTotal}
-              </Text>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Avg today: {stats?.orders.avgOrderValueToday}
-              </Text>
-            </View>
-          </View>
-        </View>
-
-        <View
-          style={[
-            styles.sectionContainer,
-            {
-              borderColor: theme.primary,
-            },
-          ]}
-        >
-          <View style={styles.sectionContainerText}>
-            <Text style={[styles.sectionTitle, { color: theme.text }]}>
-              Reservation
-            </Text>
-            <View style={styles.sectionSpacer}>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Total: {stats?.reservations.total}
-              </Text>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Today: {stats?.reservations.today}
-              </Text>
-              <Text style={[styles.sectionText, { color: theme.primary }]}>
-                Upcoming: {stats?.reservations.upcoming}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.statItem}>
-            <PieChart
-              data={pieData}
-              width={width - 43} // Dynamically calculate width
-              height={220}
-              chartConfig={chartConfig}
-              accessor={"population"}
-              backgroundColor={"transparent"}
-              paddingLeft={"15"}
-              style={styles.chart}
+      {isLoading ? (
+        <LoadingPage />
+      ) : error ? (
+        <Text style={[styles.errorText, { color: theme.text }]}>{error}</Text>
+      ) : (
+        <ScrollView
+          contentContainerStyle={styles.container}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={handleRefresh}
+              tintColor={theme.secondary}
             />
-          </View>
-        </View>
-
-        <View
-          style={[
-            styles.sectionContainer,
-            {
-              borderColor: theme.primary,
-            },
-          ]}
+          }
         >
-          <View style={styles.sectionContainerText}>
-            <Text style={[styles.sectionTitle, { color: theme.text }]}>
-              Most ordered
-            </Text>
+          <View
+            style={[
+              styles.sectionContainer,
+              {
+                borderColor: theme.primary,
+              },
+            ]}
+          >
+            <View style={styles.sectionContainerText}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                Sales
+              </Text>
+              <View style={styles.sectionSpacer}>
+                <View>
+                  <Text style={[styles.sectionText, { color: theme.primary }]}>
+                    Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
+                  </Text>
+                </View>
+                <View>
+                  <Text style={[styles.sectionText, { color: theme.primary }]}>
+                    Today: {stats?.economy.salesToday} {stats?.economy.valuta}
+                  </Text>
+                </View>
+              </View>
+            </View>
           </View>
 
           <View style={styles.statItem}>
-            <BarChart
-              data={barChartData}
+            <LineChart
+              data={lineChartData}
               width={width - 43} // Dynamically calculate width
-              height={220}
-              chartConfig={chartConfig}
-              style={styles.chart}
+              height={500}
               yAxisLabel=""
-              yAxisSuffix=""
+              chartConfig={chartConfig}
+              bezier
+              style={styles.chart}
             />
           </View>
-        </View>
-
-        <View
-          style={[
-            styles.sectionContainer,
-            {
-              borderColor: theme.primary,
-            },
-          ]}
-        >
-          <View style={styles.sectionContainerText}>
-            <Text style={[styles.sectionTitle, { color: theme.text }]}>
-              Low storage
-            </Text>
-            <FlatList
-              data={stats?.rawMaterials.lowStock}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={renderItem}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>
-                  There are currently no items with low storage.
+          <View
+            style={[
+              styles.sectionContainer,
+              {
+                borderColor: theme.primary,
+              },
+            ]}
+          >
+            <View style={styles.sectionContainerText}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                Orders
+              </Text>
+              <View style={styles.sectionSpacer}>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Total: {stats?.orders.ordersTotal}
                 </Text>
-              }
-            />
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Today: {stats?.orders.ordersToday}
+                </Text>
+              </View>
+              <View style={styles.sectionSpacer}>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Avg total: {stats?.orders.avgOrderValueTotal}
+                </Text>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Avg today: {stats?.orders.avgOrderValueToday}
+                </Text>
+              </View>
+            </View>
           </View>
-        </View>
-      </ScrollView>
+
+          <View
+            style={[
+              styles.sectionContainer,
+              {
+                borderColor: theme.primary,
+              },
+            ]}
+          >
+            <View style={styles.sectionContainerText}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                Reservation
+              </Text>
+              <View style={styles.sectionSpacer}>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Total: {stats?.reservations.total}
+                </Text>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Today: {stats?.reservations.today}
+                </Text>
+                <Text style={[styles.sectionText, { color: theme.primary }]}>
+                  Upcoming: {stats?.reservations.upcoming}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.statItem}>
+              <PieChart
+                data={pieData}
+                width={width - 43} // Dynamically calculate width
+                height={220}
+                chartConfig={chartConfig}
+                accessor={"population"}
+                backgroundColor={"transparent"}
+                paddingLeft={"15"}
+                style={styles.chart}
+              />
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.sectionContainer,
+              {
+                borderColor: theme.primary,
+              },
+            ]}
+          >
+            <View style={styles.sectionContainerText}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                Most ordered
+              </Text>
+            </View>
+
+            <View style={styles.statItem}>
+              <BarChart
+                data={barChartData}
+                width={width - 43} // Dynamically calculate width
+                height={220}
+                chartConfig={chartConfig}
+                style={styles.chart}
+                yAxisLabel=""
+                yAxisSuffix=""
+              />
+            </View>
+          </View>
+
+          <View
+            style={[
+              styles.sectionContainer,
+              {
+                borderColor: theme.primary,
+              },
+            ]}
+          >
+            <View style={styles.sectionContainerText}>
+              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+                Low storage
+              </Text>
+              <FlatList
+                data={stats?.rawMaterials.lowStock}
+                keyExtractor={(item, index) => index.toString()}
+                renderItem={renderItem}
+                ListEmptyComponent={
+                  <Text style={styles.emptyText}>
+                    There are currently no items with low storage.
+                  </Text>
+                }
+              />
+            </View>
+          </View>
+        </ScrollView>
+      )}
     </TemplateLayout>
   );
 }
@@ -366,5 +370,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
     marginTop: 20,
+  },
+
+  lowStockItem: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    padding: 5,
+    marginVertical: 8,
+    borderBottomWidth: 1,
+  },
+  lowStockItemName: {
+    fontSize: 22,
+    fontWeight: "bold", // Make the name bold
+    flex: 1, // Ensure the name takes available space
+  },
+  lowStockItemQuantity: {
+    fontSize: 20,
+    flexShrink: 1, // Ensure the quantity doesn't overflow
+  },
+  errorText: {
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 20,
+    color: "red",
   },
 });
