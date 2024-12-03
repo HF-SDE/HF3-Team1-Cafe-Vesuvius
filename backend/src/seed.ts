@@ -1,7 +1,10 @@
 import { hash } from 'argon2';
+import { randomBytes } from 'crypto';
 
 import { PrismaClient } from '@prisma/client';
 import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
+
+// Use crypto to generate random hex strings
 
 const prisma = new PrismaClient();
 const prismaPSQL = new PrismaClientPSQL();
@@ -830,6 +833,158 @@ async function generateMongo() {
   // Menu
   await prisma.menuItem.createMany({
     data: menu,
+  });
+
+  // Test data for stats :3
+  await prisma.order.createMany({
+    data: [
+      {
+        id: '1a2b3c4d5e6f7890abcd1234', // Unique order ID
+        tableId: '1a2b3c4d5e6f7890abcd1234', // Relating to the Table
+        createdAt: new Date('2024-01-01T12:00:00Z'),
+        updatedAt: new Date('2024-01-01T12:15:00Z'),
+      },
+      {
+        id: '1a2b3c4d5e6f7890abcd1235',
+        tableId: '1a2b3c4d5e6f7890abcd1235',
+        createdAt: new Date('2024-01-01T12:10:00Z'),
+        updatedAt: new Date('2024-01-01T12:20:00Z'),
+      },
+    ],
+  });
+
+  // Order_Menu seed data
+  await prisma.order_Menu.createMany({
+    data: [
+      {
+        id: '1a2b3c4d5e6f7890abcd1234',
+        orderId: '1a2b3c4d5e6f7890abcd1234', // Relating to the Order
+        menuItemId: '1a2b3c4d5e6f7890abcd1234', // Relating to the Menu Item
+        status: 'completed', // Status of the order menu item
+        quantity: 2, // Quantity ordered
+        note: 'Extra cheese, no onions', // Special notes for the order
+        menuItemPrice: 129, // Price of the menu item
+      },
+      {
+        id: '1a2b3c4d5e6f7890abcd1235',
+        orderId: '1a2b3c4d5e6f7890abcd1234',
+        menuItemId: '1a2b3c4d5e6f7890abcd1235',
+        status: 'pending',
+        quantity: 1,
+        note: '',
+        menuItemPrice: 139,
+      },
+      {
+        id: '1a2b3c4d5e6f7890abcd1236',
+        orderId: '1a2b3c4d5e6f7890abcd1235',
+        menuItemId: '1a2b3c4d5e6f7890abcd1236',
+        status: 'delivered',
+        quantity: 3,
+        note: 'Make it spicy',
+        menuItemPrice: 85,
+      },
+    ],
+  });
+
+  const menuItems = [
+    { name: 'Nachos Supreme', price: 129 },
+    { name: 'Caesar Salad', price: 139 },
+    { name: "Tiger's Prawn Salad", price: 139 },
+    { name: "Vegan's salad", price: 119 },
+    { name: 'Club Sandwich', price: 139 },
+    { name: 'Salmon Sandwich', price: 149 },
+    { name: 'Spicy Steak Sandwich', price: 149 },
+    { name: 'Tuna Sandwich', price: 139 },
+    { name: 'Vesuvius Burger', price: 139 },
+    { name: 'Spicy Burger', price: 139 },
+    { name: 'Crispy Chicken Burger', price: 139 },
+    { name: 'Tomato Soup', price: 99 },
+    { name: 'Pasta with Chicken', price: 169 },
+    { name: 'Pasta with Beef tenderloin', price: 179 },
+    { name: 'Pasta with tiger prawn', price: 179 },
+    { name: 'Aperol Spritz', price: 85 },
+    { name: 'Espresso Martini', price: 85 },
+    { name: 'Dark & Stormy', price: 85 },
+    { name: 'Mojito', price: 85 },
+    { name: 'Gin Tonic', price: 85 },
+    { name: 'Moscow Mule', price: 85 },
+    { name: 'Strawberry Daiquiri', price: 85 },
+    { name: 'Gin Hass', price: 85 },
+  ];
+
+  // Use today's date as the start date
+  const startDate = new Date(); // This will be today's date
+
+  /**
+   * Generates a random 12-byte hexadecimal string.
+   * This is used for generating table IDs and order IDs.
+   * @returns {string} A 12-byte hexadecimal string.
+   */
+  function generateHexId(): string {
+    return randomBytes(12).toString('hex');
+  }
+
+  /**
+   * Seed the database with sample data.
+   * This function creates orders and associated menu items for the past 50 days.
+   */
+  async function seedData() {
+    for (let day = 0; day < 50; day++) {
+      const date = new Date(startDate); // Copy the startDate
+      date.setDate(startDate.getDate() - day); // Decrease date by 'day'
+
+      const orderCount = Math.floor(Math.random() * 31) + 1; // Random number between 20 and 50
+
+      for (let i = 0; i < orderCount; i++) {
+        const tableId = generateHexId(); // Generate a random 12-byte hex string for tableId
+
+        // Create the order (Let Prisma handle the ID)
+        await prisma.order.create({
+          data: {
+            tableId: tableId,
+            createdAt: date,
+            updatedAt: date,
+          },
+        });
+
+        const orderMenuCount = Math.floor(Math.random() * 5) + 1; // Random number of items (1-5)
+        const selectedMenuItems = Array.from(
+          { length: orderMenuCount },
+          () => menuItems[Math.floor(Math.random() * menuItems.length)],
+        );
+
+        for (const menuItem of selectedMenuItems) {
+          // Get the menuItemId (simulate retrieval from menuItems table)
+          const menuItemId = await prisma.menuItem.findFirst({
+            where: { name: menuItem.name },
+            select: { id: true },
+          });
+
+          if (menuItemId) {
+            const orderId = generateHexId(); // Generate a random 12-byte hex string for orderId
+
+            // Create the order_Menu (Let Prisma handle the ID)
+            await prisma.order_Menu.create({
+              data: {
+                orderId: orderId, // Use the 12-byte hex orderId
+                menuItemId: menuItemId.id,
+                status: ['pending', 'completed', 'delivered'][
+                  Math.floor(Math.random() * 3)
+                ], // Random status
+                quantity: Math.floor(Math.random() * 3) + 1, // Random quantity (1-3)
+                note: Math.random() > 0.7 ? 'Special note' : '', // Random note with 30% chance
+                menuItemPrice: menuItem.price, // Match price from the list
+              },
+            });
+          }
+        }
+      }
+    }
+  }
+
+  // Invoke the seedData function
+  seedData().catch((error) => {
+    console.error('Error seeding data:', error);
   });
 
   // RawMaterial_MenuItem
