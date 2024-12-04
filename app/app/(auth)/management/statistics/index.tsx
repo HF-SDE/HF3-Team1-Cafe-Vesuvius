@@ -26,13 +26,23 @@ export default function StatsPage() {
   const navigation = useNavigation();
   const { width } = useWindowDimensions();
   const chartOffset = 100;
-  const data = [
-    { value: 20, label: "Unused tables", color: theme.secondary },
-    { value: 80, label: "Used tables", color: theme.primary },
-  ];
 
   // Use the useStats hook directly
   const { stats, isLoading, error, refreshStats } = useStats();
+
+  const data = [
+    {
+      value: 100 - Number(stats?.reservations.tableUtilizationPercentage),
+      label: "Unused tables",
+      color: theme.secondary,
+    },
+    {
+      value: stats?.reservations.tableUtilizationPercentage,
+      label: "Used tables",
+      color: theme.primary,
+      opacity: "50%",
+    },
+  ];
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -319,6 +329,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    padding: 20,
   },
   chart: {
     borderRadius: 16,

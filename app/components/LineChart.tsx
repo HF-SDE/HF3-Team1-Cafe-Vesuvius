@@ -2,8 +2,14 @@ import React from "react";
 import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
 import { curveMonotoneX } from "d3-shape";
 import { Circle } from "react-native-svg";
-import { View, StyleSheet, DimensionValue } from "react-native";
+import {
+  View,
+  StyleSheet,
+  DimensionValue,
+  ActivityIndicator,
+} from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import { useFonts } from "expo-font";
 
 interface DecoratorProps {
   x: (arg: number) => number;
@@ -53,7 +59,28 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 }) => {
   const theme = useThemeColor();
 
-  const axesSvg = { fontSize: 10, fill: theme.primary };
+  // Load custom font
+  const [fontsLoaded] = useFonts({
+    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
+  });
+
+  // Display a loading indicator while the font is loading
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.text} />
+      </View>
+    );
+  }
+
+  // Define custom SVG styles for axes using the loaded font
+  const axesSvg = {
+    fontSize: 10,
+    fill: theme.primary,
+    fontFamily: "SpaceMono-Regular", // Use the custom font
+  };
+
+  const horizontalContentInset = { left: 6, right: 6 }; // Adjusted insets
 
   return (
     <View style={styles.container}>
@@ -61,13 +88,13 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         data={data.map((item) => item.value)}
         style={styles.yAxis}
         contentInset={verticalContentInset}
-        svg={axesSvg}
+        svg={axesSvg} // Apply the font to Y-axis labels
       />
       <View style={[styles.chartContainer, { maxWidth: width }]}>
         <LineChart
           style={styles.chart}
           data={data.map((item) => item.value)}
-          contentInset={verticalContentInset}
+          contentInset={{ ...verticalContentInset, ...horizontalContentInset }}
           svg={{ stroke: theme.primary, strokeWidth: 2 }}
           curve={curveMonotoneX}
         >
@@ -83,7 +110,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
           formatLabel={(index: number) => data[index].name}
           contentInset={{ left: 40, right: 20 }}
           svg={{
-            ...axesSvg,
+            ...axesSvg, // Apply the font to X-axis labels
             rotation: 30,
             y: 15,
           }}
@@ -112,6 +139,11 @@ const styles = StyleSheet.create({
   },
   xAxis: {
     marginHorizontal: -10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
 

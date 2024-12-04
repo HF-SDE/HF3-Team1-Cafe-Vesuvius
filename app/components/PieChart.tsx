@@ -1,7 +1,8 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, ActivityIndicator } from "react-native";
 import { PieChart } from "react-native-svg-charts";
 import { Text } from "react-native-svg";
+import { useFonts } from "expo-font";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface DataPoint {
@@ -23,11 +24,25 @@ const PieChartComponent: React.FC<PieChartProps> = ({
 }) => {
   const theme = useThemeColor();
 
+  // Load the font
+  const [fontsLoaded] = useFonts({
+    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
+  });
+
+  // Show a loading indicator until the font is loaded
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color={theme.text} />
+      </View>
+    );
+  }
+
+  // Render the labels with the loaded font
   const Labels = ({ slices }: any) =>
     slices.map((slice: any, index: number) => {
       const { pieCentroid, data } = slice;
 
-      // Ensure `data.label` is a string before rendering
       const label =
         typeof data.label === "string" ? data.label : String(data.label);
 
@@ -38,8 +53,8 @@ const PieChartComponent: React.FC<PieChartProps> = ({
           y={pieCentroid[1]}
           fill={theme.text}
           textAnchor="middle"
-          alignmentBaseline="middle"
-          fontSize={12}
+          fontSize={16}
+          fontFamily="SpaceMono-Regular" // Use the loaded font
         >
           {label}
         </Text>
@@ -66,6 +81,11 @@ const PieChartComponent: React.FC<PieChartProps> = ({
 
 const styles = StyleSheet.create({
   container: {
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
   },
