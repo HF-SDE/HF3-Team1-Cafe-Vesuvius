@@ -31,7 +31,7 @@ export async function manageTables(
   const totalCapacity = await getTotalCapacity(req.body.reservationTime);
 
   if (totalCapacity < req.body.amount) {
-    res.status(400).json({
+    res.status(409).json({
       status: Status.CreationFailed,
       message: 'Not enough tables available',
     });
@@ -45,7 +45,7 @@ export async function manageTables(
     const validTables = await checkValidSeatability(tableIds, req.body.amount);
 
     if (validTables.err) {
-      res.status(403).json({
+      res.status(400).json({
         status: Status.CreationFailed,
         message: validTables.message,
       });

@@ -41,12 +41,93 @@ router.get("/", async (req, res, next) => {
   });
 });
 
+
 /* GET . */
 router.get("/reservation", async (req, res, next) => {
+  const date = new Date();
+
+  const day = date.getDay().toString().length === 2 ? date.getDay() : "0" + date.getDay();
+  const maxDate = new Date(date.getFullYear() + 1, date.getMonth(), day, 23, 45).toISOString().slice(0, 16);
 
   res.render("site/reservation", {
     title: "Reservation",
+    toDay: new Date().toISOString().slice(0, 16),
+    maxDate,
+    minDate: new Date().toISOString().slice(0, 16),
+    name: "",
+    email: "",
+    phone: "",
+    persons: "",
+    noDate: false,
+    error: false,
+    errorMessage: "",
   });
+});
+
+router.post("/reservation", async (req, res, next) => {
+  const { name, email, phone, date: reservationDate, persons } = req.body;
+
+  const date = new Date();
+
+  const day = date.getDay().toString().length === 2 ? date.getDay() : "0" + date.getDay();
+  const maxDate = new Date(date.getFullYear() + 1, date.getMonth(), day, 23, 45).toISOString().slice(0, 16);
+
+  const reservation = {
+    name,
+    email,
+    phone,
+    reservationTime: reservationDate,
+    amount: persons,
+  };
+
+  try {
+    const apiResponse = await axios.post(process.env.BACKEND_URL + "/reservation", reservation)
+    if (apiResponse.status === 201) {
+      console.info("Reservation created successfully");
+      res.render("site/reservation-confirmed", {
+        title: "Reservation confirmed",
+        date: reservationDate,
+        name,
+        email,
+        phone,
+        persons,
+      });
+    }
+  } catch (error) {
+    const minDate = new Date(new Date(reservationDate).setHours(date.getHours() + 3)).toISOString().slice(0, 16);
+    const errorMessage = error.response.data.message ?? "An error occurred";
+
+    if (error.status === 409) {
+      res.render("site/reservation", {
+        title: "Reservation",
+        toDay: reservationDate,
+        maxDate,
+        minDate,
+        name,
+        email,
+        phone,
+        persons,
+        noDate: true,
+        error: true,
+        errorMessage,
+      });
+    } else {
+      res.render("site/reservation", {
+        title: "Reservation",
+        toDay: reservationDate,
+        maxDate,
+        minDate,
+        name,
+        email,
+        phone,
+        persons,
+        noDate: false,
+        error: true,
+        errorMessage,
+      });
+    }
+  }
+
 });
 
 export default router;

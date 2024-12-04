@@ -14,7 +14,7 @@
 
   <body>
     <%- include('../partials/topNav'); %>
-    <div class="menu-container">
+    <main class="menu-container">
       <h1><%= title %></h1>
 
       <div class="container-fluid py-5">
@@ -27,19 +27,26 @@
                     <h1 class="display-3 text-primary">Online Reservation</h1>
                   </div>
                   <p class="text-secondary">
-                    Skip the wait and secure your spot with our easy online table reservations!
-                    Book anytime, get instant confirmation, and enjoy a hassle-free dining experience. 
-                    Your perfect table is just a click away!
+                    Skip the wait and secure your spot with our easy online
+                    table reservations! Book anytime, get instant confirmation,
+                    and enjoy a hassle-free dining experience. Your perfect
+                    table is just a click away!
                   </p>
                   <ul class="list-inline text-secondary m-0">
                     <li class="py-2">
-                      <i class="fa fa-check text-primary mr-3"></i>Convenience: Book anytime, anywhere without needing to call the restaurant
+                      <i class="fa fa-check text-primary mr-3"></i>Convenience:
+                      Book anytime, anywhere without needing to call the
+                      restaurant
                     </li>
                     <li class="py-2">
-                      <i class="fa fa-check text-primary mr-3"></i>Guaranteed Availability: Ensure a table is ready, especially during peak hours or busy days.
+                      <i class="fa fa-check text-primary mr-3"></i>Guaranteed
+                      Availability: Ensure a table is ready, especially during
+                      peak hours or busy days.
                     </li>
                     <li class="py-2">
-                      <i class="fa fa-check text-primary mr-3"></i>Plan Ahead: Coordinate with friends or family knowing your reservation is secured.
+                      <i class="fa fa-check text-primary mr-3"></i>Plan Ahead:
+                      Coordinate with friends or family knowing your reservation
+                      is secured.
                     </li>
                   </ul>
                 </div>
@@ -50,21 +57,38 @@
                   style="background: rgba(51, 33, 29, 0.8)"
                 >
                   <h1 class="text-secondary mb-4 mt-5">Book Your Table</h1>
-                  <form class="mb-5">
+                  <form class="mb-5" action="/reservation" method="post">
                     <div class="form-group">
-                      <input
-                        type="text"
+                      <input 
+                        type="text" 
                         class="form-control bg-transparent border-primary p-4"
                         placeholder="Name"
-                        required="required"
+                        required
+                        autocomplete="name"
+                        minlength="2"
+                        name="name"
+                        pattern="^[A-Z][a-z]*(?:['-][A-Z][a-z]*)?(?:[A-Z][a-z]*(?:['-][A-Z][a-z]*)?)*$"
+                        value="<%= name %>"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <input 
+                        type="email"
+                        class="form-control bg-transparent border-primary p-4" 
+                        placeholder="Email"
+                        autocomplete="email" 
+                        name="email" 
+                        value="<%= email %>" 
                       />
                     </div>
                     <div class="form-group">
                       <input
-                        type="email"
+                        type="tel" 
                         class="form-control bg-transparent border-primary p-4"
-                        placeholder="Email"
-                        required="required"
+                        placeholder="Phone" 
+                        autocomplete="tel"
+                        name="phone"
+                        value="<%= phone %>" 
                       />
                     </div>
                     <div class="form-group">
@@ -72,16 +96,23 @@
                         type="datetime-local"
                         class="form-control bg-transparent border-primary p-4"
                         placeholder="Date"
-                        required="required"
+                        required
+                        name="date"
+                        autocomplete="off"
+                        value="<%= toDay %>"
+                        max="<%= maxDate %>"
+                        min="<%= minDate %>"
                       />
                     </div>
                     <input
-                      type="number"
+                      type="number" 
                       class="form-control bg-transparent border-primary p-4"
                       placeholder="Persons"
-                      required="required"
+                      name="persons"
+                      required min="1"
+                      max="10"
+                      value="<%= persons %>"
                     />
-
                     <div>
                       <button
                         class="btn btn-primary btn-block font-weight-bold py-3"
@@ -91,6 +122,12 @@
                       </button>
                     </div>
                   </form>
+                  <% if (error) {%>
+                  <div style="background-color: red">
+                    <p>Error</p>
+                    <p><%= errorMessage %></p>
+                  </div>
+                  <% }%>
                 </div>
               </div>
             </div>
