@@ -1,14 +1,8 @@
 import React from "react";
-import { Grid, BarChart, XAxis, YAxis } from "react-native-svg-charts";
-import {
-  View,
-  StyleSheet,
-  DimensionValue,
-  ActivityIndicator,
-} from "react-native";
+import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import { BarChart } from "react-native-gifted-charts";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
-import { Text } from "react-native";
 
 interface DataPoint {
   value: number;
@@ -20,14 +14,14 @@ interface AxesExampleProps {
   label: string;
   verticalContentInset?: { top: number; bottom: number };
   xAxisHeight?: number;
-  width: DimensionValue;
+  width: number;
 }
 
 const AxesExample: React.FC<AxesExampleProps> = ({
   data,
   label,
   verticalContentInset = { top: 10, bottom: 10 },
-  xAxisHeight = 30,
+  xAxisHeight = 70,
   width,
 }) => {
   const theme = useThemeColor();
@@ -46,49 +40,46 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     );
   }
 
-  // Define custom SVG styles for axes using the loaded font
-  const axesSvg = {
-    fontSize: 10,
-    fill: theme.primary,
-    fontFamily: "SpaceMono-Regular", // Use the custom font
-  };
+  // Map data for react-native-gifted-charts
+  const chartData = data.map((item) => ({
+    value: item.value,
+    label: item.name,
+    frontColor: theme.primary,
+  }));
 
   return (
     <View style={styles.container}>
-      <Text>{label}</Text>
-      <YAxis
-        data={data.map((item) => item.value)}
-        style={styles.yAxis}
-        contentInset={verticalContentInset}
-        svg={axesSvg} // Apply the font to Y-axis labels
-      />
-      <View
-        style={[styles.chartContainer, { maxWidth: width, minWidth: width }]}
-      >
+      <Text style={[styles.label, { color: theme.text }]}>{label}</Text>
+      <View style={[styles.chartContainer, { width }]}>
         <BarChart
-          style={styles.chart}
-          data={data.map((item) => item.value)}
-          contentInset={verticalContentInset}
-          svg={{ fill: theme.primary }} // Set the bar color
-        >
-          <Grid
-            svg={{ stroke: theme.primary, strokeWidth: 0.5 }}
-            style={{ width: 200 }}
-          />
-        </BarChart>
-        <XAxis
-          style={[styles.xAxis, { height: xAxisHeight }]}
-          data={data.map((item) => item.name)}
-          formatLabel={(index: number) => data[index].name}
-          contentInset={{
-            left: Number(width) / 5 / 2 + 20,
-            right: Number(width) / 5 / 2 + 40,
+          data={chartData}
+          noOfSections={4}
+          width={500}
+          parentWidth={500}
+          barBorderRadius={4}
+          xAxisThickness={1}
+          yAxisThickness={1}
+          xAxisColor={theme.primary}
+          yAxisColor={theme.primary}
+          xAxisLabelTextStyle={{
+            color: theme.primary,
+            fontSize: 10,
+            fontFamily: "SpaceMono-Regular",
           }}
-          svg={{
-            ...axesSvg, // Apply the font to X-axis labels
-            rotation: 10, // Slight rotation for better readability
-            y: 10,
+          yAxisTextStyle={{
+            color: theme.primary,
+            fontSize: 10,
+            fontFamily: "SpaceMono-Regular",
           }}
+          yAxisLabelTexts={chartData.map((item) => `${item.value}`)}
+          xAxisLabelTexts={chartData.map((item) => item.label)}
+          showValuesAsTopLabel
+          rotateLabel
+          spacing={20}
+          disableScroll={true}
+          disablePress
+          labelsExtraHeight={80}
+          labelWidth={80}
         />
       </View>
     </View>
@@ -98,23 +89,16 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: 300,
-    //padding: 20,
-    flexDirection: "row",
-  },
-  yAxis: {
-    marginBottom: 30,
+    justifyContent: "center",
+    alignItems: "center",
   },
   chartContainer: {
-    marginLeft: 10,
-    width: "100%",
+    marginTop: 10,
   },
-  chart: {
-    flex: 1,
-    paddingRight: 40,
-    paddingLeft: 20,
-  },
-  xAxis: {
-    marginHorizontal: -10,
+  label: {
+    fontSize: 14,
+    fontWeight: "bold",
+    marginBottom: 10,
   },
   loadingContainer: {
     flex: 1,

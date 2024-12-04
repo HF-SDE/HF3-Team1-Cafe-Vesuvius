@@ -1,61 +1,25 @@
 import React from "react";
-import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
-import { curveMonotoneX } from "d3-shape";
-import { Circle } from "react-native-svg";
-import {
-  View,
-  StyleSheet,
-  DimensionValue,
-  ActivityIndicator,
-} from "react-native";
+import { LineChart } from "react-native-gifted-charts";
+import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
-
-interface DecoratorProps {
-  x: (arg: number) => number;
-  y: (arg: number) => number;
-  data: number[];
-}
-
-export const Dots = (props: Partial<DecoratorProps>) => {
-  const theme = useThemeColor();
-
-  const { x, y, data } = props;
-  const defaultFn = (value: any) => value;
-
-  return (
-    <>
-      {data?.map((value, index) => (
-        <Circle
-          key={index}
-          cx={(x ?? defaultFn)(index)}
-          cy={(y ?? defaultFn)(value)}
-          r={6}
-          stroke={"rgb(0, 0, 0)"}
-          fill={theme.primary}
-        />
-      ))}
-    </>
-  );
-};
 
 interface DataPoint {
   value: number;
   name: string;
+  year: string;
 }
 
 interface AxesExampleProps {
   data: Array<DataPoint>;
-  verticalContentInset?: { top: number; bottom: number };
-  xAxisHeight?: number;
-  width: DimensionValue;
+  width: number;
+  height?: number;
 }
 
 const AxesExample: React.FC<AxesExampleProps> = ({
   data,
-  verticalContentInset = { top: 10, bottom: 10 },
-  xAxisHeight = 30,
   width,
+  height = 300,
 }) => {
   const theme = useThemeColor();
 
@@ -73,75 +37,83 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     );
   }
 
-  // Define custom SVG styles for axes using the loaded font
-  const axesSvg = {
-    fontSize: 10,
-    fill: theme.primary,
-    fontFamily: "SpaceMono-Regular", // Use the custom font
-  };
-
-  const horizontalContentInset = { left: 6, right: 6 }; // Adjusted insets
+  // Prepare data for GiftedCharts
+  const chartData = data.map((item) => ({
+    value: item.value,
+    label: item.name,
+  }));
 
   return (
-    <View style={styles.container}>
-      <YAxis
-        data={data.map((item) => item.value)}
-        style={styles.yAxis}
-        contentInset={verticalContentInset}
-        svg={axesSvg} // Apply the font to Y-axis labels
+    <View style={[styles.container, { width: "100%" }]}>
+      <LineChart
+        data={chartData}
+        height={height}
+        isAnimated
+        //adjustToWidth // HERE
+        dashWidth={1}
+        dashGap={15}
+        showVerticalLines
+        verticalLinesUptoDataPoint
+        dataPointsColor1={theme.primary}
+        dataPointsRadius1={6}
+        curved={true}
+        color={theme.primary}
+        xAxisColor={theme.primary}
+        yAxisColor={theme.primary}
+        xAxisLabelTextStyle={{
+          color: theme.text,
+          fontSize: 10,
+          fontFamily: "SpaceMono-Regular",
+        }}
+        yAxisTextStyle={{
+          color: theme.text,
+          fontSize: 10,
+          fontFamily: "SpaceMono-Regular",
+        }}
+        pointerConfig={{
+          pointerStripUptoDataPoint: true,
+          autoAdjustPointerLabelPosition: true,
+          showPointerStrip: false,
+
+          pointerColor: "lightgray",
+          radius: 4,
+          pointerLabelWidth: 100,
+          pointerLabelHeight: 120,
+          pointerLabelComponent: (items: any) => {
+            return (
+              <View
+                style={{
+                  height: 40,
+                  width: 100,
+                  backgroundColor: "#282C3E",
+                  borderRadius: 4,
+                  justifyContent: "center",
+                  paddingLeft: 16,
+                }}
+              >
+                <Text style={{ color: "lightgray", fontSize: 12 }}>
+                  {"TEST"}
+                </Text>
+                <Text style={{ color: "white", fontWeight: "bold" }}>
+                  {items[0].value}
+                </Text>
+              </View>
+            );
+          },
+        }}
       />
-      <View
-        style={[styles.chartContainer, { maxWidth: width, minWidth: width }]}
-      >
-        <LineChart
-          style={styles.chart}
-          data={data.map((item) => item.value)}
-          contentInset={{ ...verticalContentInset, ...horizontalContentInset }}
-          svg={{ stroke: theme.primary, strokeWidth: 2, animationDuration: 0 }}
-          curve={curveMonotoneX}
-        >
-          <Grid
-            svg={{ stroke: theme.primary, strokeWidth: 0.5 }}
-            style={{ width: 200 }}
-          />
-          <Dots />
-        </LineChart>
-        <XAxis
-          style={[styles.xAxis, { height: xAxisHeight }]}
-          data={data.map((item, index) => index)}
-          formatLabel={(index: number) => data[index].name}
-          contentInset={{ left: 40, right: 20 }}
-          svg={{
-            ...axesSvg, // Apply the font to X-axis labels
-            rotation: 30,
-            y: 15,
-          }}
-        />
-      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    height: 300,
-    //padding: 20,
-    flexDirection: "row",
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    alignItems: "center",
   },
-  yAxis: {
-    marginBottom: 30,
-  },
-  chartContainer: {
-    marginLeft: 10,
-    width: "100%",
-  },
-  chart: {
-    flex: 1,
-    paddingRight: 40,
-  },
-  xAxis: {
-    marginHorizontal: -10,
-  },
+
   loadingContainer: {
     flex: 1,
     justifyContent: "center",

@@ -7,6 +7,7 @@ interface EconomyStats {
   valuta: string;
   salesMonth: {
     month: string;
+    year: string;
     sales: number;
     orders: number;
     reservations: number;

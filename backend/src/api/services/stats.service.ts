@@ -166,29 +166,34 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
     });
 
     const salesByMonthAggregated = salesByMonth.reduce((acc, order) => {
-      const monthYear = new Date(order.createdAt).toLocaleString('default', {
-        month: 'short',
-        year: 'numeric',
-      });
+      const date = new Date(order.createdAt);
+      const year = date.getFullYear();
+      const month = date.toLocaleString('default', { month: 'short' });
+
+      // Create a unique key for grouping
+      const key = `${year}-${month}`;
+
       const totalMenuItemPrice = order.Order_Menus.reduce(
         (sum, item) => sum + item.menuItemPrice,
         0,
       );
 
-      if (!acc[monthYear]) {
-        acc[monthYear] = { sales: 0, orders: 0 };
+      if (!acc[key]) {
+        acc[key] = { year, month, sales: 0, orders: 0 };
       }
 
-      acc[monthYear].sales += totalMenuItemPrice;
-      acc[monthYear].orders += 1;
+      acc[key].sales += totalMenuItemPrice;
+      acc[key].orders += 1;
 
       return acc;
     }, {});
 
-    const salesMonth = Object.keys(salesByMonthAggregated).map((month) => ({
-      month,
-      sales: salesByMonthAggregated[month].sales,
-      orders: salesByMonthAggregated[month].orders,
+    // Transform the aggregated data into the desired structure
+    const salesMonth = Object.values(salesByMonthAggregated).map((entry) => ({
+      year: entry.year,
+      month: entry.month,
+      sales: entry.sales,
+      orders: entry.orders,
       reservations: totalReservations,
     }));
 

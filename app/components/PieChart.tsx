@@ -1,13 +1,12 @@
 import React from "react";
-import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { PieChart } from "react-native-svg-charts";
-import { Text } from "react-native-svg";
+import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import { PieChart } from "react-native-gifted-charts";
 import { useFonts } from "expo-font";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface DataPoint {
   value: number;
-  label: string;
+  text: string;
   color: string;
 }
 
@@ -38,43 +37,109 @@ const PieChartComponent: React.FC<PieChartProps> = ({
     );
   }
 
-  // Render the labels with the loaded font
-  const Labels = ({ slices }: any) =>
-    slices.map((slice: any, index: number) => {
-      const { pieCentroid, data } = slice;
+  // Calculate the total value of all data points
+  const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 
-      const label =
-        typeof data.label === "string" ? data.label : String(data.label);
+  // Map data to the structure required by react-native-gifted-charts
+  const chartData = data.map((item) => ({
+    value: item.value,
+    color: item.color,
+    text: item.text,
+  }));
 
-      return (
-        <Text
-          key={data.label}
-          x={pieCentroid[0]}
-          y={pieCentroid[1]}
-          fill={theme.text}
-          textAnchor="middle"
-          fontSize={16}
-          fontFamily="SpaceMono-Regular" // Use the loaded font
+  const renderDot = (color) => {
+    return (
+      <View
+        style={{
+          height: 10,
+          width: 10,
+          borderRadius: 5,
+          backgroundColor: color,
+          marginRight: 10,
+        }}
+      />
+    );
+  };
+
+  const renderLegendComponent = () => {
+    return (
+      <>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            marginBottom: 10,
+          }}
         >
-          {label}
-        </Text>
-      );
-    });
+          {data.map((item, index) => (
+            <View
+              key={index}
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                width: 120,
+                marginRight: 20,
+              }}
+            >
+              {renderDot(item.color)}
+              <Text style={{ color: "white" }}>
+                {item.text}: {((item.value / totalValue) * 100).toFixed(0)}%
+              </Text>
+            </View>
+          ))}
+        </View>
+      </>
+    );
+  };
+  const radius = width * 0.5;
 
   return (
-    <View style={styles.container}>
-      <PieChart
-        style={{ height, maxWidth: width, minWidth: width }}
-        valueAccessor={({ item }: { item: DataPoint }) => item.value}
-        data={data.map((item) => ({
-          value: item.value,
-          svg: { fill: item.color },
-          label: item.label,
-        }))}
-        spacing={0}
+    <View
+      style={{
+        borderRadius: 20,
+      }}
+    >
+      <Text
+        style={{
+          color: theme.text,
+          fontSize: 16,
+          fontWeight: "bold",
+          textAlign: "center",
+        }}
       >
-        <Labels />
-      </PieChart>
+        Table Utilization Percentage
+      </Text>
+
+      <View style={{ padding: 20, alignItems: "center" }}>
+        <PieChart
+          data={chartData.reverse()}
+          donut
+          sectionAutoFocus
+          radius={radius}
+          innerRadius={radius * 0.6}
+          innerCircleColor={theme.background}
+          centerLabelComponent={() => {
+            const usedTables = data.find((item) => item.text === "Used tables");
+            const usedTablesPercentage = usedTables
+              ? ((usedTables.value / totalValue) * 100).toFixed(0)
+              : "0";
+            return (
+              <View style={{ justifyContent: "center", alignItems: "center" }}>
+                <Text
+                  style={{
+                    fontSize: 22,
+                    color: theme.text,
+                    fontWeight: "bold",
+                  }}
+                >
+                  {usedTablesPercentage}%
+                </Text>
+              </View>
+            );
+          }}
+        />
+      </View>
+      {renderLegendComponent()}
     </View>
   );
 };
@@ -88,6 +153,15 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+  centerLabel: {
+    fontSize: 18,
+    fontWeight: "bold",
+    textAlign: "center",
+  },
+  label: {
+    fontSize: 14,
+    position: "absolute",
   },
 });
 

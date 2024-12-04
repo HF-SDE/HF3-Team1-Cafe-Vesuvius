@@ -32,14 +32,14 @@ export default function StatsPage() {
 
   const data = [
     {
-      value: 100 - Number(stats?.reservations.tableUtilizationPercentage),
-      label: "Unused tables",
-      color: theme.secondary,
+      value: stats?.reservations.tableUtilizationPercentage,
+      text: "Used tables",
+      color: theme.primary,
     },
     {
-      value: stats?.reservations.tableUtilizationPercentage,
-      label: "Used tables",
-      color: theme.primary,
+      value: 100 - Number(stats?.reservations.tableUtilizationPercentage),
+      text: "Unused tables",
+      color: theme.secondary,
     },
   ];
 
@@ -53,19 +53,20 @@ export default function StatsPage() {
       setRefreshing(false);
     }
   };
+
   const lineChartData = useMemo(() => {
     const salesMonth = stats?.economy.salesMonth || [];
 
     const sortedSalesMonth = salesMonth
       .map((item) => ({
         ...item,
-        monthDate: new Date(item.month), // Parse the month string into a Date object
       }))
       .sort((a, b) => a.monthDate - b.monthDate); // Sort by the Date object in ascending order
 
     return sortedSalesMonth.map((item) => ({
       value: item.sales, // Map `sales` to `value`
       name: item.month, // Map `month` to `name`
+      year: item.year,
     }));
   }, [stats]);
 
@@ -158,7 +159,7 @@ export default function StatsPage() {
             </View>
           </View>
 
-          <View style={[styles.statItem]}>
+          <View style={[styles.statItem, { paddingHorizontal: 0 }]}>
             <LineChartCustom data={lineChartData} width={width - chartOffset} />
           </View>
           <View
@@ -233,7 +234,7 @@ export default function StatsPage() {
             </View>
 
             <View style={styles.statItem}>
-              <PieChartCustom data={data} width={width - chartOffset} />
+              <PieChartCustom data={data} width={width * 0.8 - chartOffset} />
             </View>
           </View>
 
