@@ -57,11 +57,10 @@
                   style="background: rgba(51, 33, 29, 0.8)"
                 >
                   <h1 class="text-secondary mb-4 mt-5">Book Your Table</h1>
-                  <form class="mb-5" action="/reservation" method="post">
-                    <div class="form-group">
+                  <form action="/reservation" method="post">
                       <input 
                         type="text" 
-                        class="form-control bg-transparent border-primary p-4"
+                        class="form-control"
                         placeholder="Name"
                         required
                         autocomplete="name"
@@ -70,31 +69,25 @@
                         pattern="^[A-Z][a-z]*(?:['-][A-Z][a-z]*)?(?:[A-Z][a-z]*(?:['-][A-Z][a-z]*)?)*$"
                         value="<%= name %>"
                       />
-                    </div>
-                    <div class="form-group">
                       <input 
                         type="email"
-                        class="form-control bg-transparent border-primary p-4" 
+                        class="form-control" 
                         placeholder="Email"
                         autocomplete="email" 
                         name="email" 
                         value="<%= email %>" 
                       />
-                    </div>
-                    <div class="form-group">
                       <input
                         type="tel" 
-                        class="form-control bg-transparent border-primary p-4"
+                        class="form-control"
                         placeholder="Phone" 
                         autocomplete="tel"
                         name="phone"
                         value="<%= phone %>" 
                       />
-                    </div>
-                    <div class="form-group">
                       <input
                         type="datetime-local"
-                        class="form-control bg-transparent border-primary p-4"
+                        class="form-control"
                         placeholder="Date"
                         required
                         name="date"
@@ -103,24 +96,22 @@
                         max="<%= maxDate %>"
                         min="<%= minDate %>"
                       />
-                    </div>
                     <input
                       type="number" 
-                      class="form-control bg-transparent border-primary p-4"
+                      class="form-control"
                       placeholder="Persons"
                       name="persons"
-                      required min="1"
+                      required
+                      min="1"
                       max="10"
                       value="<%= persons %>"
                     />
-                    <div>
-                      <button
-                        class="btn btn-primary btn-block font-weight-bold py-3"
-                        type="submit"
-                      >
-                        Book Now
-                      </button>
-                    </div>
+                    <button
+                      class="btn btn-primary btn-block font-weight-bold py-3"
+                      type="submit"
+                    >
+                      Book Now
+                    </button>
                   </form>
                   <% if (error) {%>
                   <div style="background-color: red">
