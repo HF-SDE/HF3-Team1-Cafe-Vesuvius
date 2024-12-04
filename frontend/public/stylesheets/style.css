@@ -164,10 +164,6 @@ nav.is-hidden {
   margin-bottom: 3rem !important;
 }
 
-.form-group {
-  margin-bottom: 1rem;
-}
-
 .was-validated textarea.form-control:invalid,
 textarea.form-control.is-invalid {
   padding-right: calc(1.5em + 0.75rem);
@@ -400,6 +396,9 @@ input[type="submit"].btn-block {
   background-position: top;
   background-repeat: no-repeat;
   background-size: cover;
+  & input {
+    margin-bottom: 1rem;
+  }
 }
 
 /* END Reservation Section END */
