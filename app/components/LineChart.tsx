@@ -90,12 +90,14 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         contentInset={verticalContentInset}
         svg={axesSvg} // Apply the font to Y-axis labels
       />
-      <View style={[styles.chartContainer, { maxWidth: width }]}>
+      <View
+        style={[styles.chartContainer, { maxWidth: width, minWidth: width }]}
+      >
         <LineChart
           style={styles.chart}
           data={data.map((item) => item.value)}
           contentInset={{ ...verticalContentInset, ...horizontalContentInset }}
-          svg={{ stroke: theme.primary, strokeWidth: 2 }}
+          svg={{ stroke: theme.primary, strokeWidth: 2, animationDuration: 0 }}
           curve={curveMonotoneX}
         >
           <Grid

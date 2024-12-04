@@ -58,7 +58,9 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         contentInset={verticalContentInset}
         svg={axesSvg} // Apply the font to Y-axis labels
       />
-      <View style={[styles.chartContainer, { maxWidth: width }]}>
+      <View
+        style={[styles.chartContainer, { maxWidth: width, minWidth: width }]}
+      >
         <BarChart
           style={styles.chart}
           data={data.map((item) => item.value)}
@@ -74,7 +76,10 @@ const AxesExample: React.FC<AxesExampleProps> = ({
           style={[styles.xAxis, { height: xAxisHeight }]}
           data={data.map((item) => item.name)}
           formatLabel={(index: number) => data[index].name}
-          contentInset={{ left: 60, right: 80 }}
+          contentInset={{
+            left: Number(width) / 5 / 2 + 20,
+            right: Number(width) / 5 / 2 + 40,
+          }}
           svg={{
             ...axesSvg, // Apply the font to X-axis labels
             rotation: 10, // Slight rotation for better readability
@@ -102,6 +107,7 @@ const styles = StyleSheet.create({
   chart: {
     flex: 1,
     paddingRight: 40,
+    paddingLeft: 20,
   },
   xAxis: {
     marginHorizontal: -10,

@@ -64,7 +64,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
   return (
     <View style={styles.container}>
       <PieChart
-        style={{ height, width }}
+        style={{ height, maxWidth: width, minWidth: width }}
         valueAccessor={({ item }: { item: DataPoint }) => item.value}
         data={data.map((item) => ({
           value: item.value,

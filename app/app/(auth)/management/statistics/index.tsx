@@ -40,7 +40,6 @@ export default function StatsPage() {
       value: stats?.reservations.tableUtilizationPercentage,
       label: "Used tables",
       color: theme.primary,
-      opacity: "50%",
     },
   ];
 
