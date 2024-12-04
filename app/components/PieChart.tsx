@@ -53,8 +53,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
           y={pieCentroid[1]}
           fill={theme.text}
           textAnchor="middle"
-          alignmentBaseline="middle"
-          fontSize={12}
+          fontSize={16}
           fontFamily="SpaceMono-Regular" // Use the loaded font
         >
           {label}
