@@ -159,13 +159,11 @@ nav.is-hidden {
   margin-top: 3rem !important;
 }
 
-.mb-5,
 .my-5 {
   margin-bottom: 3rem !important;
 }
 
-.was-validated textarea.form-control:invalid,
-textarea.form-control.is-invalid {
+.was-validated textarea.form-control:invalid {
   padding-right: calc(1.5em + 0.75rem);
   background-position: top calc(0.375em + 0.1875rem) right
     calc(0.375em + 0.1875rem);
@@ -203,7 +201,7 @@ textarea.form-control.is-invalid {
   box-shadow: 0 0 0 0.2rem rgba(40, 167, 69, 0.25);
 }
 
-input[type="datetime-local"].form-control{
+input[type="datetime-local"].form-control {
   appearance: none;
 }
 
@@ -258,16 +256,8 @@ input[type="datetime-local"].form-control{
   transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
-.bg-transparent {
-  background-color: transparent !important;
-}
-
 .border-primary {
   border-color: #da9f5b !important;
-}
-
-.p-4 {
-  padding: 1.5rem !important;
 }
 
 input[type="submit"].btn-block {
@@ -396,8 +386,14 @@ input[type="submit"].btn-block {
   background-position: top;
   background-repeat: no-repeat;
   background-size: cover;
-  & input {
-    margin-bottom: 1rem;
+  & form {
+    margin-bottom: 3rem;
+    & input {
+      margin-bottom: 1rem;
+      background-color: transparent !important;
+      border-color: #da9f5b;
+      padding: 1.5rem;
+    }
   }
 }
 
