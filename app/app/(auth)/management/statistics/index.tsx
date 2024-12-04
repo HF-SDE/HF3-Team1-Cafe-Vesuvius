@@ -255,12 +255,15 @@ export default function StatsPage() {
               <BarChartCustom
                 data={barChartHighest}
                 width={width - chartOffset}
+                label="Most ordered"
               />
             </View>
+
             <View style={styles.statItem}>
               <BarChartCustom
                 data={barChartLowest}
                 width={width - chartOffset}
+                label="Least ordered"
               />
             </View>
           </View>
@@ -344,6 +347,11 @@ const styles = StyleSheet.create({
   sectionTitle: {
     fontSize: 30,
     textAlign: "center",
+  },
+  sectionSubTitle: {
+    fontSize: 24,
+    textAlign: "left",
+    paddingHorizontal: 20,
   },
   sectionSpacer: {
     display: "flex",

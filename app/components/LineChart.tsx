@@ -125,7 +125,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: 300,
-    padding: 20,
+    //padding: 20,
     flexDirection: "row",
   },
   yAxis: {

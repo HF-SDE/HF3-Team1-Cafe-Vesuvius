@@ -8,6 +8,7 @@ import {
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
+import { Text } from "react-native";
 
 interface DataPoint {
   value: number;
@@ -16,6 +17,7 @@ interface DataPoint {
 
 interface AxesExampleProps {
   data: Array<DataPoint>;
+  label: string;
   verticalContentInset?: { top: number; bottom: number };
   xAxisHeight?: number;
   width: DimensionValue;
@@ -23,6 +25,7 @@ interface AxesExampleProps {
 
 const AxesExample: React.FC<AxesExampleProps> = ({
   data,
+  label,
   verticalContentInset = { top: 10, bottom: 10 },
   xAxisHeight = 30,
   width,
@@ -52,6 +55,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 
   return (
     <View style={styles.container}>
+      <Text>{label}</Text>
       <YAxis
         data={data.map((item) => item.value)}
         style={styles.yAxis}
@@ -94,7 +98,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: 300,
-    padding: 20,
+    //padding: 20,
     flexDirection: "row",
   },
   yAxis: {
