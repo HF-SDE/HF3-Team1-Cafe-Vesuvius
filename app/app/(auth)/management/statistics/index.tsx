@@ -16,13 +16,9 @@ import LoadingPage from "@/components/LoadingPage";
 import TemplateLayout from "@/components/TemplateLayout";
 
 import LineChartCustom from "@/components/LineChart";
+import PieChartCustom from "@/components/PieChart";
+import BarChartCustom from "@/components/BarChart";
 
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-} from "react-native-chart-kit";
 import { useState, useMemo } from "react";
 
 export default function StatsPage() {
@@ -31,38 +27,9 @@ export default function StatsPage() {
   const { width } = useWindowDimensions();
   const chartOffset = 100;
   const data = [
-    { value: 10, name: "Jan 2024" },
-    { value: 30, name: "Feb 2024" },
-    { value: 15, name: "Mar 2024" },
-
-    { value: 54, name: "Apr 2024" },
-    { value: 78, name: "Maj 2024" },
-    { value: 34, name: "Jun 2024" },
-    { value: 56, name: "Jul 2024" },
-    { value: 86, name: "Aug 2024" },
-    { value: 43, name: "Sep 2024" },
-    { value: 21, name: "Ock 2024" },
-    { value: 9, name: "Nov 2024" },
-    { value: 54, name: "Dec 2024" },
-    // more data
+    { value: 20, label: "Unused tables", color: theme.secondary },
+    { value: 80, label: "Used tables", color: theme.primary },
   ];
-
-  const chartConfig = {
-    backgroundColor: theme.primary,
-    backgroundGradientFrom: theme.background,
-    backgroundGradientTo: theme.background,
-    decimalPlaces: 2,
-    color: (opacity = 1) => theme.primary,
-    labelcolor: (opacity = 1) => theme.primary,
-    style: {
-      borderRadius: 16,
-    },
-    propsForDots: {
-      r: "6",
-      strokeWidth: "2",
-      stroke: theme.primary,
-    },
-  };
 
   // Use the useStats hook directly
   const { stats, isLoading, error, refreshStats } = useStats();
@@ -96,55 +63,27 @@ export default function StatsPage() {
   const barChartLowest = useMemo(() => {
     const orderedStats = stats?.menuItems?.orderedStats || [];
 
-    const bottom10Stats = [...orderedStats]
+    const bottomStats = [...orderedStats]
       .sort((a, b) => a.count - b.count)
       .slice(0, 5);
 
-    return {
-      labels: bottom10Stats.map((item) => item.name), // Use 'name' for the labels
-      datasets: [
-        {
-          data: bottom10Stats.map((item) => item.count), // Use 'count' for the data values
-        },
-      ],
-    };
+    return bottomStats.map((item) => ({
+      value: item.count,
+      name: item.name,
+    }));
   }, [stats]);
   const barChartHighest = useMemo(() => {
     const orderedStats = stats?.menuItems?.orderedStats || [];
 
-    const top10Stats = [...orderedStats]
+    const topStats = [...orderedStats]
       .sort((a, b) => b.count - a.count)
       .slice(0, 5);
 
-    return {
-      labels: top10Stats.map((item) => item.name), // Use 'name' for the labels
-      datasets: [
-        {
-          data: top10Stats.map((item) => item.count), // Use 'count' for the data values
-        },
-      ],
-    };
+    return topStats.map((item) => ({
+      value: item.count,
+      name: item.name,
+    }));
   }, [stats]);
-
-  const pieData = useMemo(
-    () => [
-      {
-        name: "Used tables",
-        population: 20,
-        color: theme.secondary,
-        legendFontColor: theme.secondary,
-        legendFontSize: 12,
-      },
-      {
-        name: "Unused tables",
-        population: 80,
-        color: theme.primary,
-        legendFontColor: theme.primary,
-        legendFontSize: 12,
-      },
-    ],
-    []
-  );
 
   if (error) {
     return (
@@ -158,17 +97,6 @@ export default function StatsPage() {
     );
   }
   console.log(stats);
-
-  const renderItem = ({ item }: { item: any }) => (
-    <View style={[styles.lowStockItem, { borderColor: theme.primary }]}>
-      <Text style={[styles.lowStockItemName, { color: theme.primary }]}>
-        {item.name}
-      </Text>
-      <Text style={[styles.lowStockItemQuantity, { color: theme.primary }]}>
-        Quantity: {item.quantity} {item.unit} ⚠️
-      </Text>
-    </View>
-  );
 
   return (
     <TemplateLayout pageName="StatsPage" title="Statistics">
@@ -222,7 +150,7 @@ export default function StatsPage() {
           </View>
 
           <View style={[styles.statItem]}>
-            <LineChartCustom data={lineChartData} width={width - 100} />
+            <LineChartCustom data={lineChartData} width={width - chartOffset} />
           </View>
           <View
             style={[
@@ -296,16 +224,7 @@ export default function StatsPage() {
             </View>
 
             <View style={styles.statItem}>
-              <PieChart
-                data={pieData}
-                width={width - chartOffset}
-                height={220}
-                chartConfig={chartConfig}
-                accessor={"population"}
-                backgroundColor={"transparent"}
-                paddingLeft={"15"}
-                style={styles.chart}
-              />
+              <PieChartCustom data={data} width={width - chartOffset} />
             </View>
           </View>
 
@@ -324,27 +243,15 @@ export default function StatsPage() {
             </View>
 
             <View style={styles.statItem}>
-              <BarChart
+              <BarChartCustom
                 data={barChartHighest}
-                width={width - chartOffset} // Dynamically calculate width
-                height={220}
-                chartConfig={chartConfig}
-                style={styles.chart}
-                yAxisLabel=""
-                yAxisSuffix=""
-                verticalLabelRotation={30}
+                width={width - chartOffset}
               />
             </View>
             <View style={styles.statItem}>
-              <BarChart
+              <BarChartCustom
                 data={barChartLowest}
-                width={width - chartOffset} // Dynamically calculate width
-                height={220}
-                chartConfig={chartConfig}
-                style={styles.chart}
-                yAxisLabel=""
-                yAxisSuffix=""
-                verticalLabelRotation={30}
+                width={width - chartOffset}
               />
             </View>
           </View>
