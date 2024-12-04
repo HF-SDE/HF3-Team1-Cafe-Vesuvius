@@ -1,7 +1,5 @@
 import React from "react";
-import { Grid, LineChart, XAxis, YAxis } from "react-native-svg-charts";
-import { curveMonotoneX } from "d3-shape";
-import { Circle } from "react-native-svg";
+import { Grid, BarChart, XAxis, YAxis } from "react-native-svg-charts";
 import { View, StyleSheet, DimensionValue } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
@@ -10,28 +8,6 @@ interface DecoratorProps {
   y: (arg: number) => number;
   data: number[];
 }
-
-export const Dots = (props: Partial<DecoratorProps>) => {
-  const theme = useThemeColor();
-
-  const { x, y, data } = props;
-  const defaultFn = (value: any) => value;
-
-  return (
-    <>
-      {data?.map((value, index) => (
-        <Circle
-          key={index}
-          cx={(x ?? defaultFn)(index)}
-          cy={(y ?? defaultFn)(value)}
-          r={6}
-          stroke={"rgb(0, 0, 0)"}
-          fill={theme.primary}
-        />
-      ))}
-    </>
-  );
-};
 
 interface DataPoint {
   value: number;
@@ -64,28 +40,26 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         svg={axesSvg}
       />
       <View style={[styles.chartContainer, { maxWidth: width }]}>
-        <LineChart
+        <BarChart
           style={styles.chart}
           data={data.map((item) => item.value)}
           contentInset={verticalContentInset}
-          svg={{ stroke: theme.primary, strokeWidth: 2 }}
-          curve={curveMonotoneX}
+          svg={{ fill: theme.primary }} // Set the bar color
         >
           <Grid
             svg={{ stroke: theme.primary, strokeWidth: 0.5 }}
             style={{ width: 200 }}
           />
-          <Dots />
-        </LineChart>
+        </BarChart>
         <XAxis
           style={[styles.xAxis, { height: xAxisHeight }]}
-          data={data.map((item, index) => index)}
+          data={data.map((item) => item.name)}
           formatLabel={(index: number) => data[index].name}
-          contentInset={{ left: 40, right: 20 }}
+          contentInset={{ left: 60, right: 80 }}
           svg={{
             ...axesSvg,
-            rotation: 30,
-            y: 15,
+            rotation: 10, // Rotating by 30 degrees
+            y: 10,
           }}
         />
       </View>
