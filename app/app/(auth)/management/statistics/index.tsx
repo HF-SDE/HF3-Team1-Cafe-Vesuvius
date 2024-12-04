@@ -319,6 +319,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     justifyContent: "center",
+    padding: 20,
   },
   chart: {
     borderRadius: 16,
