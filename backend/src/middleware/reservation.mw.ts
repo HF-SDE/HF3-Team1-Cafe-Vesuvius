@@ -45,7 +45,7 @@ export async function manageTables(
     const validTables = await checkValidSeatability(tableIds, req.body.amount);
 
     if (validTables.err) {
-      res.status(400).json({
+      res.status(403).json({
         status: Status.CreationFailed,
         message: validTables.message,
       });

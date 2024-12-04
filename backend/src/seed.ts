@@ -858,7 +858,7 @@ async function generateMongo() {
     { name: 'Gin Tonic', price: 85 },
     { name: 'Moscow Mule', price: 85 },
     { name: 'Strawberry Daiquiri', price: 85 },
-    { name: 'Gin Hass', price: 85 },
+    //{ name: 'Gin Hass', price: 85 },
   ];
 
   // Use today's date as the start date
@@ -970,7 +970,7 @@ async function generateMongo() {
       }
 
       // Generate a random number of reservations (2-5 per day)
-      const reservationCount = Math.floor(Math.random() * 4) + 2;
+      const reservationCount = Math.floor(Math.random() * 21) + 10;
 
       for (let i = 0; i < reservationCount; i++) {
         // Generate random party size (1-10 people)

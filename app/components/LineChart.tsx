@@ -80,6 +80,8 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     fontFamily: "SpaceMono-Regular", // Use the custom font
   };
 
+  const horizontalContentInset = { left: 6, right: 6 }; // Adjusted insets
+
   return (
     <View style={styles.container}>
       <YAxis
@@ -92,7 +94,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         <LineChart
           style={styles.chart}
           data={data.map((item) => item.value)}
-          contentInset={verticalContentInset}
+          contentInset={{ ...verticalContentInset, ...horizontalContentInset }}
           svg={{ stroke: theme.primary, strokeWidth: 2 }}
           curve={curveMonotoneX}
         >
