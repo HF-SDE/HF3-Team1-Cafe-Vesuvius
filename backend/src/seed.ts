@@ -934,7 +934,6 @@ async function generateMongo() {
   /**
    * Generates a random hexadecimal string within the given range.
    * Assumes the range is inclusive.
-   *
    * @param {string} start - The start of the hexadecimal range (inclusive).
    * @param {string} end - The end of the hexadecimal range (inclusive).
    * @returns {string} - A random hexadecimal string within the specified range.
