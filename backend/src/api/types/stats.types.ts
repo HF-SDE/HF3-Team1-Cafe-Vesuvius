@@ -20,6 +20,7 @@ interface ReservationStats {
   total: number;
   today: number;
   upcoming: number;
+  tableUtilizationPercentage: number;
 }
 
 /**

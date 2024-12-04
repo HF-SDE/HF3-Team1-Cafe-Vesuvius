@@ -37,8 +37,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       ordersForToday.some((order) => order.id === item.orderId),
     );
 
-    console.log(orderMenuItemsForToday);
-
     // Calculate total sales for all orders
     const salesTotal = orderMenuItems.reduce(
       (sum, item) => sum + item.menuItemPrice * item.quantity,
@@ -54,6 +52,87 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
     const ordersTotal = await prisma.order.count();
     const ordersToday = ordersForToday.length;
 
+    // Fetch reservations that are older than today's date (not future reservations)
+    const pastReservations = await prisma.reservation.findMany({
+      where: {
+        reservationTime: {
+          lt: startOfDay, // Only consider past reservations
+        },
+      },
+      select: {
+        reservationTime: true,
+        tableIds: true, // Assuming 'tables' is a relation field for the reserved tables
+      },
+    });
+
+    const reservationsGroupedByDays: {
+      [key: string]: {
+        date: Date;
+        reservations: { reservationTime: Date; tableIds: string[] }[];
+      };
+    } = {};
+
+    for (const reservation of pastReservations) {
+      const dayKey = reservation.reservationTime.toISOString().split('T')[0]; // Extracts the date part (YYYY-MM-DD)
+
+      // If the group for the day does not exist, create it
+      if (!reservationsGroupedByDays[dayKey]) {
+        reservationsGroupedByDays[dayKey] = {
+          date: new Date(reservation.reservationTime),
+          reservations: [],
+        };
+      }
+
+      // Add the reservation to the respective day's group
+      reservationsGroupedByDays[dayKey].reservations.push({
+        reservationTime: reservation.reservationTime,
+        tableIds: reservation.tableIds,
+      });
+    }
+
+    const dailyUtilizationPercentages: number[] = [];
+
+    const totalTables = await prisma.table.count();
+
+    const totalTimeUnitsPossible = totalTables * 12;
+
+    // Iterate over each group of reservations by day
+    for (const group of Object.values(reservationsGroupedByDays)) {
+      const totalTimeUnitsUsed = group.reservations.reduce(
+        (sum, reservation) => sum + reservation.tableIds.length * 3,
+        0,
+      );
+
+      const percentageForDay =
+        (totalTimeUnitsUsed / totalTimeUnitsPossible) * 100;
+      // for (const reservation of group.reservations) {
+      //   const dayStart = new Date(reservation.reservationTime);
+      //   dayStart.setHours(0, 0, 0, 0); // Set the time to the start of the day
+      //   const dayEnd = new Date(reservation.reservationTime);
+      //   dayEnd.setHours(23, 59, 59, 999); // Set the time to the end of the day
+
+      //   // Fetch the total tables available for this day
+
+      //   // Fetch the number of unique tables reserved for this specific day
+      //   const tablesUsed = reservation.tableIds.length;
+
+      //   // Calculate the table utilization percentage for this day
+      //   const utilizationPercentage = (tablesUsed / totalTables) * 100;
+
+      //   // Add to the daily utilization array
+      // }
+      dailyUtilizationPercentages.push(percentageForDay);
+    }
+
+    console.log(dailyUtilizationPercentages);
+
+    // Step 2: Calculate the average table utilization percentage
+    const averageUtilizationPercentage =
+      dailyUtilizationPercentages.length > 0
+        ? dailyUtilizationPercentages.reduce((acc, curr) => acc + curr, 0) /
+          dailyUtilizationPercentages.length
+        : 0;
+
     const totalReservations = await prisma.reservation.count();
     const todayReservations = await prisma.reservation.count({
       where: {
@@ -63,7 +142,14 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
         },
       },
     });
-    const upcomingReservations = totalReservations - todayReservations;
+    const upcomingReservations = await prisma.reservation.count({
+      where: {
+        reservationTime: {
+          gte: new Date(new Date().setHours(23, 59, 59, 999)),
+        },
+      },
+    });
+    //const upcomingReservations = totalReservations - todayReservations;
 
     const salesByMonth = await prisma.order.findMany({
       select: {
@@ -106,7 +192,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       reservations: totalReservations,
     }));
 
-    const MenuItemsCount = await prisma.menuItem.count();
     const orderedItems = await prisma.order_Menu.groupBy({
       by: ['menuItemId'],
       _count: {
@@ -120,20 +205,18 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
     });
 
     // Step 2: Fetch related data from the 'MenuItem' model based on menuItemId
-    const menuItems = await prisma.menuItem.findMany({
-      where: {
-        id: {
-          in: orderedItems.map((item) => item.menuItemId),
-        },
-      },
-    });
+    const menuItems = await prisma.menuItem.findMany();
 
     // Combine the data
-    const orderedItemsWithMenuInfo = orderedItems.map((item) => {
-      const menuItem = menuItems.find((menu) => menu.id === item.menuItemId);
+    const orderedItemsWithMenuInfo = menuItems.map((item) => {
+      //const menuItem = menuItems.find((menu) => menu.id === item.menuItemId);
+      const count: number =
+        orderedItems.find((orderline) => orderline.menuItemId === item.id)
+          ?._count.id || 0;
+
       return {
-        ...item,
-        menuItemName: menuItem ? menuItem.name : null, // Include any other fields you need from menuItem
+        count,
+        menuItemName: item ? item.name : null, // Include any other fields you need from menuItem
       };
     });
 
@@ -156,6 +239,9 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
         total: totalReservations,
         today: todayReservations,
         upcoming: upcomingReservations,
+        tableUtilizationPercentage: parseFloat(
+          averageUtilizationPercentage.toFixed(2),
+        ),
       },
       orders: {
         ordersTotal: ordersTotal,
@@ -169,7 +255,7 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
         total: orderedItemsWithMenuInfo.length, // MenuItemsCount
         orderedStats: orderedItemsWithMenuInfo.map((item) => ({
           name: item.menuItemName as string,
-          count: item._count.id,
+          count: item.count,
         })),
       },
       rawMaterials: {
