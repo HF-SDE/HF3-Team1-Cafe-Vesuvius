@@ -931,6 +931,87 @@ async function generateMongo() {
     }
   }
 
+  /**
+   * Generates a random hexadecimal string within the given range.
+   * Assumes the range is inclusive.
+   *
+   * @param {string} start - The start of the hexadecimal range (inclusive).
+   * @param {string} end - The end of the hexadecimal range (inclusive).
+   * @returns {string} - A random hexadecimal string within the specified range.
+   */
+  function generateHexBetween(start: string, end: string): string {
+    const startNum = BigInt(`0x${start}`);
+    const endNum = BigInt(`0x${end}`);
+    const randomNum =
+      startNum +
+      BigInt(Math.floor(Math.random() * Number(endNum - startNum + BigInt(1))));
+    return randomNum.toString(16);
+  }
+
+  /**
+   * Seed reservations into the database.
+   * This function creates 2-5 reservations per day for the past 200 days.
+   */
+  async function seedReservations(): Promise<void> {
+    const today = new Date();
+    const totalDays = 250; // 200 past days + 50 future days
+    const pastDays = 200; // Number of days in the past
+    const tableIdRangeStart = '674ef570a216f785d048b7a0'; // First table ID
+    const tableIdRangeEnd = '674ef570a216f785d048b7bb'; // Last table ID
+
+    for (let day = 0; day < totalDays; day++) {
+      const date = new Date(today);
+
+      if (day < pastDays) {
+        // Create reservations for the past 200 days
+        date.setDate(today.getDate() - (pastDays - day));
+      } else {
+        // Create reservations for the next 50 days
+        date.setDate(today.getDate() + (day - pastDays));
+      }
+
+      // Generate a random number of reservations (2-5 per day)
+      const reservationCount = Math.floor(Math.random() * 4) + 2;
+
+      for (let i = 0; i < reservationCount; i++) {
+        // Generate random party size (1-10 people)
+        const amount = Math.floor(Math.random() * 10) + 1;
+
+        // Calculate number of tables required (1 table for every 2 people)
+        const tableCount = Math.ceil(amount / 2);
+
+        // Generate unique table IDs within the specified range
+        const selectedTableIds = Array.from({ length: tableCount }, () =>
+          generateHexBetween(tableIdRangeStart, tableIdRangeEnd),
+        );
+
+        // Generate random data for the reservation
+        const name = `Guest-${generateHexId().slice(0, 6)}`; // Randomized guest name
+        const email = `${name.toLowerCase()}@example.com`; // Corresponding email
+        const phone = `+12345678${Math.floor(Math.random() * 9000) + 1000}`; // Random phone number
+        const reservationTime = new Date(date); // Use the generated date
+        reservationTime.setHours(Math.floor(Math.random() * 12) + 10); // Random time (10 AM - 9 PM)
+
+        // Create the reservation
+        await prisma.reservation.create({
+          data: {
+            amount,
+            name,
+            email,
+            phone,
+            reservationTime,
+            tableIds: selectedTableIds, // Use generated table IDs
+          },
+        });
+      }
+    }
+  }
+
+  // Call the seedReservations function
+  seedReservations().catch((error) => {
+    console.error('Error seeding reservations:', error);
+  });
+
   // Invoke the seedData function
   seedData().catch((error) => {
     console.error('Error seeding data:', error);
