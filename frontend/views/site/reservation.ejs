@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Vesuvius menu card." />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <%- include('../partials/topNav'); %>
+    <div class="menu-container">
+      <h1><%= title %></h1>
+
+      <div class="container-fluid py-5">
+        <div class="container">
+          <div class="reservation position-relative overlay-top overlay-bottom">
+            <div class="row align-items-center">
+              <div class="col-lg-6 my-5 my-lg-0">
+                <div class="p-5">
+                  <div class="mb-4">
+                    <h1 class="display-3 text-primary">Online Reservation</h1>
+                  </div>
+                  <p class="text-secondary">
+                    Skip the wait and secure your spot with our easy online table reservations!
+                    Book anytime, get instant confirmation, and enjoy a hassle-free dining experience. 
+                    Your perfect table is just a click away!
+                  </p>
+                  <ul class="list-inline text-secondary m-0">
+                    <li class="py-2">
+                      <i class="fa fa-check text-primary mr-3"></i>Convenience: Book anytime, anywhere without needing to call the restaurant
+                    </li>
+                    <li class="py-2">
+                      <i class="fa fa-check text-primary mr-3"></i>Guaranteed Availability: Ensure a table is ready, especially during peak hours or busy days.
+                    </li>
+                    <li class="py-2">
+                      <i class="fa fa-check text-primary mr-3"></i>Plan Ahead: Coordinate with friends or family knowing your reservation is secured.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div
+                  class="text-center p-5"
+                  style="background: rgba(51, 33, 29, 0.8)"
+                >
+                  <h1 class="text-secondary mb-4 mt-5">Book Your Table</h1>
+                  <form class="mb-5">
+                    <div class="form-group">
+                      <input
+                        type="text"
+                        class="form-control bg-transparent border-primary p-4"
+                        placeholder="Name"
+                        required="required"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <input
+                        type="email"
+                        class="form-control bg-transparent border-primary p-4"
+                        placeholder="Email"
+                        required="required"
+                      />
+                    </div>
+                    <div class="form-group">
+                      <input
+                        type="datetime-local"
+                        class="form-control bg-transparent border-primary p-4"
+                        placeholder="Date"
+                        required="required"
+                      />
+                    </div>
+                    <input
+                      type="number"
+                      class="form-control bg-transparent border-primary p-4"
+                      placeholder="Persons"
+                      required="required"
+                    />
+
+                    <div>
+                      <button
+                        class="btn btn-primary btn-block font-weight-bold py-3"
+                        type="submit"
+                      >
+                        Book Now
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

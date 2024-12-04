@@ -41,4 +41,12 @@ router.get("/", async (req, res, next) => {
   });
 });
 
+/* GET . */
+router.get("/reservation", async (req, res, next) => {
+
+  res.render("site/reservation", {
+    title: "Reservation",
+  });
+});
+
 export default router;
