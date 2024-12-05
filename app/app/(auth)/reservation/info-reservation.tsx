@@ -84,7 +84,7 @@ export default function InfoReservationModal({
 const styles = StyleSheet.create({
   dateTimePicker: {
     position: "absolute",
-    backgroundColor: "white",
+    // backgroundColor: "white",
     zIndex: 2,
     borderRadius: 20,
     padding: 10,
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(249, 180, 45, 0.25)",
     borderWidth: 1.5,
-    borderColor: "#fff",
+    // borderColor: "#fff",
   },
   itemDisabled: {
     flex: 1,
