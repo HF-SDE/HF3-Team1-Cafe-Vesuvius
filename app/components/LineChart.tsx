@@ -184,6 +184,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 16,
+    flexWrap: "wrap",
+    alignItems: "center",
   },
   yearButton: {
     marginHorizontal: 8,

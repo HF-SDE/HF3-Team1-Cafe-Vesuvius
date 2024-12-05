@@ -37,12 +37,12 @@ export default function StatsPage() {
 
   const data = [
     {
-      value: stats?.reservations.tableUtilizationPercentage,
+      value: stats?.reservations.tableUtilizationPercentage ?? 0, // Default to 0 if undefined
       text: "Used tables",
       color: theme.primary,
     },
     {
-      value: 100 - Number(stats?.reservations.tableUtilizationPercentage),
+      value: 100 - Number(stats?.reservations.tableUtilizationPercentage ?? 0), // Default to 0 if undefined
       text: "Unused tables",
       color: theme.secondary,
     },

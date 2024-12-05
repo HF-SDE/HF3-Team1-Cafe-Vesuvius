@@ -84,7 +84,6 @@ const AxesExample: React.FC<AxesExampleProps> = ({
             fontSize: 10,
             fontFamily: "SpaceMono-Regular",
           }}
-          yAxisLabelTexts={chartData.map((item) => `${item.value}`)}
           xAxisLabelTexts={chartData.map((item) => item.label)}
           showValuesAsTopLabel
           rotateLabel
