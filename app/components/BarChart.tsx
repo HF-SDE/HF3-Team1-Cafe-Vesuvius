@@ -1,5 +1,12 @@
-import React from "react";
-import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import React, { useState } from "react";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Text,
+  Modal,
+  Pressable,
+} from "react-native";
 import { BarChart } from "react-native-gifted-charts";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
@@ -21,10 +28,11 @@ const AxesExample: React.FC<AxesExampleProps> = ({
   data,
   label,
   verticalContentInset = { top: 10, bottom: 10 },
-  xAxisHeight = 70,
+  xAxisHeight = 30,
   width,
 }) => {
   const theme = useThemeColor();
+  const [selectedData, setSelectedData] = useState<DataPoint | null>(null);
 
   // Load custom font
   const [fontsLoaded] = useFonts({
@@ -45,7 +53,11 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     value: item.value,
     label: item.name,
     frontColor: theme.primary,
+    onPress: () => setSelectedData(item), // Show modal on press
   }));
+
+  const containerPadding = 20;
+  const chartWidth = width - 2 * containerPadding;
 
   return (
     <View style={styles.container}>
@@ -54,8 +66,9 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         <BarChart
           data={chartData}
           noOfSections={4}
-          width={500}
-          parentWidth={500}
+          width={chartWidth}
+          barWidth={(chartWidth * 0.75) / chartData.length}
+          spacing={(chartWidth * 0.2) / chartData.length}
           barBorderRadius={4}
           xAxisThickness={1}
           yAxisThickness={1}
@@ -75,13 +88,38 @@ const AxesExample: React.FC<AxesExampleProps> = ({
           xAxisLabelTexts={chartData.map((item) => item.label)}
           showValuesAsTopLabel
           rotateLabel
-          spacing={20}
           disableScroll={true}
-          disablePress
-          labelsExtraHeight={80}
-          labelWidth={80}
+          topLabelTextStyle={{
+            color: theme.text,
+            fontSize: 12,
+            fontFamily: "SpaceMono-Regular",
+          }}
         />
       </View>
+
+      {/* Modal for displaying full name */}
+      {selectedData && (
+        <Modal
+          animationType="none"
+          transparent={true}
+          visible={!!selectedData}
+          onRequestClose={() => setSelectedData(null)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={[styles.modalText, { color: theme.text }]}>
+                {selectedData.name}
+              </Text>
+              <Pressable
+                style={[styles.closeButton, { backgroundColor: theme.primary }]}
+                onPress={() => setSelectedData(null)}
+              >
+                <Text style={{ color: theme.text }}>Close</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -89,8 +127,9 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 const styles = StyleSheet.create({
   container: {
     height: 300,
-    justifyContent: "center",
-    alignItems: "center",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
+    width: "100%",
   },
   chartContainer: {
     marginTop: 10,
@@ -99,10 +138,32 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     marginBottom: 10,
+    alignSelf: "flex-start",
   },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalContent: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 10,
+  },
+  closeButton: {
+    padding: 10,
+    borderRadius: 5,
     alignItems: "center",
   },
 });

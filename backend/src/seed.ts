@@ -878,7 +878,7 @@ async function generateMongo() {
    * This function creates orders and associated menu items for the past 50 days.
    */
   async function seedData() {
-    for (let day = 0; day < 200; day++) {
+    for (let day = 0; day < 1200; day++) {
       const date = new Date(startDate); // Copy the startDate
       date.setDate(startDate.getDate() - day); // Decrease date by 'day'
 

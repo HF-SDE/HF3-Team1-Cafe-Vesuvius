@@ -157,11 +157,14 @@ export default function StatsPage() {
                 </View>
               </View>
             </View>
+            <View style={[styles.statItem, { paddingHorizontal: 0 }]}>
+              <LineChartCustom
+                data={lineChartData}
+                width={width - chartOffset}
+              />
+            </View>
           </View>
 
-          <View style={[styles.statItem, { paddingHorizontal: 0 }]}>
-            <LineChartCustom data={lineChartData} width={width - chartOffset} />
-          </View>
           <View
             style={[
               styles.sectionContainer,

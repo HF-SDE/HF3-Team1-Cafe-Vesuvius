@@ -1,6 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import { LineChart } from "react-native-gifted-charts";
-import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
 
@@ -28,6 +34,14 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
   });
 
+  // Extract unique years and find the newest year
+  const uniqueYears = Array.from(new Set(data.map((item) => item.year))).sort(
+    (a, b) => Number(b) - Number(a)
+  );
+  const newestYear = uniqueYears[0];
+
+  const [selectedYear, setSelectedYear] = useState<string>(newestYear);
+
   // Display a loading indicator while the font is loading
   if (!fontsLoaded) {
     return (
@@ -37,26 +51,65 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     );
   }
 
-  // Prepare data for GiftedCharts
-  const chartData = data.map((item) => ({
-    value: item.value,
-    label: item.name,
-  }));
+  // Filter data for the selected year
+  const filteredData = data
+    .filter((item) => item.year === selectedYear)
+    .map((item) => ({
+      value: item.value,
+      label: item.name,
+      year: item.year,
+    }));
+
+  const containerPadding = 20;
+  const chartWidth = width - 2 * containerPadding;
 
   return (
-    <View style={[styles.container, { width: "100%" }]}>
+    <View
+      style={[
+        styles.container,
+        { width: "100%", paddingHorizontal: containerPadding },
+      ]}
+    >
+      {/* Year Selection */}
+      <View style={styles.yearSelector}>
+        {uniqueYears.reverse().map((year) => (
+          <TouchableOpacity
+            key={year}
+            onPress={() => setSelectedYear(year)}
+            style={[
+              styles.yearButton,
+              selectedYear === year && { backgroundColor: theme.primary },
+              { borderColor: theme.primary },
+            ]}
+          >
+            <Text
+              style={[
+                styles.yearText,
+                {
+                  color: selectedYear === year ? theme.accent : theme.text,
+                },
+              ]}
+            >
+              {year}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       <LineChart
-        data={chartData}
+        data={filteredData}
         height={height}
         isAnimated
-        //adjustToWidth // HERE
+        width={chartWidth}
+        spacing={chartWidth / (filteredData.length - 0.2 || 1)}
         dashWidth={1}
         dashGap={15}
         showVerticalLines
         verticalLinesUptoDataPoint
         dataPointsColor1={theme.primary}
         dataPointsRadius1={6}
-        curved={true}
+        curved
+        rotateLabel
         color={theme.primary}
         xAxisColor={theme.primary}
         yAxisColor={theme.primary}
@@ -74,27 +127,39 @@ const AxesExample: React.FC<AxesExampleProps> = ({
           pointerStripUptoDataPoint: true,
           autoAdjustPointerLabelPosition: true,
           showPointerStrip: false,
-
-          pointerColor: "lightgray",
+          pointerColor: theme.accent,
           radius: 4,
           pointerLabelWidth: 100,
           pointerLabelHeight: 120,
+
           pointerLabelComponent: (items: any) => {
             return (
               <View
                 style={{
                   height: 40,
                   width: 100,
-                  backgroundColor: "#282C3E",
+                  backgroundColor: theme.accent,
                   borderRadius: 4,
                   justifyContent: "center",
                   paddingLeft: 16,
                 }}
               >
-                <Text style={{ color: "lightgray", fontSize: 12 }}>
-                  {"TEST"}
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontSize: 12,
+                    fontFamily: "SpaceMono-Regular",
+                  }}
+                >
+                  {items[0].label} {items[0].year}
                 </Text>
-                <Text style={{ color: "white", fontWeight: "bold" }}>
+                <Text
+                  style={{
+                    color: theme.text,
+                    fontWeight: "bold",
+                    fontFamily: "SpaceMono-Regular",
+                  }}
+                >
                   {items[0].value}
                 </Text>
               </View>
@@ -113,7 +178,21 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-
+  yearSelector: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  yearButton: {
+    marginHorizontal: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 4,
+    borderWidth: 2,
+  },
+  yearText: {
+    fontSize: 14,
+  },
   loadingContainer: {
     flex: 1,
     justifyContent: "center",

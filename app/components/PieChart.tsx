@@ -82,7 +82,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
               }}
             >
               {renderDot(item.color)}
-              <Text style={{ color: "white" }}>
+              <Text style={{ color: theme.text }}>
                 {item.text}: {((item.value / totalValue) * 100).toFixed(0)}%
               </Text>
             </View>
