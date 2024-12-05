@@ -190,7 +190,7 @@ const styles = StyleSheet.create({
   yearButton: {
     marginHorizontal: 8,
     paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingHorizontal: 12,
     borderRadius: 4,
     borderWidth: 2,
   },
