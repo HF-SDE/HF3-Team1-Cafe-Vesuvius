@@ -81,7 +81,7 @@ export default function ManageUsersPage() {
   );
 
   return (
-    <TemplateLayout pageName="MenuPage" title="Menu">
+    <TemplateLayout pageName="MenuPage" title="Menu" error={error}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         <SearchBar
           value={searchQuery}
@@ -92,8 +92,6 @@ export default function ManageUsersPage() {
         />
         {isLoading ? (
           <LoadingPage />
-        ) : error ? (
-          <Text style={[styles.errorText, { color: theme.text }]}>{error}</Text>
         ) : (
           <FlatList
             data={filteredMenu}

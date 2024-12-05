@@ -21,7 +21,7 @@ export function usePermissions() {
 
         setPermissions(response.data.data);
       } catch (err: any) {
-        setError("Failed to load permissions");
+        setError(err.code || "Failed to load permissions");
       } finally {
         setIsLoading(false);
       }

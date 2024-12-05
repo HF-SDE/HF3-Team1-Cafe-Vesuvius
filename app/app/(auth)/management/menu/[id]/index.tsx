@@ -214,11 +214,10 @@ export default function EditCreateUserPage() {
       pageName="ManagementPage"
       title={id !== "new" ? "Edit Menu Item" : "Create Menu Item"}
       buttonTitle="Cancel"
+      error={error}
     >
       {isLoading ? (
         <LoadingPage />
-      ) : error ? (
-        <Text style={[styles.errorText, { color: theme.text }]}>{error}</Text>
       ) : (
         <View style={styles.container}>
           <View>

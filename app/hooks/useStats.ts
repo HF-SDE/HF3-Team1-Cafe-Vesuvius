@@ -17,7 +17,7 @@ export function useStats() {
 
       setStats(response.data.data);
     } catch (err: any) {
-      setError("Failed to load stats");
+      setError(err.code || "Failed to load stats");
     } finally {
       setIsLoading(false);
     }

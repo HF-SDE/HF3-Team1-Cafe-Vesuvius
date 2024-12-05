@@ -21,7 +21,7 @@ export function useStock(id?: string | string[]) {
     } catch (err: any) {
       console.log(err);
 
-      setError("Failed to load stock");
+      setError(err.code || "Failed to load stock");
     } finally {
       setIsLoading(false);
     }
@@ -38,7 +38,7 @@ export function useStock(id?: string | string[]) {
         await fetchStock();
       }
     } catch (err: any) {
-      setError("Failed to create stock");
+      setError(err.code || "Failed to create stock");
     }
   };
 
@@ -66,7 +66,7 @@ export function useStock(id?: string | string[]) {
         );
       }
     } catch (err: any) {
-      setError("Failed to update stock");
+      setError(err.code || "Failed to update stock");
     }
   };
   const deleteStock = async (deleteStock: StockItemModel) => {
@@ -80,7 +80,7 @@ export function useStock(id?: string | string[]) {
           prevStock?.filter((item) => item.id !== deleteStock.id) ?? null
       );
     } catch (err: any) {
-      setError("Failed to update stock");
+      setError(err.code || "Failed to delete stock");
     }
   };
 

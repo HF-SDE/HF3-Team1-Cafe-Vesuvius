@@ -12,10 +12,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useNavigation } from "@react-navigation/native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useStats } from "@/hooks/useStats";
+
 import LoadingPage from "@/components/LoadingPage";
-
 import TemplateLayout from "@/components/TemplateLayout";
-
 import LineChartCustom from "@/components/LineChart";
 import PieChartCustom from "@/components/PieChart";
 import BarChartCustom from "@/components/BarChart";
@@ -99,25 +98,10 @@ export default function StatsPage() {
     }));
   }, [stats]);
 
-  if (error) {
-    return (
-      <TemplateLayout pageName="StatsPage" title="Statistics">
-        <View style={styles.container}>
-          <View style={styles.statItem}>
-            <Text>{error}</Text>
-          </View>
-        </View>
-      </TemplateLayout>
-    );
-  }
-  console.log(stats);
-
   return (
-    <TemplateLayout pageName="StatsPage" title="Statistics">
+    <TemplateLayout pageName="StatsPage" title="Statistics" error={error}>
       {isLoading ? (
         <LoadingPage />
-      ) : error ? (
-        <Text style={[styles.errorText, { color: theme.text }]}>{error}</Text>
       ) : (
         <ScrollView
           contentContainerStyle={styles.container}

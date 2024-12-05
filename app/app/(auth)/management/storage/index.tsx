@@ -398,9 +398,10 @@ export default function ManageUsersPage() {
   const animationIsRunning = useRef(false);
 
   const onSwipeValueChange = (swipeData: any) => {};
+  console.log(error);
 
   return (
-    <TemplateLayout pageName="StockPage" title="Storage">
+    <TemplateLayout pageName="StockPage" title="Storage" error={error}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         <SearchBar
           //searchQuery={searchQuery}
@@ -424,10 +425,6 @@ export default function ManageUsersPage() {
 
         {isLoading ? (
           <LoadingPage />
-        ) : error ? (
-          <Text style={[styles.errorText, { color: theme.text }]}>
-            Something went wrong!
-          </Text>
         ) : (
           <SwipeListView
             data={paginatedData}
@@ -473,6 +470,7 @@ export default function ManageUsersPage() {
           />
         )}
       </View>
+
       <Modal
         animationType="none"
         transparent={true}

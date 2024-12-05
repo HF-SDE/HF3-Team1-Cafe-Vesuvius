@@ -128,6 +128,7 @@ export default function EditCreateUserPage() {
       pageName="ManagementPage"
       title={id !== "new" ? "Edit User" : "Create User"}
       buttonTitle="Cancel"
+      error={error}
     >
       <View style={styles.container}>
         <TextInput
