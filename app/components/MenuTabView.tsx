@@ -71,7 +71,9 @@ const MenuTabView = React.memo(
             <View
               style={[styles.categoryItem, { backgroundColor: theme.primary }]}
             >
-              <Text style={styles.categoryText}>{item}</Text>
+              <Text style={[styles.categoryText, { color: theme.background }]}>
+                {item}
+              </Text>
               <TouchableOpacity onPress={() => onDeleteCategory(item)}>
                 <FontAwesome6
                   name="trash-alt"

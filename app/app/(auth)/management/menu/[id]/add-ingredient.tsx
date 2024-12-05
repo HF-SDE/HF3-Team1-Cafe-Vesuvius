@@ -76,16 +76,16 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <View style={[styles.modalContent]}>
-        <Text style={[styles.title, { color: theme.text }]}>
-          Add New Ingredient
-        </Text>
-        <SearchBar
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-          placeholder="Search for menu"
-        />
-        <KeyboardAvoidingView>
+      <KeyboardAvoidingView>
+        <View style={[styles.modalContent]}>
+          <Text style={[styles.title, { color: theme.text }]}>
+            Add New Ingredient
+          </Text>
+          <SearchBar
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            placeholder="Search for menu"
+          />
           <FlatList
             data={filteredStock}
             renderItem={renderItem}
@@ -93,19 +93,21 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
             showsVerticalScrollIndicator={false}
             style={styles.ingredientList}
           />
-        </KeyboardAvoidingView>
 
-        <View style={styles.modalButtonContainer}>
-          <TouchableOpacity
-            style={[styles.modalButton, { backgroundColor: theme.primary }]}
-            onPress={onClose}
-          >
-            <Text style={[styles.modalButtonText, { color: theme.background }]}>
-              Cancel
-            </Text>
-          </TouchableOpacity>
+          <View style={styles.modalButtonContainer}>
+            <TouchableOpacity
+              style={[styles.modalButton, { backgroundColor: theme.primary }]}
+              onPress={onClose}
+            >
+              <Text
+                style={[styles.modalButtonText, { color: theme.background }]}
+              >
+                Cancel
+              </Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
+      </KeyboardAvoidingView>
     </SafeAreaView>
   );
 };

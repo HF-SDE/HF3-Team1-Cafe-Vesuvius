@@ -240,6 +240,8 @@ export default function NewReservationModal({
                 headerTextStyle={{ color: theme.background }}
                 headerButtonColor={theme.secondary}
                 weekDaysTextStyle={{ color: theme.background }}
+                headerTextContainerStyle={{ backgroundColor: theme.primary }}
+                monthContainerStyle={{ backgroundColor: theme.primary }}
               />
             </View>
           )}
@@ -494,7 +496,7 @@ function areKeysDefined<T extends Record<string, any>>(
 const styles = StyleSheet.create({
   dateTimePicker: {
     position: "absolute",
-    backgroundColor: "white",
+    // backgroundColor: "white",
     zIndex: 2,
     borderRadius: 20,
     padding: 10,
@@ -508,7 +510,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(249, 180, 45, 0.25)",
     borderWidth: 1.5,
-    borderColor: "#fff",
+    // borderColor: "red",
   },
   itemDisabled: {
     flex: 1,
@@ -520,7 +522,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(249, 180, 45, 0.25)",
     borderWidth: 1.5,
-    borderColor: "#fff",
+    // borderColor: "red",
   },
   listContainer: {
     padding: 16,
@@ -570,7 +572,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   buttonText: {
-    color: "#fff",
+    // color: "red",
     fontWeight: "bold",
   },
   errorText: {
