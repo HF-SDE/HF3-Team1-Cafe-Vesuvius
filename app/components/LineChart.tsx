@@ -63,6 +63,9 @@ const AxesExample: React.FC<AxesExampleProps> = ({
   const containerPadding = 20;
   const chartWidth = width - 2 * containerPadding;
 
+  const maxValue =
+    Math.ceil(Math.max(...filteredData.map((x) => x.value)) / 10) * 10;
+
   return (
     <View
       style={[
@@ -98,12 +101,11 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 
       <LineChart
         data={filteredData}
+        maxValue={maxValue}
         height={height}
         isAnimated
         width={chartWidth}
         spacing={chartWidth / (filteredData.length - 0.2 || 1)}
-        dashWidth={1}
-        dashGap={15}
         showVerticalLines
         verticalLinesUptoDataPoint
         dataPointsColor1={theme.primary}
@@ -182,6 +184,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "center",
     marginBottom: 16,
+    flexWrap: "wrap",
+    alignItems: "center",
   },
   yearButton: {
     marginHorizontal: 8,

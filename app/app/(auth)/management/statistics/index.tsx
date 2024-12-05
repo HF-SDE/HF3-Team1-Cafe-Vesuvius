@@ -7,6 +7,7 @@ import {
   RefreshControl,
   FlatList,
 } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useNavigation } from "@react-navigation/native";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -24,7 +25,11 @@ import { useState, useMemo } from "react";
 export default function StatsPage() {
   const theme = useThemeColor();
   const navigation = useNavigation();
-  const { width } = useWindowDimensions();
+  const { width: screenWidth } = useWindowDimensions();
+  const { left, right } = useSafeAreaInsets(); // Getting safe area insets
+
+  const safeAreaWidth = screenWidth - left - right; // Calculate safe area width
+
   const chartOffset = 100;
 
   // Use the useStats hook directly
@@ -32,12 +37,12 @@ export default function StatsPage() {
 
   const data = [
     {
-      value: stats?.reservations.tableUtilizationPercentage,
+      value: stats?.reservations.tableUtilizationPercentage ?? 0, // Default to 0 if undefined
       text: "Used tables",
       color: theme.primary,
     },
     {
-      value: 100 - Number(stats?.reservations.tableUtilizationPercentage),
+      value: 100 - Number(stats?.reservations.tableUtilizationPercentage ?? 0), // Default to 0 if undefined
       text: "Unused tables",
       color: theme.secondary,
     },
@@ -57,11 +62,10 @@ export default function StatsPage() {
   const lineChartData = useMemo(() => {
     const salesMonth = stats?.economy.salesMonth || [];
 
-    const sortedSalesMonth = salesMonth
-      .map((item) => ({
-        ...item,
-      }))
-      .sort((a, b) => a.monthDate - b.monthDate); // Sort by the Date object in ascending order
+    const sortedSalesMonth = salesMonth.map((item) => ({
+      ...item,
+    }));
+    //.sort((a, b) => a.monthDate - b.monthDate); // Sort by the Date object in ascending order
 
     return sortedSalesMonth.map((item) => ({
       value: item.sales, // Map `sales` to `value`
@@ -142,17 +146,19 @@ export default function StatsPage() {
               <View
                 style={[
                   styles.sectionSpacer,
-                  width < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                  safeAreaWidth < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
                 ]}
               >
                 <View>
                   <Text style={[styles.sectionText, { color: theme.primary }]}>
-                    Total: {stats?.economy.salesTotal} {stats?.economy.valuta}
+                    <Text style={{ fontWeight: "bold" }}>Total: </Text>
+                    {stats?.economy.salesTotal} {stats?.economy.valuta}
                   </Text>
                 </View>
                 <View>
                   <Text style={[styles.sectionText, { color: theme.primary }]}>
-                    Today: {stats?.economy.salesToday} {stats?.economy.valuta}
+                    <Text style={{ fontWeight: "bold" }}>Today: </Text>
+                    {stats?.economy.salesToday} {stats?.economy.valuta}
                   </Text>
                 </View>
               </View>
@@ -160,7 +166,7 @@ export default function StatsPage() {
             <View style={[styles.statItem, { paddingHorizontal: 0 }]}>
               <LineChartCustom
                 data={lineChartData}
-                width={width - chartOffset}
+                width={safeAreaWidth - chartOffset}
               />
             </View>
           </View>
@@ -180,27 +186,32 @@ export default function StatsPage() {
               <View
                 style={[
                   styles.sectionSpacer,
-                  width < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                  safeAreaWidth < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
                 ]}
               >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Total: {stats?.orders.ordersTotal}
+                  <Text style={{ fontWeight: "bold" }}>Total: </Text>
+                  {stats?.orders.ordersTotal}
                 </Text>
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Today: {stats?.orders.ordersToday}
+                  <Text style={{ fontWeight: "bold" }}>Today: </Text>
+                  {stats?.orders.ordersToday}
                 </Text>
               </View>
+
               <View
                 style={[
                   styles.sectionSpacer,
-                  width < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                  safeAreaWidth < 500 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
                 ]}
               >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Avg total: {stats?.orders.avgOrderValueTotal}
+                  <Text style={{ fontWeight: "bold" }}>Avg total: </Text>
+                  {stats?.orders.avgOrderValueTotal}
                 </Text>
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Avg today: {stats?.orders.avgOrderValueToday}
+                  <Text style={{ fontWeight: "bold" }}>Avg today: </Text>
+                  {stats?.orders.avgOrderValueToday}
                 </Text>
               </View>
             </View>
@@ -221,23 +232,29 @@ export default function StatsPage() {
               <View
                 style={[
                   styles.sectionSpacer,
-                  width < 700 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
+                  safeAreaWidth < 700 && styles.sectionSpacerStack, // Switch to stacked layout if width is less than 500
                 ]}
               >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Total: {stats?.reservations.total}
+                  <Text style={{ fontWeight: "bold" }}>Total: </Text>
+                  {stats?.reservations.total}
                 </Text>
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Today: {stats?.reservations.today}
+                  <Text style={{ fontWeight: "bold" }}>Today: </Text>
+                  {stats?.reservations.today}
                 </Text>
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
-                  Upcoming: {stats?.reservations.upcoming}
+                  <Text style={{ fontWeight: "bold" }}>Upcoming: </Text>
+                  {stats?.reservations.upcoming}
                 </Text>
               </View>
             </View>
 
             <View style={styles.statItem}>
-              <PieChartCustom data={data} width={width * 0.8 - chartOffset} />
+              <PieChartCustom
+                data={data}
+                width={safeAreaWidth * 0.8 - chartOffset}
+              />
             </View>
           </View>
 
@@ -258,7 +275,7 @@ export default function StatsPage() {
             <View style={styles.statItem}>
               <BarChartCustom
                 data={barChartHighest}
-                width={width - chartOffset}
+                width={safeAreaWidth - chartOffset}
                 label="Most ordered"
               />
             </View>
@@ -266,7 +283,7 @@ export default function StatsPage() {
             <View style={styles.statItem}>
               <BarChartCustom
                 data={barChartLowest}
-                width={width - chartOffset}
+                width={safeAreaWidth - chartOffset}
                 label="Least ordered"
               />
             </View>

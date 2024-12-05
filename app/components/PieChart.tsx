@@ -1,5 +1,11 @@
 import React from "react";
-import { View, StyleSheet, ActivityIndicator, Text } from "react-native";
+import {
+  View,
+  StyleSheet,
+  ActivityIndicator,
+  Text,
+  ColorValue,
+} from "react-native";
 import { PieChart } from "react-native-gifted-charts";
 import { useFonts } from "expo-font";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -47,7 +53,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
     text: item.text,
   }));
 
-  const renderDot = (color) => {
+  const renderDot = (color: ColorValue | undefined) => {
     return (
       <View
         style={{
@@ -82,8 +88,10 @@ const PieChartComponent: React.FC<PieChartProps> = ({
               }}
             >
               {renderDot(item.color)}
+
               <Text style={{ color: theme.text }}>
-                {item.text}: {((item.value / totalValue) * 100).toFixed(0)}%
+                <Text style={{ fontWeight: "bold" }}>{item.text}</Text>:{" "}
+                {((item.value / totalValue) * 100).toFixed(2)}%
               </Text>
             </View>
           ))}
@@ -121,7 +129,7 @@ const PieChartComponent: React.FC<PieChartProps> = ({
           centerLabelComponent={() => {
             const usedTables = data.find((item) => item.text === "Used tables");
             const usedTablesPercentage = usedTables
-              ? ((usedTables.value / totalValue) * 100).toFixed(0)
+              ? ((usedTables.value / totalValue) * 100).toFixed(2)
               : "0";
             return (
               <View style={{ justifyContent: "center", alignItems: "center" }}>
