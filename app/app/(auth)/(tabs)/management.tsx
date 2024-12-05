@@ -62,11 +62,11 @@ export default function ManagementScreen() {
                   <FontAwesome6
                     name={button.icon}
                     size={button.size}
-                    color={theme.background}
+                    color={theme.secondary}
                     style={styles.icon}
                   />
                 )}
-                <Text style={[styles.buttonText, { color: theme.background }]}>
+                <Text style={[styles.buttonText, { color: theme.secondary }]}>
                   {button.title}
                 </Text>
               </View>
