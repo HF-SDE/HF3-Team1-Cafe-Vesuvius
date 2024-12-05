@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  KeyboardAvoidingView,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -84,14 +85,15 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           onChangeText={setSearchQuery}
           placeholder="Search for menu"
         />
-
-        <FlatList
-          data={filteredStock}
-          renderItem={renderItem}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-          style={styles.ingredientList}
-        />
+        <KeyboardAvoidingView>
+          <FlatList
+            data={filteredStock}
+            renderItem={renderItem}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
+            style={styles.ingredientList}
+          />
+        </KeyboardAvoidingView>
 
         <View style={styles.modalButtonContainer}>
           <TouchableOpacity

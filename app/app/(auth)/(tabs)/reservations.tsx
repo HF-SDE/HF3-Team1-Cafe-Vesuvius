@@ -6,6 +6,7 @@ import {
   Modal,
   SectionList,
   Pressable,
+  KeyboardAvoidingView,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useRouter } from "expo-router";
@@ -184,27 +185,29 @@ export default function ReservationsOverview(): ReactElement {
           requiredPermission={["reservation:create"]}
         />
 
-        <Modal
-          animationType="none"
-          transparent={true}
-          visible={isCreateModalVisible}
-          onRequestClose={() => setCreateModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View
-              style={[
-                styles.modalContent,
-                styles.modalsizing,
-                { backgroundColor: theme.primary },
-              ]}
-            >
-              <NewReservationModal
-                tables={table!}
-                onClose={() => setCreateModalVisible(false)}
-              />
+        <KeyboardAvoidingView>
+          <Modal
+            animationType="none"
+            transparent={true}
+            visible={isCreateModalVisible}
+            onRequestClose={() => setCreateModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View
+                style={[
+                  styles.modalContent,
+                  styles.modalsizing,
+                  { backgroundColor: theme.primary },
+                ]}
+              >
+                <NewReservationModal
+                  tables={table!}
+                  onClose={() => setCreateModalVisible(false)}
+                />
+              </View>
             </View>
-          </View>
-        </Modal>
+          </Modal>
+        </KeyboardAvoidingView>
 
         <Modal
           animationType="none"
@@ -447,7 +450,7 @@ const styles = StyleSheet.create({
 
   modalsizing: {
     maxWidth: 400,
-    height: "70%",
+    height: "75%",
     minHeight: 500,
   },
 
