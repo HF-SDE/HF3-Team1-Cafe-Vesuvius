@@ -97,7 +97,6 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         />
       </View>
 
-      {/* Modal for displaying full name */}
       {selectedData && (
         <Modal
           animationType="none"
