@@ -36,7 +36,10 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
 
   return (
     <TextInput
-      style={[styles.quantityInput, { borderColor: theme.secondary }]}
+      style={[
+        styles.quantityInput,
+        { borderColor: theme.secondary, color: theme.background },
+      ]}
       value={quantity.toString()}
       keyboardType="decimal-pad"
       onChangeText={(text) => {

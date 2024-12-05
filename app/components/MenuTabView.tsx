@@ -114,7 +114,11 @@ const MenuTabView = React.memo(
                 { backgroundColor: theme.primary },
               ]}
             >
-              <Text style={styles.ingredientName}>{item.RawMaterial.name}</Text>
+              <Text
+                style={[styles.ingredientName, { color: theme.background }]}
+              >
+                {item.RawMaterial.name}
+              </Text>
               <QuantityInput
                 itemId={item.RawMaterial.id as string}
                 initialQty={item.quantity}

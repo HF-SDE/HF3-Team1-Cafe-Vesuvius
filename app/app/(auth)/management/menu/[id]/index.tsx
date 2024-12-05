@@ -260,7 +260,12 @@ export default function EditCreateUserPage() {
             <View style={{ minHeight: "70%" }}>{memoizedMenuTabView}</View>
           </View>
 
-          <View style={styles.buttonContainer}>
+          <View
+            style={[
+              styles.buttonContainer,
+              { backgroundColor: theme.background },
+            ]}
+          >
             <Button title="Cancel" onPress={() => navigation.goBack()} />
             <Button
               title={id !== "new" ? "Save" : "Create"}
@@ -293,6 +298,10 @@ const styles = StyleSheet.create({
   buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+    alignSelf: "center",
   },
   errorText: {
     fontSize: 16,

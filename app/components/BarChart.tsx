@@ -10,6 +10,7 @@ import {
 import { BarChart } from "react-native-gifted-charts";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
+import NavBackground from "./NavBackground";
 
 interface DataPoint {
   value: number;
@@ -104,7 +105,12 @@ const AxesExample: React.FC<AxesExampleProps> = ({
           onRequestClose={() => setSelectedData(null)}
         >
           <View style={styles.modalContainer}>
-            <View style={styles.modalContent}>
+            <View
+              style={[
+                styles.modalContent,
+                { backgroundColor: theme.background },
+              ]}
+            >
               <Text style={[styles.modalText, { color: theme.text }]}>
                 {selectedData.name}
               </Text>
@@ -112,7 +118,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
                 style={[styles.closeButton, { backgroundColor: theme.primary }]}
                 onPress={() => setSelectedData(null)}
               >
-                <Text style={{ color: theme.text }}>Close</Text>
+                <Text style={{ color: theme.background }}>Close</Text>
               </Pressable>
             </View>
           </View>
@@ -150,7 +156,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    backgroundColor: "white",
     padding: 20,
     borderRadius: 10,
     alignItems: "center",
