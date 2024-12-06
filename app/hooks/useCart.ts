@@ -7,7 +7,7 @@ export default function useCart<T extends Payload = Payload>(
 ) {
   const [cartItems, dispatch] = useReducer(CartReducer, init);
 
-  function getCartItemQuantity(input: Payload<T> | string): number {
+  function getCartItemQuantity(input: T | string): number {
     const cartItems = getCartItems(input);
     if (!cartItems) return 0;
 
@@ -20,7 +20,7 @@ export default function useCart<T extends Payload = Payload>(
     return quantity;
   }
 
-  function getCartItems(input: Payload<T> | string | undefined): CartItem[] {
+  function getCartItems(input: T | string | undefined): CartItem[] {
     if (!input) return [];
     const id = typeof input === "string" ? input : input.id;
 

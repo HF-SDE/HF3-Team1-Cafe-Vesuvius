@@ -10,16 +10,16 @@ type ActionPayloadMap<T = any> = {
   [Action in IAction<T> as ToCamelCase<Action["type"]>]: Action["payload"];
 };
 
-export type ICartActions<ItemType = any> = {
+export type ICartActions<ItemType> = {
   [K in keyof ActionPayloadMap]: (
     payload: ActionPayloadMap<ItemType>[K]
   ) => void;
 } & {
-  getCartItemQuantity: (input: Payload | string) => number;
-  getCartItems: (input: Payload | string | undefined) => CartItem[];
+  getCartItemQuantity: (input: ItemType | string) => number;
+  getCartItems: (input: ItemType | string | undefined) => CartItem[];
 };
 
-export function cartActions<ItemType = any>(
+export function cartActions<ItemType>(
   dispatch: React.Dispatch<IAction<ItemType>>
 ): ICartActions<ItemType> {
   const actions = {} as ICartActions<ItemType>;
