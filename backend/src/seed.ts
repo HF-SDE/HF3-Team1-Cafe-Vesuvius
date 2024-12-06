@@ -1,7 +1,8 @@
 import { hash } from 'argon2';
 import { randomBytes } from 'crypto';
 
-import { PrismaClient } from '@prisma/client';
+import { faker } from '@faker-js/faker';
+import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
 
 // Use crypto to generate random hex strings
@@ -135,6 +136,9 @@ const menu = [
  * Mongo database is used in the app and management side
  */
 async function generateMongo() {
+  
+  const today = new Date();
+
   // Create Permission Groups
   await prisma.permissionGroup.createMany({
     data: [
@@ -858,11 +862,8 @@ async function generateMongo() {
     { name: 'Gin Tonic', price: 85 },
     { name: 'Moscow Mule', price: 85 },
     { name: 'Strawberry Daiquiri', price: 85 },
-    //{ name: 'Gin Hass', price: 85 },
+    { name: 'Gin Hass', price: 85 },
   ];
-
-  // Use today's date as the start date
-  const startDate = new Date(); // This will be today's date
 
   /**
    * Generates a random 12-byte hexadecimal string.
@@ -878,6 +879,7 @@ async function generateMongo() {
    * This function creates orders and associated menu items for the past 50 days.
    */
   async function seedData() {
+    const startDate = new Date();
     for (let day = 0; day < 1200; day++) {
       const date = new Date(startDate); // Copy the startDate
       date.setDate(startDate.getDate() - day); // Decrease date by 'day'
@@ -930,86 +932,6 @@ async function generateMongo() {
       }
     }
   }
-
-  /**
-   * Generates a random hexadecimal string within the given range.
-   * Assumes the range is inclusive.
-   * @param {string} start - The start of the hexadecimal range (inclusive).
-   * @param {string} end - The end of the hexadecimal range (inclusive).
-   * @returns {string} - A random hexadecimal string within the specified range.
-   */
-  function generateHexBetween(start: string, end: string): string {
-    const startNum = BigInt(`0x${start}`);
-    const endNum = BigInt(`0x${end}`);
-    const randomNum =
-      startNum +
-      BigInt(Math.floor(Math.random() * Number(endNum - startNum + BigInt(1))));
-    return randomNum.toString(16);
-  }
-
-  /**
-   * Seed reservations into the database.
-   * This function creates 2-5 reservations per day for the past 200 days.
-   */
-  async function seedReservations(): Promise<void> {
-    const today = new Date();
-    const totalDays = 250; // 200 past days + 50 future days
-    const pastDays = 200; // Number of days in the past
-    const tableIdRangeStart = '674ef570a216f785d048b7a0'; // First table ID
-    const tableIdRangeEnd = '674ef570a216f785d048b7bb'; // Last table ID
-
-    for (let day = 0; day < totalDays; day++) {
-      const date = new Date(today);
-
-      if (day < pastDays) {
-        // Create reservations for the past 200 days
-        date.setDate(today.getDate() - (pastDays - day));
-      } else {
-        // Create reservations for the next 50 days
-        date.setDate(today.getDate() + (day - pastDays));
-      }
-
-      // Generate a random number of reservations (2-5 per day)
-      const reservationCount = Math.floor(Math.random() * 21) + 10;
-
-      for (let i = 0; i < reservationCount; i++) {
-        // Generate random party size (1-10 people)
-        const amount = Math.floor(Math.random() * 10) + 1;
-
-        // Calculate number of tables required (1 table for every 2 people)
-        const tableCount = Math.ceil(amount / 2);
-
-        // Generate unique table IDs within the specified range
-        const selectedTableIds = Array.from({ length: tableCount }, () =>
-          generateHexBetween(tableIdRangeStart, tableIdRangeEnd),
-        );
-
-        // Generate random data for the reservation
-        const name = `Guest-${generateHexId().slice(0, 6)}`; // Randomized guest name
-        const email = `${name.toLowerCase()}@example.com`; // Corresponding email
-        const phone = `+12345678${Math.floor(Math.random() * 9000) + 1000}`; // Random phone number
-        const reservationTime = new Date(date); // Use the generated date
-        reservationTime.setHours(Math.floor(Math.random() * 12) + 10); // Random time (10 AM - 9 PM)
-
-        // Create the reservation
-        await prisma.reservation.create({
-          data: {
-            amount,
-            name,
-            email,
-            phone,
-            reservationTime,
-            tableIds: selectedTableIds, // Use generated table IDs
-          },
-        });
-      }
-    }
-  }
-
-  // Call the seedReservations function
-  seedReservations().catch((error) => {
-    console.error('Error seeding reservations:', error);
-  });
 
   // Invoke the seedData function
   seedData().catch((error) => {
@@ -1844,6 +1766,74 @@ async function generateMongo() {
       },
     ],
   });
+
+  // Reservation
+  const totalDays = 250; // 200 past days + 50 future days
+  const pastDays = 200; // Number of days in the past
+  const tableAmount = 28; // First table ID
+
+  const reservations: Prisma.Prisma__ReservationClient<any>[] = [];
+
+  for (let day = 0; day < totalDays; day++) {
+    if (day < pastDays) {
+      // Create reservations for the past 200 days
+      today.setDate(today.getDate() - (pastDays - day));
+    } else {
+      // Create reservations for the next 50 days
+      today.setDate(today.getDate() + (day - pastDays));
+    }
+
+    // Generate a random number of reservations (2-5 per day)
+    const reservationCount = Math.floor(Math.random() * 21) + 10;
+
+    for (let i = 0; i < reservationCount; i++) {
+      // Generate random party size (1-10 people)
+      const amount = Math.floor(Math.random() * 10) + 1;
+
+      // Calculate number of tables required (1 table for every 2 people)
+      const tableCount = Math.ceil(amount / 2);
+
+      // Generate unique table IDs within the specified range
+      const selectedTableNumbers = Array.from({ length: tableCount }, () =>
+        Math.floor(
+          Math.random() * (Number(JSON.stringify(tableAmount)) - 1 + 1) + 1,
+        ),
+      );
+
+      const selectedTableIdsTmp = selectedTableNumbers.map(
+        (selectedTableNumber) => {
+          return findTable(selectedTableNumber);
+        },
+      );
+
+      const selectedTableIds = await Promise.all(selectedTableIdsTmp);
+
+      const firstName = faker.person.firstName();
+      const lastName = faker.person.lastName();
+      // Generate random data for the reservation
+      const name = `${firstName} ${lastName}`; // Randomized guest name
+      const email = faker.internet.email({ firstName, lastName }); // Corresponding email
+      const phone = faker.phone.number({ style: 'international' }); // Random phone number
+      const reservationTime = new Date(
+        new Date(today).setHours(Math.floor(Math.random() * 12) + 10),
+      ); // Use the generated date
+
+      reservations.push(
+        prisma.reservation.create({
+          data: {
+            amount,
+            name,
+            email,
+            phone,
+            reservationTime,
+            tableIds: selectedTableIds,
+          },
+        }),
+      );
+    }
+  }
+
+  await prisma.$transaction(reservations);
 }
 
 /**
@@ -1854,6 +1844,30 @@ async function generatingPSQL() {
   await prismaPSQL.menu.createMany({
     data: menu,
   });
+}
+
+/**
+ * Find table id by number
+ * @param {number} number Table number
+ * @returns {Promise<string>} Table id
+ */
+async function findTable(number: number): Promise<string> {
+  try {
+    const result = await prisma.table.findFirst({
+      where: {
+        number,
+      },
+      select: {
+        id: true,
+      },
+    });
+    if (result) {
+      return result.id;
+    }
+    throw new Error('Table id not found');
+  } catch (error: unknown) {
+    return (error as Error).message;
+  }
 }
 
 /**
@@ -1937,12 +1951,10 @@ async function findRawMaterialItem(name: string): Promise<string> {
 generateMongo()
   .then(async () => {
     await prisma.$disconnect();
-    await prismaPSQL.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
     await prisma.$disconnect();
-    await prismaPSQL.$disconnect();
     process.exit(1);
   });
 
