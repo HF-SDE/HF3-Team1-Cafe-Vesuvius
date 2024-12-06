@@ -9,13 +9,14 @@ import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { SwipeListView } from "react-native-swipe-list-view";
 import SwipeRow from "./components/SwipeRow";
 import SwipeIcons from "./components/SwipeIcons";
+import { ICartActions } from "@/actions/cartActions";
 
 interface INoteModal {
   show: boolean;
   setShow: (show: boolean) => void;
   menuItem: Menu;
   cartItems: CartItem<Menu>[];
-  cartActions: any; // TODO: Add type
+  cartActions: ICartActions<Menu>;
 }
 
 export default function MenuItemEditModal({
