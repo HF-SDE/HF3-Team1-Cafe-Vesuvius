@@ -1772,7 +1772,7 @@ async function generateMongo() {
   const pastDays = 200; // Number of days in the past
   const tableAmount = 28; // First table ID
 
-  const reservations: Prisma.Prisma__ReservationClient<any>[] = [];
+  const reservations: Prisma.Prisma__ReservationClient<unknown>[] = [];
 
   for (let day = 0; day < totalDays; day++) {
     if (day < pastDays) {
