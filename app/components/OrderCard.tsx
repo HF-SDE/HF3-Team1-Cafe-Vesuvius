@@ -68,7 +68,7 @@ export default function OrderCard({ order }: OrderCardProps) {
               <MaterialCommunityIcons
                 name="note-text-outline"
                 size={28}
-                color="black"
+                color={theme.text}
               />
             )}
 
