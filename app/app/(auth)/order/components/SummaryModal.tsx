@@ -86,8 +86,8 @@ export default function SummaryModal({
             <Text style={{ fontSize: 20, color: theme.text }}>Price</Text>
           </View>
           <View style={{ gap: 10 }}>
-            {selectedMenuItems.map((item) => (
-              <View key={item.id}>
+            {selectedMenuItems.map((item, i) => (
+              <View key={i}>
                 <View
                   style={{
                     display: "flex",
@@ -114,8 +114,15 @@ export default function SummaryModal({
           </View>
         </View>
 
-        <Text>
-          Total:{" "}
+        <Text
+          style={{
+            fontSize: 24,
+            color: theme.text,
+            textAlign: "right",
+            fontWeight: "bold",
+          }}
+        >
+          Total: $
           {selectedMenuItems.reduce(
             (acc, item) => acc + item.quantity * (item.item?.price ?? 1),
             0

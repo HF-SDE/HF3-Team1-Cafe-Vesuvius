@@ -28,13 +28,13 @@ export default function SwipeIcons({
   return (
     <View
       style={{
-        width: "100%",
-        margin: 0,
-        height: "100%",
-        borderRadius: 10,
         display: "flex",
         flexDirection: "row",
         justifyContent: "space-between",
+        borderRadius: 10,
+        width: "100%",
+        margin: 0,
+        height: "100%",
       }}
     >
       <Pressable
@@ -61,7 +61,7 @@ export default function SwipeIcons({
         <MaterialCommunityIcons
           name={cartItem?.note ? "note-edit" : "note-plus"}
           size={32}
-          color={theme.background}
+          color="white"
           style={{ alignSelf: "flex-start" }}
         />
       </Pressable>
@@ -87,8 +87,8 @@ export default function SwipeIcons({
       >
         <FontAwesome6
           name="trash-alt"
-          size={24}
-          color={theme.background}
+          size={28}
+          color="white"
           style={{ alignSelf: "flex-end" }}
         />
       </Pressable>

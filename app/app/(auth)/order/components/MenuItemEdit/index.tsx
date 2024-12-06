@@ -64,11 +64,11 @@ export default function MenuItemEditModal({
             data={cartItems}
             keyExtractor={({ cartItemId }) => cartItemId!}
             contentContainerStyle={{ gap: 10 }}
-            renderHiddenItem={(data, rowMap) => (
+            renderHiddenItem={({ item }, rowMap) => (
               <SwipeIcons
                 cartActions={cartActions}
                 rowMap={rowMap}
-                cartItem={data?.item}
+                cartItem={item}
               />
             )}
             renderItem={({ item: cartItem }) => (

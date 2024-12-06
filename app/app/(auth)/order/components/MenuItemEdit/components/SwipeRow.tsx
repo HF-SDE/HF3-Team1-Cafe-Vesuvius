@@ -21,95 +21,93 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
   }
 
   return (
-    <>
-      <Pressable
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          borderRadius: 10,
-          paddingHorizontal: 10,
-          borderColor: theme.green,
-          backgroundColor: theme.primary,
-        }}
-        onPress={() => {
-          Alert.prompt(
-            "Note",
-            "Add a note to this item",
-            handleNoteChange,
-            "plain-text",
-            cartItem?.note
-          );
-        }}
-      >
-        <View style={{ display: "flex", justifyContent: "center" }}>
-          <View
+    <Pressable
+      style={{
+        display: "flex",
+        flexDirection: "row",
+        justifyContent: "space-between",
+        borderRadius: 10,
+        paddingHorizontal: 10,
+        borderColor: theme.green,
+        backgroundColor: theme.primary,
+      }}
+      onPress={() => {
+        Alert.prompt(
+          "Note",
+          "Add a note to this item",
+          handleNoteChange,
+          "plain-text",
+          cartItem?.note
+        );
+      }}
+    >
+      <View style={{ display: "flex", justifyContent: "center" }}>
+        <View
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 3,
+          }}
+        >
+          <Text
             style={{
-              display: "flex",
-              justifyContent: "space-between",
-              gap: 3,
+              fontSize: 16,
+              color: theme.accent,
+              alignSelf: "center",
             }}
           >
-            <Text
+            {cartItem.item?.name} x{cartItem.quantity}
+          </Text>
+
+          {cartItem?.note && (
+            <View
               style={{
-                fontSize: 16,
-                color: theme.accent,
-                alignSelf: "center",
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 3,
               }}
             >
-              {cartItem.item?.name} x{cartItem.quantity}
-            </Text>
-
-            {cartItem?.note && (
-              <View
+              <MaterialCommunityIcons
+                name="note"
+                size={16}
+                color={theme.secondary}
+              />
+              <Text
                 style={{
-                  display: "flex",
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 3,
+                  color: theme.accent,
+                  fontSize: 14,
                 }}
               >
-                <MaterialCommunityIcons
-                  name="note"
-                  size={16}
-                  color={theme.secondary}
-                />
-                <Text
-                  style={{
-                    color: theme.accent,
-                    fontSize: 14,
-                  }}
-                >
-                  {cartItem.note}
-                </Text>
-              </View>
-            )}
-          </View>
+                {cartItem.note}
+              </Text>
+            </View>
+          )}
         </View>
+      </View>
 
-        <View style={[styles.buttonContainer]}>
-          <Pressable
-            onPress={() => {
-              cartActions.removeItem({
-                cartItemId: cartItem.cartItemId,
-              });
-            }}
-            style={[styles.button, { backgroundColor: theme.accent }]}
-          >
-            <FontAwesome6 name="minus" size={24} color={theme.text} />
-          </Pressable>
+      <View style={[styles.buttonContainer]}>
+        <Pressable
+          onPress={() => {
+            cartActions.removeItem({
+              cartItemId: cartItem.cartItemId,
+            });
+          }}
+          style={[styles.button, { backgroundColor: theme.accent }]}
+        >
+          <FontAwesome6 name="minus" size={24} color={theme.text} />
+        </Pressable>
 
-          <Pressable
-            onPress={() => {
-              cartActions.addItem({ cartItemId: cartItem.cartItemId });
-            }}
-            style={[styles.button, { backgroundColor: theme.accent }]}
-          >
-            <FontAwesome6 name="plus" size={24} color={theme.text} />
-          </Pressable>
-        </View>
-      </Pressable>
-    </>
+        <Pressable
+          onPress={() => {
+            cartActions.addItem({ cartItemId: cartItem.cartItemId });
+          }}
+          style={[styles.button, { backgroundColor: theme.accent }]}
+        >
+          <FontAwesome6 name="plus" size={24} color={theme.text} />
+        </Pressable>
+      </View>
+    </Pressable>
   );
 }
 
