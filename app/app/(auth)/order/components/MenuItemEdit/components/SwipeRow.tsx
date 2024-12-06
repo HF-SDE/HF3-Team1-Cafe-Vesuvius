@@ -3,17 +3,18 @@ import { CartItem } from "@/reducers/cartReducer";
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Menu } from "../../../new-order";
+import { ICartActions } from "@/actions/cartActions";
 
 interface ISwipeRow {
   cartItem: CartItem<Menu>;
-  cartActions: any;
+  cartActions: ICartActions<Menu>;
 }
 
 export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
   const theme = useThemeColor();
 
   function handleNoteChange(note: string) {
-    cartActions.updateCartItem({
+    cartActions.updateItem({
       cartItemId: cartItem.cartItemId,
       note: note,
     });
@@ -21,19 +22,6 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
 
   return (
     <>
-      {cartItem?.note && (
-        <MaterialCommunityIcons
-          name="note"
-          size={24}
-          color={theme.secondary}
-          style={{
-            position: "absolute",
-            top: 3,
-            left: 5,
-            zIndex: 1,
-          }}
-        />
-      )}
       <Pressable
         style={{
           display: "flex",
@@ -54,18 +42,50 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
           );
         }}
       >
-        <Text
-          style={{
-            textAlign: "center",
-            textAlignVertical: "center",
-            alignSelf: "flex-end",
-            paddingBottom: 10,
-            fontSize: 16,
-            color: theme.accent,
-          }}
-        >
-          {cartItem.item?.name} x{cartItem.quantity}
-        </Text>
+        <View style={{ display: "flex", justifyContent: "center" }}>
+          <View
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              gap: 3,
+            }}
+          >
+            <Text
+              style={{
+                fontSize: 16,
+                color: theme.accent,
+                alignSelf: "center",
+              }}
+            >
+              {cartItem.item?.name} x{cartItem.quantity}
+            </Text>
+
+            {cartItem?.note && (
+              <View
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                  gap: 3,
+                }}
+              >
+                <MaterialCommunityIcons
+                  name="note"
+                  size={16}
+                  color={theme.secondary}
+                />
+                <Text
+                  style={{
+                    color: theme.accent,
+                    fontSize: 14,
+                  }}
+                >
+                  {cartItem.note}
+                </Text>
+              </View>
+            )}
+          </View>
+        </View>
 
         <View style={[styles.buttonContainer]}>
           <Pressable

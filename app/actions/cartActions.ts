@@ -1,21 +1,36 @@
-import { IAction, Payload } from "@/reducers/cartReducer";
+import {
+  Payload,
+  CartItem,
+  IAction,
+  actionTypes,
+} from "@/reducers/cartReducer";
+import { toCamelCase, ToCamelCase } from "@/utils/camelCase";
 
-export function addItem(payload: Payload): IAction {
-  return { type: "ADD_TO_CART", payload };
-}
+type ActionPayloadMap<T = any> = {
+  [Action in IAction<T> as ToCamelCase<Action["type"]>]: Action["payload"];
+};
 
-export function addInstance(payload: Payload): IAction {
-  return { type: "ADD_INSTANCE_TO_CART", payload };
-}
+export type ICartActions<ItemType = any> = {
+  [K in keyof ActionPayloadMap]: (
+    payload: ActionPayloadMap<ItemType>[K]
+  ) => void;
+} & {
+  getCartItemQuantity: (input: Payload | string) => number;
+  getCartItems: (input: Payload | string | undefined) => CartItem[];
+};
 
-export function removeItem(payload: Payload): IAction {
-  return { type: "REMOVE_FROM_CART", payload };
-}
+export function cartActions<ItemType = any>(
+  dispatch: React.Dispatch<IAction<ItemType>>
+): ICartActions<ItemType> {
+  const actions = {} as ICartActions<ItemType>;
 
-export function deleteItem(payload: Payload): IAction {
-  return { type: "DELETE_FROM_CART", payload };
-}
+  for (const type of actionTypes) {
+    const actionType: keyof ActionPayloadMap =
+      toCamelCase<IAction<ItemType>["type"]>(type);
 
-export function updateCartItem(payload: Payload): IAction {
-  return { type: "UPDATE_CART_ITEM", payload };
+    actions[actionType] = (payload) =>
+      dispatch({ type, payload } as IAction<ItemType>);
+  }
+
+  return actions;
 }

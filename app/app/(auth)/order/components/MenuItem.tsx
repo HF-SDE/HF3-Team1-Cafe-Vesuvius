@@ -1,24 +1,14 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { MenuModel } from "@/models/MenuModel";
-import { FontAwesome6 } from "@expo/vector-icons";
-import {
-  Image,
-  Pressable,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MenuItemEdit from "./MenuItemEdit";
 import { useState } from "react";
 import { CartItem } from "@/reducers/cartReducer";
-
-type Menu = Required<MenuModel>;
+import { ICartActions } from "@/actions/cartActions";
+import { Menu } from "../new-order";
 
 interface IMenuItem {
   menuItem: Menu;
-  cartActions: any; // TODO: Add type
+  cartActions: ICartActions<Menu>;
 }
 
 export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
@@ -46,17 +36,17 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
   const image = getImage();
 
-  const cartItem = cartActions.getCartItem(menuItem.id) as CartItem<Menu>;
+  const cartItem = cartActions.getCartItems(menuItem.id)[0] as CartItem<Menu>;
 
   return (
     <View>
       <TouchableOpacity
         onPress={() =>
-          cartActions.addItem(
-            cartItem
-              ? { cartItemId: cartItem.cartItemId, item: menuItem }
-              : { id: menuItem.id, item: menuItem }
-          )
+          cartActions.addItem({
+            cartItemId: cartItem?.cartItemId,
+            item: menuItem,
+            id: menuItem.id,
+          })
         }
         onLongPress={() => addNote()}
       >
@@ -93,43 +83,6 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
           cartActions={cartActions}
         />
       </TouchableOpacity>
-
-      {/* <View
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          alignItems: "center",
-          width: "100%",
-          padding: 10,
-          gap: 15,
-        }}
-      >
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.secondary }]}
-          onPress={() => cartActions.removeItem(menuItem)}
-        >
-          <FontAwesome6 name="minus" size={30} color="black" />
-        </TouchableOpacity>
-
-        <Text
-          style={{
-            fontSize: 40,
-            color: theme.background,
-            textAlign: "center",
-            width: 40,
-          }}
-        >
-          {cartActions.getCartItem(menuItem)?.quantity ?? 0}
-        </Text>
-
-        <TouchableOpacity
-          style={[styles.button, { backgroundColor: theme.secondary }]}
-          onPress={() => cartActions.addItem(menuItem)}
-        >
-          <FontAwesome6 name="plus" size={30} color="black" />
-        </TouchableOpacity>
-      </View> */}
     </View>
   );
 }

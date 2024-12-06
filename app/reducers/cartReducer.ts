@@ -1,81 +1,110 @@
 type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-export interface CartItem<T = any> {
-  id: string;
+export interface CartItem<ItemType = any> {
+  id?: string;
   cartItemId?: string;
   quantity: number;
-  item?: T;
+  item: ItemType;
   note?: string;
 }
 
-export interface Payload extends Optional<CartItem, "quantity"> {}
-
-type ActionTypes =
-  | "ADD_TO_CART"
-  | "REMOVE_FROM_CART"
-  | "ADD_INSTANCE_TO_CART"
-  | "DELETE_FROM_CART"
-  | "UPDATE_CART_ITEM";
-
-export interface IAction {
-  type: ActionTypes;
-  payload: Payload;
+export interface Payload<_T = any> {
+  id?: string;
+  cartItemId?: string;
 }
+
+interface AddItemPayload<ItemType>
+  extends Optional<Omit<AddInstancePayload<ItemType>, "id">, "item"> {
+  id?: string;
+  cartItemId?: string;
+}
+interface RemoveItemPayload extends Payload {
+  quantity?: number;
+}
+interface AddInstancePayload<ItemType>
+  extends Omit<Payload<ItemType>, "cartItemId"> {
+  id: string;
+  item: ItemType;
+  quantity?: number;
+}
+interface DeleteInstancePayload extends Omit<Payload, "id"> {
+  cartItemId?: string;
+}
+interface UpdateItemPayload extends Payload {
+  note: string;
+}
+
+export type IAction<ItemType = any> =
+  | { type: "ADD_ITEM"; payload: AddItemPayload<ItemType> }
+  | { type: "REMOVE_ITEM"; payload: RemoveItemPayload }
+  | { type: "ADD_INSTANCE"; payload: AddInstancePayload<ItemType> }
+  | { type: "DELETE_INSTANCE"; payload: DeleteInstancePayload }
+  | { type: "UPDATE_ITEM"; payload: UpdateItemPayload };
+
+export const actionTypes: IAction["type"][] = [
+  "ADD_ITEM",
+  "REMOVE_ITEM",
+  "ADD_INSTANCE",
+  "DELETE_INSTANCE",
+  "UPDATE_ITEM",
+];
 
 let increment = 1;
 
 export default function CartReducer<T>(state: CartItem<T>[], action: IAction) {
-  let existingCartItem = state.find(
-    (item) => item.cartItemId === action.payload.cartItemId
-  );
+  const { payload, type } = action;
+  const defaultQuantity = 1;
 
-  const quantity = action.payload?.quantity || 1;
+  const id = "id" in payload ? payload.id : "";
+  const cartItemId = "cartItemId" in payload ? payload.cartItemId : "";
 
-  switch (action.type) {
-    case "ADD_TO_CART":
-      if (existingCartItem) {
-        existingCartItem.quantity += quantity;
+  let quantity = defaultQuantity;
+  if ("quantity" in payload) quantity = payload.quantity || defaultQuantity;
+
+  let cartInstance = state.find((item) => item.cartItemId === cartItemId);
+
+  let firstCartItem = state.find((item) => item.id === id);
+
+  switch (type) {
+    case "ADD_ITEM":
+      if (cartInstance) {
+        cartInstance.quantity += quantity;
+        return [...state];
+      } else if (firstCartItem) {
+        firstCartItem.quantity += quantity;
         return [...state];
       }
-    case "ADD_INSTANCE_TO_CART":
+    case "ADD_INSTANCE":
       return [
         ...state,
         {
-          id: action.payload.id,
-          cartItemId: action.payload.id + "_" + increment++,
+          id: id,
+          cartItemId: id + "_" + increment++,
           quantity: quantity,
-          item: action.payload.item,
+          item: action.payload.item || {},
         },
       ];
 
-    case "REMOVE_FROM_CART":
-      if (existingCartItem) {
-        if (existingCartItem.quantity === quantity) {
-          return state.filter(
-            (item) => item.cartItemId !== action.payload.cartItemId
-          );
-        } else {
-          existingCartItem.quantity -= quantity;
+    case "REMOVE_ITEM":
+      if (cartInstance) {
+        if (cartInstance.quantity !== quantity) {
+          cartInstance.quantity -= quantity;
           return [...state];
         }
       }
 
-    case "DELETE_FROM_CART":
-      return state.filter(
-        (item) => item.cartItemId !== action.payload.cartItemId
-      );
+    case "DELETE_INSTANCE":
+      return state.filter((item) => item.cartItemId !== cartItemId);
 
-    case "UPDATE_CART_ITEM":
-      if (existingCartItem) {
-        existingCartItem = {
-          ...existingCartItem,
+    case "UPDATE_ITEM":
+      if (cartInstance) {
+        const newInstance = {
+          ...cartInstance,
           ...action.payload,
         };
 
         state = [...state].map((item) =>
-          item.cartItemId === action.payload.cartItemId
-            ? existingCartItem!
-            : item
+          item.cartItemId === cartItemId ? newInstance : item
         );
 
         return state;

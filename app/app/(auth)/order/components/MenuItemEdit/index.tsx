@@ -44,8 +44,19 @@ export default function MenuItemEditModal({
     >
       <View style={[styles.container, { backgroundColor: theme.background }]}>
         <View>
-          <Text style={[styles.h1]}>{menuItem?.name}</Text>
+          <Text style={[styles.h1, { color: theme.text }]}>
+            {menuItem?.name}
+          </Text>
         </View>
+
+        <View
+          style={{
+            width: "100%",
+            height: 1,
+            backgroundColor: theme.text,
+            marginVertical: 14,
+          }}
+        />
 
         <View>
           <SwipeListView
