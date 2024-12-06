@@ -1834,6 +1834,18 @@ async function generateMongo() {
   }
 
   await prisma.$transaction(reservations);
+
+  // Create TTL index for session collection
+  await prisma.$runCommandRaw({
+    createIndexes: 'Session',
+    indexes: [
+      {
+        key: { expiresAt: 1 },
+        expireAfterSeconds: 0,
+        name: 'expiresAtIndex',
+      },
+    ],
+  });
 }
 
 /**
