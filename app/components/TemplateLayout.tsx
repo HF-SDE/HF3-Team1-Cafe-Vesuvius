@@ -5,12 +5,14 @@ import { router } from "expo-router";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { PermissionManager } from "@/utils/permissionManager";
 import HeaderBackground from "@/components/HeaderBackground";
+import ErrorPage from "@/components/ErrorPage";
 
 type TemplateLayoutProps = {
   children: React.ReactNode; // Content to render within the template
   pageName: string; // Page name for permission checking
   title?: string; // Optional title to display
   buttonTitle?: string;
+  error?: string | null;
 };
 
 const TemplateLayout: React.FC<TemplateLayoutProps> = ({
@@ -18,6 +20,7 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
   pageName,
   title,
   buttonTitle = "Back",
+  error,
 }) => {
   const theme = useThemeColor();
   const navigation = useNavigation();
@@ -54,6 +57,10 @@ const TemplateLayout: React.FC<TemplateLayoutProps> = ({
 
   if (hasAccess === null) {
     return null; // Or a loading spinner
+  }
+
+  if (error) {
+    return <ErrorPage message={error} />;
   }
 
   return (

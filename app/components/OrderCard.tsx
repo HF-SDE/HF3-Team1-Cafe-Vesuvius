@@ -12,9 +12,9 @@ export default function OrderCard({ order }: OrderCardProps) {
   const theme = useThemeColor();
 
   const statusColors = {
-    cook: "#007FFF",
-    deliver: "orange",
-    completed: "green",
+    cook: theme.blue,
+    deliver: theme.orange,
+    completed: theme.green,
   };
 
   return (
@@ -24,14 +24,14 @@ export default function OrderCard({ order }: OrderCardProps) {
         alignItems: "center",
         backgroundColor: theme.primary,
         paddingVertical: 20,
-        borderRadius: 20,
+        borderRadius: 15,
         gap: 12,
       }}
     >
       <Text
         style={{
           color: theme.background,
-          fontSize: 38,
+          fontSize: 32,
           fontWeight: "bold",
         }}
       >
@@ -45,9 +45,9 @@ export default function OrderCard({ order }: OrderCardProps) {
             flexDirection: "row",
             justifyContent: "space-between",
             alignItems: "center",
-            padding: 10,
+            padding: 7,
             backgroundColor: theme.background,
-            borderRadius: 50,
+            borderRadius: 10,
             width: "90%",
           }}
         >

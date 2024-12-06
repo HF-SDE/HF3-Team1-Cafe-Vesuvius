@@ -18,7 +18,7 @@ export function useUsers(id?: string | string[]) {
 
       setUsers(response.data.data);
     } catch (err: any) {
-      setError("Failed to load user/users");
+      setError(err.code || "Failed to load user/users");
     } finally {
       setIsLoading(false);
     }
@@ -38,7 +38,7 @@ export function useUsers(id?: string | string[]) {
       );
       return response.data.data; // Return created user data
     } catch (err: any) {
-      setError("Failed to create user");
+      setError(err.code || "Failed to create user");
     } finally {
       setIsLoading(false);
     }
@@ -67,7 +67,7 @@ export function useUsers(id?: string | string[]) {
       );
       return response.data.data; // Return updated user data
     } catch (err: any) {
-      setError("Failed to update user");
+      setError(err.code || "Failed to update user");
     } finally {
       setIsLoading(false);
     }

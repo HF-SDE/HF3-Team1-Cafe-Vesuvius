@@ -28,7 +28,7 @@ export function useUserProfile() {
 
         setUserProfile(response.data.data);
       } catch (err: any) {
-        setError("Failed to load profile data");
+        setError(err.code || "Failed to load profile data");
       } finally {
         setIsLoading(false);
       }

@@ -18,12 +18,12 @@ export function useTable() {
         });
 
         setTable(response.data.data);
-      } catch (err: unknown) {
-        setError("Failed to load reservation data");
+      } catch (err: any) {
+        setError(err.code || "Failed to load reservation data");
       } finally {
         setIsLoading(false);
       }
-    };
+    }
 
     fetchReservations();
   }, []);

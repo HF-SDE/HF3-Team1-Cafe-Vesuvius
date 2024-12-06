@@ -124,8 +124,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       dailyUtilizationPercentages.push(percentageForDay);
     }
 
-    console.log(dailyUtilizationPercentages);
-
     // Step 2: Calculate the average table utilization percentage
     const averageUtilizationPercentage =
       dailyUtilizationPercentages.length > 0

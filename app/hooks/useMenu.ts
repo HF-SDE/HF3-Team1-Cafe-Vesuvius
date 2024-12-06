@@ -19,7 +19,7 @@ export function useMenu(id?: string | string[]) {
 
       setMenu(response.data.data);
     } catch (err: any) {
-      setError("Failed to load menu");
+      setError(err.code || "Failed to load menu");
     } finally {
       setIsLoading(false);
     }
@@ -41,7 +41,7 @@ export function useMenu(id?: string | string[]) {
         await fetchMenu();
       }
     } catch (err: any) {
-      setError("Failed to create menu");
+      setError(err.code || "Failed to create menu");
     }
   };
 
@@ -64,7 +64,7 @@ export function useMenu(id?: string | string[]) {
         );
       }
     } catch (err: any) {
-      setError("Failed to update menu");
+      setError(err.code || "Failed to update menu");
     }
   };
   const deleteMenu = async (deleteMenuId: string) => {
@@ -81,7 +81,7 @@ export function useMenu(id?: string | string[]) {
         );
       }
     } catch (err: any) {
-      setError("Failed to delete menu");
+      setError(err.code || "Failed to delete menu");
     }
   };
 

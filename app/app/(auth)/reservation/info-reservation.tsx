@@ -54,24 +54,35 @@ export default function InfoReservationModal({
         </Text>
         <Text style={{ color: theme.text, fontSize: 18 }}>
           Email:{" "}
-          <Text style={{ color: theme.primary }} onPress={handleEmailPress}>
+          <Text
+            style={{ color: theme.primary, textDecorationLine: "underline" }}
+            onPress={handleEmailPress}
+          >
             {email}
           </Text>
         </Text>
         <Text style={{ color: theme.text, fontSize: 18 }}>
           Phone:{" "}
-          <Text style={{ color: theme.primary }} onPress={handlePhonePress}>
+          <Text
+            style={{ color: theme.primary, textDecorationLine: "underline" }}
+            onPress={handlePhonePress}
+          >
             {phone}
           </Text>
         </Text>
         <TouchableOpacity
           style={[
             styles.cancelButton,
-            { backgroundColor: theme.primary, width: "100%" },
+            { backgroundColor: theme.primary, minWidth: "100%" },
           ]}
           onPress={onClose}
         >
-          <Text style={[styles.buttonText, { color: theme.background }]}>
+          <Text
+            style={[
+              styles.buttonText,
+              { color: theme.background, width: "100%", textAlign: "center" },
+            ]}
+          >
             close
           </Text>
         </TouchableOpacity>
@@ -84,7 +95,7 @@ export default function InfoReservationModal({
 const styles = StyleSheet.create({
   dateTimePicker: {
     position: "absolute",
-    backgroundColor: "white",
+    // backgroundColor: "white",
     zIndex: 2,
     borderRadius: 20,
     padding: 10,
@@ -98,7 +109,7 @@ const styles = StyleSheet.create({
     padding: 10,
     backgroundColor: "rgba(249, 180, 45, 0.25)",
     borderWidth: 1.5,
-    borderColor: "#fff",
+    // borderColor: "#fff",
   },
   itemDisabled: {
     flex: 1,
@@ -124,7 +135,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
-    paddingHorizontal: 10,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
@@ -148,7 +159,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginRight: 10,
   },
   mainButton: {
     flex: 1,

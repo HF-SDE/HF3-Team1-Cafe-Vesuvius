@@ -3,14 +3,15 @@ import { StyleSheet, FlatList, SafeAreaView, Text } from "react-native";
 import { useRouter } from "expo-router";
 import TemplateLayout from "@/components/TemplateLayout";
 import AddButton from "@/components/AddButton";
-import { useOrder } from "@/hooks/useOrder";
+import { useData } from "@/hooks/useData";
 import OrderCard from "@/components/OrderCard";
 import SearchBar from "@/components/SearchBar";
+import { OrderModel } from "@/models/OrderModel";
 
 export default function OrderOverview() {
   const router = useRouter();
 
-  const { orders, setOrders, isLoading } = useOrder();
+  const [orders, setOrders, isLoading] = useData<OrderModel>("/order");
 
   const [searchQuery, setSearchQuery] = useState("");
 
