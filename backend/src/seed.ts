@@ -1,5 +1,4 @@
 import { hash } from 'argon2';
-import { randomBytes } from 'crypto';
 
 import { faker } from '@faker-js/faker';
 import { Prisma, PrismaClient } from '@prisma/client';
@@ -136,7 +135,6 @@ const menu = [
  * Mongo database is used in the app and management side
  */
 async function generateMongo() {
-  
   const today = new Date();
 
   // Create Permission Groups
@@ -864,79 +862,6 @@ async function generateMongo() {
     { name: 'Strawberry Daiquiri', price: 85 },
     { name: 'Gin Hass', price: 85 },
   ];
-
-  /**
-   * Generates a random 12-byte hexadecimal string.
-   * This is used for generating table IDs and order IDs.
-   * @returns {string} A 12-byte hexadecimal string.
-   */
-  function generateHexId(): string {
-    return randomBytes(12).toString('hex');
-  }
-
-  /**
-   * Seed the database with sample data.
-   * This function creates orders and associated menu items for the past 50 days.
-   */
-  async function seedData() {
-    const startDate = new Date();
-    for (let day = 0; day < 1200; day++) {
-      const date = new Date(startDate); // Copy the startDate
-      date.setDate(startDate.getDate() - day); // Decrease date by 'day'
-
-      const orderCount = Math.floor(Math.random() * 5) + 1; // Random number between 1 and 5
-
-      for (let i = 0; i < orderCount; i++) {
-        const tableId = generateHexId(); // Generate a random 12-byte hex string for tableId
-
-        // Create the order (Let Prisma handle the ID)
-        const newOrder = await prisma.order.create({
-          data: {
-            tableId: tableId,
-            createdAt: date,
-            updatedAt: date,
-          },
-        });
-
-        const orderMenuCount = Math.floor(Math.random() * 5) + 1; // Random number of items (1-5)
-        const selectedMenuItems = Array.from(
-          { length: orderMenuCount },
-          () => menuItems[Math.floor(Math.random() * menuItems.length)],
-        );
-
-        for (const menuItem of selectedMenuItems) {
-          // Get the menuItemId (simulate retrieval from menuItems table)
-          const menuItemId = await prisma.menuItem.findFirst({
-            where: { name: menuItem.name },
-            select: { id: true },
-          });
-
-          if (menuItemId) {
-            //const orderId = generateHexId(); // Generate a random 12-byte hex string for orderId
-
-            // Create the order_Menu (Let Prisma handle the ID)
-            await prisma.order_Menu.create({
-              data: {
-                orderId: newOrder.id, // Use the 12-byte hex orderId
-                menuItemId: menuItemId.id,
-                status: ['pending', 'completed', 'delivered'][
-                  Math.floor(Math.random() * 3)
-                ], // Random status
-                quantity: Math.floor(Math.random() * 3) + 1, // Random quantity (1-3)
-                note: Math.random() > 0.7 ? 'Special note' : '', // Random note with 30% chance
-                menuItemPrice: menuItem.price, // Match price from the list
-              },
-            });
-          }
-        }
-      }
-    }
-  }
-
-  // Invoke the seedData function
-  seedData().catch((error) => {
-    console.error('Error seeding data:', error);
-  });
 
   // RawMaterial_MenuItem
   await prisma.rawMaterial_MenuItem.createMany({
@@ -1772,7 +1697,7 @@ async function generateMongo() {
   const pastDays = 200; // Number of days in the past
   const tableAmount = 28; // First table ID
 
-  const reservations: Prisma.Prisma__ReservationClient<unknown>[] = [];
+  const testData: Prisma.Prisma__ReservationClient<unknown>[] & Prisma.Prisma__Order_MenuClient<unknown>[] = [];
 
   for (let day = 0; day < totalDays; day++) {
     if (day < pastDays) {
@@ -1795,9 +1720,7 @@ async function generateMongo() {
 
       // Generate unique table IDs within the specified range
       const selectedTableNumbers = Array.from({ length: tableCount }, () =>
-        Math.floor(
-          Math.random() * (Number(JSON.stringify(tableAmount)) - 1 + 1) + 1,
-        ),
+        randomTable(tableAmount),
       );
 
       const selectedTableIdsTmp = selectedTableNumbers.map(
@@ -1818,7 +1741,7 @@ async function generateMongo() {
         new Date(today).setHours(Math.floor(Math.random() * 12) + 10),
       ); // Use the generated date
 
-      reservations.push(
+      testData.push(
         prisma.reservation.create({
           data: {
             amount,
@@ -1833,7 +1756,61 @@ async function generateMongo() {
     }
   }
 
-  await prisma.$transaction(reservations);
+
+  /**
+   * This creates orders and associated menu items for the past 50 days.
+   */
+  for (let day = 0; day < 1200; day++) {
+    const orderCount = Math.floor(Math.random() * 5) + 1; // Random number between 1 and 5
+
+    for (let i = 0; i < orderCount; i++) {
+      const tableId = await findTable(randomTable(tableAmount));
+
+      // Create the order (Let Prisma handle the ID)
+      const newOrder = await prisma.order.create({
+        data: {
+          tableId: tableId,
+        },
+      });
+
+      const orderMenuCount = Math.floor(Math.random() * 5) + 1; // Random number of items (1-5)
+      const selectedMenuItems = Array.from(
+        { length: orderMenuCount },
+        () => menuItems[Math.floor(Math.random() * menuItems.length)],
+      );
+
+      for (const menuItem of selectedMenuItems) {
+        // Get the menuItemId (simulate retrieval from menuItems table)
+        const menuItemId = await prisma.menuItem.findFirst({
+          where: { name: menuItem.name },
+          select: { id: true },
+        });
+
+        if (menuItemId) {
+          //const orderId = generateHexId(); // Generate a random 12-byte hex string for orderId
+
+          // Create the order_Menu (Let Prisma handle the ID)
+          testData.push(
+            prisma.order_Menu.create({
+              data: {
+                orderId: newOrder.id, // Use the 12-byte hex orderId
+                menuItemId: menuItemId.id,
+                status: ['pending', 'completed', 'delivered'][
+                  Math.floor(Math.random() * 3)
+                ], // Random status
+                quantity: Math.floor(Math.random() * 3) + 1, // Random quantity (1-3)
+                note: Math.random() > 0.7 ? 'Special note' : '', // Random note with 30% chance
+                menuItemPrice: menuItem.price, // Match price from the list
+              },
+            }),
+          );
+        }
+      }
+    }
+  }
+
+  // Create the orders and reservations
+  await prisma.$transaction(testData);
 
   // Create TTL index for session collection
   await prisma.$runCommandRaw({
@@ -1856,6 +1833,17 @@ async function generatingPSQL() {
   await prismaPSQL.menu.createMany({
     data: menu,
   });
+}
+
+/**
+ * Generate random table number in a specified range
+ * @param {number} amount Amount of tables
+ * @returns {number} Random table number
+ */
+function randomTable(amount: number): number {
+  return Math.floor(
+    Math.random() * (Number(JSON.stringify(amount)) - 1 + 1) + 1,
+  );
 }
 
 /**
