@@ -44,3 +44,23 @@ export const reservation: Prisma.ReservationFindManyArgs = {
   },
   include: { Tables: defaultTableInclude },
 };
+
+export const user: Prisma.UserFindManyArgs = {
+  omit: {
+    ...omit,
+    password: true,
+  },
+  include: {
+    UserPermissions: {
+      select: {
+        Permission: {
+          select: {
+            code: true,
+            description: true,
+            id: true,
+          },
+        },
+      },
+    },
+  },
+};

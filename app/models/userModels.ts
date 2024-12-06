@@ -5,7 +5,7 @@ export interface UserProfile {
   initials: string;
   name: string;
   active: boolean;
-  permissions: Permission[];
+  UserPermissions: Permission[];
 }
 
 export interface Permission {

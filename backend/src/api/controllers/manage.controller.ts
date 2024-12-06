@@ -1,29 +1,23 @@
-import { Request, Response } from 'express';
-
-import { APIResponse, TypedQuery } from '@api-types/general.types';
-import { User } from '@api-types/user.types';
-import { Prisma } from '@prisma/client';
-import * as ManageService from '@services/manage.service';
-import { getHttpStatusCode } from '@utils/Utils';
+import { TransformedUser, User } from '@api-types/user.types';
 
 /**
- * Controller to get all users
- * @async
- * @param {Request<Record<string, any>, APIResponse<Prisma.UserUpdateManyMutationInput[], Record<string, any>, TypedQuery<User>>>} req - The request object
- * @param {Response<APIResponse<Prisma.UserUpdateManyMutationInput[]>>} res - The response object
- * @returns {*} The response object
+ * Transforms raw User data into TransformedUser format.
+ * @param data - Array of raw User objects
+ * @returns Array of TransformedUser objects
  */
-export async function getUsers(
-  req: Request<
-    Record<string, any>,
-    APIResponse<Prisma.UserUpdateManyMutationInput[]>,
-    Record<string, any>,
-    TypedQuery<User>
-  >,
-  res: Response<APIResponse<Prisma.UserUpdateManyMutationInput[]>>,
-): Promise<void> {
-  const { id, username, email } = req.query;
-  const response = await ManageService.getUsers(id, username, email);
-
-  res.status(getHttpStatusCode(response.status)).json(response).end();
+export function transformUserData(data: User[]): TransformedUser[] {
+  return data.map((user) => ({
+    id: user.id,
+    name: user.name,
+    username: user.username,
+    email: user.email,
+    initials: user.initials,
+    active: user.active,
+    UserPermissions:
+      user.UserPermissions?.map((permission) => ({
+        id: permission.Permission.id,
+        code: permission.Permission.code,
+        description: permission.Permission.description,
+      })) || [],
+  }));
 }

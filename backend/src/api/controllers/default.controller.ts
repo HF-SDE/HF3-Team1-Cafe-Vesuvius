@@ -21,7 +21,10 @@ const config: Config = configWithoutType as Config;
  * @param {prismaModels} model - The Prisma model to get the records from.
  * @returns {ExpressFunction} The response object
  */
-export function getAll(model?: prismaModels): ExpressFunction {
+export function getAll(
+  model?: prismaModels,
+  transform?: (data: any[]) => any[],
+): ExpressFunction {
   return async (req, res: Response | WSResponse) => {
     let ws: ExtendedWebSocket;
     if (isWebSocket(res)) {
@@ -64,6 +67,9 @@ export function getAll(model?: prismaModels): ExpressFunction {
         ws.send(JSON.stringify(response));
       }, 12000);
     } else {
+      if (response.data && transform) {
+        response.data = transform(response.data);
+      }
       res.status(getHttpStatusCode(response.status)).json(response).end();
     }
   };

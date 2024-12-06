@@ -38,7 +38,7 @@ export default function EditCreateUserPage() {
     email: "",
     initials: "",
     active: true,
-    permissions: [] as { code: string; description: string }[],
+    UserPermissions: [] as { code: string; description: string }[],
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
@@ -65,12 +65,14 @@ export default function EditCreateUserPage() {
     } else {
       console.log("Update/Create");
 
-      if (id) {
+      if (id !== "new") {
         // Update user logic here
-        updateUser(user);
-        console.log(changedFields);
+        //updateUser(user);
+        console.log(user);
       } else {
         // Create new user logic here
+        //createUser(user);
+        console.log(user);
       }
     }
   };
@@ -100,7 +102,7 @@ export default function EditCreateUserPage() {
     isEnabled: boolean
   ) => {
     if (isEnabled !== changedFields[permissionCode]) {
-      const origValue = user.permissions.some(
+      const origValue = user.UserPermissions.some(
         (permission) => permission.code === permissionCode
       );
       setChangedFields((prev) => ({
@@ -115,11 +117,14 @@ export default function EditCreateUserPage() {
     }
     setUser((prevUser) => {
       const updatedPermissions = isEnabled
-        ? [...prevUser.permissions, { code: permissionCode, description: "" }]
-        : prevUser.permissions.filter(
+        ? [
+            ...prevUser.UserPermissions,
+            { code: permissionCode, description: "" },
+          ]
+        : prevUser.UserPermissions.filter(
             (permission) => permission.code !== permissionCode
           );
-      return { ...prevUser, permissions: updatedPermissions };
+      return { ...prevUser, UserPermissions: updatedPermissions };
     });
   };
 
@@ -179,7 +184,7 @@ export default function EditCreateUserPage() {
 
         <PermissionsTabView
           permissions={permissions ? permissions : []}
-          userPermissions={user.permissions ? user.permissions : []}
+          userPermissions={user.UserPermissions ? user.UserPermissions : []}
           onPermissionToggle={handlePermissionToggle}
         />
 

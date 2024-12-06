@@ -12,6 +12,10 @@ export function useUsers(id?: string | string[]) {
       setIsLoading(true);
       setError(null);
 
+      if (id === "new") {
+        return;
+      }
+
       const endpoint = id ? `/manage/user?id=${id}` : "/manage/user";
       const response = await apiClient.get(endpoint);
       //const response = await apiClient.get("/manage/user");
