@@ -17,7 +17,9 @@ services:
     volumes:
       - ../backend/src:/usr/src/app/src
       - ../schemas:/usr/src/app/schemas
-      - ../backend/nodemon.json:/usr/src/app/nodemon.json
+    configs:
+      - source: backend_nodemon
+        target: /usr/src/app/nodemon.json
     networks:
       - internal
 
@@ -36,6 +38,9 @@ services:
       - BACKEND_URL=http://reverse-proxy/api
     volumes:
       - ../frontend:/usr/src/app
+    configs:
+      - source: web_nodemon
+        target: /usr/src/app/nodemon.json
     networks:
       - internal
 
@@ -94,8 +99,9 @@ services:
       - 80:80
     depends_on:
       - backend
-    volumes:
-      - "../config/nginx.conf:/etc/nginx/nginx.conf"
+    configs:
+      - source: nginx_config
+        target: /etc/nginx/nginx.conf
     networks:
       - internal
 
@@ -122,3 +128,11 @@ volumes:
   mongo1_data: {}
   mongo1_config: {}
   postgres_data: {}
+
+configs:
+  nginx_config:
+    file: ../config/nginx.conf
+  web_nodemon:
+    file: ../frontend/nodemon.json
+  backend_nodemon:
+    file: ../backend/nodemon.json
