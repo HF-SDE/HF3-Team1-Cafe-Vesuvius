@@ -21,14 +21,6 @@ mongosh --port $MONGO_PORT <<EOF
 
     print("Replica set initiated.");
 
-    use CafeVesuvius;
-
-    db.Session.createIndex({ "expireAt": 1 }, { expireAfterSeconds: 0 });
-
-    print("TTL index created.");
-
-
-
 EOF
 
 echo "MongoDB initialization script completed."
