@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "install": "cd backend && npm install && cd ../app && npm install",
+    "install": "cd backend && npm install && cd ../app && npm install && cd ../frontend && npm install",
     "dev": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh && cd app && npm run start",
     "backend:dev": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh",
     "backend": "docker compose --env-file ./config/environment-variables/.env.docker.dev -f ./docker/docker-compose.prod.yml -f ./docker/docker-compose.yml up -d && docker exec db ./docker-entrypoint-initdb.d/init.sh",
