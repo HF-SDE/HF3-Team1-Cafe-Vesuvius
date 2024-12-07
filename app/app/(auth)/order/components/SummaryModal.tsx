@@ -1,11 +1,11 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Table } from "@/models/TableModels";
-import { CartItem } from "@/reducers/cartReducer";
 import apiClient from "@/utils/apiClient";
 import { useNavigation } from "expo-router";
 import { Modal, StyleSheet, Text, View } from "react-native";
 import FooterButtons from "./FooterButtons";
 import { Menu } from "../new-order";
+import type { CartItem } from "@/types/cartReducer.types";
 
 interface IConfirmModal {
   showModal: boolean;

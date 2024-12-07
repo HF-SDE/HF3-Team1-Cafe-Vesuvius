@@ -1,15 +1,11 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Modal, Pressable, StyleSheet, Text, View } from "react-native";
 import FooterButtons from "../FooterButtons";
-import { CartItem } from "@/reducers/cartReducer";
-import { TextInput } from "react-native-paper";
-import { useEffect, useState } from "react";
 import { Menu } from "../../new-order";
-import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { SwipeListView } from "react-native-swipe-list-view";
 import SwipeRow from "./components/SwipeRow";
 import SwipeIcons from "./components/SwipeIcons";
-import { ICartActions } from "@/actions/cartActions";
+import type { CartItem, ICartActions } from "@/types/cartReducer.types";
 
 interface INoteModal {
   show: boolean;

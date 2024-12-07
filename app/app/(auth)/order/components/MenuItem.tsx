@@ -2,8 +2,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MenuItemEdit from "./MenuItemEdit";
 import { useState } from "react";
-import { CartItem } from "@/reducers/cartReducer";
-import { ICartActions } from "@/actions/cartActions";
+import { CartItem, ICartActions } from "@/types/cartReducer.types";
 import { Menu } from "../new-order";
 
 interface IMenuItem {
