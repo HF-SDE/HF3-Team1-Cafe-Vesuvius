@@ -4,16 +4,12 @@ import { StyleSheet, View, Text, FlatList, Dimensions } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import Switch from "@/components/Switch";
 import { useThemeColor } from "@/hooks/useThemeColor";
-
-interface Permission {
-  code: string;
-  description: string;
-}
+import { Permission } from "@/models/PermissionModel";
 
 interface PermissionsTabViewProps {
   permissions: Permission[];
   userPermissions: Permission[];
-  onPermissionToggle?: (permissionCode: string, isEnabled: boolean) => void;
+  onPermissionToggle?: (permissionId: string, isEnabled: boolean) => void;
 }
 
 const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
@@ -43,7 +39,7 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     return (
       <FlatList
         data={filteredPermissions}
-        keyExtractor={(item) => item.code}
+        keyExtractor={(item) => item.permissionId}
         renderItem={renderPermissionItem}
         showsHorizontalScrollIndicator={false}
         showsVerticalScrollIndicator={false}
@@ -53,7 +49,7 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
 
   const renderPermissionItem = ({ item }: { item: Permission }) => {
     const isActive = userPermissions.some(
-      (permission) => permission.code === item.code
+      (permission) => permission.permissionId === item.permissionId
     );
     return (
       <View
@@ -65,7 +61,7 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
         <Switch
           value={isActive}
           onValueChange={(newValue) =>
-            onPermissionToggle?.(item.code, newValue)
+            onPermissionToggle?.(item.permissionId, newValue)
           }
         />
       </View>

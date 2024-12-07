@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import apiClient from "../utils/apiClient";
-
-interface Permissions {
-  code: string;
-  description: string;
-}
+import { Permission } from "@/models/PermissionModel";
 
 export function usePermissions() {
-  const [permissions, setPermissions] = useState<Permissions[] | null>(null);
+  const [permissions, setPermissions] = useState<Permission[] | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -19,7 +15,18 @@ export function usePermissions() {
 
         const response = await apiClient.get("/manage/permission");
 
-        setPermissions(response.data.data);
+        // Map the API response to match the Permission interface
+        const mappedPermissions: Permission[] = response.data.data.map(
+          (item: any) => ({
+            permissionId: item.id, // Map `id` to `permissionId`
+            code: item.code,
+            description: item.description,
+            assignedBy: item.assignedBy,
+          })
+        );
+
+        setPermissions(mappedPermissions);
+        //setPermissions(response.data.data);
       } catch (err: any) {
         setError(err.code || "Failed to load permissions");
       } finally {

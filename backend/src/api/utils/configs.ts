@@ -60,6 +60,7 @@ export const user: Prisma.UserFindManyArgs = {
             id: true,
           },
         },
+        assignedBy: true,
       },
     },
   },

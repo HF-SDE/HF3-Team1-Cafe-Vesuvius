@@ -14,13 +14,15 @@ import AddButton from "@/components/AddButton";
 import LoadingPage from "@/components/LoadingPage";
 import { router } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import SearchBar from "@/components/SearchBar"; // Import the SearchBar
 import { UserProfile } from "@/models/userModels";
 
 export default function ManageUsersPage() {
-  const { users, isLoading, error } = useUsers(); // Assume refresh is available
+  const { users, isLoading, error, refreshUsers } = useUsers(); // Assume refresh is available
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
+  const navigation = useNavigation();
 
   const theme = useThemeColor();
 
@@ -38,6 +40,16 @@ export default function ManageUsersPage() {
   const handleUserPress = (userId: string) => {
     router.navigate(`/management/users/${userId}`);
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("focus", () => {
+      // Trigger the refetch whenever the screen comes into focus
+      refreshUsers();
+    });
+
+    // Cleanup the listener
+    return unsubscribe;
+  }, [navigation]);
 
   const filterUsers = (query: string) => {
     const text = query.toLowerCase();
@@ -65,7 +77,18 @@ export default function ManageUsersPage() {
             {item.email}
           </Text>
         </View>
-        <FontAwesome6 name="edit" size={48} color={theme.secondary} />
+        <View style={styles.iconContainer}>
+          {!item.active && (
+            <MaterialIcons
+              name="cancel"
+              size={52}
+              color="red"
+              style={{ paddingRight: 10 }}
+            />
+          )}
+
+          <FontAwesome6 name="edit" size={48} color={theme.secondary} />
+        </View>
       </View>
     </TouchableOpacity>
   );
@@ -130,5 +153,9 @@ const styles = StyleSheet.create({
     textAlign: "center",
     marginVertical: 20,
     color: "red",
+  },
+  iconContainer: {
+    display: "flex",
+    flexDirection: "row",
   },
 });

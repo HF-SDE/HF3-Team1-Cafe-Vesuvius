@@ -12,6 +12,7 @@ export interface User {
 
 interface UserPermission {
   Permission: Permission;
+  assignedBy: string;
 }
 
 export interface TransformedUser {
@@ -21,5 +22,10 @@ export interface TransformedUser {
   email: string;
   initials: string;
   active: boolean;
-  permissions: { code: string; description: string }[]; // Match the mapped structure
+  UserPermissions: {
+    permissionId: string;
+    code: string;
+    description: string;
+    assignedBy: string;
+  }[]; // Match the mapped structure
 }

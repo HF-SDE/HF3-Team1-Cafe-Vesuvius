@@ -1,3 +1,4 @@
+import { Permission } from "@/models/PermissionModel";
 export interface UserProfile {
   id: string;
   username: string;
@@ -5,10 +6,6 @@ export interface UserProfile {
   initials: string;
   name: string;
   active: boolean;
+  password: string;
   UserPermissions: Permission[];
-}
-
-export interface Permission {
-  code: string;
-  description: string;
 }

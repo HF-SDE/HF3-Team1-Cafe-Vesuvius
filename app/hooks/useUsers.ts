@@ -31,12 +31,19 @@ export function useUsers(id?: string | string[]) {
     fetchUsers();
   }, [id]);
 
+  const refreshUsers = async () => {
+    await fetchUsers();
+  };
+
   // Create a new user
   const createUser = async (newUser: UserProfile) => {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await apiClient.post("/manage/user", newUser);
+
+      const { id, ...userWithoutId } = newUser;
+
+      const response = await apiClient.post("/manage/user", userWithoutId);
       setUsers((prevUsers) =>
         prevUsers ? [...prevUsers, response.data.data] : [response.data.data]
       );
@@ -58,9 +65,12 @@ export function useUsers(id?: string | string[]) {
     try {
       setIsLoading(true);
       setError(null);
-      const response = await apiClient.put(
-        `/manage/user?id=${updatedUser.id}`,
-        updatedUser
+
+      const { id, ...userWithoutId } = updatedUser;
+
+      const response = await apiClient.patch(
+        `/manage/user/${id}`,
+        userWithoutId
       );
       setUsers((prevUsers) =>
         prevUsers
@@ -77,5 +87,5 @@ export function useUsers(id?: string | string[]) {
     }
   };
 
-  return { users, isLoading, error, createUser, updateUser };
+  return { users, isLoading, error, createUser, updateUser, refreshUsers };
 }

@@ -17,6 +17,8 @@ import ResetPasswordModal from "./reset-password";
 
 import { UserProfile } from "@/models/userModels";
 
+import { useLogedInUser } from "@/hooks/useLogedInUser";
+
 export default function EditCreateUserPage() {
   const { id } = useLocalSearchParams();
 
@@ -31,6 +33,8 @@ export default function EditCreateUserPage() {
   );
   const { permissions } = usePermissions();
 
+  const currentUser = useLogedInUser();
+
   const [user, setUser] = useState<UserProfile>({
     id: "",
     username: "",
@@ -38,7 +42,13 @@ export default function EditCreateUserPage() {
     email: "",
     initials: "",
     active: true,
-    UserPermissions: [] as { code: string; description: string }[],
+    password: "",
+    UserPermissions: [] as {
+      permissionId: string;
+      code: string;
+      description: string;
+      assignedBy: string;
+    }[],
   });
 
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
@@ -50,12 +60,19 @@ export default function EditCreateUserPage() {
       const foundUser = users[0];
 
       if (id && foundUser) {
-        setUser(foundUser);
+        const minimalPermissions = foundUser.UserPermissions?.map(
+          (permission) => ({
+            permissionId: permission.permissionId,
+            assignedBy: permission.assignedBy,
+          })
+        );
+
+        setUser({ ...foundUser, UserPermissions: minimalPermissions });
       }
     }
   }, [id, users]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
@@ -67,14 +84,13 @@ export default function EditCreateUserPage() {
 
       if (id !== "new") {
         // Update user logic here
-        //updateUser(user);
-        console.log(user);
+        await updateUser(user);
       } else {
         // Create new user logic here
-        //createUser(user);
-        console.log(user);
+        await createUser(user);
       }
     }
+    navigation.goBack();
   };
 
   const handleChange = (field: keyof UserProfile, value: string | boolean) => {
@@ -97,32 +113,29 @@ export default function EditCreateUserPage() {
     }));
   };
 
-  const handlePermissionToggle = (
-    permissionCode: string,
-    isEnabled: boolean
-  ) => {
-    if (isEnabled !== changedFields[permissionCode]) {
+  const handlePermissionToggle = (permissionId: string, isEnabled: boolean) => {
+    if (isEnabled !== changedFields[permissionId]) {
       const origValue = user.UserPermissions.some(
-        (permission) => permission.code === permissionCode
+        (permission) => permission.permissionId === permissionId
       );
       setChangedFields((prev) => ({
         ...prev,
-        [permissionCode]: origValue,
+        [permissionId]: origValue,
       }));
     } else {
       // If the value is changed back to original, remove from changedFields
       const updatedChangedFields = { ...changedFields };
-      delete updatedChangedFields[permissionCode];
+      delete updatedChangedFields[permissionId];
       setChangedFields(updatedChangedFields);
     }
     setUser((prevUser) => {
       const updatedPermissions = isEnabled
         ? [
             ...prevUser.UserPermissions,
-            { code: permissionCode, description: "" },
+            { permissionId: permissionId, assignedBy: currentUser },
           ]
         : prevUser.UserPermissions.filter(
-            (permission) => permission.code !== permissionCode
+            (permission) => permission.permissionId !== permissionId
           );
       return { ...prevUser, UserPermissions: updatedPermissions };
     });
@@ -212,7 +225,13 @@ export default function EditCreateUserPage() {
           <View
             style={[styles.modalContent, { backgroundColor: theme.primary }]}
           >
-            <ResetPasswordModal onClose={() => setIsModalVisible(false)} />
+            <ResetPasswordModal
+              onClose={() => setIsModalVisible(false)}
+              onResetPassword={(newPassword) => {
+                handleChange("password", newPassword);
+                setIsModalVisible(false);
+              }}
+            />
           </View>
         </View>
       </Modal>

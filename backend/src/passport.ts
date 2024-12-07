@@ -49,6 +49,10 @@ passport.use(
           return done(null, false, { message: 'User not found' });
         }
 
+        if (!user.active) {
+          return done(null, false, { message: 'User deactivated' });
+        }
+
         // Validate the password using Argon2
         const validate = await argon2.verify(user.password, password);
         if (!validate) {

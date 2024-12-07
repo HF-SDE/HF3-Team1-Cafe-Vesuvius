@@ -18,9 +18,13 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ModalScreenProps {
   onClose: () => void;
+  onResetPassword: (newPassword: string) => void;
 }
 
-export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
+export default function ResetPasswordModal({
+  onClose,
+  onResetPassword,
+}: ModalScreenProps) {
   const { resetPassword } = useUserProfile();
 
   const [newPassword, setNewPassword] = useState("");
@@ -46,6 +50,8 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
       // } else {
       //   setErrorMessage(response || "An error occurred.");
       // }
+      const encodedPassword = btoa(newPassword);
+      onResetPassword(encodedPassword);
     } catch (error) {
       console.error(error);
 
