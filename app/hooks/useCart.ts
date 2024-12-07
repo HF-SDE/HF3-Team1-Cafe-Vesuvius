@@ -1,6 +1,7 @@
 import { useReducer } from "react";
-import CartReducer, { Payload, CartItem } from "@/reducers/cartReducer";
-import { cartActions, ICartActions } from "@/actions/cartActions";
+import CartReducer from "@/reducers/cartReducer";
+import { CartItem, Payload, ICartActions } from "@/types/cartReducer.types";
+import { cartActions } from "@/actions/cartActions";
 
 export default function useCart<T extends Payload = Payload>(
   init: CartItem<T>[] = []

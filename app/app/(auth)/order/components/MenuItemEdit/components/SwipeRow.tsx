@@ -1,9 +1,8 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { CartItem } from "@/reducers/cartReducer";
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Menu } from "../../../new-order";
-import { ICartActions } from "@/actions/cartActions";
+import type { CartItem, ICartActions } from "@/types/cartReducer.types";
 
 interface ISwipeRow {
   cartItem: CartItem<Menu>;

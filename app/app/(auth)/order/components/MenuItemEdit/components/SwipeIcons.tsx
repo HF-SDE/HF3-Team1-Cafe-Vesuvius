@@ -2,8 +2,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { Menu } from "../../../new-order";
-import { CartItem } from "@/reducers/cartReducer";
-import { ICartActions } from "@/actions/cartActions";
+import type { CartItem, ICartActions } from "@/types/cartReducer.types";
 
 interface ISwipeIcons {
   cartActions: ICartActions<Menu>;

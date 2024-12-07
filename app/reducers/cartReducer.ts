@@ -1,45 +1,4 @@
-type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
-export interface CartItem<ItemType = any> {
-  id?: string;
-  cartItemId?: string;
-  quantity: number;
-  item: ItemType;
-  note?: string;
-}
-
-export interface Payload<_T = any> {
-  id?: string;
-  cartItemId?: string;
-}
-
-interface AddItemPayload<ItemType>
-  extends Optional<Omit<AddInstancePayload<ItemType>, "id">, "item"> {
-  id?: string;
-  cartItemId?: string;
-}
-interface RemoveItemPayload extends Payload {
-  quantity?: number;
-}
-interface AddInstancePayload<ItemType>
-  extends Omit<Payload<ItemType>, "cartItemId"> {
-  id: string;
-  item: ItemType;
-  quantity?: number;
-}
-interface DeleteInstancePayload extends Omit<Payload, "id"> {
-  cartItemId?: string;
-}
-interface UpdateItemPayload extends Payload {
-  note: string;
-}
-
-export type IAction<ItemType = any> =
-  | { type: "ADD_ITEM"; payload: AddItemPayload<ItemType> }
-  | { type: "REMOVE_ITEM"; payload: RemoveItemPayload }
-  | { type: "ADD_INSTANCE"; payload: AddInstancePayload<ItemType> }
-  | { type: "DELETE_INSTANCE"; payload: DeleteInstancePayload }
-  | { type: "UPDATE_ITEM"; payload: UpdateItemPayload };
+import { CartItem, IAction } from "@/types/cartReducer.types";
 
 export const actionTypes: IAction["type"][] = [
   "ADD_ITEM",
