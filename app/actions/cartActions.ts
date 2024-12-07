@@ -1,23 +1,11 @@
-import {
-  Payload,
-  CartItem,
+import { actionTypes } from "@/reducers/cartReducer";
+import { toCamelCase } from "@/utils/camelCase";
+
+import type {
+  ActionPayloadMap,
   IAction,
-  actionTypes,
-} from "@/reducers/cartReducer";
-import { toCamelCase, ToCamelCase } from "@/utils/camelCase";
-
-type ActionPayloadMap<T = any> = {
-  [Action in IAction<T> as ToCamelCase<Action["type"]>]: Action["payload"];
-};
-
-export type ICartActions<ItemType> = {
-  [K in keyof ActionPayloadMap]: (
-    payload: ActionPayloadMap<ItemType>[K]
-  ) => void;
-} & {
-  getCartItemQuantity: (input: ItemType | string) => number;
-  getCartItems: (input: ItemType | string | undefined) => CartItem[];
-};
+  ICartActions,
+} from "@/types/cartReducer.types";
 
 export function cartActions<ItemType>(
   dispatch: React.Dispatch<IAction<ItemType>>
