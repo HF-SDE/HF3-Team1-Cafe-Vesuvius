@@ -13,12 +13,14 @@ type QuantityInputProps = {
   itemId: string;
   initialQty: number; // Change adjustedQty to initialQty for better clarity
   onQuantityChanged?: (id: string, quantity: number) => void;
+  editable: boolean | undefined;
 };
 
 const QuantityInput: React.FC<QuantityInputProps> = ({
   itemId,
   initialQty,
   onQuantityChanged,
+  editable,
 }) => {
   const theme = useThemeColor();
 
@@ -42,6 +44,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
       ]}
       value={quantity.toString()}
       keyboardType="decimal-pad"
+      editable={editable}
       onChangeText={(text) => {
         text = text.replace(",", ".");
 

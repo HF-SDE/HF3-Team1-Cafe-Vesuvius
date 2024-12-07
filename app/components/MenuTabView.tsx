@@ -18,8 +18,10 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { SafeAreaView } from "react-native-safe-area-context";
 import NewCategoryInput from "./NewCategoryInput";
 import QuantityInput from "./QuantityInput";
+import CheckPermission from "@/components/CheckPermission";
 
 type CategoryIngredientTabsProps = {
+  id: string | undefined;
   categories: string[];
   ingredients: RawMaterial_MenuItems[];
   onAddCategory: (category: string) => void;
@@ -37,6 +39,7 @@ type CategoryIngredientTabsProps = {
 
 const MenuTabView = React.memo(
   ({
+    id,
     categories,
     ingredients,
     onAddCategory,
@@ -60,10 +63,15 @@ const MenuTabView = React.memo(
 
     const CategoriesTab = () => (
       <View style={styles.section}>
-        <NewCategoryInput
-          onAddCategory={onAddCategory}
-          themeColors={themeColors}
-        />
+        <CheckPermission
+          requiredPermission={[id !== "new" ? "menu:update" : "menu:create"]}
+        >
+          <NewCategoryInput
+            onAddCategory={onAddCategory}
+            themeColors={themeColors}
+          />
+        </CheckPermission>
+
         <FlatList
           data={categories}
           keyExtractor={(item) => item}
@@ -74,13 +82,19 @@ const MenuTabView = React.memo(
               <Text style={[styles.categoryText, { color: theme.background }]}>
                 {item}
               </Text>
-              <TouchableOpacity onPress={() => onDeleteCategory(item)}>
-                <FontAwesome6
-                  name="trash-alt"
-                  size={18}
-                  color={theme.secondary}
-                />
-              </TouchableOpacity>
+              <CheckPermission
+                requiredPermission={[
+                  id !== "new" ? "menu:update" : "menu:create",
+                ]}
+              >
+                <TouchableOpacity onPress={() => onDeleteCategory(item)}>
+                  <FontAwesome6
+                    name="trash-alt"
+                    size={18}
+                    color={theme.secondary}
+                  />
+                </TouchableOpacity>
+              </CheckPermission>
             </View>
           )}
           ListEmptyComponent={
@@ -96,16 +110,21 @@ const MenuTabView = React.memo(
 
     const IngredientsTab = () => (
       <View style={styles.section}>
-        <TouchableOpacity
-          style={styles.addIcon}
-          onPress={() => setIsModalVisible(true)}
+        <CheckPermission
+          requiredPermission={[id !== "new" ? "menu:update" : "menu:create"]}
         >
-          <FontAwesome6
-            name="square-plus"
-            size={60}
-            color={themeColors.primary}
-          />
-        </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.addIcon}
+            onPress={() => setIsModalVisible(true)}
+          >
+            <FontAwesome6
+              name="square-plus"
+              size={60}
+              color={themeColors.primary}
+            />
+          </TouchableOpacity>
+        </CheckPermission>
+
         <FlatList
           data={ingredients}
           keyExtractor={(item) => item.RawMaterial.id as string}
@@ -121,27 +140,39 @@ const MenuTabView = React.memo(
               >
                 {item.RawMaterial.name}
               </Text>
-              <QuantityInput
-                itemId={item.RawMaterial.id as string}
-                initialQty={item.quantity}
-                onQuantityChanged={onUpdateIngredientQuantity}
-              />
+              <CheckPermission
+                requiredPermission={[
+                  id !== "new" ? "menu:update" : "menu:create",
+                ]}
+                showIfNotPermitted
+              >
+                <QuantityInput
+                  itemId={item.RawMaterial.id as string}
+                  initialQty={item.quantity}
+                  onQuantityChanged={onUpdateIngredientQuantity}
+                />
+              </CheckPermission>
 
               <Text style={{ width: 30, color: theme.background }}>
                 {item.RawMaterial.unit}
               </Text>
-
-              <TouchableOpacity
-                onPress={() => {
-                  onDeleteIngredient(item.RawMaterial.id as string);
-                }}
+              <CheckPermission
+                requiredPermission={[
+                  id !== "new" ? "menu:update" : "menu:create",
+                ]}
               >
-                <FontAwesome6
-                  name="trash-alt"
-                  size={18}
-                  color={theme.secondary}
-                />
-              </TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    onDeleteIngredient(item.RawMaterial.id as string);
+                  }}
+                >
+                  <FontAwesome6
+                    name="trash-alt"
+                    size={18}
+                    color={theme.secondary}
+                  />
+                </TouchableOpacity>
+              </CheckPermission>
             </View>
           )}
           ListEmptyComponent={

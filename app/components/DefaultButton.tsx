@@ -5,15 +5,17 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 interface ButtonProps {
   onPress?: () => void;
   title: string;
+  disabled?: boolean | undefined;
 }
 
-const SubmitButton: React.FC<ButtonProps> = ({ onPress, title }) => {
+const SubmitButton: React.FC<ButtonProps> = ({ onPress, title, disabled }) => {
   const theme = useThemeColor();
 
   return (
     <TouchableOpacity
       style={[styles.button, { backgroundColor: theme.primary }]}
       onPress={onPress}
+      disabled={disabled}
     >
       <Text style={[styles.buttonText, { color: theme.background }]}>
         {title}

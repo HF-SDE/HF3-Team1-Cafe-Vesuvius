@@ -117,7 +117,7 @@ export default function ManageUsersPage() {
         )}
         <AddButton
           onPress={handleAddUser}
-          requiredPermission={["order:create"]}
+          requiredPermission={["administrator:users:create"]}
         />
       </View>
     </TemplateLayout>

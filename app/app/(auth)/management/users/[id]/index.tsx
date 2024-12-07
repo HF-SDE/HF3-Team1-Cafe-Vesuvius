@@ -13,14 +13,24 @@ import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
 import Switch from "@/components/Switch";
 import PermissionsTabView from "@/components/PermissionsTabView";
+import CheckPermission from "@/components/CheckPermission";
+
 import ResetPasswordModal from "./reset-password";
 
 import { UserProfile } from "@/models/userModels";
 
 import { useLogedInUser } from "@/hooks/useLogedInUser";
+import { useRoute } from "@react-navigation/native";
+import { RouteProp } from "@react-navigation/native";
+
+type EditCreateUserRouteParams = {
+  id: string | "new" | undefined;
+};
 
 export default function EditCreateUserPage() {
-  const { id } = useLocalSearchParams();
+  const route =
+    useRoute<RouteProp<{ params: EditCreateUserRouteParams }, "params">>();
+  const { id } = route.params || { id: undefined };
 
   const navigation = useNavigation();
 
@@ -149,70 +159,97 @@ export default function EditCreateUserPage() {
       error={error}
     >
       <View style={styles.container}>
-        <TextInput
-          style={styles.input}
-          label="Username"
-          value={user.username}
-          onChangeText={(value) => handleChange("username", value)}
-          clearTextOnFocus={false}
-        />
-        <TextInput
-          style={styles.input}
-          label="Name"
-          value={user.name}
-          onChangeText={(value) => handleChange("name", value)}
-          clearTextOnFocus={false}
-        />
-        <TextInput
-          style={styles.input}
-          label="Email"
-          value={user.email}
-          onChangeText={(value) => handleChange("email", value)}
-          inputMode="email"
-          clearTextOnFocus={false}
-        />
-        <View style={styles.initialsActiveContainer}>
-          <TextInput
-            style={[styles.input, styles.initialsInput]}
-            label="Initials"
-            value={user.initials}
-            onChangeText={(value) => handleChange("initials", value)}
-            clearTextOnFocus={false}
-          />
-          <View style={styles.activeSwitchContainer}>
-            <Text style={[styles.permissionsTitle, { color: theme.text }]}>
-              Active
-            </Text>
-
-            <Switch
-              onValueChange={(newValue) => handleChange("active", newValue)}
-              value={user.active}
+        <View>
+          <CheckPermission
+            requiredPermission={[
+              id !== "new"
+                ? "administrator:users:update"
+                : "administrator:users:create",
+            ]}
+            showIfNotPermitted
+          >
+            <TextInput
+              style={styles.input}
+              label="Username"
+              value={user.username}
+              onChangeText={(value) => handleChange("username", value)}
+              clearTextOnFocus={false}
             />
-          </View>
+            <TextInput
+              style={styles.input}
+              label="Name"
+              value={user.name}
+              onChangeText={(value) => handleChange("name", value)}
+              clearTextOnFocus={false}
+            />
+            <TextInput
+              style={styles.input}
+              label="Email"
+              value={user.email}
+              onChangeText={(value) => handleChange("email", value)}
+              inputMode="email"
+              clearTextOnFocus={false}
+            />
+            <View style={styles.initialsActiveContainer}>
+              <TextInput
+                style={[styles.input, styles.initialsInput]}
+                label="Initials"
+                value={user.initials}
+                onChangeText={(value) => handleChange("initials", value)}
+                clearTextOnFocus={false}
+              />
+              <View style={styles.activeSwitchContainer}>
+                <Text style={[styles.permissionsTitle, { color: theme.text }]}>
+                  Active
+                </Text>
+
+                <Switch
+                  onValueChange={(newValue) => handleChange("active", newValue)}
+                  value={user.active}
+                />
+              </View>
+            </View>
+          </CheckPermission>
+          <Text style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}>
+            Permissions
+          </Text>
+          <PermissionsTabView
+            id={id}
+            permissions={permissions ? permissions : []}
+            userPermissions={user.UserPermissions ? user.UserPermissions : []}
+            onPermissionToggle={handlePermissionToggle}
+          />
         </View>
 
-        <Text style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}>
-          Permissions
-        </Text>
+        <View>
+          <CheckPermission
+            requiredPermission={[
+              id !== "new"
+                ? "administrator:users:update"
+                : "administrator:users:create",
+            ]}
+          >
+            <Button
+              title="Reset password"
+              onPress={() => setIsModalVisible(true)}
+            />
+          </CheckPermission>
+          <View style={styles.buttonContainer}>
+            <Button title="Cancel" onPress={() => navigation.goBack()} />
 
-        <PermissionsTabView
-          permissions={permissions ? permissions : []}
-          userPermissions={user.UserPermissions ? user.UserPermissions : []}
-          onPermissionToggle={handlePermissionToggle}
-        />
-
-        <Button
-          title="Reset password"
-          onPress={() => setIsModalVisible(true)}
-        />
-
-        <View style={styles.buttonContainer}>
-          <Button title="Cancel" onPress={() => navigation.goBack()} />
-
-          <Button
-            title={id !== "new" ? "Save" : "Create"}
-            onPress={handleSave}
-          />
+            <CheckPermission
+              requiredPermission={[
+                id !== "new"
+                  ? "administrator:users:update"
+                  : "administrator:users:create",
+              ]}
+            >
+              <Button
+                title={id !== "new" ? "Save" : "Create"}
+                onPress={handleSave}
+              />
+            </CheckPermission>
+          </View>
         </View>
       </View>
       <Modal
@@ -243,6 +280,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     flex: 1,
+    justifyContent: "space-between",
   },
   scrollViewContainer: {
     flexGrow: 1,

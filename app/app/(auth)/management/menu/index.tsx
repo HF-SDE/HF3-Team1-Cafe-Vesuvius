@@ -55,7 +55,7 @@ export default function ManageUsersPage() {
       const lowercasedQuery = searchQuery.toLowerCase();
       if (lowercasedQuery.length > 0) {
         const results = menu.filter((item) =>
-          item.name.toLowerCase().includes(lowercasedQuery)
+          (item.name as string).toLowerCase().includes(lowercasedQuery)
         );
         setFilteredMenu(results);
       } else {
@@ -65,7 +65,7 @@ export default function ManageUsersPage() {
   }, [menu, searchQuery]);
 
   const renderItem = ({ item }: { item: MenuModel }) => (
-    <TouchableOpacity onPress={() => handleUserPress(item.id)}>
+    <TouchableOpacity onPress={() => handleUserPress(item.id as string)}>
       <View style={[styles.userItem, { backgroundColor: theme.primary }]}>
         <View>
           <Text style={[styles.ItemName, { color: theme.background }]}>
@@ -96,7 +96,7 @@ export default function ManageUsersPage() {
           <FlatList
             data={filteredMenu}
             renderItem={renderItem}
-            keyExtractor={(item) => item.id.toString()}
+            keyExtractor={(item) => item.id as string}
             contentContainerStyle={styles.userList}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
@@ -104,7 +104,8 @@ export default function ManageUsersPage() {
         )}
         <AddButton
           onPress={handleAddUser}
-          requiredPermission={["order:create"]}
+          requiredPermission={["menu:create"]}
+          
         />
       </View>
     </TemplateLayout>

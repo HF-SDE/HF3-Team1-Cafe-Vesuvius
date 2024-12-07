@@ -5,14 +5,17 @@ import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import Switch from "@/components/Switch";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Permission } from "@/models/PermissionModel";
+import CheckPermission from "@/components/CheckPermission";
 
 interface PermissionsTabViewProps {
+  id: string | undefined;
   permissions: Permission[];
   userPermissions: Permission[];
   onPermissionToggle?: (permissionId: string, isEnabled: boolean) => void;
 }
 
 const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
+  id,
   permissions,
   userPermissions,
   onPermissionToggle,
@@ -58,12 +61,21 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
         <Text style={[styles.permissionDescription, { color: theme.text }]}>
           {item.description}
         </Text>
-        <Switch
-          value={isActive}
-          onValueChange={(newValue) =>
-            onPermissionToggle?.(item.permissionId, newValue)
-          }
-        />
+        <CheckPermission
+          requiredPermission={[
+            id !== "new"
+              ? "administrator:users:update"
+              : "administrator:users:create",
+          ]}
+          showIfNotPermitted
+        >
+          <Switch
+            value={isActive}
+            onValueChange={(newValue) =>
+              onPermissionToggle?.(item.permissionId, newValue)
+            }
+          />
+        </CheckPermission>
       </View>
     );
   };

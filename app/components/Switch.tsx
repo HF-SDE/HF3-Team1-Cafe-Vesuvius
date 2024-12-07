@@ -5,11 +5,13 @@ import { Platform, Switch } from "react-native";
 interface CustomSwitchProps {
   value: boolean;
   onValueChange?: (value: boolean) => void;
+  disabled?: boolean | undefined;
 }
 
 const CustomSwitch: React.FC<CustomSwitchProps> = ({
   value,
   onValueChange,
+  disabled,
 }) => {
   const theme = useThemeColor();
 
@@ -20,6 +22,7 @@ const CustomSwitch: React.FC<CustomSwitchProps> = ({
       ios_backgroundColor={theme.secondary}
       onValueChange={onValueChange}
       value={value}
+      disabled={disabled}
     />
   );
 };

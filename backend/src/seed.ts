@@ -225,7 +225,7 @@ async function generateMongo() {
       {
         code: 'menu:create',
         permissionGroupId: await findPermissionGroup('Menu'),
-        description: 'Update menu',
+        description: 'Create menu',
       },
       {
         code: 'menu:delete',
@@ -1697,7 +1697,8 @@ async function generateMongo() {
   const pastDays = 200; // Number of days in the past
   const tableAmount = 28; // First table ID
 
-  const testData: Prisma.Prisma__ReservationClient<unknown>[] & Prisma.Prisma__Order_MenuClient<unknown>[] = [];
+  const testData: Prisma.Prisma__ReservationClient<unknown>[] &
+    Prisma.Prisma__Order_MenuClient<unknown>[] = [];
 
   for (let day = 0; day < totalDays; day++) {
     if (day < pastDays) {
@@ -1755,7 +1756,6 @@ async function generateMongo() {
       );
     }
   }
-
 
   /**
    * This creates orders and associated menu items for the past 50 days.

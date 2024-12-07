@@ -11,16 +11,17 @@ import { RouteProp } from "@react-navigation/native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { router } from "expo-router";
 import LoadingPage from "@/components/LoadingPage";
+import CheckPermission from "@/components/CheckPermission";
 
 import { MenuModel } from "@/models/MenuModel";
 
-type EditCreateUserRouteParams = {
+type EditCreateMenuRouteParams = {
   id: string | "new" | undefined;
 };
 
 export default function EditCreateUserPage() {
   const route =
-    useRoute<RouteProp<{ params: EditCreateUserRouteParams }, "params">>();
+    useRoute<RouteProp<{ params: EditCreateMenuRouteParams }, "params">>();
   const { id } = route.params || { id: undefined };
   const navigation = useNavigation();
 
@@ -61,18 +62,20 @@ export default function EditCreateUserPage() {
     if (id !== "new") {
       navigation.setOptions({
         headerRight: () => (
-          <FontAwesome6
-            name="trash-alt"
-            size={24}
-            color={theme.secondary}
-            onPress={async () => {
-              if (id && id !== "new") {
-                await deleteMenu(id);
-                navigation.goBack();
-              }
-            }}
-            style={{ marginRight: 16 }}
-          />
+          <CheckPermission requiredPermission={["menu:delete"]}>
+            <FontAwesome6
+              name="trash-alt"
+              size={24}
+              color={theme.secondary}
+              onPress={async () => {
+                if (id && id !== "new") {
+                  await deleteMenu(id);
+                  navigation.goBack();
+                }
+              }}
+              style={{ marginRight: 16 }}
+            />
+          </CheckPermission>
         ),
       });
     }
@@ -160,6 +163,7 @@ export default function EditCreateUserPage() {
   const memoizedMenuTabView = useMemo(
     () => (
       <MenuTabView
+        id={id}
         categories={menuItem.category || []}
         ingredients={menuItem.RawMaterial_MenuItems || []}
         onAddCategory={(category) => {
@@ -225,35 +229,42 @@ export default function EditCreateUserPage() {
               <Text style={[styles.sectionTitle, { color: theme.primary }]}>
                 Menu Info
               </Text>
-              <TextInput
-                style={{ marginBottom: 10 }}
-                label="Name"
-                value={menuItem.name}
-                onChangeText={(text) => handleChange("name", text)}
-                clearTextOnFocus={false}
-                selectTextOnFocus={false}
-                isHighlighted={validationErrors.name}
-              />
-              <TextInput
-                label="Price"
-                value={menuItem.price?.toString()}
-                onChangeText={(text) => {
-                  // Replace commas with periods
-                  let formattedText = text.replace(/,/g, ".");
+              <CheckPermission
+                requiredPermission={[
+                  id !== "new" ? "menu:update" : "menu:create",
+                ]}
+                showIfNotPermitted
+              >
+                <TextInput
+                  style={{ marginBottom: 10 }}
+                  label="Name"
+                  value={menuItem.name}
+                  onChangeText={(text) => handleChange("name", text)}
+                  clearTextOnFocus={false}
+                  selectTextOnFocus={false}
+                  isHighlighted={validationErrors.name}
+                />
+                <TextInput
+                  label="Price"
+                  value={menuItem.price?.toString()}
+                  onChangeText={(text) => {
+                    // Replace commas with periods
+                    let formattedText = text.replace(/,/g, ".");
 
-                  // Validate the input and ensure only two decimal places are allowed
-                  const regex = /^\d*\.?\d{0,2}$/;
+                    // Validate the input and ensure only two decimal places are allowed
+                    const regex = /^\d*\.?\d{0,2}$/;
 
-                  if (regex.test(formattedText)) {
-                    const newPrice: number = Number(formattedText);
-                    handleChange("price", newPrice);
-                  }
-                }}
-                inputMode="decimal"
-                clearTextOnFocus={false}
-                selectTextOnFocus={false}
-                isHighlighted={validationErrors.price}
-              />
+                    if (regex.test(formattedText)) {
+                      const newPrice: number = Number(formattedText);
+                      handleChange("price", newPrice);
+                    }
+                  }}
+                  inputMode="decimal"
+                  clearTextOnFocus={false}
+                  selectTextOnFocus={false}
+                  isHighlighted={validationErrors.price}
+                />
+              </CheckPermission>
             </View>
 
             <View style={{ minHeight: "70%" }}>{memoizedMenuTabView}</View>
@@ -266,10 +277,16 @@ export default function EditCreateUserPage() {
             ]}
           >
             <Button title="Cancel" onPress={() => navigation.goBack()} />
-            <Button
-              title={id !== "new" ? "Save" : "Create"}
-              onPress={handleSave}
-            />
+            <CheckPermission
+              requiredPermission={[
+                id !== "new" ? "menu:update" : "menu:create",
+              ]}
+            >
+              <Button
+                title={id !== "new" ? "Save" : "Create"}
+                onPress={handleSave}
+              />
+            </CheckPermission>
           </View>
         </View>
       )}
