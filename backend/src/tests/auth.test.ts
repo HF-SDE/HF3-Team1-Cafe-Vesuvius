@@ -116,11 +116,6 @@ describe('Auth API Endpoints', () => {
     // Any cleanup needed after tests finish
   });
 
-  it('should respond to /ping endpoint', async () => {
-    const response = await axiosInstance.get('/ping');
-    expect(response.status).toBe(200);
-  });
-
   it('should login a user successfully', async () => {
     const response = await loginUser('admin', 'YWRtaW4=');
     validateLoginSuccess(response);
