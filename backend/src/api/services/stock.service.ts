@@ -1,5 +1,5 @@
 import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
-import { StockResult } from '@api-types/stock.types';
+import { StockResult, StockUpdate } from '@api-types/stock.types';
 import prisma from '@prisma-instance';
 import { Prisma } from '@prisma/client';
 import { UuidSchema } from '@schemas/general.schemas';
@@ -92,10 +92,6 @@ export async function create(
       message: 'Something went wrong on our end',
     };
   }
-}
-
-interface StockUpdate extends Prisma.RawMaterialUpdateManyMutationInput {
-  id: string;
 }
 
 /**

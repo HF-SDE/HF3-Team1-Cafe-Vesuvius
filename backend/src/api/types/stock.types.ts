@@ -9,3 +9,7 @@ export type StockResult = RawMaterial[] | RawMaterial | Prisma.RawMaterialCreate
 export interface StockUpdate {
   items: UpdateItem[];
 }
+
+export interface StockUpdate extends Prisma.RawMaterialUpdateManyMutationInput {
+  id: string;
+}
