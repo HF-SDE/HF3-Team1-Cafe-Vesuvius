@@ -1,24 +1,27 @@
 import { Request, Response } from 'express';
 
-import { LoginRequestBody } from '@api-types/auth.types';
+import {
+  AccessResult,
+  GetAccessTokenRequestBody,
+  LoginRequestBody,
+  LogoutRequestBody,
+} from '@api-types/auth.types';
+import { APIResponse } from '@api-types/general.types';
 import { getHttpStatusCode } from '@utils/Utils';
 
 import * as AuthService from '../services/auth.service';
 
 /**
  * Handles user login, authenticates with passport, and returns tokens on successful login.
- * @param {Request} req - The request object containing `username` and `password` in the body.
- * @param {Response} res - The response object to send authentication results.
+ * @param {Request<unknown, APIResponse<AccessResult>, LoginRequestBody>} req - The request object containing `username` and `password` in the body.
+ * @param {Response<APIResponse<AccessResult>>} res - The response object to send authentication results.
  * @returns {Promise<void>} Resolves with tokens on success or an error response.
  */
 export async function login(
-  req: Request,
-  res: Response,
+  req: Request<unknown, APIResponse<AccessResult>, LoginRequestBody>,
+  res: Response<APIResponse<AccessResult>>,
 ): Promise<void> {
-  const { username, password } = req.body as {
-    username: string;
-    password: string;
-  };
+  const { username, password } = req.body;
 
   const userObject: LoginRequestBody = {
     username,
@@ -31,19 +34,17 @@ export async function login(
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
-// Define the interface for the request body
-interface LogoutRequestBody {
-  token: string;
-}
-
 /**
  * Logs out a user by invalidating their session token.
- * @param {Request<unknown, unknown, LogoutRequestBody>} req - The request object, containing the token in the body.
- * @param {Response} res - The response object used to send the response to the client.
+ * @param {Request<unknown, APIResponse, LogoutRequestBody>} req - The request object, containing the token in the body.
+ * @param {Response<APIResponse>} res - The response object used to send the response to the client.
  * @returns {Promise<void>} - A promise that resolves when the logout is complete or rejects if an error occurs.
  */
-export async function logout(req: Request, res: Response): Promise<void> {
-  const { token } = req.body as { token: string };
+export async function logout(
+  req: Request<unknown, APIResponse, LogoutRequestBody>,
+  res: Response<APIResponse>,
+): Promise<void> {
+  const { token } = req.body;
   const response = await AuthService.logout({
     token,
     ip: req.headers['x-forwarded-for'] as string,
@@ -54,15 +55,15 @@ export async function logout(req: Request, res: Response): Promise<void> {
 
 /**
  * Endpoint to refresh user tokens based on the provided refresh token.
- * @param {Request} req - The request object containing the refresh token in the body.
- * @param {Response} res - The response object used to send the response to the client.
+ * @param {Request<unknown, APIResponse<AccessResult>, GetAccessTokenRequestBody>} req - The request object containing the refresh token in the body.
+ * @param {Response<APIResponse<AccessResult>>} res - The response object used to send the response to the client.
  * @returns {Promise<void>} - A promise that resolves when the access token is refreshed or rejects if an error occurs.
  */
 export async function getAccessToken(
-  req: Request,
-  res: Response,
+  req: Request<unknown, APIResponse<AccessResult>, GetAccessTokenRequestBody>,
+  res: Response<APIResponse<AccessResult>>,
 ): Promise<void> {
-  const { token } = req.body as { token: string };
+  const { token } = req.body;
   const response = await AuthService.accessToken({
     token,
     ip: req.headers['x-forwarded-for'] as string,
