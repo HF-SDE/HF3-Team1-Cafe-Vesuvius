@@ -9,6 +9,7 @@ import {
   TextInput as RNTextInput,
   Modal,
   TextInput,
+  KeyboardAvoidingView,
 } from "react-native";
 import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
@@ -62,50 +63,61 @@ const MenuTabView = React.memo(
     ];
 
     const CategoriesTab = () => (
-      <View style={styles.section}>
-        <CheckPermission
-          requiredPermission={[id !== "new" ? "menu:update" : "menu:create"]}
-        >
-          <NewCategoryInput
-            onAddCategory={onAddCategory}
-            themeColors={themeColors}
-          />
-        </CheckPermission>
-
-        <FlatList
-          data={categories}
-          keyExtractor={(item) => item}
-          renderItem={({ item }) => (
-            <View
-              style={[styles.categoryItem, { backgroundColor: theme.primary }]}
+      <KeyboardAvoidingView>
+        <SafeAreaView>
+          <View style={styles.section}>
+            <CheckPermission
+              requiredPermission={[
+                id !== "new" ? "menu:update" : "menu:create",
+              ]}
             >
-              <Text style={[styles.categoryText, { color: theme.background }]}>
-                {item}
-              </Text>
-              <CheckPermission
-                requiredPermission={[
-                  id !== "new" ? "menu:update" : "menu:create",
-                ]}
-              >
-                <TouchableOpacity onPress={() => onDeleteCategory(item)}>
-                  <FontAwesome6
-                    name="trash-alt"
-                    size={18}
-                    color={theme.secondary}
-                  />
-                </TouchableOpacity>
-              </CheckPermission>
-            </View>
-          )}
-          ListEmptyComponent={
-            <Text style={styles.emptyText}>
-              No categories added yet. Type the category you want to add, and
-              tap the '+' icon to add it.
-            </Text>
-          }
-          style={styles.listContainer}
-        />
-      </View>
+              <NewCategoryInput
+                onAddCategory={onAddCategory}
+                themeColors={themeColors}
+              />
+            </CheckPermission>
+
+            <FlatList
+              data={categories}
+              keyExtractor={(item) => item}
+              renderItem={({ item }) => (
+                <View
+                  style={[
+                    styles.categoryItem,
+                    { backgroundColor: theme.primary },
+                  ]}
+                >
+                  <Text
+                    style={[styles.categoryText, { color: theme.background }]}
+                  >
+                    {item}
+                  </Text>
+                  <CheckPermission
+                    requiredPermission={[
+                      id !== "new" ? "menu:update" : "menu:create",
+                    ]}
+                  >
+                    <TouchableOpacity onPress={() => onDeleteCategory(item)}>
+                      <FontAwesome6
+                        name="trash-alt"
+                        size={18}
+                        color={theme.secondary}
+                      />
+                    </TouchableOpacity>
+                  </CheckPermission>
+                </View>
+              )}
+              ListEmptyComponent={
+                <Text style={styles.emptyText}>
+                  No categories added yet. Type the category you want to add,
+                  and tap the '+' icon to add it.
+                </Text>
+              }
+              style={styles.listContainer}
+            />
+          </View>
+        </SafeAreaView>
+      </KeyboardAvoidingView>
     );
 
     const IngredientsTab = () => (

@@ -303,12 +303,14 @@ export default function NewReservationModal({
               styles.mainButton,
               disabledCreateButton
                 ? { backgroundColor: theme.secondary }
-                : { backgroundColor: theme.primary },
+                : { backgroundColor: theme.accent },
             ]}
             onPress={handleCreate}
             disabled={disabledCreateButton}
           >
-            <Text style={styles.buttonText}>Create</Text>
+            <Text style={[styles.buttonText, { color: theme.text }]}>
+              Create
+            </Text>
           </Pressable>
         )}
       </View>

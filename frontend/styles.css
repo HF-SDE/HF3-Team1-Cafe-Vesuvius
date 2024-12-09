@@ -6,11 +6,17 @@ body {
   color: #333;
 }
 
+@media (prefers-color-scheme: dark) {
+  .theme-logo {
+    content: url("/images/CaféVesuviusLogo3.svg");
+  }
+}
+
 .menu-container {
   max-width: 800px;
   margin: 20px auto;
   padding: 20px;
-  background: #fff;
+  /* background: #fff; */
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
