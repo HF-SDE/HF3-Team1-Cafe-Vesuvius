@@ -48,41 +48,41 @@ export async function transformPermissions(
   const userPermissions = req.body
     .UserPermissions as (CustomRawMaterialMenuItem & UserPermissions)[];
 
+  if (userPermissions) {
+    // Transform permissions into the UserPermission format
+    for (const userPermission of userPermissions) {
+      if ('Permission' in userPermission) {
+        userPermission.permissionId = userPermission.Permission!.id;
+        delete userPermission.Permission;
+      }
+
+      const permission = await prisma.permission.findUnique({
+        where: { id: userPermission.permissionId },
+      });
+      console.log(permission);
+
+      if (!permission) {
+        res.status(400).json({
+          status: Status.NotFound,
+          message: 'Permission not found: ' + userPermission.permissionId,
+        });
+
+        return;
+      }
+    }
+  }
+
   console.log(userPermissions);
 
-  if (!userPermissions) {
-    res.status(400).json({
-      status: Status.MissingDetails,
-      message: 'No permissions provided',
-    });
-    return;
+  if (userPermissions && userPermissions.length > 0) {
+    console.log('RUN');
+
+    req.body.UserPermissions = {
+      createMany: { data: userPermissions },
+    };
+  } else {
+    req.body.UserPermissions = undefined;
   }
-
-  // Transform permissions into the UserPermission format
-  for (const userPermission of userPermissions) {
-    if ('Permission' in userPermission) {
-      userPermission.permissionId = userPermission.Permission!.id;
-      delete userPermission.Permission;
-    }
-
-    const permission = await prisma.permission.findUnique({
-      where: { id: userPermission.permissionId },
-    });
-    console.log(permission);
-
-    if (!permission) {
-      res.status(400).json({
-        status: Status.NotFound,
-        message: 'Permission not found: ' + userPermission.permissionId,
-      });
-
-      return;
-    }
-  }
-
-  req.body.UserPermissions = {
-    createMany: { data: userPermissions },
-  };
 
   if (req.body.password) {
     // Decode the password from Base64
@@ -93,11 +93,6 @@ export async function transformPermissions(
     // Hash the decoded password
     req.body.password = await hashPassword(decodedPassword);
   }
-
-  console.log(req.body);
-
-  console.log(userPermissions);
-  //console.log(req.body.UserPermissions);
 
   next();
 }

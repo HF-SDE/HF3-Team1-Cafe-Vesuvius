@@ -6,6 +6,8 @@ import {
   Text,
   Platform,
 } from "react-native";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+
 import { useThemeColor } from "@/hooks/useThemeColor";
 import Button from "@/components/DefaultButton";
 import TextInput from "@/components/TextInput";
@@ -38,34 +40,25 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
     }
   );
 
+  const [validationErrors, setValidationErrors] = useState({
+    name: false,
+    unit: false,
+  });
+
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
 
-  const [errorMessage, setErrorMessage] = useState<string>("");
-
   const handleSave = () => {
-    // Collect fields with validation errors
-    let wrongFields: string[] = [];
+    const errors = {
+      name: !(stockItem.name as string).trim(), // Check if the name is empty
+      unit: !(stockItem.unit as string).trim(), // Check if the price is greater than 0
+    };
 
-    if (!stockItem.name?.toString().trim()) {
-      wrongFields.push("Name");
-    }
-    if (!stockItem.unit?.toString().trim()) {
-      wrongFields.push("Unit");
-    }
-
-    if (wrongFields.length > 0) {
-      const formattedFields =
-        wrongFields.length > 1
-          ? `${wrongFields.slice(0, -1).join(", ")} & ${wrongFields.slice(-1)}`
-          : wrongFields[0];
-
-      setErrorMessage(`${formattedFields} cannot be empty.`);
+    setValidationErrors(errors);
+    if (errors.name || errors.unit) {
       return;
     }
-
-    setErrorMessage(""); // Clear any existing error message
 
     const changedFieldsCount = Object.keys(changedFields).length;
 
@@ -89,6 +82,16 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
   };
 
   const handleChange = (field: keyof StockItemModel, value: string) => {
+    setValidationErrors((prevErrors) => {
+      const newErrors = { ...prevErrors };
+      if (field === "name") {
+        newErrors.name = !value.trim();
+      }
+      if (field === "unit") {
+        newErrors.unit = !value.trim();
+      }
+      return newErrors;
+    });
     if (value !== stockItem[field]) {
       setChangedFields((prev) => ({
         ...prev,
@@ -120,12 +123,17 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
       behavior={Platform.OS === "ios" ? "padding" : "height"}
       style={[styles.container, { backgroundColor: theme.background }]}
     >
+      <Text style={[styles.title, { color: theme.text }]}>
+        {stockItem.id ? "Edit item" : "Create new item"}
+      </Text>
+
       <TextInput
         style={styles.input}
         label="Name"
         value={stockItem.name}
         onChangeText={(value) => handleChange("name", value)}
         clearTextOnFocus={false}
+        isHighlighted={validationErrors.name}
       />
 
       <TextInput
@@ -134,38 +142,40 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         value={stockItem.unit}
         onChangeText={(value) => handleChange("unit", value)}
         clearTextOnFocus={false}
+        isHighlighted={validationErrors.unit}
       />
 
       <InputSpinner
         type="float"
         decimalSeparator="."
         step={1}
-        color={theme.primary}
+        color={"transparent"}
         textColor={theme.primary}
         value={stockItem.quantity}
         onChange={quantityChange}
         inputStyle={{ borderColor: theme.primary }}
         fontSize={20}
         buttonStyle={{
-          borderRadius: 10,
-          borderWidth: 3,
           backgroundColor: "transparent",
-          borderColor: theme.primary,
-          padding: 5,
         }}
         buttonTextColor={theme.primary}
         buttonFontSize={40}
         style={styles.spinner}
+        buttonRightImage={
+          <FontAwesome6 name="square-plus" size={50} color={theme.primary} />
+        }
+        buttonLeftImage={
+          <FontAwesome6 name="square-minus" size={50} color={theme.primary} />
+        }
       />
 
-      {errorMessage ? (
-        <Text style={[styles.errorMessage, { color: "red" }]}>
-          {errorMessage}
-        </Text>
-      ) : null}
-
       <View style={styles.buttonContainer}>
-        <Button title="Cancel" onPress={onClose} />
+        <Button
+          title="Cancel"
+          onPress={onClose}
+          backgroundColor={theme.accent}
+          textColor={theme.text}
+        />
         <Button title={stockItem.id ? "Save" : "Create"} onPress={handleSave} />
       </View>
     </KeyboardAvoidingView>
@@ -179,6 +189,11 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingHorizontal: 20,
     gap: 10,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: "bold",
+    marginBottom: 20,
   },
   input: {
     height: 40,
@@ -198,6 +213,11 @@ const styles = StyleSheet.create({
   },
   errorMessage: {
     marginVertical: 10,
+    textAlign: "center",
+  },
+  errorText: {
+    marginTop: 10,
+    fontSize: 14,
     textAlign: "center",
   },
 });

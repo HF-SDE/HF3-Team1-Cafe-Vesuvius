@@ -1,23 +1,36 @@
 import React from "react";
-import { TouchableOpacity, Text, StyleSheet } from "react-native";
+import { TouchableOpacity, Text, StyleSheet, ColorValue } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 interface ButtonProps {
   onPress?: () => void;
   title: string;
   disabled?: boolean | undefined;
+  backgroundColor?: ColorValue | undefined;
+  textColor?: ColorValue | undefined;
 }
 
-const SubmitButton: React.FC<ButtonProps> = ({ onPress, title, disabled }) => {
+const SubmitButton: React.FC<ButtonProps> = ({
+  onPress,
+  title,
+  disabled,
+  backgroundColor,
+  textColor,
+}) => {
   const theme = useThemeColor();
 
   return (
     <TouchableOpacity
-      style={[styles.button, { backgroundColor: theme.primary }]}
+      style={[
+        styles.button,
+        { backgroundColor: backgroundColor || theme.primary },
+      ]}
       onPress={onPress}
       disabled={disabled}
     >
-      <Text style={[styles.buttonText, { color: theme.background }]}>
+      <Text
+        style={[styles.buttonText, { color: textColor || theme.background }]}
+      >
         {title}
       </Text>
     </TouchableOpacity>
