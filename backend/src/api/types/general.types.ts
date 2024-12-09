@@ -26,7 +26,7 @@ export enum Status {
   WsForbidden = "Forbidden WebSocket",
   wsInvalidDetails = "Invalid Details WebSocket",
 }
-export interface APIResponse<T> {
+export interface APIResponse<T = null | undefined> {
   status: Status;
   message?: string;
   data?: T | null;
