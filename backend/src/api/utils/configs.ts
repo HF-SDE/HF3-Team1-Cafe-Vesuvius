@@ -21,10 +21,7 @@ const defaultTableInclude = {
 export const table: Prisma.TableFindManyArgs = defaultTableInclude;
 
 export const order: Prisma.OrderFindManyArgs = {
-  omit: {
-    ...omit,
-    tableId: true,
-  },
+  omit: { tableId: true },
   include: {
     Order_Menus: {
       include: { Menu: { omit } },

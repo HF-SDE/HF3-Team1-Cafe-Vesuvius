@@ -3,6 +3,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { OrderModel } from "@/models/OrderModel";
 import { Pressable, Text, View } from "react-native";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import { formatDistanceToNow } from "date-fns";
 
 interface OrderCardProps {
   order: OrderModel;
@@ -66,7 +67,7 @@ export default function OrderCard({ order }: OrderCardProps) {
           >
             {orderMenu.note && (
               <MaterialCommunityIcons
-                name="note-text-outline"
+                name="note-outline"
                 size={28}
                 color={theme.text}
               />
@@ -84,6 +85,18 @@ export default function OrderCard({ order }: OrderCardProps) {
           </View>
         </View>
       ))}
+
+      <Text
+        style={{
+          color: theme.accent,
+          fontSize: 14,
+          fontWeight: "bold",
+          alignSelf: "flex-start",
+          paddingHorizontal: 20,
+        }}
+      >
+        {formatDistanceToNow(order.createdAt)} ago
+      </Text>
     </Pressable>
   );
 }

@@ -11,7 +11,7 @@ interface OrderMenu extends Order_Menu {
   Menu: Omit<MenuItem, defaultOmit>;
 }
 
-export interface OrderModel extends Omit<Order, defaultOmit | "tableId"> {
+export interface OrderModel extends Omit<Order, "tableId"> {
   Order_Menus: Omit<OrderMenu, "menuItemId" | "orderId">[];
   Table: Table;
 }
