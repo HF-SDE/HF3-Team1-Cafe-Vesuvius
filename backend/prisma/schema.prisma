@@ -98,15 +98,15 @@ model Reservation {
 }
 
 model Table {
-  id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  number    Int      @unique
-  location  String?
-  capacity  Int      @default(2)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  number         Int      @unique
+  location       String?
+  capacity       Int      @default(2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
   reservationIds String[] @db.ObjectId
 
-  Orders      Order[]
+  Orders       Order[]
   Reservations Reservation[] @relation(fields: [reservationIds], references: [id])
 }
 
@@ -123,7 +123,7 @@ model Order {
 
 model Order_Menu {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
-  status        String  @default("cook")
+  status        String  @default("toPrepare")
   quantity      Int     @default(1)
   note          String?
   menuItemPrice Float   @default(1)
