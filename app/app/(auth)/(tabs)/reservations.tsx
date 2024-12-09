@@ -178,12 +178,40 @@ export default function ReservationsOverview(): ReactElement {
           refreshing={reservationsLoading}
           onRefresh={handleRefresh}
           renderSectionHeader={({ section: { title } }) => (
-            <Text
-              style={{ color: theme.primary, marginVertical: 10, fontSize: 18 }}
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                paddingVertical: 5,
+                backgroundColor: theme.background,
+              }}
             >
-              {title}
-            </Text>
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: theme.primary,
+                  alignSelf: "center",
+                  marginRight: 5,
+                }}
+              />
+
+              <Text style={{ color: theme.primary, fontSize: 22 }}>
+                {title}
+              </Text>
+
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: theme.primary,
+                  alignSelf: "center",
+                  marginLeft: 5,
+                }}
+              />
+            </View>
           )}
+          renderSectionFooter={() => <View style={{ height: 40 }} />} // Adds 30px of empty space at the bottom of each section
         />
 
         <AddButton
@@ -417,7 +445,6 @@ const styles = StyleSheet.create({
   },
   reservationList: {
     flex: 1,
-    gap: 10,
   },
   orderItem: {
     padding: 10,
