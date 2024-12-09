@@ -1688,23 +1688,19 @@ async function generateMongo() {
   });
 
   // Reservation
-  const totalDays = 250; // 200 past days + 50 future days
-  const pastDays = 200; // Number of days in the past
+  const futureDays = 50; // Number of future days
+  const pastDays = 200; // Number of past days
   const tableAmount = 28; // First table ID
 
-  const testData: Prisma.Prisma__ReservationClient<unknown>[] &
-    Prisma.Prisma__Order_MenuClient<unknown>[] = [];
+  const testData = []; // Array to hold test data
+  today.setDate(new Date().getDate()); // Set today's date
 
-  for (let day = 0; day < totalDays; day++) {
-    if (day < pastDays) {
-      // Create reservations for the past 200 days
-      today.setDate(today.getDate() - (pastDays - day));
-    } else {
-      // Create reservations for the next 50 days
-      today.setDate(today.getDate() + (day - pastDays));
-    }
+  for (let day = -pastDays; day <= futureDays; day++) {
+    // Clone today's date and add/subtract days
+    const reservationDate = new Date(today);
+    reservationDate.setDate(today.getDate() + day);
 
-    // Generate a random number of reservations (2-5 per day)
+    // Generate a random number of reservations (10-30 per day)
     const reservationCount = Math.floor(Math.random() * 21) + 10;
 
     for (let i = 0; i < reservationCount; i++) {
@@ -1729,14 +1725,16 @@ async function generateMongo() {
 
       const firstName = faker.person.firstName();
       const lastName = faker.person.lastName();
+
       // Generate random data for the reservation
       const name = `${firstName} ${lastName}`; // Randomized guest name
       const email = faker.internet.email({ firstName, lastName }); // Corresponding email
       const phone = faker.phone.number({ style: 'international' }); // Random phone number
       const reservationTime = new Date(
-        new Date(today).setHours(Math.floor(Math.random() * 12) + 10),
-      ); // Use the generated date
+        reservationDate.setHours(Math.floor(Math.random() * 12) + 10), // Random hour (10AM - 10PM)
+      );
 
+      // Push generated reservation data into the testData array
       testData.push(
         prisma.reservation.create({
           data: {
@@ -1755,6 +1753,8 @@ async function generateMongo() {
   /**
    * This creates orders and associated menu items for the past 50 days.
    */
+
+  const dateForOrder = new Date();
   for (let day = 0; day < 1200; day++) {
     const orderCount = Math.floor(Math.random() * 5) + 1; // Random number between 1 and 5
 
@@ -1765,6 +1765,8 @@ async function generateMongo() {
       const newOrder = await prisma.order.create({
         data: {
           tableId: tableId,
+          createdAt: dateForOrder,
+          updatedAt: dateForOrder,
         },
       });
 
@@ -1802,6 +1804,7 @@ async function generateMongo() {
         }
       }
     }
+    dateForOrder.setDate(dateForOrder.getDate() - 1);
   }
 
   // Create the orders and reservations

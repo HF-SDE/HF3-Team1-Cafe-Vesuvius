@@ -177,7 +177,41 @@ export default function ReservationsOverview(): ReactElement {
           showsVerticalScrollIndicator={false}
           refreshing={reservationsLoading}
           onRefresh={handleRefresh}
-          renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
+          renderSectionHeader={({ section: { title } }) => (
+            <View
+              style={{
+                alignItems: "center",
+                flexDirection: "row",
+                paddingVertical: 5,
+                backgroundColor: theme.background,
+              }}
+            >
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: theme.primary,
+                  alignSelf: "center",
+                  marginRight: 5,
+                }}
+              />
+
+              <Text style={{ color: theme.primary, fontSize: 22 }}>
+                {title}
+              </Text>
+
+              <View
+                style={{
+                  flex: 1,
+                  height: 1,
+                  backgroundColor: theme.primary,
+                  alignSelf: "center",
+                  marginLeft: 5,
+                }}
+              />
+            </View>
+          )}
+          renderSectionFooter={() => <View style={{ height: 40 }} />} // Adds 30px of empty space at the bottom of each section
         />
 
         <AddButton
