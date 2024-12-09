@@ -407,7 +407,10 @@ export default function ManageUsersPage() {
           //searchQuery={searchQuery}
           //setSearchQuery={setSearchQuery}
           value={searchQuery}
-          onChangeText={setSearchQuery}
+          onChangeText={(text) => {
+            setSearchQuery(text);
+            setCurrentPage(1);
+          }}
           placeholder="Search for item"
           loading={isLoading}
         />

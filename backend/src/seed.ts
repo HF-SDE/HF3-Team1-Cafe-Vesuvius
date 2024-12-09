@@ -287,11 +287,6 @@ async function generateMongo() {
         permissionGroupId: await findPermissionGroup('Reservation'),
         description: 'Delete reservation',
       },
-      {
-        code: 'permission:view',
-        permissionGroupId: await findPermissionGroup('Administrator'),
-        description: 'View permissions',
-      },
     ],
   });
 

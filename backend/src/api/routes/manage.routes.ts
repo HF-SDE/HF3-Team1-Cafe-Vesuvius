@@ -18,7 +18,7 @@ router.get(
 );
 router.get(
   ['/permission', '/permission/:id'],
-  isAllowed(['permission:view']),
+  isAllowed(['administrator:permission:view']),
   validateParams,
   getAll('permission'),
 );
