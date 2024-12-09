@@ -81,7 +81,7 @@ export default function ManageUsersPage() {
           {!item.active && (
             <FontAwesome5
               name="user-alt-slash"
-              size={48}
+              size={46}
               color={theme.secondary}
             />
           )}
@@ -155,6 +155,8 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
     gap: 10,
     flexDirection: "row",
   },
