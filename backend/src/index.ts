@@ -48,12 +48,6 @@ app.use(`/profile`, profileRoutes);
 app.use(`/menu`, menuRoutes);
 app.use(`/stats`, statsRoutes);
 
-app.get('/ping', (req, res) => {
-  res.json({
-    status: 'Server is running',
-  });
-});
-
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
