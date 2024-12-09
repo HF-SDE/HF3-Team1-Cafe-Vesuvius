@@ -1,10 +1,14 @@
 import { Request, Response } from 'express';
 
+import { APIResponse, Status } from '@api-types/general.types';
+import {
+  CreateOrderReqBody,
+  OrderRequestBody,
+  OrderRequestParams,
+} from '@api-types/order.types';
 import { Order_MenusSchema } from '@schemas/order_menu.schema';
 import * as OrderService from '@services/order.service';
 import { getHttpStatusCode } from '@utils/Utils';
-import { APIResponse } from '@api-types/general.types';
-import { CreateOrderReqBody, OrderRequestBody, OrderRequestParams } from '@api-types/order.types';
 
 /**
  * Controller to create an order
@@ -12,7 +16,10 @@ import { CreateOrderReqBody, OrderRequestBody, OrderRequestParams } from '@api-t
  * @param {Response<APIResponse>} res - The response object
  * @returns {Promise<void>}
  */
-export async function createOrder(req: Request<unknown, APIResponse, CreateOrderReqBody>, res: Response<APIResponse>): Promise<void> {
+export async function createOrder(
+  req: Request<unknown, APIResponse, CreateOrderReqBody>,
+  res: Response<APIResponse>,
+): Promise<void> {
   const data = req.body;
 
   const response = await OrderService.createOrder({
@@ -25,13 +32,13 @@ export async function createOrder(req: Request<unknown, APIResponse, CreateOrder
 
 /**
  * Controller to validate the order status
- * @param {Request<OrderRequestParams, unknown, OrderRequestBody>} req - The request object
+ * @param {Request<OrderRequestParams, APIResponse, OrderRequestBody>} req - The request object
  * @param {Response} res - The response object
  * @returns {Promise<void>}
  */
 export async function updateOrderStatus(
-  req: Request<OrderRequestParams, unknown, OrderRequestBody>,
-  res: Response,
+  req: Request<OrderRequestParams, APIResponse, OrderRequestBody>,
+  res: Response<APIResponse>,
 ): Promise<void> {
   let items = req.body.items || [];
   const orderId = req.params.id;
@@ -40,7 +47,7 @@ export async function updateOrderStatus(
 
   if (validated.error) {
     res.status(400).json({
-      status: 'Failed',
+      status: Status.Failed,
       message: validated.error.message,
     });
 

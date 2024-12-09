@@ -1,4 +1,4 @@
-import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
+import { APIResponse, Status } from '@api-types/general.types';
 import prisma, { errorResponse } from '@prisma-instance';
 import { Order_Menu, Prisma } from '@prisma/client';
 import schema from '@schemas/order.schema';
@@ -90,12 +90,12 @@ export async function createOrder(data: IData): Promise<APIResponse> {
  * @async
  * @param {string} orderId - The ID of the order to update.
  * @param {Order_Menu[]} menuItems - The menu items to update.
- * @returns {Promise<IAPIResponse>} A promise that resolves to an object containing the status and message.
+ * @returns {Promise<APIResponse>} A promise that resolves to an object containing the status and message.
  */
 export async function updateStatus(
   orderId: string,
   menuItems: Order_Menu[],
-): Promise<IAPIResponse> {
+): Promise<APIResponse> {
   try {
     const transactions = [];
     for (const menuItem of menuItems) {
