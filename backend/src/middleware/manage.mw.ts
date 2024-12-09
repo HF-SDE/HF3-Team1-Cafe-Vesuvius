@@ -6,8 +6,9 @@ import prisma from '@prisma-instance';
 import { Permission, Prisma, User, UserPermissions } from '@prisma/client';
 
 /**
- *
- * @param password
+ * Hashes the password using Argon2
+ * @param {string} password - The password to hash
+ * @returns {Promise<string>} The hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
   try {
@@ -48,8 +49,6 @@ export async function transformPermissions(
   const userPermissions = req.body
     .UserPermissions as (CustomRawMaterialMenuItem & UserPermissions)[];
 
-  console.log(userPermissions);
-
   if (!userPermissions) {
     res.status(400).json({
       status: Status.MissingDetails,
@@ -68,7 +67,6 @@ export async function transformPermissions(
     const permission = await prisma.permission.findUnique({
       where: { id: userPermission.permissionId },
     });
-    console.log(permission);
 
     if (!permission) {
       res.status(400).json({
@@ -94,10 +92,6 @@ export async function transformPermissions(
     req.body.password = await hashPassword(decodedPassword);
   }
 
-  console.log(req.body);
-
-  console.log(userPermissions);
-  //console.log(req.body.UserPermissions);
 
   next();
 }

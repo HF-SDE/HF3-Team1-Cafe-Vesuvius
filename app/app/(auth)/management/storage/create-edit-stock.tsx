@@ -70,7 +70,7 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
-      console.log("No changes");
+      console.info("No changes");
     } else {
       if (stockItem.id) {
         const updatedFields: StockItemModel = {

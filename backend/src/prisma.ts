@@ -21,7 +21,7 @@ export function errorResponse(
   model: prismaModels,
   operation: keyof typeof Status,
 ): IAPIResponse {
-  console.log(err);
+  console.error(err);
   if (err.name == 'PrismaClientValidationError') {
     return {
       status: Status.MissingDetails,

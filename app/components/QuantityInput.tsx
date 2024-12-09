@@ -33,7 +33,7 @@ const QuantityInput: React.FC<QuantityInputProps> = ({
     if (onQuantityChanged) {
       onQuantityChanged(itemId, numericQuantity); // Optionally handle quantity change
     }
-    console.log("LEAVE");
+    console.info("LEAVE");
   };
 
   return (

@@ -55,7 +55,7 @@ const MenuTabView = React.memo(
 
     const theme = useThemeColor();
 
-    console.log("Rerender");
+    console.info("Rerender");
 
     const routes = [
       { key: "ingredients", title: "Ingredients" },
