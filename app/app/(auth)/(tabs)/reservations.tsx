@@ -177,7 +177,13 @@ export default function ReservationsOverview(): ReactElement {
           showsVerticalScrollIndicator={false}
           refreshing={reservationsLoading}
           onRefresh={handleRefresh}
-          renderSectionHeader={({ section: { title } }) => <Text>{title}</Text>}
+          renderSectionHeader={({ section: { title } }) => (
+            <Text
+              style={{ color: theme.primary, marginVertical: 10, fontSize: 18 }}
+            >
+              {title}
+            </Text>
+          )}
         />
 
         <AddButton
@@ -411,6 +417,7 @@ const styles = StyleSheet.create({
   },
   reservationList: {
     flex: 1,
+    gap: 10,
   },
   orderItem: {
     padding: 10,
