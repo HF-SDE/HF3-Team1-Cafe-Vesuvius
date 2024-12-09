@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { ParamsDictionary } from 'express-serve-static-core';
 
 import { APIResponse } from '@api-types/general.types';
 import {
@@ -12,12 +13,17 @@ import { getHttpStatusCode } from '@utils/Utils';
 
 /**
  * Controller to get stock items
- * @param {Request<unknown, APIResponse<StockResult>, unknown, StockRequestQuery>} req - The request object
+ * @param {Request<ParamsDictionary, APIResponse<StockResult>, qs.ParsedQs, StockRequestQuery>} req - The request object
  * @param {Response<APIResponse<StockResult>>} res - The response object
  * @returns {Promise<void>} The response object
  */
 export async function getStock(
-  req: Request<unknown, APIResponse<StockResult>, unknown, StockRequestQuery>,
+  req: Request<
+    ParamsDictionary,
+    APIResponse<StockResult>,
+    qs.ParsedQs,
+    StockRequestQuery
+  >,
   res: Response<APIResponse<StockResult>>,
 ): Promise<void> {
   const id = req.query.id;
@@ -28,13 +34,13 @@ export async function getStock(
 
 /**
  * Controller to create a stock item
- * @param {Request<unknown, APIResponse, Prisma.RawMaterialCreateWithoutRawMaterial_MenuItemsInput>} req - The request object
+ * @param {Request<ParamsDictionary, APIResponse, Prisma.RawMaterialCreateWithoutRawMaterial_MenuItemsInput>} req - The request object
  * @param {Response<APIResponse>} res - The response object
  * @returns {Promise<void>} The response object
  */
 export async function createStock(
   req: Request<
-    unknown,
+    ParamsDictionary,
     APIResponse,
     Prisma.RawMaterialCreateWithoutRawMaterial_MenuItemsInput
   >,
@@ -49,12 +55,12 @@ export async function createStock(
 
 /**
  * Controller to update a stock item
- * @param {Request<unknown, APIResponse, StockRequestBody>} req - The request object
+ * @param {Request<ParamsDictionary, APIResponse, StockRequestBody>} req - The request object
  * @param {Response<APIResponse>} res - The response object
  * @returns {Promise<void>} The response object
  */
 export async function updateStock(
-  req: Request<unknown, APIResponse, StockRequestBody>,
+  req: Request<ParamsDictionary, APIResponse, StockRequestBody>,
   res: Response<APIResponse>,
 ): Promise<void> {
   const data = req.body;
