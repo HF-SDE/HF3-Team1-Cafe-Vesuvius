@@ -11,6 +11,10 @@ export type RefreshResult = {
   };
 };
 
+export type LoginAttemptsCache = {
+  [key: string]: Date[];
+};
+
 /** Interface for the login request body */
 export interface LoginRequestBody {
   username: string;
@@ -22,4 +26,19 @@ export interface LoginRequestBody {
 export interface TokenRequestBody {
   token: string;
   ip: string;
+}
+
+/**
+ * The request body for the logout endpoint.
+ */
+export interface GetAccessTokenRequestBody {
+  token: string;
+}
+
+
+/**
+ * The request body for the logout endpoint.
+ */
+export interface LogoutRequestBody {
+  token: string;
 }

@@ -19,7 +19,7 @@ export function useStock(id?: string | string[]) {
 
       setStock(response.data.data);
     } catch (err: any) {
-      console.log(err);
+      console.error(err);
 
       setError(err.code || "Failed to load stock");
     } finally {

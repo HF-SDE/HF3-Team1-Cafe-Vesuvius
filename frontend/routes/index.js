@@ -9,7 +9,7 @@ router.get("/menu", async (req, res, next) => {
   const { data } = await axios
     .get(process.env.BACKEND_URL + "/menu")
     .catch((err) => {
-      console.log(err);
+      console.error(err);
       return { data: { data: [] } };
     });
 

@@ -19,6 +19,5 @@ router.put(
   isAllowed(['stock:update']),
   StockController.updateStock,
 );
-//router.delete('/:id', verifyJWT, isAllowed(['stock:delete']), deleteRecord());
 
 export default router;

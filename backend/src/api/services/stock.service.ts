@@ -1,5 +1,5 @@
-import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
-import { StockResult } from '@api-types/stock.types';
+import { APIResponse, Status } from '@api-types/general.types';
+import { StockResult, StockUpdate } from '@api-types/stock.types';
 import prisma from '@prisma-instance';
 import { Prisma } from '@prisma/client';
 import { UuidSchema } from '@schemas/general.schemas';
@@ -55,12 +55,12 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
 
 /**
  * Service to create a stock item
- * @param {Prisma.RawMaterialCreateInput} data - The data to create a stock item.
- * @returns {Promise<IAPIResponse>} A promise that resolves to an object containing the status and message.
+ * @param {Prisma.RawMaterialCreateWithoutRawMaterial_MenuItemsInput} data - The data to create a stock item.
+ * @returns {Promise<APIResponse>} A promise that resolves to an object containing the status and message.
  */
 export async function create(
   data: Prisma.RawMaterialCreateWithoutRawMaterial_MenuItemsInput,
-): Promise<IAPIResponse> {
+): Promise<APIResponse> {
   try {
     // Validate the id
     const validate = StockCreateSchema.validate(data);
@@ -94,16 +94,12 @@ export async function create(
   }
 }
 
-interface StockUpdate extends Prisma.RawMaterialUpdateManyMutationInput {
-  id: string;
-}
-
 /**
  * Service to update a stock item
- * @param {Prisma.RawMaterialCreateInput[]} data - The data to update a stock item.
- * @returns {Promise<IAPIResponse>} A promise that resolves to an object containing the status and message.
+ * @param {StockUpdate[]} data - The data to update a stock item.
+ * @returns {Promise<APIResponse>} A promise that resolves to an object containing the status and message.
  */
-export async function update(data: StockUpdate[]): Promise<IAPIResponse> {
+export async function update(data: StockUpdate[]): Promise<APIResponse> {
   try {
     const validate = StockUpdateSchema.validate(data);
     if (validate.error) {

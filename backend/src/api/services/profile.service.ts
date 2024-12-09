@@ -1,6 +1,7 @@
 import { hash, verify } from 'argon2';
 
 import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
+import { BasicUser } from '@api-types/user.types';
 import prisma from '@prisma-instance';
 import {
   ChangePasswordBase64Schema,
@@ -95,15 +96,13 @@ export async function changePassword(
 }
 
 /**
- * Service to change a user's password
- * @param {string} id - The id of the user to change the password for.
- * @param {string} newPassword - The new password for the user.
- * @param {string} oldPassword - The old password for the user.
- * @returns {Promise<APIResponse<undefined>>} A promise that resolves to an object containing the status and message of the password change.
+ * Service to get a user's profile
+ * @param {string} accessToken - The access token for the user.
+ * @returns {Promise<APIResponse<BasicUser>>} A promise that resolves to an object containing the status, message and data of the user's profile.
  */
 export async function getProfile(
   accessToken: string,
-): Promise<APIResponse<any>> {
+): Promise<APIResponse<BasicUser>> {
   try {
     // Validate
     const tokenValidation = jwtTokenSchema.validate(accessToken);
@@ -145,10 +144,10 @@ export async function getProfile(
       message: 'Profile found',
       data: tokenData.session.user,
     };
-  } catch (error) {
+  } catch (error: unknown) {
     return {
       status: Status.Failed,
-      message: 'Something went wrong on our end' + error.message,
+      message: 'Something went wrong on our end' + (error as Error).message,
     };
   }
 }

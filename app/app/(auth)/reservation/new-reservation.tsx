@@ -510,7 +510,7 @@ const styles = StyleSheet.create({
     width: "100%",
 
     padding: 10,
-    backgroundColor: "rgba(249, 180, 45, 0.25)",
+    // backgroundColor: "red",
     borderWidth: 1.5,
     // borderColor: "red",
   },
@@ -558,14 +558,15 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginTop: 20,
+    gap: 10,
+    marginBottom: 10,
   },
   cancelButton: {
     flex: 1,
     padding: 10,
     borderRadius: 5,
     alignItems: "center",
-    marginRight: 10,
+    // marginRight: 10,
   },
   mainButton: {
     flex: 1,

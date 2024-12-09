@@ -1,11 +1,11 @@
 import { ObjectId } from 'bson';
-import { Request } from 'express';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
 
 import { UserToken } from '@api-types/JWTToken';
 import {
   AccessResult,
+  LoginAttemptsCache,
   LoginRequestBody,
   RefreshResult,
   TokenRequestBody,
@@ -13,10 +13,10 @@ import {
 import { APIResponse, Status } from '@api-types/general.types';
 //import { JwtPayload } from 'jsonwebtoken';
 import config from '@config';
-import { PrismaClient, Session } from '@prisma/client';
+import { Session } from '@prisma/client';
 import { LoginSchema, TokenSchema } from '@schemas/auth.schemas';
+import prisma from '@prisma-instance';
 
-const prisma = new PrismaClient();
 
 /**
  * Generates a JSON Web Token (JWT) for the given user.
@@ -289,9 +289,6 @@ export async function refreshUserTokens(
 }
 
 // In-memory store for login attempts
-type LoginAttemptsCache = {
-  [key: string]: Date[];
-};
 const loginAttempts: LoginAttemptsCache = {};
 
 /**
@@ -441,12 +438,10 @@ export async function login(
 /**
  * Logs out a user by invalidating their session with the provided token.
  * @param {string} token - The authentication token provided by the user.
- * @returns {Promise<APIResponse<undefined>>} A promise that resolves to an API response object containing the result of the logout operation.
+ * @returns {Promise<APIResponse>} A promise that resolves to an API response object containing the result of the logout operation.
  * @throws {Error} Throws an error if something goes wrong during the process, logging the issue and returning a generic error message.
  */
-export async function logout(
-  token: TokenRequestBody,
-): Promise<APIResponse<undefined>> {
+export async function logout(token: TokenRequestBody): Promise<APIResponse> {
   try {
     // Validate the token using TokenSchema
     const validate = TokenSchema.validate({ token: token.token });

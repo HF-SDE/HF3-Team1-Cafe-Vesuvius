@@ -1,26 +1,21 @@
 import { Request, Response } from 'express';
 
-import { APIResponse, IAPIResponse } from '@api-types/general.types';
-import { User } from '@api-types/user.types';
-import { accessToken } from '@services/auth.service';
+import { APIResponse, Status } from '@api-types/general.types';
+import { ChangePasswordRequestBody } from '@api-types/profile.types';
+import { BasicUser, User } from '@api-types/user.types';
 import * as ProfileService from '@services/profile.service';
 import { getHttpStatusCode } from '@utils/Utils';
-
-interface ChangePasswordRequestBody {
-  oldPassword: string;
-  newPassword: string;
-}
 
 /**
  * Controller so user's can change there own password
  * @async
- * @param {Request} req - The request object
- * @param {Request<Record<string, any>, IAPIResponse, ChangePasswordRequestBody>} res - The response object
- * @returns {*} The response object
+ * @param {Response<APIResponse>} req - The request object
+ * @param {Request<Record<string, any>, APIResponse, ChangePasswordRequestBody>} res - The response object
+ * @returns {Promise<void>} The response object
  */
 export async function changePassword(
-  req: Request<Record<string, any>, IAPIResponse, ChangePasswordRequestBody>,
-  res: Response<IAPIResponse>,
+  req: Request<Record<string, any>, APIResponse, ChangePasswordRequestBody>,
+  res: Response<APIResponse>,
 ): Promise<void> {
   const { oldPassword, newPassword } = req.body;
   const { id } = req.user as User;
@@ -36,19 +31,20 @@ export async function changePassword(
 /**
  * Controller so user's can get theire profile data
  * @async
- * @param {Request} req - The request object
- * @param {Request<Record<string, any>, IAPIResponse, ChangePasswordRequestBody>} res - The response object
- * @returns {*} The response object
+ * @param {Request<APIResponse<BasicUser>>} req - The request object
+ * @param {Request<unknown, APIResponse, ChangePasswordRequestBody>} res - The response object
+ * @returns {Promise<void>} The response object
  */
-export async function getProfile(req: Request, res: Response): Promise<void> {
+export async function getProfile(
+  req: Request<unknown, APIResponse, ChangePasswordRequestBody>,
+  res: Response<APIResponse<BasicUser>>,
+): Promise<void> {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    res
-      .status(400)
-      .json({
-        status: 'MissingData',
-        message: 'Missing authentication',
-      })
+    res.status(400).json({
+      status: Status.MissingDetails,
+      message: 'Missing authentication',
+    });
     return;
   }
 
@@ -56,14 +52,13 @@ export async function getProfile(req: Request, res: Response): Promise<void> {
   const tokenParts = authHeader.split(' ');
   if (tokenParts.length !== 2 || tokenParts[0].toLowerCase() !== 'bearer') {
     res.status(400).json({
-      status: 'MissingData',
+      status: Status.MissingDetails,
       message: 'Missing authentication',
     });
     return;
   }
   const token = tokenParts[1];
 
-  //res.status(getHttpStatusCode(response.status)).json(response).end();
   const response = await ProfileService.getProfile(token);
 
   res.status(getHttpStatusCode(response.status)).json(response).end();

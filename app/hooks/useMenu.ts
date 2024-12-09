@@ -48,7 +48,6 @@ export function useMenu(id?: string | string[]) {
   const updateMenu = async (updatedMenu: MenuModel) => {
     try {
       const { id, ...payload } = updatedMenu;
-      console.log(payload);
 
       const response = await apiClient.patch(
         `/menu/${updatedMenu.id}`,

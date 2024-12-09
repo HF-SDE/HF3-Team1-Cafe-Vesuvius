@@ -484,7 +484,7 @@ const styles = StyleSheet.create({
 
   modalsizing: {
     maxWidth: 400,
-    height: "75%",
+    // height: "65%",
     minHeight: 500,
   },
 

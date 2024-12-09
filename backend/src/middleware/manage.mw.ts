@@ -6,8 +6,9 @@ import prisma from '@prisma-instance';
 import { Permission, Prisma, User, UserPermissions } from '@prisma/client';
 
 /**
- *
- * @param password
+ * Hashes the password using Argon2
+ * @param {string} password - The password to hash
+ * @returns {Promise<string>} The hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
   try {

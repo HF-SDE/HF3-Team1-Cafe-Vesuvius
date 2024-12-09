@@ -1,6 +1,6 @@
 import Joi from 'joi';
 
-import { Status } from '@api-types/general.types';
+import { APIResponse, Status } from '@api-types/general.types';
 import { prismaModels } from '@prisma-instance';
 
 /**
@@ -58,17 +58,19 @@ export function getHttpStatusCode(status: Status): number {
   }
 }
 
-// eslint-disable-next-line jsdoc/require-returns
 /**
- *
+ * Returns the default response for a given response code
  * @param {number} code - Response code
+ * @returns {APIResponse | undefined} The default response for the given code
  */
-export function defaultResponse(code: number | string) {
+export function defaultResponse(
+  code: number | string,
+): APIResponse | undefined {
   switch (code) {
     case Status.Unauthorized:
     case getHttpStatusCode(Status.Unauthorized):
       return {
-        status: 'Unauthorized',
+        status: Status.Unauthorized,
         message: 'Unauthorized',
       };
   }

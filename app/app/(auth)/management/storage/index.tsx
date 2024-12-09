@@ -398,7 +398,7 @@ export default function ManageUsersPage() {
   const animationIsRunning = useRef(false);
 
   const onSwipeValueChange = (swipeData: any) => {};
-  console.log(error);
+  console.error(error);
 
   return (
     <TemplateLayout pageName="StockPage" title="Storage" error={error}>
@@ -445,17 +445,6 @@ export default function ManageUsersPage() {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-            // onSwipeValueChange={onSwipeValueChange}
-            // onRowOpen={(rowKey, rowMap) => {
-            //   console.log(`Row opened: ${rowKey}`);
-            //   const direction: string = rowMap[rowKey].previousTrackedDirection;
-            //   if (direction === "left") {
-            //     if (rowMap[rowKey]) {
-            //       rowMap[rowKey].closeRow();
-            //     }
-            //     handleAddEditStockItem(rowKey);
-            //   }
-            // }}
           />
         )}
 
