@@ -10,6 +10,13 @@ export interface User {
   UserPermissions?: UserPermission[];
 }
 
+export interface BasicUser {
+  initials: string;
+  name: string;
+  email: string;
+  username: string;
+}
+
 interface UserPermission {
   Permission: Permission;
   assignedBy: string;
