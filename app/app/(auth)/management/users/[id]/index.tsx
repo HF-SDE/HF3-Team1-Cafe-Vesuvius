@@ -210,15 +210,23 @@ export default function EditCreateUserPage() {
               </View>
             </View>
           </CheckPermission>
-          <Text style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}>
-            Permissions
-          </Text>
-          <PermissionsTabView
-            id={id}
-            permissions={permissions ? permissions : []}
-            userPermissions={user.UserPermissions ? user.UserPermissions : []}
-            onPermissionToggle={handlePermissionToggle}
-          />
+
+          <CheckPermission
+            requiredPermission={["administrator:permission:view"]}
+            showIfNotPermitted
+          >
+            <Text
+              style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}
+            >
+              Permissions
+            </Text>
+            <PermissionsTabView
+              id={id}
+              permissions={permissions ? permissions : []}
+              userPermissions={user.UserPermissions ? user.UserPermissions : []}
+              onPermissionToggle={handlePermissionToggle}
+            />
+          </CheckPermission>
         </View>
 
         <View>
