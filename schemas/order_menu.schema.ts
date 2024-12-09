@@ -6,7 +6,7 @@ import { Order_Menu } from "../backend/node_modules/.prisma/client";
 const Order_MenuSchema = Joi.object<Order_Menu>({
   id: UuidSchema.required(),
   status: Joi.string()
-    .valid("cook", "completed", "deliver")
+    .valid("toPrepare", "completed", "deliver")
     .required()
     .messages({
       "any.only": "({#key}) must one of {#valids}",
