@@ -2,32 +2,20 @@ import { NextFunction, Request, Response } from 'express';
 
 import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
-import { Prisma, RawMaterial, RawMaterial_MenuItem } from '@prisma/client';
+import { RawMaterial_MenuItem } from '@prisma/client';
 import { getHttpStatusCode } from '@utils/Utils';
-
-interface CustomRawMaterialMenuItem {
-  quantity: number;
-  RawMaterial?: RawMaterial;
-}
-
-interface MenuRequest extends Request {
-  body: {
-    RawMaterial_MenuItems:
-      | (CustomRawMaterialMenuItem & RawMaterial_MenuItem)[]
-      | Prisma.MenuItemCreateInput['RawMaterial_MenuItems'];
-  };
-}
+import { CustomRawMaterialMenuItem, MenuRequestBody } from '@api-types/menu.types';
 
 /**
  * Controller to transform the menus array
  * @async
- * @param {MenuRequest} req - The request object
+ * @param {Request<unknown, unknown, MenuRequestBody>} req - The request object
  * @param {Response} res - The response object
  * @param {NextFunction} next - The next middleware function
  * @returns {Promise<void>} The response object
  */
 export async function transformMenusItems(
-  req: MenuRequest,
+  req: Request<unknown, unknown, MenuRequestBody>,
   res: Response,
   next: NextFunction,
 ): Promise<void> {
@@ -43,10 +31,6 @@ export async function transformMenusItems(
 
     return;
   }
-
-  // const ids = RawMaterialMenuItems.map((material) => material.rawMaterialId);
-
-  // await prisma.rawMaterial.findMany({ where: { id: { in: ids } } });
 
   for (const material of RawMaterialMenuItems) {
     if ('RawMaterial' in material) {
