@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { Prisma, RawMaterial, RawMaterial_MenuItem } from '@prisma/client';
+import { getHttpStatusCode } from '@utils/Utils';
 
 interface CustomRawMaterialMenuItem {
   quantity: number;
@@ -35,7 +36,7 @@ export async function transformMenusItems(
     RawMaterial_MenuItem)[];
 
   if (!RawMaterialMenuItems) {
-    res.status(400).json({
+    res.status(getHttpStatusCode(Status.MissingDetails)).json({
       status: Status.MissingDetails,
       message: 'No materials provided',
     });
@@ -58,7 +59,7 @@ export async function transformMenusItems(
     });
 
     if (!menuItem) {
-      res.status(400).json({
+      res.status(getHttpStatusCode(Status.NotFound)).json({
         status: Status.NotFound,
         message: 'Menu item not found: ' + material.rawMaterialId,
       });
