@@ -1,23 +1,19 @@
 import { Request, Response } from 'express';
 
-import { Order_Menu } from '@prisma/client';
 import { Order_MenusSchema } from '@schemas/order_menu.schema';
 import * as OrderService from '@services/order.service';
 import { getHttpStatusCode } from '@utils/Utils';
-
-export interface ReqBody extends Request {
-  tableId: string;
-  items: Order_Menu[];
-}
+import { APIResponse } from '@api-types/general.types';
+import { CreateOrderReqBody, OrderRequestBody, OrderRequestParams } from '@api-types/order.types';
 
 /**
  * Controller to create an order
- * @param {Request} req - The request object
- * @param {Response} res - The response object
+ * @param {Request<unknown, APIResponse, CreateOrderReqBody>} req - The request object
+ * @param {Response<APIResponse>} res - The response object
  * @returns {Promise<void>}
  */
-export async function createOrder(req: Request, res: Response): Promise<void> {
-  const data = req.body as ReqBody;
+export async function createOrder(req: Request<unknown, APIResponse, CreateOrderReqBody>, res: Response<APIResponse>): Promise<void> {
+  const data = req.body;
 
   const response = await OrderService.createOrder({
     tableId: data.tableId,
@@ -27,20 +23,14 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
-interface OrderStatusRequest extends Request {
-  body: {
-    items?: Order_Menu[];
-  };
-}
-
 /**
  * Controller to validate the order status
- * @param {OrderStatusRequest} req - The request object
+ * @param {Request<OrderRequestParams, unknown, OrderRequestBody>} req - The request object
  * @param {Response} res - The response object
  * @returns {Promise<void>}
  */
 export async function updateOrderStatus(
-  req: OrderStatusRequest,
+  req: Request<OrderRequestParams, unknown, OrderRequestBody>,
   res: Response,
 ): Promise<void> {
   let items = req.body.items || [];

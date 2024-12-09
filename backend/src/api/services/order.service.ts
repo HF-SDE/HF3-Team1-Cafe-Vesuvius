@@ -12,9 +12,9 @@ interface IData {
  * Service to get all orders
  * @async
  * @param {IData} data - The menu items to update.
- * @returns {Promise<APIResponse<any>>} A promise that resolves to an object containing the status and data.
+ * @returns {Promise<APIResponse>} A promise that resolves to an object containing the status and data.
  */
-export async function createOrder(data: IData): Promise<APIResponse<any>> {
+export async function createOrder(data: IData): Promise<APIResponse> {
   const validation = schema.validate(data);
 
   if (validation.error) {
