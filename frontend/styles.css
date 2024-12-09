@@ -5,10 +5,18 @@ body {
   background-color: #f8f9fa;
   color: #333;
 }
+.theme-logo {
+  display: block;
+  width: 250px;
+  height: 250px;
+  background-image: url("/images/CaféVesuviusLogo2.svg");
+  background-size: cover;
+  background-position: center;
+}
 
 @media (prefers-color-scheme: dark) {
   .theme-logo {
-    content: url("/images/CaféVesuviusLogo3.svg");
+    background-image: url("/images/CaféVesuviusLogo3.svg");
   }
 }
 
