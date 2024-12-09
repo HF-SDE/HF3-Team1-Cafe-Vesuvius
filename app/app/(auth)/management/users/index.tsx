@@ -14,7 +14,7 @@ import AddButton from "@/components/AddButton";
 import LoadingPage from "@/components/LoadingPage";
 import { router } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
+import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import SearchBar from "@/components/SearchBar"; // Import the SearchBar
 import { UserProfile } from "@/models/userModels";
 
@@ -79,11 +79,10 @@ export default function ManageUsersPage() {
         </View>
         <View style={styles.iconContainer}>
           {!item.active && (
-            <MaterialIcons
-              name="cancel"
-              size={52}
-              color="red"
-              style={{ paddingRight: 10 }}
+            <FontAwesome5
+              name="user-alt-slash"
+              size={48}
+              color={theme.secondary}
             />
           )}
 
@@ -156,6 +155,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     display: "flex",
+    gap: 10,
     flexDirection: "row",
   },
 });
