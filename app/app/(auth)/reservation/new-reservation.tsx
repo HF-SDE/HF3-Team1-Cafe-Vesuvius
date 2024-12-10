@@ -210,6 +210,7 @@ export default function NewReservationModal({
             onChangeText={(email) =>
               setReservations({ ...reservation!, email })
             }
+            clearTextOnFocus={false}
           />
 
           {datePicker && (
@@ -255,7 +256,9 @@ export default function NewReservationModal({
       ) : (
         <KeyboardAwareFlatList
           ListHeaderComponent={
-            <Text>
+            <Text
+              style={[styles.reservationSelectorLabel, { color: theme.text }]}
+            >
               Tables - {tableSelectNeed} out of {tableSelect}{" "}
             </Text>
           }
@@ -404,15 +407,25 @@ function Item(props: TableProps): ReactElement {
     props.tableSelectNeed,
     [props.reservation[0], props.reservation[1]]
   );
+  const theme = useThemeColor();
+
   const selected = areItemSelected(props.table, props.reservation[0]);
   return (
     <Pressable
       style={
         selected
-          ? { ...styles.item, backgroundColor: "blue" }
+          ? { ...styles.item, backgroundColor: theme.accent }
           : disabled
-          ? { ...styles.item, backgroundColor: "#969696" }
-          : styles.item
+          ? {
+              ...styles.item,
+              backgroundColor: `${theme.primary}60`,
+              borderColor: theme.background,
+            }
+          : {
+              ...styles.item,
+              backgroundColor: theme.primary,
+              borderColor: theme.background,
+            }
       }
       onPress={() => {
         props.reservation[1]({
@@ -423,7 +436,18 @@ function Item(props: TableProps): ReactElement {
       }}
       disabled={selected || disabled}
     >
-      <Text>{props.table.number}</Text>
+      <Text
+        style={[
+          { fontWeight: "bold", fontSize: 20 },
+          selected
+            ? { color: theme.text }
+            : disabled
+            ? { color: theme.background }
+            : { color: theme.background },
+        ]}
+      >
+        {props.table.number}
+      </Text>
     </Pressable>
   );
 }
@@ -510,9 +534,7 @@ const styles = StyleSheet.create({
     width: "100%",
 
     padding: 10,
-    // backgroundColor: "red",
     borderWidth: 1.5,
-    // borderColor: "red",
   },
   itemDisabled: {
     flex: 1,
@@ -545,7 +567,6 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 20,
   },
   input: {
     width: "100%",
@@ -582,5 +603,9 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 14,
     textAlign: "center",
+  },
+  reservationSelectorLabel: {
+    textAlign: "center",
+    fontSize: 16,
   },
 });

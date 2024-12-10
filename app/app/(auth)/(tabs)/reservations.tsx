@@ -230,7 +230,7 @@ export default function ReservationsOverview(): ReactElement {
               <View
                 style={[
                   styles.modalContent,
-                  styles.modalsizing,
+                  styles.modalContentNewRes,
                   { backgroundColor: theme.primary },
                 ]}
               >
@@ -253,7 +253,7 @@ export default function ReservationsOverview(): ReactElement {
             <View
               style={[
                 styles.modalContent,
-                styles.modalsizing2,
+                styles.modalContentInfo,
                 { backgroundColor: theme.primary },
               ]}
             >
@@ -476,22 +476,17 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "100%",
-    // backgroundColor: theme.secondary,
+    width: "90%",
+    maxWidth: 400,
+    minHeight: 270,
     padding: 10,
     borderRadius: 10,
   },
-
-  modalsizing: {
-    maxWidth: 400,
-    // height: "65%",
-    minHeight: 500,
+  modalContentInfo: {
+    minHeight: 270,
   },
-
-  modalsizing2: {
-    maxWidth: 300,
-    height: "35%",
-    minHeight: 300,
+  modalContentNewRes: {
+    minHeight: 480,
   },
 
   button: {
