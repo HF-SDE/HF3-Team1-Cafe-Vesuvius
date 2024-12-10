@@ -94,12 +94,8 @@ export default function EditCreateUserPage() {
     const changedFieldsCount = Object.keys(changedFields).length;
 
     if (changedFieldsCount === 0) {
-      console.info("No changes");
-
       navigation.goBack();
     } else {
-      console.info("Update/Create");
-
       if (id !== "new") {
         // Update user logic here
         await updateUser(user);

@@ -114,10 +114,3 @@ export const permissionManager = new PermissionManager();
 async function initializePermissions() {
   await permissionManager.init();
 }
-
-// Example of getting accessible pages
-async function getPagesForUser() {
-  await initializePermissions();
-  const accessiblePages = permissionManager.getAccessiblePages();
-  console.log(accessiblePages); // This will log the pages the user has access to
-}

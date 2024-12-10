@@ -35,19 +35,20 @@ router.get("/menu", async (req, res, next) => {
 
 /* GET . */
 router.get("/", async (req, res, next) => {
-
   res.render("site/index", {
     title: "Home",
   });
 });
 
-
 /* GET . */
 router.get("/reservation", async (req, res, next) => {
   const date = new Date();
 
-  const day = date.getDay().toString().length === 2 ? date.getDay() : "0" + date.getDay();
-  const maxDate = new Date(date.getFullYear() + 1, date.getMonth(), day, 23, 45).toISOString().slice(0, 16);
+  const day =
+    date.getDay().toString().length === 2 ? date.getDay() : "0" + date.getDay();
+  const maxDate = new Date(date.getFullYear() + 1, date.getMonth(), day, 23, 45)
+    .toISOString()
+    .slice(0, 16);
 
   res.render("site/reservation", {
     title: "Reservation",
@@ -69,8 +70,11 @@ router.post("/reservation", async (req, res, next) => {
 
   const date = new Date();
 
-  const day = date.getDay().toString().length === 2 ? date.getDay() : "0" + date.getDay();
-  const maxDate = new Date(date.getFullYear() + 1, date.getMonth(), day, 23, 45).toISOString().slice(0, 16);
+  const day =
+    date.getDay().toString().length === 2 ? date.getDay() : "0" + date.getDay();
+  const maxDate = new Date(date.getFullYear() + 1, date.getMonth(), day, 23, 45)
+    .toISOString()
+    .slice(0, 16);
 
   const reservation = {
     name,
@@ -81,9 +85,11 @@ router.post("/reservation", async (req, res, next) => {
   };
 
   try {
-    const apiResponse = await axios.post(process.env.BACKEND_URL + "/reservation", reservation)
+    const apiResponse = await axios.post(
+      process.env.BACKEND_URL + "/reservation",
+      reservation
+    );
     if (apiResponse.status === 201) {
-      console.info("Reservation created successfully");
       res.render("site/reservation-confirmed", {
         title: "Reservation confirmed",
         date: reservationDate,
@@ -94,7 +100,11 @@ router.post("/reservation", async (req, res, next) => {
       });
     }
   } catch (error) {
-    const minDate = new Date(new Date(reservationDate).setHours(date.getHours() + 3)).toISOString().slice(0, 16);
+    const minDate = new Date(
+      new Date(reservationDate).setHours(date.getHours() + 3)
+    )
+      .toISOString()
+      .slice(0, 16);
     const errorMessage = error.response.data.message ?? "An error occurred";
 
     if (error.status === 409) {
@@ -127,7 +137,6 @@ router.post("/reservation", async (req, res, next) => {
       });
     }
   }
-
 });
 
 export default router;

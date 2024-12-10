@@ -395,11 +395,6 @@ export default function ManageUsersPage() {
     [quantities]
   );
 
-  const animationIsRunning = useRef(false);
-
-  const onSwipeValueChange = (swipeData: any) => {};
-  console.error(error);
-
   return (
     <TemplateLayout pageName="StockPage" title="Storage" error={error}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -440,7 +435,7 @@ export default function ManageUsersPage() {
             stopRightSwipe={-150}
             disableLeftSwipe={!canEdit}
             disableRightSwipe={!canDelete}
-            keyExtractor={(item) => item.id as string}
+            keyExtractor={(item) => (item.id as string) + item.name}
             contentContainerStyle={styles.userList}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
