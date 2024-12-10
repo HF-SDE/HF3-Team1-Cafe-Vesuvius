@@ -76,7 +76,8 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       const dayKey = reservation.reservationTime.toISOString().split('T')[0]; // Extracts the date part (YYYY-MM-DD)
 
       // If the group for the day does not exist, create it
-      if (!reservationsGroupedByDays[dayKey]) {
+      if (!Object.prototype.hasOwnProperty.call(reservationsGroupedByDays, dayKey)) {
+        // eslint-disable-next-line security/detect-object-injection
         reservationsGroupedByDays[dayKey] = {
           date: new Date(reservation.reservationTime),
           reservations: [],
@@ -84,6 +85,7 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       }
 
       // Add the reservation to the respective day's group
+      // eslint-disable-next-line security/detect-object-injection
       reservationsGroupedByDays[dayKey].reservations.push({
         reservationTime: reservation.reservationTime,
         tableIds: reservation.tableIds,
@@ -163,28 +165,47 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       },
     });
 
-    const salesByMonthAggregated = salesByMonth.reduce((acc, order) => {
-      const date = new Date(order.createdAt);
-      const year = date.getFullYear();
-      const month = date.toLocaleString('default', { month: 'short' });
+    const salesByMonthAggregated = salesByMonth.reduce(
+      (
+        acc: {
+          [key: string]: {
+            month: string;
+            year: string;
+            sales: number;
+            orders: number;
+            reservations?: number;
+          };
+        },
+        order,
+      ) => {
+        const date = new Date(order.createdAt);
+        const year = date.getFullYear();
+        const month = date.toLocaleString('default', { month: 'short' });
 
-      // Create a unique key for grouping
-      const key = `${year}-${month}`;
+        // Create a unique key for grouping
+        const key = `${year}-${month}`;
 
-      const totalMenuItemPrice = order.Order_Menus.reduce(
-        (sum, item) => sum + item.menuItemPrice,
-        0,
-      );
+        const totalMenuItemPrice = order.Order_Menus.reduce(
+          (sum, item) => sum + item.menuItemPrice,
+          0,
+        );
 
-      if (!acc[key]) {
-        acc[key] = { year, month, sales: 0, orders: 0 };
-      }
+        if (!Object.prototype.hasOwnProperty.call(acc, key)) {
+          // eslint-disable-next-line security/detect-object-injection
+          acc[key] = { month, year: year.toString(), sales: 0, orders: 0 };
+        }
 
-      acc[key].sales += totalMenuItemPrice;
-      acc[key].orders += 1;
+        if (Object.prototype.hasOwnProperty.call(acc, key)) {
+          // eslint-disable-next-line security/detect-object-injection
+          acc[key].sales += totalMenuItemPrice;
+          // eslint-disable-next-line security/detect-object-injection
+          acc[key].orders += 1;
+        }
 
-      return acc;
-    }, {});
+        return acc;
+      },
+      {},
+    );
 
     // Transform the aggregated data into the desired structure
     const salesMonth = Object.values(salesByMonthAggregated).map((entry) => ({
@@ -279,7 +300,7 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
   } catch (error) {
     return {
       status: Status.Failed,
-      message: 'Something went wrong on our end: ' + error.message,
+      message: 'Something went wrong on our end: ' + (error as Error).message,
     };
   }
 }
