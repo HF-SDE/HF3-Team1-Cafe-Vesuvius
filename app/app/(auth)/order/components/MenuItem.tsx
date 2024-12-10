@@ -35,54 +35,52 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
   const image = getImage();
 
-  const cartItem = cartActions.getCartItems(menuItem.id)[0] as CartItem<Menu>;
+  const cartItem = cartActions.getCartItems(menuItem.id)[0];
 
   return (
-    <View>
-      <TouchableOpacity
-        onPress={() =>
-          cartActions.addItem({
-            cartItemId: cartItem?.cartItemId,
-            item: menuItem,
-            id: menuItem.id,
-          })
-        }
-        onLongPress={() => addNote()}
+    <TouchableOpacity
+      onPress={() =>
+        cartActions.addItem({
+          cartItemId: cartItem?.cartItemId,
+          item: menuItem,
+          id: menuItem.id,
+        })
+      }
+      onLongPress={() => addNote()}
+    >
+      <Image source={image} style={[styles.image]} />
+
+      <Text
+        style={[
+          styles.itemName,
+          { color: theme.text, backgroundColor: theme.accent },
+        ]}
       >
-        <Image source={image} style={[styles.image]} />
+        {menuItem.name}
+      </Text>
 
-        <Text
-          style={[
-            styles.itemName,
-            { color: theme.text, backgroundColor: theme.accent },
-          ]}
-        >
-          {menuItem.name}
-        </Text>
+      {cartActions.getCartItemQuantity(menuItem) > 0 && (
+        <View style={[styles.quantity, { backgroundColor: theme.orange }]}>
+          <Text
+            style={{
+              color: theme.background,
+              fontSize: 20,
+              padding: 5,
+            }}
+          >
+            {cartActions.getCartItemQuantity(menuItem)}
+          </Text>
+        </View>
+      )}
 
-        {cartActions.getCartItemQuantity(menuItem) > 0 && (
-          <View style={[styles.quantity, { backgroundColor: theme.orange }]}>
-            <Text
-              style={{
-                color: theme.background,
-                fontSize: 20,
-                padding: 5,
-              }}
-            >
-              {cartActions.getCartItemQuantity(menuItem)}
-            </Text>
-          </View>
-        )}
-
-        <MenuItemEdit
-          show={showModal}
-          setShow={setShowModal}
-          menuItem={menuItem}
-          cartItems={cartActions.getCartItems(menuItem)}
-          cartActions={cartActions}
-        />
-      </TouchableOpacity>
-    </View>
+      <MenuItemEdit
+        show={showModal}
+        setShow={setShowModal}
+        menuItem={menuItem}
+        cartItems={cartActions.getCartItems(menuItem)}
+        cartActions={cartActions}
+      />
+    </TouchableOpacity>
   );
 }
 

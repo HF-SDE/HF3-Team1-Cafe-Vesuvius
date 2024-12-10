@@ -93,6 +93,7 @@ export default function AddOrderScreen() {
               />
             )}
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: 15 }}
           />
         </View>
@@ -133,6 +134,7 @@ export default function AddOrderScreen() {
               </TouchableOpacity>
             )}
             horizontal={true}
+            showsHorizontalScrollIndicator={false}
             contentContainerStyle={{ gap: 15 }}
           />
 

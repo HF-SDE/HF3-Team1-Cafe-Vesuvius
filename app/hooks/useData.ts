@@ -1,10 +1,12 @@
 import apiClient from "@/utils/apiClient";
 import { useEffect, useState } from "react";
 
+type SetData<T> = React.Dispatch<React.SetStateAction<T[]>>;
+
 export function useData<T>(
   url: string,
   defaultData: T[] = []
-): [T[], (data: T[]) => void, boolean] {
+): [T[], SetData<T>, boolean] {
   const [data, setData] = useState<T[]>(defaultData);
   const [isLoading, setIsLoading] = useState(true);
 
