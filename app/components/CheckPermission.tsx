@@ -52,18 +52,18 @@ const CheckPermission: React.FC<CheckPermissionProps> = ({
 }) => {
   const [hasPermission, setHasPermission] = useState(false);
 
+  const checkPermissions = async () => {
+    const permissionMan = new PermissionManager();
+    await permissionMan.init();
+
+    // Check if the user has any of the required permissions
+    const permission = permissionMan.hasAllPermissions(requiredPermission);
+
+    // If any permission is granted, set hasPermission to true
+    setHasPermission(permission);
+  };
+
   useEffect(() => {
-    const checkPermissions = async () => {
-      const permissionMan = new PermissionManager();
-      await permissionMan.init();
-
-      // Check if the user has any of the required permissions
-      const permission = permissionMan.hasAllPermissions(requiredPermission);
-
-      // If any permission is granted, set hasPermission to true
-      setHasPermission(permission);
-    };
-
     checkPermissions();
   }, [requiredPermission]);
 

@@ -13,6 +13,7 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 import PasswordInput from "@/components/PasswordInput";
+import Button from "@/components/DefaultButton";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
@@ -79,25 +80,26 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
         placeholder="Confirm New Password"
       />
 
-      {errorMessage ? (
-        <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
-      ) : null}
+      <Text
+        style={[
+          styles.errorText,
+          {
+            color: errorMessage ? "red" : "transparent",
+            visibility: errorMessage ? "visible" : "hidden",
+          },
+        ]}
+      >
+        {errorMessage || "Error Message"}
+      </Text>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: theme.accent }]}
+        <Button
+          title="Cancel"
           onPress={onClose}
-        >
-          <Text style={[styles.buttonText, { color: theme.text }]}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: theme.primary }]}
-          onPress={handleReset}
-        >
-          <Text style={[styles.buttonText, { color: theme.background }]}>
-            Reset
-          </Text>
-        </TouchableOpacity>
+          backgroundColor={theme.accent}
+          textColor={theme.text}
+        />
+        <Button title={"Reset"} onPress={handleReset} />
       </View>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
@@ -129,8 +131,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginTop: 20,
-    gap: 10,
   },
   resetButton: {
     flex: 1,

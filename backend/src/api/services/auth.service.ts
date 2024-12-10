@@ -1,3 +1,4 @@
+import { Mutex } from 'async-mutex';
 import { ObjectId } from 'bson';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
@@ -13,10 +14,9 @@ import {
 import { APIResponse, Status } from '@api-types/general.types';
 //import { JwtPayload } from 'jsonwebtoken';
 import config from '@config';
+import prisma from '@prisma-instance';
 import { Session } from '@prisma/client';
 import { LoginSchema, TokenSchema } from '@schemas/auth.schemas';
-import prisma from '@prisma-instance';
-
 
 /**
  * Generates a JSON Web Token (JWT) for the given user.
@@ -290,6 +290,8 @@ export async function refreshUserTokens(
 
 // In-memory store for login attempts
 const loginAttempts: LoginAttemptsCache = {};
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+const mutex = new Mutex();
 
 /**
  * Generates a cache key based on the username and IP address.
@@ -306,28 +308,54 @@ function getCacheKey(username: string, ipAddress: string): string {
  * Tracks the time of the failed attempt and manages the attempt window.
  * @param {string} username - The username of the user attempting to log in.
  * @param {string} ipAddress - The IP address from which the login attempt is made.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-function addFailedAttempt(username: string, ipAddress: string): void {
+async function addFailedAttempt(
+  username: string,
+  ipAddress: string,
+): Promise<void> {
   const key = getCacheKey(username, ipAddress);
   const now = new Date();
 
-  // Initialize the array if it doesn't exist
-  if (!loginAttempts[key]) {
-    loginAttempts[key] = [];
-  }
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  await mutex.runExclusive(async () => {
+    // Initialize the array if it doesn't exist
+    if (!loginAttempts[key]) {
+      loginAttempts[key] = [];
+    }
 
-  // Remove old attempts outside the time window
-  loginAttempts[key] = loginAttempts[key].filter(
-    (attemptTime) =>
-      now.getTime() - attemptTime.getTime() <
-      config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
-  );
+    // Remove old attempts outside the time window
+    loginAttempts[key] = loginAttempts[key].filter(
+      (attemptTime) =>
+        now.getTime() - attemptTime.getTime() <
+        config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+    );
 
-  // Add the new failed attempt
-  loginAttempts[key].push(now);
+    // Add the new failed attempt
+    loginAttempts[key].push(now);
+  });
 }
 
+/**
+ * Clears failed login attempts for a given username and IP address upon successful login.
+ * @param {string} username - The username of the user who successfully logged in.
+ * @param {string} ipAddress - The IP address from which the successful login is made.
+ * @returns {Promise<void>}
+ */
+async function clearFailedAttempts(
+  username: string,
+  ipAddress: string,
+): Promise<void> {
+  const key = getCacheKey(username, ipAddress);
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  await mutex.runExclusive(async () => {
+    // Clear the failed attempts for the username and IP
+    if (loginAttempts[key]) {
+      delete loginAttempts[key];
+    }
+  });
+}
 /**
  * Checks if an account is locked due to too many failed login attempts.
  * @param {string} username - The username of the user attempting to log in.
@@ -394,7 +422,7 @@ export async function login(
         'local',
         async (err: any, user: Express.User | false) => {
           if (err || !user) {
-            addFailedAttempt(userData.username, userData.ip);
+            await addFailedAttempt(userData.username, userData.ip);
             return resolve({
               status: Status.InvalidCredentials,
               message: 'Wrong username or password',
@@ -403,6 +431,7 @@ export async function login(
 
           // Proceed with login and token generation
           try {
+            await clearFailedAttempts(userData.username, userData.ip);
             const result: AccessResult = await generateUserTokens(
               {
                 sub: user.id,

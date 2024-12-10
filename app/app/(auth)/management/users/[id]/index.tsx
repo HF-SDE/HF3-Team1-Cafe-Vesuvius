@@ -61,6 +61,14 @@ export default function EditCreateUserPage() {
     }[],
   });
 
+  const [validationErrors, setValidationErrors] = useState({
+    username: false,
+    name: false,
+    email: false,
+    initials: false,
+    password: false,
+  });
+
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
@@ -197,6 +205,7 @@ export default function EditCreateUserPage() {
                 value={user.initials}
                 onChangeText={(value) => handleChange("initials", value)}
                 clearTextOnFocus={false}
+                maxLength={4}
               />
               <View style={styles.activeSwitchContainer}>
                 <Text style={[styles.permissionsTitle, { color: theme.text }]}>

@@ -17,6 +17,7 @@
     "@types/express-serve-static-core": "^5.0.2",
     "@types/ws": "^8.5.13",
     "argon2": "^0.41.1",
+    "async-mutex": "^0.5.0",
     "axios": "^1.7.7",
     "body-parser": "^1.20.3",
     "bson": "^6.9.0",

@@ -9,36 +9,43 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 
 import { PermissionManager } from "@/utils/permissionManager";
 import HeaderBackground from "@/components/HeaderBackground";
+import LoadingPage from "@/components/LoadingPage";
 
 export default function TabLayout() {
   const theme = useThemeColor();
+
+  const [isLoading, setIsLoading] = useState(true);
 
   const [hasOrderPermission, setHasOrderPermission] = useState(false);
   const [hasReservationPermission, setHasReservationPermission] =
     useState(false);
   const [hasManagementPermission, setHasManagementPermission] = useState(false);
 
+  const checkPermissions = async () => {
+    const permissionMan = new PermissionManager();
+    await permissionMan.init();
+
+    const orderPermission = await permissionMan.hasPageAccess("OrderPage");
+    setHasOrderPermission(orderPermission);
+
+    const reservationPermission = await permissionMan.hasPageAccess(
+      "ReservationPage"
+    );
+    setHasReservationPermission(reservationPermission);
+
+    const managementPermission = await permissionMan.hasPageAccess(
+      "ManagementPage"
+    );
+    setHasManagementPermission(managementPermission);
+
+    setIsLoading(false);
+  };
+
   useEffect(() => {
-    const checkPermissions = async () => {
-      const permissionMan = new PermissionManager();
-      await permissionMan.init();
-
-      const orderPermission = await permissionMan.hasPageAccess("OrderPage");
-      setHasOrderPermission(orderPermission);
-
-      const reservationPermission = await permissionMan.hasPageAccess(
-        "ReservationPage"
-      );
-      setHasReservationPermission(reservationPermission);
-
-      const managementPermission = await permissionMan.hasPageAccess(
-        "ManagementPage"
-      );
-      setHasManagementPermission(managementPermission);
-    };
-
     checkPermissions();
   }, []);
+
+  if (isLoading) return <LoadingPage />;
 
   return (
     <Tabs

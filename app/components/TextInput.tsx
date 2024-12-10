@@ -70,6 +70,7 @@ export interface CustomTextInputProps extends TextInputProps {
  * @param {TextInputProps["editable"]} [editable] [Optional] - default is true - If the text input should be editable @see https://reactnative.dev/docs/textinput#editable
  * @param {TextInputProps["onChangeText"]} [onChange] [Optional] - function to handle text input change event @see https://reactnative.dev/docs/textinput#onchangetext
  * @param {TextInputProps["onSubmitEditing"]} [onSubmitEditing] [Optional] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
+ * @param {TextInputProps["maxLength"]} [maxLength] [Optional] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
  * @returns {*}
  */
 export default function CustomTextInput({
@@ -92,6 +93,7 @@ export default function CustomTextInput({
   secureTextEntry,
   editable = true,
   error = false,
+  maxLength,
 }: CustomTextInputProps): ReactElement {
   const theme = useThemeColor();
 
@@ -128,6 +130,7 @@ export default function CustomTextInput({
             outline: theme.primary,
           },
         }}
+        maxLength={maxLength || 30}
         contentStyle={{
           color: theme.primary,
         }}
