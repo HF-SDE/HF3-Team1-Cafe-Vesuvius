@@ -8,6 +8,8 @@
   --bg-dark: #1d1207;
   --primary-light: #67422d;
   --primary-dark: #d2ad98;
+  --secondary-light: #d5af95;
+  --secondary-dark: #6a442a;
   --accent-light: #fbc39d;
   --accent-dark: #622a04;
 }
@@ -21,8 +23,9 @@
 
 body {
   background-color: light-dark(var(--bg-light), var(--bg-dark));
+  /* background-color: var(--bg-dark); */
   color: light-dark(var(--text-light), var(--text-dark));
-  display: grid;
+  /* display: grid; */
   place-items: center;
   height: 100vh;
   margin: 0;

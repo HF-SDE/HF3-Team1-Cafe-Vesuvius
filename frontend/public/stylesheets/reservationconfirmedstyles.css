@@ -1,0 +1,118 @@
+main {
+  background: linear-gradient(
+      90deg,
+      rgba(51, 33, 29, 0.85) 0%,
+      rgba(51, 33, 29, 0.85) 50%,
+      rgba(51, 33, 29, 0.95) 50%,
+      rgba(51, 33, 29, 0.95) 100%
+    ),
+    url(../images/reservation/bg.jpg);
+
+  /* below is a different option for philip */
+
+  /* background: linear-gradient(
+      90deg,
+      rgba(51, 33, 29, 0.85) 0%,
+      rgba(51, 33, 29, 0.85) 100%
+    ),
+    url(../images/reservation/bg.jpg); */
+
+  background-position: top;
+  background-repeat: no-repeat;
+  background-size: cover;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+@media (max-width: 800px) {
+  main {
+    flex-direction: column;
+    background: linear-gradient(
+        90deg,
+        rgba(51, 33, 29, 0.85) 0%,
+        rgba(51, 33, 29, 0.85) 100%
+      ),
+      url(../images/reservation/bg.jpg);
+    /* background: linear-gradient(
+        180deg,
+        rgba(51, 33, 29, 0.85) 0%,
+        rgba(51, 33, 29, 0.85) 50%,
+        rgba(51, 33, 29, 0.95) 50%,
+        rgba(51, 33, 29, 0.95) 100%
+      ),
+      url(../images/reservation/bg.jpg); */
+  }
+  .form {
+    background: rgba(51, 33, 29, 0.8);
+  }
+}
+
+.container {
+  width: 100%;
+  height: 100%;
+  padding: 25px;
+  display: flex;
+}
+
+.res {
+  flex-direction: column;
+  gap: 35px;
+  justify-content: center;
+  align-items: center;
+}
+
+.form {
+  align-items: center;
+  flex-direction: column;
+  gap: 15px;
+
+  /* below is another thing for the philip thing */
+
+  /* background: rgba(51, 33, 29, 0.8); */
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+section div {
+  font-size: 1.5rem;
+  display: flex;
+  gap: 15px;
+  justify-content: space-between;
+}
+
+span {
+  text-align: center;
+  color: var(--secondary-light);
+}
+
+.res h1 {
+  font-size: 3rem;
+}
+
+.res-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  list-style: none;
+  font-size: 1.2rem;
+}
+
+.fa {
+  margin-right: 15px;
+  color: #da9f5b;
+}
+
+p,
+h1,
+li,
+.text {
+  color: var(--text-dark);
+}
