@@ -35,7 +35,7 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
   const image = getImage();
 
-  const cartItem = cartActions.getCartItems(menuItem.id)[0] as CartItem<Menu>;
+  const cartItem = cartActions.getCartItems(menuItem.id)[0];
 
   return (
     <View>

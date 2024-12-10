@@ -10,5 +10,5 @@ export interface MenuModel {
 export interface RawMaterial_MenuItems {
   id?: string;
   quantity: number;
-  RawMaterial: StockItemModel;
+  RawMaterial: Required<StockItemModel>;
 }
