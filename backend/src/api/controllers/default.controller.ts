@@ -18,7 +18,9 @@ const config: Config = configWithoutType as Config;
 
 /**
  * Controller to get all
- * @param {prismaModels} model - The Prisma model to get the records from.
+ * @template T - The type of the data to be transformed.
+ * @param {prismaModels} [model] - [Optional] - The Prisma model to get the records from.
+ * @param {(data: T[]) => T[]} [transform] - [Optional] - The function to transform the data.
  * @returns {ExpressFunction} The response object
  */
 export function getAll<T = unknown>(
