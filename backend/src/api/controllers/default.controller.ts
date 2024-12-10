@@ -68,7 +68,7 @@ export function getAll<T = unknown>(
       }, 12000);
     } else {
       if (response.data && transform) {
-        response.data = transform(response.data);
+        response.data = transform(response.data as T[]);
       }
       res.status(getHttpStatusCode(response.status)).json(response).end();
     }
