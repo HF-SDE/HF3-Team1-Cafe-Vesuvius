@@ -163,7 +163,7 @@ model RawMaterial_MenuItem {
   rawMaterialId String @db.ObjectId
   menuItemId    String @db.ObjectId
 
-  RawMaterial RawMaterial @relation(fields: [rawMaterialId], references: [id])
+  RawMaterial RawMaterial @relation(fields: [rawMaterialId], references: [id], onDelete: Cascade)
   MenuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
 }
 

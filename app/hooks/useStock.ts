@@ -71,10 +71,13 @@ export function useStock(id?: string | string[]) {
   };
   const deleteStock = async (deleteStock: StockItemModel) => {
     try {
-      // const response = await apiClient.delete("/stock", deleteStock);
-      // if (response.status === 201) {
-      //   await fetchStock();
-      // }
+      if (!deleteStock.id) {
+        return;
+      }
+      const response = await apiClient.delete(`/stock/${deleteStock.id}`);
+      if (response.status === 200) {
+        await fetchStock();
+      }
       setStock(
         (prevStock) =>
           prevStock?.filter((item) => item.id !== deleteStock.id) ?? null
