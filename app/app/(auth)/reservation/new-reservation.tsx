@@ -2,7 +2,6 @@ import React, {
   Dispatch,
   ReactElement,
   SetStateAction,
-  useRef,
   useState,
 } from "react";
 import { StatusBar } from "expo-status-bar";
@@ -11,10 +10,7 @@ import {
   StyleSheet,
   Text,
   View,
-  FlatList,
   Pressable,
-  KeyboardAvoidingView,
-  TextInput,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
@@ -27,9 +23,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TextIconInput from "@/components/TextIconInput";
 import {
   KeyboardAwareFlatList,
-  KeyboardAwareScrollView,
 } from "react-native-keyboard-aware-scroll-view";
-import { getBackgroundColorAsync } from "expo-system-ui";
 
 interface ModalScreenProps {
   onClose: () => void;
@@ -410,31 +404,36 @@ function Item(props: TableProps): ReactElement {
   const theme = useThemeColor();
 
   const selected = areItemSelected(props.table, props.reservation[0]);
+
+  function onPress() {
+    if (selected) {
+      props.reservation[1]({...props.reservation[0], Tables: [...props.reservation[0].Tables!.filter((table) => table.id !== props.table.id)]});
+      props.setTableSelect(props.tableSelect - 1);
+    } else {
+      props.reservation[1]({ ...props.reservation[0], Tables: [...props.reservation[0].Tables!, props.table] });
+      props.setTableSelect(props.tableSelect + 1);
+    }
+  }
+
   return (
     <Pressable
       style={
         selected
           ? { ...styles.item, backgroundColor: theme.accent }
           : disabled
-          ? {
+            ? {
               ...styles.item,
               backgroundColor: `${theme.primary}60`,
               borderColor: theme.background,
             }
-          : {
+            : {
               ...styles.item,
               backgroundColor: theme.primary,
               borderColor: theme.background,
             }
       }
-      onPress={() => {
-        props.reservation[1]({
-          ...props.reservation[0],
-          Tables: [...props.reservation[0].Tables!, props.table],
-        });
-        props.setTableSelect(props.tableSelect + 1);
-      }}
-      disabled={selected || disabled}
+      onPress={onPress}
+      disabled={disabled}
     >
       <Text
         style={[
@@ -442,8 +441,8 @@ function Item(props: TableProps): ReactElement {
           selected
             ? { color: theme.text }
             : disabled
-            ? { color: theme.background }
-            : { color: theme.background },
+              ? { color: theme.background }
+              : { color: theme.background },
         ]}
       >
         {props.table.number}
@@ -469,7 +468,7 @@ function areItemDisabled(
   if (action[0].Tables) {
     for (const key in action[0].Tables) {
       if (action[0].Tables[key].id === table.id) {
-        return true;
+        return false;
       }
     }
     if (tableSelect === tableSelectNeed) {

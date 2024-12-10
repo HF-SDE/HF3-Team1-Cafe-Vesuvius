@@ -40,10 +40,7 @@ export default function ReservationsOverview(): ReactElement {
   }>({ email: "", phone: "" });
   const [searchQuery, setSearchQuery] = useState("");
 
-  const {
-    reservations: reservationsData,
-    setReservations: setReservationsData,
-  } = useContext(ReservationContext);
+  const { reservations: reservationsData, setReservations: setReservationsData, } = useContext(ReservationContext);
 
   const router = useRouter();
   const theme = useThemeColor();
