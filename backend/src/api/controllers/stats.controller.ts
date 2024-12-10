@@ -12,7 +12,7 @@ interface ChangePasswordRequestBody {
 
 // eslint-disable-next-line no-secrets/no-secrets
 /**
- * Controller so user's can get theire profile data
+ * Controller so user's can get their profile data
  * @async
  * @param {Request<Record<string, any>, APIResponse<StatsResponse>, ChangePasswordRequestBody>} req - The request object
  * @param {Response<APIResponse<StatsResponse>>} res - The response object
