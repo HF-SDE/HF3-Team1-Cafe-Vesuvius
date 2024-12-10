@@ -6,8 +6,9 @@ import prisma from '@prisma-instance';
 import { Permission, Prisma, User, UserPermissions } from '@prisma/client';
 
 /**
- *
- * @param password
+ * Hashes the password using Argon2
+ * @param {string} password - The password to hash
+ * @returns {Promise<string>} The hashed password
  */
 export async function hashPassword(password: string): Promise<string> {
   try {
@@ -48,41 +49,36 @@ export async function transformPermissions(
   const userPermissions = req.body
     .UserPermissions as (CustomRawMaterialMenuItem & UserPermissions)[];
 
-  console.log(userPermissions);
+  if (userPermissions) {
+    // Transform permissions into the UserPermission format
+    for (const userPermission of userPermissions) {
+      if ('Permission' in userPermission) {
+        userPermission.permissionId = userPermission.Permission!.id;
+        delete userPermission.Permission;
+      }
 
-  if (!userPermissions) {
-    res.status(400).json({
-      status: Status.MissingDetails,
-      message: 'No permissions provided',
-    });
-    return;
-  }
-
-  // Transform permissions into the UserPermission format
-  for (const userPermission of userPermissions) {
-    if ('Permission' in userPermission) {
-      userPermission.permissionId = userPermission.Permission!.id;
-      delete userPermission.Permission;
-    }
-
-    const permission = await prisma.permission.findUnique({
-      where: { id: userPermission.permissionId },
-    });
-    console.log(permission);
-
-    if (!permission) {
-      res.status(400).json({
-        status: Status.NotFound,
-        message: 'Permission not found: ' + userPermission.permissionId,
+      const permission = await prisma.permission.findUnique({
+        where: { id: userPermission.permissionId },
       });
 
-      return;
+      if (!permission) {
+        res.status(400).json({
+          status: Status.NotFound,
+          message: 'Permission not found: ' + userPermission.permissionId,
+        });
+
+        return;
+      }
     }
   }
 
-  req.body.UserPermissions = {
-    createMany: { data: userPermissions },
-  };
+  if (userPermissions && userPermissions.length > 0) {
+    req.body.UserPermissions = {
+      createMany: { data: userPermissions },
+    };
+  } else {
+    req.body.UserPermissions = undefined;
+  }
 
   if (req.body.password) {
     // Decode the password from Base64
@@ -93,11 +89,6 @@ export async function transformPermissions(
     // Hash the decoded password
     req.body.password = await hashPassword(decodedPassword);
   }
-
-  console.log(req.body);
-
-  console.log(userPermissions);
-  //console.log(req.body.UserPermissions);
 
   next();
 }

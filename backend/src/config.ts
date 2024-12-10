@@ -4,8 +4,6 @@ import path from 'path';
 
 dotenv.config({ path: path.join(__dirname, '../', '.env') });
 
-
-
 /**
  * The configuration object for the application.
  * @see {@link Config} For the type definition.

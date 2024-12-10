@@ -1,3 +1,4 @@
+import { Mutex } from 'async-mutex';
 import { ObjectId } from 'bson';
 import jwt from 'jsonwebtoken';
 import passport from 'passport';
@@ -13,10 +14,9 @@ import {
 import { APIResponse, Status } from '@api-types/general.types';
 //import { JwtPayload } from 'jsonwebtoken';
 import config from '@config';
+import prisma from '@prisma-instance';
 import { Session } from '@prisma/client';
 import { LoginSchema, TokenSchema } from '@schemas/auth.schemas';
-import prisma from '@prisma-instance';
-
 
 /**
  * Generates a JSON Web Token (JWT) for the given user.
@@ -291,6 +291,8 @@ export async function refreshUserTokens(
 // In-memory store for login attempts
 const loginAttempts: LoginAttemptsCache = {};
 
+const mutex = new Mutex();
+
 /**
  * Generates a cache key based on the username and IP address.
  * @param {string} username - The username of the user attempting to log in.
@@ -306,28 +308,63 @@ function getCacheKey(username: string, ipAddress: string): string {
  * Tracks the time of the failed attempt and manages the attempt window.
  * @param {string} username - The username of the user attempting to log in.
  * @param {string} ipAddress - The IP address from which the login attempt is made.
- * @returns {void}
+ * @returns {Promise<void>}
  */
-function addFailedAttempt(username: string, ipAddress: string): void {
+async function addFailedAttempt(
+  username: string,
+  ipAddress: string,
+): Promise<void> {
   const key = getCacheKey(username, ipAddress);
   const now = new Date();
 
-  // Initialize the array if it doesn't exist
-  if (!loginAttempts[key]) {
-    loginAttempts[key] = [];
-  }
+  await mutex.runExclusive(() => {
+    // Initialize the array if it doesn't exist
 
-  // Remove old attempts outside the time window
-  loginAttempts[key] = loginAttempts[key].filter(
-    (attemptTime) =>
-      now.getTime() - attemptTime.getTime() <
-      config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
-  );
+    if (
+      Object.prototype.hasOwnProperty.call(loginAttempts, key) &&
+      // eslint-disable-next-line security/detect-object-injection
+      !loginAttempts[key]
+    ) {
+      // eslint-disable-next-line security/detect-object-injection
+      loginAttempts[key] = [];
+    }
 
-  // Add the new failed attempt
-  loginAttempts[key].push(now);
+    // Remove old attempts outside the time window
+    if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+      // eslint-disable-next-line security/detect-object-injection
+      loginAttempts[key] = loginAttempts[key].filter(
+        (attemptTime) =>
+          now.getTime() - attemptTime.getTime() <
+          config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+      );
+
+      // Add the new failed attempt
+      // eslint-disable-next-line security/detect-object-injection
+      loginAttempts[key].push(now);
+    }
+  });
 }
 
+/**
+ * Clears failed login attempts for a given username and IP address upon successful login.
+ * @param {string} username - The username of the user who successfully logged in.
+ * @param {string} ipAddress - The IP address from which the successful login is made.
+ * @returns {Promise<void>}
+ */
+async function clearFailedAttempts(
+  username: string,
+  ipAddress: string,
+): Promise<void> {
+  const key = getCacheKey(username, ipAddress);
+
+  await mutex.runExclusive(() => {
+    // Clear the failed attempts for the username and IP
+    if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+      // eslint-disable-next-line security/detect-object-injection
+      delete loginAttempts[key];
+    }
+  });
+}
 /**
  * Checks if an account is locked due to too many failed login attempts.
  * @param {string} username - The username of the user attempting to log in.
@@ -336,19 +373,23 @@ function addFailedAttempt(username: string, ipAddress: string): void {
  */
 function isAccountLocked(username: string, ipAddress: string): boolean {
   const key = getCacheKey(username, ipAddress);
-  if (!loginAttempts[key]) {
+  if (!Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
     return false;
   }
 
   // Remove old attempts outside of the time window
   const now = new Date();
-  loginAttempts[key] = loginAttempts[key].filter(
-    (attemptTime) =>
-      now.getTime() - attemptTime.getTime() <
-      config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
-  );
+  if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+    // eslint-disable-next-line security/detect-object-injection
+    loginAttempts[key] = loginAttempts[key].filter(
+      (attemptTime) =>
+        now.getTime() - attemptTime.getTime() <
+        config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+    );
+  }
 
   // Check if the number of recent failed attempts exceeds the limit
+  // eslint-disable-next-line security/detect-object-injection
   return loginAttempts[key].length >= config.MAX_FAILED_LOGIN_ATTEMPTS;
 }
 
@@ -394,7 +435,7 @@ export async function login(
         'local',
         async (err: any, user: Express.User | false) => {
           if (err || !user) {
-            addFailedAttempt(userData.username, userData.ip);
+            await addFailedAttempt(userData.username, userData.ip);
             return resolve({
               status: Status.InvalidCredentials,
               message: 'Wrong username or password',
@@ -403,6 +444,7 @@ export async function login(
 
           // Proceed with login and token generation
           try {
+            await clearFailedAttempts(userData.username, userData.ip);
             const result: AccessResult = await generateUserTokens(
               {
                 sub: user.id,

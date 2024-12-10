@@ -1,10 +1,10 @@
 import { Router } from 'websocket-express';
 
 import {
-  create,
+  createRecord,
   deleteRecord,
   getAll,
-  update,
+  updateRecord,
 } from '@controllers/default.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
@@ -13,7 +13,7 @@ import { validateParams } from '@middlewares/validate.mw';
 
 const router = new Router();
 
-router.post('/', manageTables, create());
+router.post('/', manageTables, createRecord());
 
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
@@ -25,7 +25,7 @@ router.get(
   getAll(),
 );
 router.ws('/', isAllowed(['reservation:view']), getAll());
-router.put('/:id', isAllowed(['reservation:update']), update());
+router.put('/:id', isAllowed(['reservation:update']), updateRecord());
 router.delete('/:id', isAllowed(['reservation:delete']), deleteRecord());
 
 export default router;

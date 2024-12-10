@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { IAPIResponse, Status } from '@api-types/general.types';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -5,6 +6,7 @@ import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
 import { capitalize } from '@utils/Utils';
 
 const prisma = new PrismaClient();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 export const prismaPSQL = new PrismaClientPSQL();
 export default prisma;
 
@@ -16,12 +18,13 @@ export type prismaModels = Uncapitalize<Prisma.ModelName>;
  * @param {keyof typeof Status} operation - The operation that caused the error.
  * @returns {IAPIResponse} An object containing the status and message.
  */
-export function errorResponse(
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function errorResponse(
   err: PrismaClientKnownRequestError,
   model: prismaModels,
   operation: keyof typeof Status,
-): IAPIResponse {
-  console.log(err);
+): Promise<IAPIResponse> {
+  console.error(err);
   if (err.name == 'PrismaClientValidationError') {
     return {
       status: Status.MissingDetails,
@@ -29,7 +32,7 @@ export function errorResponse(
     };
   }
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  if (err instanceof Prisma.PrismaClientKnownRequestError && operation in Status) {
     switch (err.code) {
       case 'P2002':
         return {

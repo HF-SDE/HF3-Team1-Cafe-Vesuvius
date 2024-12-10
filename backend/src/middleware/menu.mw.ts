@@ -24,13 +24,13 @@ interface MenuRequest extends Request {
  * @param {Request} req - The request object
  * @param {Response} res - The response object
  * @param {NextFunction} next - The next function
- * @returns {Promise<void>}
+ * @returns {void}
  */
-export async function transformPatch(
+export function transformPatch(
   req: MenuRequest,
   res: Response,
   next: NextFunction,
-): Promise<void> {
+): void {
   const RawMaterialMenuItems = req.body.RawMaterial_MenuItems;
 
   if (!RawMaterialMenuItems) {

@@ -31,5 +31,5 @@ export const search = Joi.object<
 >({
   id: UuidSchema.optional(),
   tableNumber: Joi.number().optional(),
-  status: Joi.string().valid("cook", "completed", "deliver").optional(),
+  status: Joi.string().valid("toPrepare", "completed", "deliver").optional(),
 }).options({ allowUnknown: false });

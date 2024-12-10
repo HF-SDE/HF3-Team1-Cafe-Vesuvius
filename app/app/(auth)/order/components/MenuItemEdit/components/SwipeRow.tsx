@@ -3,6 +3,7 @@ import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Menu } from "../../../new-order";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
+import TextWithNote from "@/components/TextWithNote";
 
 interface ISwipeRow {
   cartItem: CartItem<Menu>;
@@ -41,48 +42,11 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
       }}
     >
       <View style={{ display: "flex", justifyContent: "center" }}>
-        <View
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            gap: 3,
-          }}
-        >
-          <Text
-            style={{
-              fontSize: 16,
-              color: theme.accent,
-              alignSelf: "center",
-            }}
-          >
-            {cartItem.item?.name} x{cartItem.quantity}
-          </Text>
-
-          {cartItem?.note && (
-            <View
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: 3,
-              }}
-            >
-              <MaterialCommunityIcons
-                name="note"
-                size={16}
-                color={theme.secondary}
-              />
-              <Text
-                style={{
-                  color: theme.accent,
-                  fontSize: 14,
-                }}
-              >
-                {cartItem.note}
-              </Text>
-            </View>
-          )}
-        </View>
+        <TextWithNote
+          text={`${cartItem.item?.name} x ${cartItem.quantity}`}
+          note={cartItem?.note}
+          color={theme.accent}
+        />
       </View>
 
       <View style={[styles.buttonContainer]}>

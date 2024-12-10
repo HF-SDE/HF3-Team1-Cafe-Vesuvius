@@ -56,7 +56,7 @@ describe('API (Create stock)', () => {
 
   //* Create cases
   it('should create stock', async () => {
-    const name = createRandomString(10);
+    const name = await createRandomString(10);
 
     const response = await axios.post<{
       data: APIResponse<Prisma.RawMaterialCreateInput>;
@@ -104,7 +104,7 @@ describe('API (Update stock)', () => {
 
   it('should update stock', async () => {
     const data = await prisma.rawMaterial.findFirst();
-    const name = createRandomString(10);
+    const name = await createRandomString(10);
 
     const response = await axios.put<{
       data: APIResponse<Prisma.RawMaterialUpdateManyMutationInput>;

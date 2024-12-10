@@ -395,11 +395,6 @@ export default function ManageUsersPage() {
     [quantities]
   );
 
-  const animationIsRunning = useRef(false);
-
-  const onSwipeValueChange = (swipeData: any) => {};
-  console.log(error);
-
   return (
     <TemplateLayout pageName="StockPage" title="Storage" error={error}>
       <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -440,22 +435,11 @@ export default function ManageUsersPage() {
             stopRightSwipe={-150}
             disableLeftSwipe={!canEdit}
             disableRightSwipe={!canDelete}
-            keyExtractor={(item) => item.id as string}
+            keyExtractor={(item) => (item.id as string) + item.name}
             contentContainerStyle={styles.userList}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             ItemSeparatorComponent={() => <View style={{ height: 20 }} />}
-            // onSwipeValueChange={onSwipeValueChange}
-            // onRowOpen={(rowKey, rowMap) => {
-            //   console.log(`Row opened: ${rowKey}`);
-            //   const direction: string = rowMap[rowKey].previousTrackedDirection;
-            //   if (direction === "left") {
-            //     if (rowMap[rowKey]) {
-            //       rowMap[rowKey].closeRow();
-            //     }
-            //     handleAddEditStockItem(rowKey);
-            //   }
-            // }}
           />
         )}
 
@@ -604,9 +588,9 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "100%",
+    width: "90%",
     maxWidth: 400,
-    minHeight: 350,
+    minHeight: 380,
     padding: 10,
     borderRadius: 10,
   },

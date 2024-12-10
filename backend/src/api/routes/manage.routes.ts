@@ -1,6 +1,10 @@
 import { Router } from 'express';
 
-import { create, getAll, update } from '@controllers/default.controller';
+import {
+  createRecord,
+  getAll,
+  updateRecord,
+} from '@controllers/default.controller';
 import { transformUserData } from '@controllers/manage.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
@@ -27,18 +31,18 @@ router.post(
   '/user',
   isAllowed(['administrator:users:create']),
   transformPermissions,
-  create('user'),
+  createRecord('user'),
 );
 router.put(
   '/user/:id',
   isAllowed(['administrator:users:update']),
-  update('user'),
+  updateRecord('user'),
 );
 router.patch(
   '/user/:id',
   isAllowed(['administrator:users:update']),
   transformPatch,
-  update('user'),
+  updateRecord('user'),
 );
 
 export default router;

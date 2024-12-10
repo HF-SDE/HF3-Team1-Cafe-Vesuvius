@@ -42,7 +42,9 @@ export async function logout(): Promise<void> {
  * @param {number} length - The length of the string to create.
  * @returns {string} A random string.
  */
-export function createRandomString(length: number): string {
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function createRandomString(length: number): Promise<string> {
+  // eslint-disable-next-line no-secrets/no-secrets
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
   for (let i = 0; i < length; i++) {

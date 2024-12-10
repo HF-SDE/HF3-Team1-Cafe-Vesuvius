@@ -1,10 +1,6 @@
 import { useEffect, useState } from "react";
 import { getStorageItemAsync } from "../hooks/useStorageState";
-
-interface User {
-  id: string; // The user ID extracted from the token
-  [key: string]: any; // Any other properties in the token payload
-}
+import { UserInfo } from "@/models/userModels";
 
 function decodeJwt(token: string): any {
   try {
@@ -17,8 +13,8 @@ function decodeJwt(token: string): any {
   }
 }
 
-export const useLogedInUser = (): User | null => {
-  const [currentUser, setCurrentUser] = useState<User | null>(null);
+export const useLogedInUser = (): UserInfo | null => {
+  const [currentUser, setCurrentUser] = useState<UserInfo | null>(null);
 
   useEffect(() => {
     const fetchUserFromToken = async () => {
