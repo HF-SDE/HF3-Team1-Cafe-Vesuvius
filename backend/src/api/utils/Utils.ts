@@ -94,7 +94,7 @@ export function getSchema(
   try {
     const filePath = `../../../schemas/${schemaName}.schema.ts`;
 
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection, security/detect-non-literal-require
     const schema = require(filePath)[type] as Joi.ObjectSchema;
 
     return schema;
