@@ -38,7 +38,7 @@ interface AccessResult {
  * @param {number} ms - The number of milliseconds to wait.
  * @returns {Promise<void>} A promise that resolves after the given delay.
  */
-function sleep(ms: number): Promise<void> {
+async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
@@ -46,7 +46,7 @@ function sleep(ms: number): Promise<void> {
  * Logs in a user with the provided credentials.
  * @param {string} username - The username of the user.
  * @param {string} password - The password of the user.
- * @returns {Promise<ApiResponse<AccessResult>>} A promise that resolves with the login response.
+ * @returns {Promise<APIResponse<AccessResult>>} A promise that resolves with the login response.
  */
 async function loginUser(
   username: string,
@@ -84,7 +84,7 @@ function validateLoginSuccess(response: APIResponse<AccessResult>): void {
 /**
  * Calls the refresh token endpoint with an access token.
  * @param {string} accessToken - The access token to include in the request.
- * @returns {Promise<ApiResponse<AccessResult>>} A promise that resolves with the refresh token response.
+ * @returns {Promise<APIResponse<AccessResult>>} A promise that resolves with the refresh token response.
  */
 async function callRefreshToken(
   accessToken: string,
@@ -99,7 +99,7 @@ async function callRefreshToken(
 /**
  * Calls the access token endpoint with a refresh token.
  * @param {string} refreshToken - The refresh token to use for obtaining a new access token.
- * @returns {Promise<ApiResponse<AccessResult>>} A promise that resolves with the new access token response.
+ * @returns {Promise<APIResponse<AccessResult>>} A promise that resolves with the new access token response.
  */
 async function callAccessToken(
   refreshToken: string,

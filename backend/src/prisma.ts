@@ -1,3 +1,4 @@
+/* eslint-disable security/detect-object-injection */
 import { IAPIResponse, Status } from '@api-types/general.types';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -16,11 +17,12 @@ export type prismaModels = Uncapitalize<Prisma.ModelName>;
  * @param {keyof typeof Status} operation - The operation that caused the error.
  * @returns {IAPIResponse} An object containing the status and message.
  */
-export function errorResponse(
+// eslint-disable-next-line @typescript-eslint/require-await
+export async function errorResponse(
   err: PrismaClientKnownRequestError,
   model: prismaModels,
   operation: keyof typeof Status,
-): IAPIResponse {
+): Promise<IAPIResponse> {
   console.error(err);
   if (err.name == 'PrismaClientValidationError') {
     return {
@@ -29,7 +31,7 @@ export function errorResponse(
     };
   }
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError) {
+  if (err instanceof Prisma.PrismaClientKnownRequestError && operation in Status) {
     switch (err.code) {
       case 'P2002':
         return {
