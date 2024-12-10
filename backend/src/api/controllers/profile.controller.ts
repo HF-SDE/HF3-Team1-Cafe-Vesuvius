@@ -6,9 +6,9 @@ import { BasicUser, User } from '@api-types/user.types';
 import * as ProfileService from '@services/profile.service';
 import { getHttpStatusCode } from '@utils/Utils';
 
+// eslint-disable-next-line no-secrets/no-secrets
 /**
  * Controller so user's can change there own password
- * @async
  * @param {Response<APIResponse>} req - The request object
  * @param {Request<Record<string, any>, APIResponse, ChangePasswordRequestBody>} res - The response object
  * @returns {Promise<void>} The response object
