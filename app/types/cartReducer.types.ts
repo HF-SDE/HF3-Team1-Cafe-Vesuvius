@@ -55,5 +55,5 @@ export type ICartActions<ItemType> = {
   ) => void;
 } & {
   getCartItemQuantity: (input: ItemType | string) => number;
-  getCartItems: (input: ItemType | string | undefined) => CartItem[];
+  getCartItems: (input: ItemType | string | undefined) => CartItem<ItemType>[];
 };
