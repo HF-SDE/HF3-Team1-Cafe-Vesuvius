@@ -18,10 +18,13 @@ import CheckPermission from "@/components/CheckPermission";
 import SetPasswordModal from "./set-password";
 
 import { UserProfile } from "@/models/userModels";
+import { Permission } from "@/models/PermissionModel";
 
 import { useLogedInUser } from "@/hooks/useLogedInUser";
 import { useRoute } from "@react-navigation/native";
 import { RouteProp } from "@react-navigation/native";
+
+import { UserSchema } from "@/schemas/UserSchema";
 
 type EditCreateUserRouteParams = {
   id: string | "new" | undefined;
@@ -37,6 +40,7 @@ export default function EditCreateUserPage() {
   const theme = useThemeColor();
 
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [errorMessages, setErrorMessages] = useState<string[]>([]);
 
   const { users, isLoading, error, updateUser, createUser } = useUsers(
     id as string
@@ -61,14 +65,6 @@ export default function EditCreateUserPage() {
     }[],
   });
 
-  const [validationErrors, setValidationErrors] = useState({
-    username: false,
-    name: false,
-    email: false,
-    initials: false,
-    password: false,
-  });
-
   const [changedFields, setChangedFields] = useState<{ [key: string]: any }>(
     {}
   );
@@ -90,12 +86,37 @@ export default function EditCreateUserPage() {
     }
   }, [id, users]);
 
+  const isValidate = async (): Promise<boolean> => {
+    // Validate user data before proceeding
+    const { error } = UserSchema.validate(user, { abortEarly: false });
+
+    if (error) {
+      // Extract all error messages and show them in an alert
+      const messages = error.details.map((detail) => detail.path.join("."));
+      setErrorMessages(messages);
+
+      //Alert.alert("Validation Error", errorMessages);
+      console.log(error);
+
+      return false;
+    } else {
+      return true;
+    }
+  };
+
   const handleSave = async () => {
     const changedFieldsCount = Object.keys(changedFields).length;
 
-    if (changedFieldsCount === 0) {
+    if (changedFieldsCount === 0 && id !== "new") {
       navigation.goBack();
-    } else {
+      return;
+    }
+
+    if (!(await isValidate())) {
+      return;
+    }
+
+    try {
       if (id !== "new") {
         // Update user logic here
         await updateUser(user);
@@ -103,8 +124,10 @@ export default function EditCreateUserPage() {
         // Create new user logic here
         await createUser(user);
       }
+      navigation.goBack();
+    } catch (error) {
+      //Alert.alert("Save Error", "An error occurred while saving user data.");
     }
-    navigation.goBack();
   };
 
   const handleChange = (field: keyof UserProfile, value: string | boolean) => {
@@ -142,11 +165,15 @@ export default function EditCreateUserPage() {
       delete updatedChangedFields[permissionId];
       setChangedFields(updatedChangedFields);
     }
+
     setUser((prevUser) => {
       const updatedPermissions = isEnabled
         ? [
             ...prevUser.UserPermissions,
-            { permissionId: permissionId, assignedBy: currentUser },
+            {
+              permissionId: permissionId,
+              assignedBy: currentUser ? currentUser.toString() : "unknown",
+            } as Permission,
           ]
         : prevUser.UserPermissions.filter(
             (permission) => permission.permissionId !== permissionId
@@ -178,6 +205,7 @@ export default function EditCreateUserPage() {
               value={user.username}
               onChangeText={(value) => handleChange("username", value)}
               clearTextOnFocus={false}
+              isHighlighted={errorMessages.includes("username")}
             />
             <TextInput
               style={styles.input}
@@ -185,6 +213,7 @@ export default function EditCreateUserPage() {
               value={user.name}
               onChangeText={(value) => handleChange("name", value)}
               clearTextOnFocus={false}
+              isHighlighted={errorMessages.includes("name")}
             />
             <TextInput
               style={styles.input}
@@ -193,6 +222,7 @@ export default function EditCreateUserPage() {
               onChangeText={(value) => handleChange("email", value)}
               inputMode="email"
               clearTextOnFocus={false}
+              isHighlighted={errorMessages.includes("email")}
             />
             <View style={styles.initialsActiveContainer}>
               <TextInput
@@ -202,6 +232,7 @@ export default function EditCreateUserPage() {
                 onChangeText={(value) => handleChange("initials", value)}
                 clearTextOnFocus={false}
                 maxLength={4}
+                isHighlighted={errorMessages.includes("initials")}
               />
               <View style={styles.activeSwitchContainer}>
                 <Text style={[styles.permissionsTitle, { color: theme.text }]}>
@@ -246,6 +277,7 @@ export default function EditCreateUserPage() {
               <Button
                 title="Set password"
                 onPress={() => setIsModalVisible(true)}
+                isHighlighted={errorMessages.includes("password")}
               />
             </CheckPermission>
           </View>
@@ -283,6 +315,7 @@ export default function EditCreateUserPage() {
               onSetPassword={(newPassword) => {
                 handleChange("password", newPassword);
                 setIsModalVisible(false);
+                isValidate();
               }}
             />
           </View>

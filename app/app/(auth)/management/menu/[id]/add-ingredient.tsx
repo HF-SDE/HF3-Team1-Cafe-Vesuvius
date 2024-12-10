@@ -55,7 +55,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
   const handleSelectItem = (item: StockItemModel) => {
     const selectedIngredient: RawMaterial_MenuItems = {
       quantity: 1, // Use the quantity from input
-      RawMaterial: item,
+      RawMaterial: item as Required<StockItemModel>,
     };
     onAddIngredient(selectedIngredient);
     onClose(); // Close modal after selection

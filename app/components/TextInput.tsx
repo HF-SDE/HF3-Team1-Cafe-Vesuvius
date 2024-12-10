@@ -44,6 +44,11 @@ export interface CustomTextInputProps extends TextInputProps {
   onChangeText?: TextInputProps["onChangeText"];
   onSubmitEditing?: TextInputProps["onSubmitEditing"];
   onKeyPress?: TextInputProps["onKeyPress"];
+
+  /**
+   * Callback triggered when the input loses focus
+   */
+  onLeave?: () => void;
 }
 
 /**
@@ -70,7 +75,9 @@ export interface CustomTextInputProps extends TextInputProps {
  * @param {TextInputProps["editable"]} [editable] [Optional] - default is true - If the text input should be editable @see https://reactnative.dev/docs/textinput#editable
  * @param {TextInputProps["onChangeText"]} [onChange] [Optional] - function to handle text input change event @see https://reactnative.dev/docs/textinput#onchangetext
  * @param {TextInputProps["onSubmitEditing"]} [onSubmitEditing] [Optional] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
+ * @param {TextInputProps["onLeave"]} [onLeave] [Optional] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
  * @param {TextInputProps["maxLength"]} [maxLength] [Optional] - function to handle text input submit event @see https://reactnative.dev/docs/textinput#onsubmitediting
+ *
  * @returns {*}
  */
 export default function CustomTextInput({
@@ -80,6 +87,7 @@ export default function CustomTextInput({
   style,
   onSubmitEditing,
   onKeyPress,
+  onLeave,
   autoCorrect,
   clearButtonMode = "never",
   autoComplete = "off",
@@ -139,6 +147,9 @@ export default function CustomTextInput({
         autoCorrect={autoCorrect}
         secureTextEntry={secureTextEntry}
         error={error}
+        onBlur={() => {
+          onLeave?.();
+        }}
       />
     </>
   );

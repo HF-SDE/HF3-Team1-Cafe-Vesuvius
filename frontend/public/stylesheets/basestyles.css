@@ -1,0 +1,33 @@
+:root {
+  color-scheme: light dark;
+
+  /* Simplified color variables */
+  --text-light: #33230a;
+  --text-dark: #f5e5cc;
+  --bg-light: #f8ede2;
+  --bg-dark: #1d1207;
+  --primary-light: #67422d;
+  --primary-dark: #d2ad98;
+  --secondary-light: #d5af95;
+  --secondary-dark: #6a442a;
+  --accent-light: #fbc39d;
+  --accent-dark: #622a04;
+}
+
+/* Reset & base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: light-dark(var(--bg-light), var(--bg-dark));
+  /* background-color: var(--bg-dark); */
+  color: light-dark(var(--text-light), var(--text-dark));
+  /* display: grid; */
+  place-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Source Code Pro", monospace;
+}

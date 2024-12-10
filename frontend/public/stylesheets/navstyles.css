@@ -1,0 +1,22 @@
+.list {
+  list-style-type: none;
+  /* margin-left: auto; */
+  display: flex;
+  gap: 10%;
+  justify-content: center;
+  width: 100%;
+  z-index: 5;
+  font-size: 2rem;
+  /* @media (min-width: 640px) {
+    display: flex;
+  } */
+  margin-bottom: 10px;
+}
+nav ul li a {
+  text-decoration: none;
+  color: light-dark(var(--primary-light), var(--primary-dark));
+  /* color: var(--bg-light); */
+}
+nav ul li a:hover {
+  text-decoration: underline;
+}
