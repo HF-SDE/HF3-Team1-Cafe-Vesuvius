@@ -21,9 +21,9 @@ const config: Config = configWithoutType as Config;
  * @param {prismaModels} model - The Prisma model to get the records from.
  * @returns {ExpressFunction} The response object
  */
-export function getAll(
+export function getAll<T = unknown>(
   model?: prismaModels,
-  transform?: (data: any[]) => any[],
+  transform?: (data: T[]) => T[],
 ): ExpressFunction {
   return async (req, res: Response | WSResponse) => {
     let ws: ExtendedWebSocket;
