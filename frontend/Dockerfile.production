@@ -5,7 +5,7 @@
 
 FROM node:22.9-alpine AS base
 
-# Set our working directory on the virutal machine
+# Set our working directory on the virtual machine
 WORKDIR /usr/src/app
 
 # Copy our package.json to the /usr/src/app
@@ -14,7 +14,7 @@ COPY package.json ./
 # Run NPM install
 RUN npm install
 
-# Copy all files from our local machine to the virutal machine (uses .dockerignore!)
+# Copy all files from our local machine to the virtual machine (uses .dockerignore!)
 COPY . .
 
 # Create a new step
