@@ -6,7 +6,9 @@ import { fileURLToPath } from 'node:url';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import noSecrets from 'eslint-plugin-no-secrets';
 import tsParser from '@typescript-eslint/parser';
+import pluginSecurity from 'eslint-plugin-security';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -18,6 +20,7 @@ const compat = new FlatCompat({
 
 export default [
   jsdoc.configs['flat/recommended'],
+  pluginSecurity.configs.recommended,
   {
     ignores: [
       '**/*.json',
@@ -27,6 +30,9 @@ export default [
       '**/*.sql',
       '**/*.prisma',
       '**/*.toml',
+      '**/test/**',
+      '**/tests/**',
+      '**/seed.ts',
       'eslint.config.mjs',
     ],
   },
@@ -38,6 +44,7 @@ export default [
     plugins: {
       jsdoc,
       '@typescript-eslint': typescriptEslint,
+      "no-secrets": noSecrets,
     },
 
     languageOptions: {
@@ -61,6 +68,7 @@ export default [
     },
 
     rules: {
+      "no-secrets/no-secrets": "error",
       'jsdoc/require-jsdoc': [
         'error',
         {
@@ -153,12 +161,13 @@ export default [
         },
       ],
 
+      '@typescript-eslint/promise-function-async': ['error', { allowAny: false }],
       '@typescript-eslint/no-empty-function': 'error',
       '@typescript-eslint/no-empty-interface': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-misused-new': 'error',
-      '@typescript-eslint/no-misused-promises': 'off',
-      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/require-await': ['warn'],
 
       '@typescript-eslint/restrict-template-expressions': [
         'off',
@@ -195,6 +204,9 @@ export default [
       ],
 
       'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
+      'require-await': 'off',
+      'no-empty-function': 'off',
+
     },
   },
 ];

@@ -21,6 +21,7 @@ const opts: StrategyOptionsWithRequest = {
 };
 
 passport.use(
+  // eslint-disable-next-line @typescript-eslint/no-misused-promises
   new JwtStrategy(opts, async (req, jwt_payload: UserToken, done) => {
     const user = await prisma.user.findUnique({
       where: { id: jwt_payload.sub },
@@ -41,6 +42,7 @@ passport.use(
       usernameField: 'username',
       passwordField: 'password',
     },
+    // eslint-disable-next-line @typescript-eslint/no-misused-promises
     async (username, password, done) => {
       try {
         // Return success for now to test

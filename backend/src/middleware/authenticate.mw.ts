@@ -12,13 +12,13 @@ import '../passport';
  * @param {Request} req - The request object containing the JWT token.
  * @param {Response} res - The response object to send the result of the verification.
  * @param {NextFunction} next - The next middleware function in the chain.
- * @returns {Promise<void>} Resolves with the user data if the token is valid.
+ * @returns {void} Resolves with the user data if the token is valid.
  */
-export async function verifyJWT(
+export function verifyJWT(
   req: Request,
   res: Response | WSResponse,
   next: NextFunction,
-): Promise<void> {
+): void {
   // eslint-disable-next-line @typescript-eslint/no-unsafe-call
   passport.authenticate(
     'jwt',

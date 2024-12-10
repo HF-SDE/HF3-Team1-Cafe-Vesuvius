@@ -109,18 +109,22 @@ export async function update(data: StockUpdate[]): Promise<APIResponse> {
       };
     }
 
-    const transaction = data.map(({ quantity, unit, name, id }) => {
-      return prisma.rawMaterial.update({
-        where: {
-          id,
-        },
-        data: {
-          quantity,
-          unit,
-          name,
-        },
-      });
-    });
+    const transaction = [];
+    for (const item of data) {
+      const { id, quantity, unit, name } = item;
+      transaction.push(
+        prisma.rawMaterial.update({
+          where: {
+            id,
+          },
+          data: {
+            quantity,
+            unit,
+            name,
+          },
+        }),
+      );
+    }
 
     const result = await prisma.$transaction(transaction);
 

@@ -7,6 +7,7 @@ import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
 // Use crypto to generate random hex strings
 
 const prisma = new PrismaClient();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 const prismaPSQL = new PrismaClientPSQL();
 
 /**
@@ -338,7 +339,7 @@ async function generateMongo() {
   const adminPermission = await prisma.permission.findMany();
 
   if (adminPermission) {
-    adminPermission.forEach(async (permission) => {
+    for (const permission of adminPermission) {
       await prisma.userPermissions.create({
         data: {
           userId: superAdminUser.id,
@@ -346,7 +347,7 @@ async function generateMongo() {
           permissionId: permission.id,
         },
       });
-    });
+    }
   }
 
   // Assign permissions to kok user
@@ -361,7 +362,7 @@ async function generateMongo() {
   });
 
   if (kokPermission) {
-    kokPermission.forEach(async (permission) => {
+    for (const permission of kokPermission) {
       await prisma.userPermissions.create({
         data: {
           userId: kokUser.id,
@@ -369,7 +370,7 @@ async function generateMongo() {
           permissionId: permission.id,
         },
       });
-    });
+    }
   }
 
   // Assign permissions to tjener user
@@ -386,7 +387,7 @@ async function generateMongo() {
   });
 
   if (tjenerPermission) {
-    tjenerPermission.forEach(async (permission) => {
+    for (const permission of tjenerPermission) {
       await prisma.userPermissions.create({
         data: {
           userId: tjenerUser.id,
@@ -394,7 +395,7 @@ async function generateMongo() {
           permissionId: permission.id,
         },
       });
-    });
+    }
   }
 
   // Assign permissions to administration user
@@ -410,7 +411,7 @@ async function generateMongo() {
   });
 
   if (administrationPermission) {
-    administrationPermission.forEach(async (permission) => {
+    for (const permission of administrationPermission) {
       await prisma.userPermissions.create({
         data: {
           userId: administrationUser.id,
@@ -418,7 +419,7 @@ async function generateMongo() {
           permissionId: permission.id,
         },
       });
-    });
+    }
   }
 
   // Stock
@@ -1716,8 +1717,8 @@ async function generateMongo() {
       );
 
       const selectedTableIdsTmp = selectedTableNumbers.map(
-        (selectedTableNumber) => {
-          return findTable(selectedTableNumber);
+        async (selectedTableNumber) => {
+          return await findTable(selectedTableNumber);
         },
       );
 
@@ -1828,6 +1829,7 @@ async function generateMongo() {
  */
 async function generatingPSQL() {
   // Menu
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
   await prismaPSQL.menu.createMany({
     data: menu,
   });
@@ -1961,10 +1963,12 @@ generateMongo()
  */
 generatingPSQL()
   .then(async () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await prismaPSQL.$disconnect();
   })
   .catch(async (e) => {
     console.error(e);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     await prismaPSQL.$disconnect();
     process.exit(1);
   });
