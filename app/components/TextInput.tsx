@@ -148,7 +148,6 @@ export default function CustomTextInput({
         secureTextEntry={secureTextEntry}
         error={error}
         onBlur={() => {
-          console.log("Input lost focus");
           onLeave?.();
         }}
       />

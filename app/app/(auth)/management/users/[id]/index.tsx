@@ -18,6 +18,7 @@ import CheckPermission from "@/components/CheckPermission";
 import SetPasswordModal from "./set-password";
 
 import { UserProfile } from "@/models/userModels";
+import { Permission } from "@/models/PermissionModel";
 
 import { useLogedInUser } from "@/hooks/useLogedInUser";
 import { useRoute } from "@react-navigation/native";
@@ -164,11 +165,15 @@ export default function EditCreateUserPage() {
       delete updatedChangedFields[permissionId];
       setChangedFields(updatedChangedFields);
     }
+
     setUser((prevUser) => {
       const updatedPermissions = isEnabled
         ? [
             ...prevUser.UserPermissions,
-            { permissionId: permissionId, assignedBy: currentUser },
+            {
+              permissionId: permissionId,
+              assignedBy: currentUser ? currentUser.toString() : "unknown",
+            } as Permission,
           ]
         : prevUser.UserPermissions.filter(
             (permission) => permission.permissionId !== permissionId

@@ -5,6 +5,7 @@ export interface MenuModel {
   name?: string;
   price?: number;
   RawMaterial_MenuItems?: RawMaterial_MenuItems[];
+  [key: string]: any;
 }
 
 export interface RawMaterial_MenuItems {
