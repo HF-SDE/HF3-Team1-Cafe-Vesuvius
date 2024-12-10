@@ -20,4 +20,6 @@ COPY . .
 # Create a new step
 FROM base AS production
 
-CMD ["npm", "run", "start"]
+RUN npm run build:minify
+
+CMD ["npm", "run", "start:prod"]
