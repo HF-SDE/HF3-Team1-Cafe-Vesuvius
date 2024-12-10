@@ -107,22 +107,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
 
       const percentageForDay =
         (totalTimeUnitsUsed / totalTimeUnitsPossible) * 100;
-      // for (const reservation of group.reservations) {
-      //   const dayStart = new Date(reservation.reservationTime);
-      //   dayStart.setHours(0, 0, 0, 0); // Set the time to the start of the day
-      //   const dayEnd = new Date(reservation.reservationTime);
-      //   dayEnd.setHours(23, 59, 59, 999); // Set the time to the end of the day
-
-      //   // Fetch the total tables available for this day
-
-      //   // Fetch the number of unique tables reserved for this specific day
-      //   const tablesUsed = reservation.tableIds.length;
-
-      //   // Calculate the table utilization percentage for this day
-      //   const utilizationPercentage = (tablesUsed / totalTables) * 100;
-
-      //   // Add to the daily utilization array
-      // }
       dailyUtilizationPercentages.push(percentageForDay);
     }
 
@@ -149,7 +133,6 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
         },
       },
     });
-    //const upcomingReservations = totalReservations - todayReservations;
 
     const salesByMonth = await prisma.order.findMany({
       select: {
