@@ -84,7 +84,7 @@ export function getAll<T = unknown>(
  * @param {prismaModels} model - The Prisma model to create the record with.
  * @returns {ExpressFunction} The response object
  */
-export function create(model?: prismaModels): ExpressFunction {
+export function createRecord(model?: prismaModels): ExpressFunction {
   return async (req: Request, res: Response): Promise<void> => {
     const response = await DefaultService.create(
       model ?? getModel(req),
@@ -100,7 +100,7 @@ export function create(model?: prismaModels): ExpressFunction {
  * @param {prismaModels} model - The Prisma model to update the record in.
  * @returns {ExpressFunction} The response object
  */
-export function update(model?: prismaModels): ExpressFunction {
+export function updateRecord(model?: prismaModels): ExpressFunction {
   return async (req, res) => {
     const id = (req.params.id || req.query.id) as string;
 

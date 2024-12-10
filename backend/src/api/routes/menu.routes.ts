@@ -1,10 +1,10 @@
 import { Router } from 'websocket-express';
 
 import {
-  create,
+  createRecord,
   deleteRecord,
   getAll,
-  update,
+  updateRecord,
 } from '@controllers/default.controller';
 import { transformMenusItems } from '@controllers/menu.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
@@ -26,14 +26,14 @@ router.post(
   '/',
   isAllowed(['menu:create']),
   transformMenusItems,
-  create('menuItem'),
+  createRecord('menuItem'),
 );
-router.put('/:id', isAllowed(['menu:update']), update('menuItem'));
+router.put('/:id', isAllowed(['menu:update']), updateRecord('menuItem'));
 router.patch(
   '/:id',
   isAllowed(['menu:update']),
   transformPatch,
-  update('menuItem'),
+  updateRecord('menuItem'),
 );
 router.delete('/:id', isAllowed(['menu:delete']), deleteRecord('menuItem'));
 

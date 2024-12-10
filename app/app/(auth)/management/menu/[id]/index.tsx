@@ -243,6 +243,7 @@ export default function EditCreateUserPage() {
                   clearTextOnFocus={false}
                   selectTextOnFocus={false}
                   isHighlighted={validationErrors.name}
+                  maxLength={50}
                 />
                 <TextInput
                   label="Price"
