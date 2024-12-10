@@ -1,22 +1,24 @@
 import { Request, Response } from 'express';
 
-import { IAPIResponse } from '@api-types/general.types';
+import { APIResponse } from '@api-types/general.types';
 import * as StatsService from '@services/stats.service';
 import { getHttpStatusCode } from '@utils/Utils';
+import { StatsResponse } from '@api-types/stats.types';
 
 interface ChangePasswordRequestBody {
   oldPassword: string;
   newPassword: string;
 }
 
+// eslint-disable-next-line no-secrets/no-secrets
 /**
  * Controller so user's can get theire profile data
  * @async
- * @param {Request} req - The request object
- * @param {Request<Record<string, any>, IAPIResponse, ChangePasswordRequestBody>} res - The response object
- * @returns {*} The response object
+ * @param {Request<Record<string, any>, APIResponse<StatsResponse>, ChangePasswordRequestBody>} req - The request object
+ * @param {Response<APIResponse<StatsResponse>>} res - The response object
+ * @returns {Promise<void>} The response object
  */
-export async function getStats(req: Request, res: Response): Promise<void> {
+export async function getStats(req: Request<Record<string, any>, APIResponse<StatsResponse>, ChangePasswordRequestBody>, res: Response<APIResponse<StatsResponse>>): Promise<void> {
   const response = await StatsService.stats();
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
