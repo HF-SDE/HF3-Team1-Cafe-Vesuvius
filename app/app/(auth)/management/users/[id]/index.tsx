@@ -239,18 +239,21 @@ export default function EditCreateUserPage() {
         </View>
 
         <View>
-          <CheckPermission
-            requiredPermission={[
-              id !== "new"
-                ? "administrator:users:update"
-                : "administrator:users:create",
-            ]}
-          >
-            <Button
-              title="Set password"
-              onPress={() => setIsModalVisible(true)}
-            />
-          </CheckPermission>
+          <View style={styles.buttonContainer}>
+            <CheckPermission
+              requiredPermission={[
+                id !== "new"
+                  ? "administrator:users:update"
+                  : "administrator:users:create",
+              ]}
+            >
+              <Button
+                title="Set password"
+                onPress={() => setIsModalVisible(true)}
+              />
+            </CheckPermission>
+          </View>
+
           <View style={styles.buttonContainer}>
             <Button title="Cancel" onPress={() => navigation.goBack()} />
 
@@ -359,7 +362,7 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalContent: {
-    width: "100%",
+    width: "90%",
     maxWidth: 400,
     minHeight: 340,
     padding: 10,
