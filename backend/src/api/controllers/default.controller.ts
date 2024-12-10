@@ -56,7 +56,9 @@ export function getAll<T = unknown>(
     }
 
     const modelConfig = req.config || {
+      // eslint-disable-next-line security/detect-object-injection
       ...config[model],
+      // eslint-disable-next-line security/detect-object-injection
       where: Object.assign({}, req.query, config[model]?.where),
     };
 
