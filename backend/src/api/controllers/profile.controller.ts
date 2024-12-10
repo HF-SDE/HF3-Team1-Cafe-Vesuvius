@@ -6,9 +6,9 @@ import { BasicUser, User } from '@api-types/user.types';
 import * as ProfileService from '@services/profile.service';
 import { getHttpStatusCode } from '@utils/Utils';
 
+// eslint-disable-next-line no-secrets/no-secrets
 /**
  * Controller so user's can change there own password
- * @async
  * @param {Response<APIResponse>} req - The request object
  * @param {Request<Record<string, any>, APIResponse, ChangePasswordRequestBody>} res - The response object
  * @returns {Promise<void>} The response object
@@ -28,15 +28,15 @@ export async function changePassword(
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
+// eslint-disable-next-line no-secrets/no-secrets
 /**
- * Controller so user's can get theire profile data
- * @async
+ * Controller so user's can get their profile data
  * @param {Request<APIResponse<BasicUser>>} req - The request object
- * @param {Request<unknown, APIResponse, ChangePasswordRequestBody>} res - The response object
+ * @param {Request<unknown, APIResponse<BasicUser>, ChangePasswordRequestBody>} res - The response object
  * @returns {Promise<void>} The response object
  */
 export async function getProfile(
-  req: Request<unknown, APIResponse, ChangePasswordRequestBody>,
+  req: Request<unknown, APIResponse<BasicUser>, ChangePasswordRequestBody>,
   res: Response<APIResponse<BasicUser>>,
 ): Promise<void> {
   const authHeader = req.headers.authorization;

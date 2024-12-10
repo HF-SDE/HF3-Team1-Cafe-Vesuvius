@@ -6,6 +6,7 @@ import { PrismaClient as PrismaClientPSQL } from '@prisma/clientPSQL';
 import { capitalize } from '@utils/Utils';
 
 const prisma = new PrismaClient();
+// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
 export const prismaPSQL = new PrismaClientPSQL();
 export default prisma;
 

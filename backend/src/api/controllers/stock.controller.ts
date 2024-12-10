@@ -10,6 +10,7 @@ import {
 import { Prisma } from '@prisma/client';
 import * as StockService from '@services/stock.service';
 import { getHttpStatusCode } from '@utils/Utils';
+import qs from 'qs';
 
 /**
  * Controller to get stock items
@@ -32,6 +33,7 @@ export async function getStock(
   res.status(getHttpStatusCode(response.status)).json(response).end();
 }
 
+// eslint-disable-next-line no-secrets/no-secrets
 /**
  * Controller to create a stock item
  * @param {Request<ParamsDictionary, APIResponse, Prisma.RawMaterialCreateWithoutRawMaterial_MenuItemsInput>} req - The request object
