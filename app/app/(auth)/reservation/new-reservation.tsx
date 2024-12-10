@@ -280,38 +280,38 @@ export default function NewReservationModal({
       )}
       <View style={styles.buttonContainer}>
         <Pressable
-          style={[styles.cancelButton, { backgroundColor: theme.primary }]}
+          style={[styles.cancelButton, { backgroundColor: theme.accent }]}
           onPress={onClose}
         >
-          <Text style={[styles.buttonText, { color: theme.background }]}>
-            cancel
-          </Text>
+          <Text style={[styles.buttonText, { color: theme.text }]}>Cancel</Text>
         </Pressable>
         {page === 1 ? (
           <Pressable
             style={[
               styles.mainButton,
               disabledButton
-                ? { backgroundColor: theme.secondary }
-                : { backgroundColor: theme.accent },
+                ? { backgroundColor: `${theme.primary}60` }
+                : { backgroundColor: theme.primary },
             ]}
             onPress={() => setPage(2)}
             disabled={disabledButton}
           >
-            <Text style={[styles.buttonText, { color: theme.text }]}>Next</Text>
+            <Text style={[styles.buttonText, { color: theme.background }]}>
+              Next
+            </Text>
           </Pressable>
         ) : (
           <Pressable
             style={[
               styles.mainButton,
               disabledCreateButton
-                ? { backgroundColor: theme.secondary }
-                : { backgroundColor: theme.accent },
+                ? { backgroundColor: `${theme.primary}60` }
+                : { backgroundColor: theme.primary },
             ]}
             onPress={handleCreate}
             disabled={disabledCreateButton}
           >
-            <Text style={[styles.buttonText, { color: theme.text }]}>
+            <Text style={[styles.buttonText, { color: theme.background }]}>
               Create
             </Text>
           </Pressable>
@@ -522,7 +522,6 @@ function areKeysDefined<T extends Record<string, any>>(
 const styles = StyleSheet.create({
   dateTimePicker: {
     position: "absolute",
-    // backgroundColor: "white",
     zIndex: 2,
     borderRadius: 20,
     padding: 10,
@@ -535,10 +534,11 @@ const styles = StyleSheet.create({
 
     padding: 10,
     borderWidth: 1.5,
+    borderRadius: 3,
   },
   itemDisabled: {
     flex: 1,
-    maxWidth: "25%", // 100% devided by the number of rows you want
+    maxWidth: "25%",
     alignItems: "center",
     width: "100%",
 
@@ -554,14 +554,13 @@ const styles = StyleSheet.create({
   flatList: {
     flex: 1,
     alignContent: "center",
-    width: "100%", // Ensures the FlatList spans the full width
+    width: "100%",
   },
   container: {
     flex: 1,
     alignItems: "center",
     justifyContent: "center",
     paddingHorizontal: 20,
-    // minHeight: "100%",
     gap: 10,
   },
   title: {
