@@ -60,7 +60,6 @@ export async function transformPermissions(
       const permission = await prisma.permission.findUnique({
         where: { id: userPermission.permissionId },
       });
-      console.log(permission);
 
       if (!permission) {
         res.status(400).json({
@@ -73,11 +72,7 @@ export async function transformPermissions(
     }
   }
 
-  console.log(userPermissions);
-
   if (userPermissions && userPermissions.length > 0) {
-    console.log('RUN');
-
     req.body.UserPermissions = {
       createMany: { data: userPermissions },
     };

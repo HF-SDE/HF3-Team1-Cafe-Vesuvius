@@ -13,32 +13,31 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
 import PasswordInput from "@/components/PasswordInput";
+import Button from "@/components/DefaultButton";
 
 import { SafeAreaView } from "react-native-safe-area-context";
 
 interface ModalScreenProps {
   onClose: () => void;
-  onResetPassword: (newPassword: string) => void;
+  onSetPassword: (newPassword: string) => void;
 }
 
-export default function ResetPasswordModal({
+export default function SetPasswordModal({
   onClose,
-  onResetPassword,
+  onSetPassword: onSetPassword,
 }: ModalScreenProps) {
-  const { resetPassword } = useUserProfile();
-
-  const [newPassword, setNewPassword] = useState("");
+  const [password, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const theme = useThemeColor();
 
-  const handleReset = async () => {
-    if (!newPassword || !confirmPassword) {
+  const handleSet = async () => {
+    if (!password || !confirmPassword) {
       setErrorMessage("Please fill out all fields!");
       return;
     }
-    if (newPassword !== confirmPassword) {
+    if (password !== confirmPassword) {
       setErrorMessage("Passwords does not match!");
       return;
     }
@@ -50,12 +49,12 @@ export default function ResetPasswordModal({
       // } else {
       //   setErrorMessage(response || "An error occurred.");
       // }
-      const encodedPassword = btoa(newPassword);
-      onResetPassword(encodedPassword);
+      const encodedPassword = btoa(password);
+      onSetPassword(encodedPassword);
     } catch (error) {
       console.error(error);
 
-      setErrorMessage("An error occurred while resetting password.");
+      setErrorMessage("An error occurred while setting password.");
     }
   };
 
@@ -63,10 +62,10 @@ export default function ResetPasswordModal({
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <Text style={[styles.title, { color: theme.text }]}>Reset Password</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Set Password</Text>
 
       <PasswordInput
-        value={newPassword}
+        value={password}
         onChangeText={setNewPassword}
         iconColor={theme.secondary}
         placeholder="New Password"
@@ -78,25 +77,26 @@ export default function ResetPasswordModal({
         placeholder="Confirm New Password"
       />
 
-      {errorMessage ? (
-        <Text style={[styles.errorText, { color: "red" }]}>{errorMessage}</Text>
-      ) : null}
+      <Text
+        style={[
+          styles.errorText,
+          {
+            color: errorMessage ? "red" : "transparent",
+            visibility: errorMessage ? "visible" : "hidden",
+          },
+        ]}
+      >
+        {errorMessage || "Error Message"}
+      </Text>
 
       <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={[styles.cancelButton, { backgroundColor: theme.accent }]}
+        <Button
+          title="Cancel"
           onPress={onClose}
-        >
-          <Text style={[styles.buttonText, { color: theme.text }]}>Cancel</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={[styles.resetButton, { backgroundColor: theme.primary }]}
-          onPress={handleReset}
-        >
-          <Text style={[styles.buttonText, { color: theme.background }]}>
-            Reset
-          </Text>
-        </TouchableOpacity>
+          backgroundColor={theme.accent}
+          textColor={theme.text}
+        />
+        <Button title={"Reset"} onPress={handleSet} />
       </View>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
@@ -128,8 +128,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    marginTop: 20,
-    gap: 10,
   },
   resetButton: {
     flex: 1,

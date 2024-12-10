@@ -22,6 +22,7 @@ export default function ManageUsersPage() {
   const { users, isLoading, error, refreshUsers } = useUsers(); // Assume refresh is available
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredUsers, setFilteredUsers] = useState<UserProfile[]>([]);
+  const [showInactive, setShowInactive] = useState(false);
   const navigation = useNavigation();
 
   const theme = useThemeColor();
@@ -30,7 +31,7 @@ export default function ManageUsersPage() {
     if (users) {
       filterUsers(searchQuery); // Filter on initial load
     }
-  }, [users]);
+  }, [users, showInactive]);
 
   const handleAddUser = () => {
     // Navigate to the edit/create user page
@@ -42,27 +43,59 @@ export default function ManageUsersPage() {
   };
 
   useEffect(() => {
+    const updateHeaderRight = () => {
+      navigation.setOptions({
+        headerRight: () =>
+          showInactive ? (
+            <FontAwesome5
+              name="user-alt"
+              size={24}
+              color={theme.secondary}
+              onPress={() => setShowInactive(!showInactive)}
+              style={{ marginRight: 16 }}
+            />
+          ) : (
+            <FontAwesome5
+              name="user-alt-slash"
+              size={24}
+              color={theme.secondary}
+              onPress={() => setShowInactive(!showInactive)}
+              style={{ marginRight: 16 }}
+            />
+          ),
+      });
+    };
+
+    // Update header icon whenever showInactive changes
+    updateHeaderRight();
+
     const unsubscribe = navigation.addListener("focus", () => {
-      // Trigger the refetch whenever the screen comes into focus
       refreshUsers();
     });
 
-    // Cleanup the listener
-    return unsubscribe;
-  }, [navigation]);
+    // Cleanup listener on unmount
+    return () => {
+      unsubscribe();
+    };
+  }, [navigation, showInactive, theme.secondary]);
 
   const filterUsers = (query: string) => {
     const text = query.toLowerCase();
-    if (text.length > 0) {
-      const filteredData = users?.filter(
-        (user) =>
-          user.name.toLowerCase().includes(text) ||
-          user.email.toLowerCase().includes(text)
-      );
-      setFilteredUsers(filteredData);
+    let filteredData = users?.filter(
+      (user) =>
+        user.name.toLowerCase().includes(text) ||
+        user.email.toLowerCase().includes(text)
+    );
+
+    if (!showInactive) {
+      // Only show active users
+      filteredData = filteredData?.filter((user) => user.active);
     } else {
-      setFilteredUsers(users); // Reset to all users if query is too short
+      // Show inactive users
+      filteredData = filteredData?.filter((user) => !user.active);
     }
+
+    setFilteredUsers(filteredData || []);
     setSearchQuery(query);
   };
 

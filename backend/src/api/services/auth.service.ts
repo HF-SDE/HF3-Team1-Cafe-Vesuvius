@@ -290,7 +290,7 @@ export async function refreshUserTokens(
 
 // In-memory store for login attempts
 const loginAttempts: LoginAttemptsCache = {};
-// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
+
 const mutex = new Mutex();
 
 /**
@@ -317,22 +317,31 @@ async function addFailedAttempt(
   const key = getCacheKey(username, ipAddress);
   const now = new Date();
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  await mutex.runExclusive(async () => {
+  await mutex.runExclusive(() => {
     // Initialize the array if it doesn't exist
-    if (!loginAttempts[key]) {
+
+    if (
+      Object.prototype.hasOwnProperty.call(loginAttempts, key) &&
+      // eslint-disable-next-line security/detect-object-injection
+      !loginAttempts[key]
+    ) {
+      // eslint-disable-next-line security/detect-object-injection
       loginAttempts[key] = [];
     }
 
     // Remove old attempts outside the time window
-    loginAttempts[key] = loginAttempts[key].filter(
-      (attemptTime) =>
-        now.getTime() - attemptTime.getTime() <
-        config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
-    );
+    if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+      // eslint-disable-next-line security/detect-object-injection
+      loginAttempts[key] = loginAttempts[key].filter(
+        (attemptTime) =>
+          now.getTime() - attemptTime.getTime() <
+          config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+      );
 
-    // Add the new failed attempt
-    loginAttempts[key].push(now);
+      // Add the new failed attempt
+      // eslint-disable-next-line security/detect-object-injection
+      loginAttempts[key].push(now);
+    }
   });
 }
 
@@ -348,10 +357,10 @@ async function clearFailedAttempts(
 ): Promise<void> {
   const key = getCacheKey(username, ipAddress);
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  await mutex.runExclusive(async () => {
+  await mutex.runExclusive(() => {
     // Clear the failed attempts for the username and IP
-    if (loginAttempts[key]) {
+    if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+      // eslint-disable-next-line security/detect-object-injection
       delete loginAttempts[key];
     }
   });
@@ -364,19 +373,23 @@ async function clearFailedAttempts(
  */
 function isAccountLocked(username: string, ipAddress: string): boolean {
   const key = getCacheKey(username, ipAddress);
-  if (!loginAttempts[key]) {
+  if (!Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
     return false;
   }
 
   // Remove old attempts outside of the time window
   const now = new Date();
-  loginAttempts[key] = loginAttempts[key].filter(
-    (attemptTime) =>
-      now.getTime() - attemptTime.getTime() <
-      config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
-  );
+  if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+    // eslint-disable-next-line security/detect-object-injection
+    loginAttempts[key] = loginAttempts[key].filter(
+      (attemptTime) =>
+        now.getTime() - attemptTime.getTime() <
+        config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+    );
+  }
 
   // Check if the number of recent failed attempts exceeds the limit
+  // eslint-disable-next-line security/detect-object-injection
   return loginAttempts[key].length >= config.MAX_FAILED_LOGIN_ATTEMPTS;
 }
 

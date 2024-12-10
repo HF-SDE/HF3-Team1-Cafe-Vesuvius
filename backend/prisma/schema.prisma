@@ -141,6 +141,7 @@ model MenuItem {
   price     Float
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  active    Boolean @default(true)
 
   Orders                Order_Menu[]
   PendingMenuItems      PendingMenuItem[]

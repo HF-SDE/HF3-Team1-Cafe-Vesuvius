@@ -18,12 +18,14 @@ const config: Config = configWithoutType as Config;
 
 /**
  * Controller to get all
- * @param {prismaModels} model - The Prisma model to get the records from.
+ * @template T - The type of the data to be transformed.
+ * @param {prismaModels} [model] - [Optional] - The Prisma model to get the records from.
+ * @param {(data: T[]) => T[]} [transform] - [Optional] - The function to transform the data.
  * @returns {ExpressFunction} The response object
  */
-export function getAll(
+export function getAll<T = unknown>(
   model?: prismaModels,
-  transform?: (data: any[]) => any[],
+  transform?: (data: T[]) => T[],
 ): ExpressFunction {
   return async (req, res: Response | WSResponse) => {
     let ws: ExtendedWebSocket;
@@ -56,7 +58,9 @@ export function getAll(
     }
 
     const modelConfig = req.config || {
+      // eslint-disable-next-line security/detect-object-injection
       ...config[model],
+      // eslint-disable-next-line security/detect-object-injection
       where: Object.assign({}, req.query, config[model]?.where),
     };
 
@@ -68,7 +72,7 @@ export function getAll(
       }, 12000);
     } else {
       if (response.data && transform) {
-        response.data = transform(response.data);
+        response.data = transform(response.data as T[]);
       }
       res.status(getHttpStatusCode(response.status)).json(response).end();
     }
