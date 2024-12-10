@@ -15,7 +15,7 @@ import Switch from "@/components/Switch";
 import PermissionsTabView from "@/components/PermissionsTabView";
 import CheckPermission from "@/components/CheckPermission";
 
-import ResetPasswordModal from "./reset-password";
+import SetPasswordModal from "./set-password";
 
 import { UserProfile } from "@/models/userModels";
 
@@ -247,7 +247,7 @@ export default function EditCreateUserPage() {
             ]}
           >
             <Button
-              title="Reset password"
+              title="Set password"
               onPress={() => setIsModalVisible(true)}
             />
           </CheckPermission>
@@ -279,9 +279,9 @@ export default function EditCreateUserPage() {
           <View
             style={[styles.modalContent, { backgroundColor: theme.primary }]}
           >
-            <ResetPasswordModal
+            <SetPasswordModal
               onClose={() => setIsModalVisible(false)}
-              onResetPassword={(newPassword) => {
+              onSetPassword={(newPassword) => {
                 handleChange("password", newPassword);
                 setIsModalVisible(false);
               }}
@@ -361,7 +361,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: "100%",
     maxWidth: 400,
-    minHeight: 300,
+    minHeight: 340,
     padding: 10,
     borderRadius: 10,
   },
