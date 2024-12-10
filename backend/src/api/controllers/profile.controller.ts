@@ -30,7 +30,7 @@ export async function changePassword(
 }
 // eslint-disable-next-line no-secrets/no-secrets
 /**
- * Controller so user's can get theire profile data
+ * Controller so user's can get their profile data
  * @param {Request<APIResponse<BasicUser>>} req - The request object
  * @param {Request<unknown, APIResponse<BasicUser>, ChangePasswordRequestBody>} res - The response object
  * @returns {Promise<void>} The response object
