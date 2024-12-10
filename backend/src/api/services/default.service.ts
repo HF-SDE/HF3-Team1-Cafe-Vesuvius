@@ -152,7 +152,16 @@ function Validate(
   data?: unknown,
   schema?: Joi.ObjectSchema,
 ): { err?: IAPIResponse; prismaType?: any; validatedData?: unknown } {
-  const prismaType = prisma[prismaModel] as any;
+  if (!Object.prototype.hasOwnProperty.call(prisma, prismaModel)) {
+    return {
+      err: {
+        status: Status.Failed,
+        message: `Something went wrong on our end`,
+      },
+    };
+  }
+  // eslint-disable-next-line security/detect-object-injection
+  const prismaType = prisma[prismaModel];
 
   if (!prismaType) {
     return {
