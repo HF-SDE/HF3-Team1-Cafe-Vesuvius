@@ -8,6 +8,7 @@ interface ButtonProps {
   disabled?: boolean | undefined;
   backgroundColor?: ColorValue | undefined;
   textColor?: ColorValue | undefined;
+  isHighlighted?: boolean;
 }
 
 const SubmitButton: React.FC<ButtonProps> = ({
@@ -16,6 +17,7 @@ const SubmitButton: React.FC<ButtonProps> = ({
   disabled,
   backgroundColor,
   textColor,
+  isHighlighted,
 }) => {
   const theme = useThemeColor();
 
@@ -24,6 +26,10 @@ const SubmitButton: React.FC<ButtonProps> = ({
       style={[
         styles.button,
         { backgroundColor: backgroundColor || theme.primary },
+        {
+          borderWidth: isHighlighted ? 3 : 0,
+          borderColor: isHighlighted ? "red" : undefined,
+        },
       ]}
       onPress={onPress}
       disabled={disabled}
