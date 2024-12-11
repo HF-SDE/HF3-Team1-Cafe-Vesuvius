@@ -493,7 +493,7 @@ const styles = StyleSheet.create({
     minHeight: 270,
   },
   modalContentNewRes: {
-    minHeight: 450,
+    minHeight: 500,
   },
 
   button: {

@@ -1,6 +1,13 @@
 import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import { Platform, StyleSheet, Text, View, Pressable } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  Text,
+  View,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
 import { Table } from "@/models/TableModels";
@@ -12,6 +19,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import TextIconInput from "@/components/TextIconInput";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import Button from "@/components/DefaultButton";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 interface ModalScreenProps {
   onClose: () => void;
@@ -123,6 +131,14 @@ export default function NewReservationModal({
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
+      {page === 2 && (
+        <TouchableOpacity
+          style={[styles.backButton, { marginLeft: 10 }]} // Adjust margin as needed
+          onPress={() => setPage(1)}
+        >
+          <FontAwesome6 name="arrow-left" size={20} color={theme.text} />
+        </TouchableOpacity>
+      )}
       <Text style={[styles.title, { color: theme.text }]}>
         New Reservations
       </Text>
@@ -241,7 +257,7 @@ export default function NewReservationModal({
             <Text
               style={[styles.reservationSelectorLabel, { color: theme.text }]}
             >
-              Tables - {tableSelectNeed} out of {tableSelect}{" "}
+              Tables - {tableSelect} out of {tableSelectNeed}{" "}
             </Text>
           }
           numColumns={4}
@@ -288,7 +304,14 @@ export default function NewReservationModal({
           //     Next
           //   </Text>
           // </Pressable>
-          <Button title={"Next"} onPress={() => setPage(2)} />
+          <Button
+            title={"Next"}
+            onPress={() => setPage(2)}
+            disabled={disabledButton}
+            backgroundColor={
+              disabledButton ? `${theme.primary}60` : theme.primary
+            }
+          />
         ) : (
           // <Pressable
           //   style={[
@@ -443,7 +466,7 @@ function Item(props: TableProps): ReactElement {
     >
       <Text
         style={[
-          { fontWeight: "bold", fontSize: 20 },
+          { fontWeight: "bold", fontSize: 18 },
           selected
             ? { color: theme.text }
             : disabled
@@ -610,5 +633,15 @@ const styles = StyleSheet.create({
   reservationSelectorLabel: {
     textAlign: "center",
     fontSize: 16,
+  },
+  backButton: {
+    position: "absolute",
+    left: 0,
+    top: 10, // Adjust the vertical position
+    padding: 10,
+  },
+  backButtonText: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
