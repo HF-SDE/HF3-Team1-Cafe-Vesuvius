@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import prisma from '@prisma-instance';
 import { Prisma } from '@prisma/client';
 import { search } from '@schemas/table.schema';
+import { table as tableConfig } from '@utils/configs';
 
 interface TableRequest extends Request {
   query: {
@@ -44,14 +45,16 @@ export async function transformSearch(
   delete req.query.reservedNow;
 
   if (value.reservedNow !== undefined) {
-    req.config = {
-      where: {
-        Reservations: {
-          some: {
-            reservationTime: {
-              lt: new Date(),
-              gt: new Date(new Date().getTime() - 1000 * 60 * 60 * 3),
-            },
+    req.config ??= { ...tableConfig };
+
+    req.config.where = {
+      ...req.config.where,
+      ...(req.query as Prisma.TableWhereInput),
+      Reservations: {
+        some: {
+          reservationTime: {
+            lt: new Date(),
+            gt: new Date(new Date().getTime() - 1000 * 60 * 60 * 3),
           },
         },
       },
