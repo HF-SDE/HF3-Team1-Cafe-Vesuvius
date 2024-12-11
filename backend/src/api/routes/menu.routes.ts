@@ -2,8 +2,8 @@ import { Router } from 'websocket-express';
 
 import {
   createRecord,
-  deleteRecord,
   getAll,
+  softDeleteRecord,
   updateRecord,
 } from '@controllers/default.controller';
 import { transformMenusItems } from '@controllers/menu.controller';
@@ -35,6 +35,6 @@ router.patch(
   transformPatch,
   updateRecord('menuItem'),
 );
-router.delete('/:id', isAllowed(['menu:delete']), deleteRecord('menuItem'));
+router.delete('/:id', isAllowed(['menu:delete']), softDeleteRecord('menuItem'));
 
 export default router;

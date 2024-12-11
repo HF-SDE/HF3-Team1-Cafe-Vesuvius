@@ -6,6 +6,7 @@ const schema = Joi.object<MenuItem>({
   category: Joi.array().items(Joi.string()).optional(),
   name: Joi.string().min(1).required(),
   price: Joi.number().positive().required(),
+  active: Joi.boolean().optional(),
 });
 
 export default schema.append<Prisma.MenuItemCreateInput>({
