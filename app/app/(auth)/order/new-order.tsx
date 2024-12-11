@@ -17,10 +17,11 @@ import MenuItem from "./components/MenuItem";
 import FooterButtons from "./components/FooterButtons";
 import TableItem from "./components/TableItem";
 import ConfirmModal from "./components/SummaryModal";
+import { StockProvider } from "@/utils/menu";
 
 export type Menu = Required<MenuModel>;
 
-export default function AddOrderScreen() {
+function AddOrderScreen() {
   const navigation = useNavigation();
   const theme = useThemeColor();
 
@@ -78,105 +79,111 @@ export default function AddOrderScreen() {
   }
 
   return (
-    <TemplateLayout pageName="OrderCreatePage" title="New order">
-      <View style={[styles.container]}>
-        <View style={{ gap: 10 }}>
-          <Text style={[styles.h1, { color: theme.text }]}>Table</Text>
-          <FlatList
-            data={tables}
-            keyExtractor={(table) => table.id}
-            renderItem={({ item: table }) => (
-              <TableItem
-                table={table}
-                toggleTable={toggleTable}
-                isSelected={isSelected}
-              />
-            )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 15 }}
-          />
-        </View>
+    <View style={[styles.container]}>
+      <View style={{ gap: 10 }}>
+        <Text style={[styles.h1, { color: theme.text }]}>Table</Text>
+        <FlatList
+          data={tables}
+          keyExtractor={(table) => table.id}
+          renderItem={({ item: table }) => (
+            <TableItem
+              table={table}
+              toggleTable={toggleTable}
+              isSelected={isSelected}
+            />
+          )}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 15 }}
+        />
+      </View>
 
-        <View
-          style={{
-            marginVertical: 8,
-            height: 2,
-            backgroundColor: theme.text,
-          }}
+      <View
+        style={{
+          marginVertical: 8,
+          height: 2,
+          backgroundColor: theme.text,
+        }}
+      />
+
+      <View
+        style={{
+          display: "flex",
+          gap: 10,
+        }}
+      >
+        <FlatList
+          data={transformToSections(menuItems)}
+          keyExtractor={(section) => section.title}
+          renderItem={({ item: section }) => (
+            <TouchableOpacity
+              onPress={() => {
+                setCategory(section.title);
+              }}
+              style={{
+                padding: 10,
+                borderRadius: 10,
+                backgroundColor:
+                  category === section.title ? theme.accent : theme.secondary,
+                borderWidth: 2,
+              }}
+            >
+              <Text style={[styles.h1, { color: theme.text }]}>
+                {section.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={{ gap: 15 }}
         />
 
         <View
           style={{
             display: "flex",
-            gap: 10,
+            justifyContent: "center",
+            alignContent: "center",
           }}
         >
           <FlatList
-            data={transformToSections(menuItems)}
-            keyExtractor={(section) => section.title}
-            renderItem={({ item: section }) => (
-              <TouchableOpacity
-                onPress={() => {
-                  setCategory(section.title);
-                }}
-                style={{
-                  padding: 10,
-                  borderRadius: 10,
-                  backgroundColor:
-                    category === section.title ? theme.accent : theme.secondary,
-                  borderWidth: 2,
-                }}
-              >
-                <Text style={[styles.h1, { color: theme.text }]}>
-                  {section.title}
-                </Text>
-              </TouchableOpacity>
+            data={menuItems.filter((item) => item.category?.includes(category))}
+            keyExtractor={(menuItem) => menuItem.id}
+            renderItem={({ item: menuItem }) => (
+              <MenuItem menuItem={menuItem} cartActions={cartActions} />
             )}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={{ gap: 15 }}
+            contentContainerStyle={{ gap: 10 }}
+            columnWrapperStyle={{ justifyContent: "space-between" }}
+            style={{ height: 450 }}
+            numColumns={2}
           />
-
-          <View
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              alignContent: "center",
-            }}
-          >
-            <FlatList
-              data={menuItems.filter((item) =>
-                item.category?.includes(category)
-              )}
-              keyExtractor={(menuItem) => menuItem.id}
-              renderItem={({ item: menuItem }) => (
-                <MenuItem menuItem={menuItem} cartActions={cartActions} />
-              )}
-              contentContainerStyle={{ gap: 10 }}
-              columnWrapperStyle={{ justifyContent: "space-between" }}
-              style={{ height: 450 }}
-              numColumns={2}
-            />
-          </View>
         </View>
-
-        {selectedTable && (
-          <ConfirmModal
-            showModal={showModal}
-            setShowModal={setShowModal}
-            selectedTable={selectedTable}
-            selectedMenuItems={selectedMenuItems}
-          />
-        )}
-
-        <FooterButtons
-          cancelText="Back"
-          onCancel={() => navigation.goBack()}
-          onConfirm={handleConfirm}
-          confirmDisabled={!selectedTable || selectedMenuItems.length === 0}
-        />
       </View>
+
+      {selectedTable && (
+        <ConfirmModal
+          showModal={showModal}
+          setShowModal={setShowModal}
+          selectedTable={selectedTable}
+          selectedMenuItems={selectedMenuItems}
+        />
+      )}
+
+      <FooterButtons
+        cancelText="Back"
+        onCancel={() => navigation.goBack()}
+        onConfirm={handleConfirm}
+        confirmDisabled={!selectedTable || selectedMenuItems.length === 0}
+      />
+    </View>
+  );
+}
+
+export default function AddOrderWithProvider() {
+  return (
+    <TemplateLayout pageName="OrderCreatePage" title="New order">
+      <StockProvider>
+        <AddOrderScreen />
+      </StockProvider>
     </TemplateLayout>
   );
 }
