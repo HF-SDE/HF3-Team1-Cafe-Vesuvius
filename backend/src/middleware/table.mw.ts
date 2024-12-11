@@ -44,8 +44,11 @@ export async function transformSearch(
 
   delete req.query.reservedNow;
 
-  if (value.reservedNow !== undefined) {
+  if (value.reservedNow) {
     req.config ??= { ...tableConfig };
+
+    const startTime = new Date();
+    const endTime = new Date(startTime.getTime() - 1000 * 60 * 60 * 3);
 
     req.config.where = {
       ...req.config.where,
@@ -53,8 +56,8 @@ export async function transformSearch(
       Reservations: {
         some: {
           reservationTime: {
-            lt: new Date(),
-            gt: new Date(new Date().getTime() - 1000 * 60 * 60 * 3),
+            lt: startTime,
+            gt: endTime,
           },
         },
       },
