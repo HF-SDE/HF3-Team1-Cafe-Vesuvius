@@ -29,6 +29,24 @@ body {
   align-items: center;
 }
 
+.menu-container * input {
+  display: none;
+}
+
+.menu-item {
+  display: none !important;
+}
+
+input:checked + label {
+  background-color: light-dark(var(--accent-light), var(--accent-dark));
+  padding: 2px;
+  border-radius: 4px;
+}
+
+.menu-container:has(input[value="All"]:checked) .menu-item {
+  display: flex !important;
+}
+
 h1 {
   margin-bottom: 20px;
   text-align: center;
