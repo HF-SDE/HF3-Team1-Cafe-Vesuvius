@@ -24,7 +24,7 @@ export default function AddOrderScreen() {
   const navigation = useNavigation();
   const theme = useThemeColor();
 
-  const [tables] = useData<Table>("/table");
+  const [tables] = useData<Table>("/table?reservedNow=true");
   const [menuItems] = useData<Menu>("/menu");
 
   const [selectedTable, setSelectedTable] = useState<Table>();
