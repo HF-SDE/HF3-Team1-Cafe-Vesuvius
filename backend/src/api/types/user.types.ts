@@ -1,12 +1,13 @@
+import { Prisma} from '@prisma/client';
+
 import { Permission } from './permission.types';
 
-export interface User {
+interface IBasicUser extends BasicUser {
   id: string;
-  name: string;
-  username: string;
-  email: string;
-  initials: string;
   active: boolean;
+}
+
+export interface User extends IBasicUser {
   UserPermissions?: UserPermission[];
 }
 
@@ -22,17 +23,10 @@ interface UserPermission {
   assignedBy: string;
 }
 
-export interface TransformedUser {
-  id: string;
-  name: string;
-  username: string;
-  email: string;
-  initials: string;
-  active: boolean;
-  UserPermissions: {
-    permissionId: string;
-    code: string;
-    description: string;
-    assignedBy: string;
-  }[]; // Match the mapped structure
+export interface TransformedUser extends IBasicUser {
+  UserPermissions: Prisma.UserPermissionsUncheckedCreateWithoutUserInput[] &
+    {
+      code: string;
+      description: string;
+    }[]; // Match the mapped structure
 }

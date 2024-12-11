@@ -1,5 +1,6 @@
 import { Router } from 'express';
 
+import { TransformedUser } from '@api-types/user.types';
 import {
   createRecord,
   getAll,
@@ -10,6 +11,7 @@ import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
 import { transformPatch, transformPermissions } from '@middlewares/manage.mw';
 import { validateParams } from '@middlewares/validate.mw';
+import { User } from '@prisma/client';
 
 const router = Router();
 
@@ -18,7 +20,7 @@ router.use('/', verifyJWT);
 router.get(
   '/user',
   isAllowed(['administrator:users:view']),
-  getAll('user', transformUserData),
+  getAll<TransformedUser, User>('user', transformUserData),
 );
 router.get(
   ['/permission', '/permission/:id'],
