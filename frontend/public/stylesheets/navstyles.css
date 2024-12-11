@@ -2,8 +2,8 @@
   list-style-type: none;
   /* margin-left: auto; */
   display: flex;
-  gap: 10%;
-  justify-content: center;
+  /* gap: 10%; */
+  justify-content: space-evenly;
   width: 100%;
   z-index: 5;
   font-size: 2rem;
