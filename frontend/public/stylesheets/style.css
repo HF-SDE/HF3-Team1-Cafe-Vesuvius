@@ -92,7 +92,7 @@ body {
 }
 
 .screen-image {
-  background-image: url("/images/CafeBg2.webp"); /* Your background */
+  background-image: url("/images/CafeBg2small.webp"); /* Your background */
   position: absolute;
   top: 0;
   left: 0;
@@ -107,7 +107,7 @@ body {
 
 @media (max-width: 800px) {
   .screen-image {
-    background-image: url("/images/CafeBg.webp");
+    background-image: url("/images/CafeBgsmall.webp");
   }
   .screen-user .name {
     font-size: 5rem;
