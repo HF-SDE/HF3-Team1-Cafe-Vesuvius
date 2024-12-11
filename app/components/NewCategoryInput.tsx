@@ -3,6 +3,11 @@ import { View, TouchableOpacity, StyleSheet } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import TextIconInput from "@/components/TextIconInput";
 
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
+
 type NewCategoryInputProps = {
   onAddCategory: (category: string) => void;
   themeColors: {
@@ -32,10 +37,13 @@ const NewCategoryInput = ({
         label={"New category"}
         icon="plus"
         iconColor={themeColors.primary}
-        onIconPress={handleAddCategory}
+        onIconPress={() => {
+          triggerHapticFeedback();
+          handleAddCategory;
+        }}
         clearTextOnFocus={false}
       />
-      <TouchableOpacity onPress={handleAddCategory}>
+      <TouchableOpacity>
         <FontAwesome6
           name="plus-circle"
           size={24}

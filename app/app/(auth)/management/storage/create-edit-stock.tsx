@@ -16,6 +16,11 @@ import { StockItemModel } from "@/models/StorageModel";
 
 import InputSpinner from "react-native-input-spinner";
 
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
+
 interface EditCreateUserPageProps {
   onClose: () => void;
   stockItem: StockItemModel | undefined;
@@ -166,6 +171,12 @@ const EditCreateUserPage: React.FC<EditCreateUserPageProps> = ({
         buttonLeftImage={
           <FontAwesome6 name="square-minus" size={50} color={theme.primary} />
         }
+        onIncrease={async () => {
+          await triggerHapticFeedback();
+        }}
+        onDecrease={async () => {
+          await triggerHapticFeedback();
+        }}
       />
 
       <View style={styles.buttonContainer}>

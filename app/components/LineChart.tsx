@@ -10,6 +10,11 @@ import {
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
 
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
+
 interface DataPoint {
   value: number;
   name: string;
@@ -78,7 +83,11 @@ const AxesExample: React.FC<AxesExampleProps> = ({
         {uniqueYears.reverse().map((year) => (
           <TouchableOpacity
             key={year}
-            onPress={() => setSelectedYear(year)}
+            onPress={() => {
+              setSelectedYear(year);
+              // Trigger haptic feedback when a year is selected
+              triggerHapticFeedback(ImpactFeedbackStyle.Medium);
+            }}
             style={[
               styles.yearButton,
               selectedYear === year && { backgroundColor: theme.primary },
@@ -135,6 +144,8 @@ const AxesExample: React.FC<AxesExampleProps> = ({
           pointerLabelHeight: 120,
 
           pointerLabelComponent: (items: any) => {
+            triggerHapticFeedback();
+
             return (
               <View
                 style={{

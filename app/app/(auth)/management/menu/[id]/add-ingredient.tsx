@@ -20,6 +20,8 @@ import SearchBar from "@/components/SearchBar";
 import { RawMaterial_MenuItems } from "@/models/MenuModel";
 import { StockItemModel } from "@/models/StorageModel";
 
+import Button from "@/components/DefaultButton";
+
 interface AddIngredientModalProps {
   onClose: () => void;
   onAddIngredient: (ingredient: RawMaterial_MenuItems) => void;
@@ -95,7 +97,7 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
           />
 
           <View style={styles.modalButtonContainer}>
-            <TouchableOpacity
+            {/* <TouchableOpacity
               style={[styles.modalButton, { backgroundColor: theme.primary }]}
               onPress={onClose}
             >
@@ -104,7 +106,8 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
               >
                 Cancel
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+            <Button title="Cancel" onPress={onClose} />
           </View>
         </View>
       </KeyboardAvoidingView>

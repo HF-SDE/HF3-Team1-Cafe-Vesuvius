@@ -17,6 +17,10 @@ import { useColorScheme } from "react-native";
 import PasswordInput from "../components/PasswordInput";
 
 import TextInput from "../components/TextInput";
+import {
+  triggerHapticFeedback,
+  NotificationFeedbackType,
+} from "@/utils/hapticFeedback";
 
 export default function Index() {
   const { signIn } = useSession();
@@ -49,13 +53,16 @@ export default function Index() {
       const signInResult = await signIn(trimedUsername, trimedPassword);
 
       if (signInResult === "authenticated") {
+        await triggerHapticFeedback(NotificationFeedbackType.Success);
         setErrorMessage("");
         router.replace("/");
       } else {
+        await triggerHapticFeedback(NotificationFeedbackType.Error);
         setErrorMessage(signInResult);
       }
       setIsLoading(false);
     } else {
+      await triggerHapticFeedback(NotificationFeedbackType.Error);
       setErrorMessage("Please fill out username and password");
     }
   };

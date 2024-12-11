@@ -15,8 +15,12 @@ import LoadingPage from "@/components/LoadingPage";
 import { router } from "expo-router";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import SearchBar from "@/components/SearchBar"; // Import the SearchBar
+import SearchBar from "@/components/SearchBar";
 import { UserProfile } from "@/models/userModels";
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 
 export default function ManageUsersPage() {
   const { users, isLoading, error, refreshUsers } = useUsers(); // Assume refresh is available
@@ -51,7 +55,10 @@ export default function ManageUsersPage() {
               name="user-alt"
               size={24}
               color={theme.secondary}
-              onPress={() => setShowInactive(!showInactive)}
+              onPress={() => {
+                triggerHapticFeedback();
+                setShowInactive(!showInactive);
+              }}
               style={{ marginRight: 16 }}
             />
           ) : (
@@ -59,7 +66,10 @@ export default function ManageUsersPage() {
               name="user-alt-slash"
               size={24}
               color={theme.secondary}
-              onPress={() => setShowInactive(!showInactive)}
+              onPress={() => {
+                triggerHapticFeedback();
+                setShowInactive(!showInactive);
+              }}
               style={{ marginRight: 16 }}
             />
           ),
@@ -100,7 +110,12 @@ export default function ManageUsersPage() {
   };
 
   const renderItem = ({ item }: { item: UserProfile }) => (
-    <TouchableOpacity onPress={() => handleUserPress(item.id)}>
+    <TouchableOpacity
+      onPress={() => {
+        triggerHapticFeedback();
+        handleUserPress(item.id);
+      }}
+    >
       <View style={[styles.userItem, { backgroundColor: theme.primary }]}>
         <View>
           <Text style={[styles.userName, { color: theme.background }]}>

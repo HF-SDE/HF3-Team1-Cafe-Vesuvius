@@ -10,6 +10,11 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import { RelativePathString, useRouter } from "expo-router";
 
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
+
 // Define the button to show
 const buttonList = [
   {
@@ -55,7 +60,10 @@ export default function ManagementScreen() {
             <TouchableOpacity
               key={index}
               style={[styles.button, { backgroundColor: theme.primary }]}
-              onPress={() => router.navigate(button.route)}
+              onPress={() => {
+                triggerHapticFeedback();
+                router.navigate(button.route);
+              }}
             >
               <View style={styles.buttonContent}>
                 {button.icon && (

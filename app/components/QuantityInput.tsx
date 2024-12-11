@@ -13,7 +13,7 @@ type QuantityInputProps = {
   itemId: string;
   initialQty: number; // Change adjustedQty to initialQty for better clarity
   onQuantityChanged?: (id: string, quantity: number) => void;
-  editable: boolean | undefined;
+  editable?: boolean | undefined;
 };
 
 const QuantityInput: React.FC<QuantityInputProps> = ({

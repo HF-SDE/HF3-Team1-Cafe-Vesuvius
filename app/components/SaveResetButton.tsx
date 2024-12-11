@@ -4,6 +4,10 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import CheckPermission from "@/components/CheckPermission";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 
 interface SaveResetButtonProps {
   onPressSave?: () => void;
@@ -18,6 +22,16 @@ const SaveResetButton: React.FC<SaveResetButtonProps> = ({
 }) => {
   const theme = useThemeColor();
 
+  const handleSavePress = () => {
+    triggerHapticFeedback(ImpactFeedbackStyle.Medium);
+    if (onPressSave) onPressSave();
+  };
+
+  const handleResetPress = () => {
+    triggerHapticFeedback();
+    if (onPressReset) onPressReset();
+  };
+
   return (
     <CheckPermission requiredPermission={requiredPermission}>
       <View
@@ -26,7 +40,7 @@ const SaveResetButton: React.FC<SaveResetButtonProps> = ({
           { backgroundColor: theme.primary, borderColor: theme.secondary },
         ]}
       >
-        <TouchableOpacity style={styles.button} onPress={onPressSave}>
+        <TouchableOpacity style={styles.button} onPress={handleSavePress}>
           <FontAwesome6
             name={"cloud-arrow-up"}
             size={45}
@@ -34,7 +48,7 @@ const SaveResetButton: React.FC<SaveResetButtonProps> = ({
           />
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={onPressReset}>
+        <TouchableOpacity style={styles.button} onPress={handleResetPress}>
           <MaterialCommunityIcons
             name="arrow-u-left-top-bold"
             size={50}
