@@ -269,7 +269,12 @@ export default function ManageUsersPage() {
     const adjustedQty = quantities[item.id as string]
       ? quantities[item.id as string].toString()
       : "0";
-    const newStock = (item.quantity || 0) + Number(adjustedQty);
+
+    //const newStock =      Math.round((item.quantity || 0) + Number(adjustedQty) * 100) / 100;
+
+    const newStock = parseFloat(
+      ((item.quantity || 0) + Number(adjustedQty)).toFixed(10)
+    );
 
     return (
       <View style={[styles.userItem, { backgroundColor: theme.primary }]}>
