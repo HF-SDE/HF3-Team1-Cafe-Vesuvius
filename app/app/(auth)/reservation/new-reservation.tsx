@@ -1,17 +1,6 @@
-import React, {
-  Dispatch,
-  ReactElement,
-  SetStateAction,
-  useState,
-} from "react";
+import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
 import { StatusBar } from "expo-status-bar";
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View,
-  Pressable,
-} from "react-native";
+import { Platform, StyleSheet, Text, View, Pressable } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
 import { Table } from "@/models/TableModels";
@@ -21,9 +10,8 @@ import dayjs from "dayjs";
 import CustomTextInput from "@/components/TextInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TextIconInput from "@/components/TextIconInput";
-import {
-  KeyboardAwareFlatList,
-} from "react-native-keyboard-aware-scroll-view";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import Button from "@/components/DefaultButton";
 
 interface ModalScreenProps {
   onClose: () => void;
@@ -273,42 +261,50 @@ export default function NewReservationModal({
         />
       )}
       <View style={styles.buttonContainer}>
-        <Pressable
+        {/* <Pressable
           style={[styles.cancelButton, { backgroundColor: theme.accent }]}
           onPress={onClose}
         >
           <Text style={[styles.buttonText, { color: theme.text }]}>Cancel</Text>
-        </Pressable>
+        </Pressable> */}
+        <Button
+          title="Cancel"
+          onPress={onClose}
+          backgroundColor={theme.accent}
+          textColor={theme.text}
+        />
         {page === 1 ? (
-          <Pressable
-            style={[
-              styles.mainButton,
-              disabledButton
-                ? { backgroundColor: `${theme.primary}60` }
-                : { backgroundColor: theme.primary },
-            ]}
-            onPress={() => setPage(2)}
-            disabled={disabledButton}
-          >
-            <Text style={[styles.buttonText, { color: theme.background }]}>
-              Next
-            </Text>
-          </Pressable>
+          // <Pressable
+          //   style={[
+          //     styles.mainButton,
+          //     disabledButton
+          //       ? { backgroundColor: `${theme.primary}60` }
+          //       : { backgroundColor: theme.primary },
+          //   ]}
+          //   onPress={() => setPage(2)}
+          //   disabled={disabledButton}
+          // >
+          //   <Text style={[styles.buttonText, { color: theme.background }]}>
+          //     Next
+          //   </Text>
+          // </Pressable>
+          <Button title={"Next"} onPress={() => setPage(2)} />
         ) : (
-          <Pressable
-            style={[
-              styles.mainButton,
-              disabledCreateButton
-                ? { backgroundColor: `${theme.primary}60` }
-                : { backgroundColor: theme.primary },
-            ]}
-            onPress={handleCreate}
-            disabled={disabledCreateButton}
-          >
-            <Text style={[styles.buttonText, { color: theme.background }]}>
-              Create
-            </Text>
-          </Pressable>
+          // <Pressable
+          //   style={[
+          //     styles.mainButton,
+          //     disabledCreateButton
+          //       ? { backgroundColor: `${theme.primary}60` }
+          //       : { backgroundColor: theme.primary },
+          //   ]}
+          //   onPress={handleCreate}
+          //   disabled={disabledCreateButton}
+          // >
+          //   <Text style={[styles.buttonText, { color: theme.background }]}>
+          //     Create
+          //   </Text>
+          // </Pressable>
+          <Button title={"Create"} onPress={handleCreate} />
         )}
       </View>
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
@@ -407,10 +403,20 @@ function Item(props: TableProps): ReactElement {
 
   function onPress() {
     if (selected) {
-      props.reservation[1]({...props.reservation[0], Tables: [...props.reservation[0].Tables!.filter((table) => table.id !== props.table.id)]});
+      props.reservation[1]({
+        ...props.reservation[0],
+        Tables: [
+          ...props.reservation[0].Tables!.filter(
+            (table) => table.id !== props.table.id
+          ),
+        ],
+      });
       props.setTableSelect(props.tableSelect - 1);
     } else {
-      props.reservation[1]({ ...props.reservation[0], Tables: [...props.reservation[0].Tables!, props.table] });
+      props.reservation[1]({
+        ...props.reservation[0],
+        Tables: [...props.reservation[0].Tables!, props.table],
+      });
       props.setTableSelect(props.tableSelect + 1);
     }
   }
@@ -421,12 +427,12 @@ function Item(props: TableProps): ReactElement {
         selected
           ? { ...styles.item, backgroundColor: theme.accent }
           : disabled
-            ? {
+          ? {
               ...styles.item,
               backgroundColor: `${theme.primary}60`,
               borderColor: theme.background,
             }
-            : {
+          : {
               ...styles.item,
               backgroundColor: theme.primary,
               borderColor: theme.background,
@@ -441,8 +447,8 @@ function Item(props: TableProps): ReactElement {
           selected
             ? { color: theme.text }
             : disabled
-              ? { color: theme.background }
-              : { color: theme.background },
+            ? { color: theme.background }
+            : { color: theme.background },
         ]}
       >
         {props.table.number}
@@ -577,7 +583,6 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
-    gap: 10,
     marginBottom: 10,
   },
   cancelButton: {

@@ -22,6 +22,10 @@ import InfoReservationModal from "../reservation/info-reservation";
 import { ReservationContext } from "@/context/ReservationContext";
 import { Card, Text } from "react-native-paper";
 import SearchBar from "@/components/SearchBar";
+import {
+  triggerHapticFeedback,
+  NotificationFeedbackType,
+} from "@/utils/hapticFeedback";
 
 export default function ReservationsOverview(): ReactElement {
   const {
@@ -40,7 +44,10 @@ export default function ReservationsOverview(): ReactElement {
   }>({ email: "", phone: "" });
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { reservations: reservationsData, setReservations: setReservationsData, } = useContext(ReservationContext);
+  const {
+    reservations: reservationsData,
+    setReservations: setReservationsData,
+  } = useContext(ReservationContext);
 
   const router = useRouter();
   const theme = useThemeColor();
@@ -78,7 +85,10 @@ export default function ReservationsOverview(): ReactElement {
       <Card
         style={[styles.orderItem, { backgroundColor: theme.primary }]}
         mode="contained"
-        onPress={() => reservationSelect(item.email, item.phone)}
+        onPress={() => {
+          triggerHapticFeedback();
+          reservationSelect(item.email, item.phone);
+        }}
       >
         <Card.Title
           title={item.name}

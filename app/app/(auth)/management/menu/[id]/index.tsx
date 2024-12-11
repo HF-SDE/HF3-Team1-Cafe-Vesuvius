@@ -15,6 +15,8 @@ import CheckPermission from "@/components/CheckPermission";
 
 import { MenuModel } from "@/models/MenuModel";
 
+import { triggerHapticFeedback } from "@/utils/hapticFeedback";
+
 type EditCreateMenuRouteParams = {
   id: string | "new" | undefined;
 };
@@ -69,6 +71,7 @@ export default function EditCreateUserPage() {
               color={theme.secondary}
               onPress={async () => {
                 if (id && id !== "new") {
+                  await triggerHapticFeedback();
                   await deleteMenu(id);
                   navigation.goBack();
                 }

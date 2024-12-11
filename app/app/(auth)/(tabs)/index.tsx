@@ -9,6 +9,8 @@ import LoadingPage from "@/components/LoadingPage";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
 
+import Button from "@/components/DefaultButton";
+
 export default function UserProfileScreen() {
   const { userProfile, isLoading, error } = useUserProfile();
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
@@ -48,23 +50,11 @@ export default function UserProfileScreen() {
           </View>
 
           <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: theme.primary }]}
-              onPress={() => setIsModalVisible(true)} // Show modal on press
-            >
-              <Text style={[styles.buttonText, { color: theme.background }]}>
-                Reset Password
-              </Text>
-            </TouchableOpacity>
-            <View style={styles.spacer} />
-            <TouchableOpacity
-              style={[styles.button, { backgroundColor: theme.primary }]}
-              onPress={signOut}
-            >
-              <Text style={[styles.buttonText, { color: theme.background }]}>
-                Log Out
-              </Text>
-            </TouchableOpacity>
+            <Button
+              title="Reset Password"
+              onPress={() => setIsModalVisible(true)}
+            />
+            <Button title={"Log Out"} onPress={signOut} />
           </View>
         </View>
 
@@ -131,6 +121,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     paddingBottom: 20,
+    minHeight: 140,
   },
   spacer: {
     height: 10,

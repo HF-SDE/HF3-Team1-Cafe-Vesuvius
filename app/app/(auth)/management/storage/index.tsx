@@ -32,6 +32,11 @@ import EditCreateStockModal from "./create-edit-stock";
 
 import { RowMap, SwipeListView } from "react-native-swipe-list-view";
 
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
+
 export default function ManageUsersPage() {
   const { stock, isLoading, error, updateStock, createStock, deleteStock } =
     useStock();
@@ -85,15 +90,17 @@ export default function ManageUsersPage() {
     (filteredStockItems?.length || 0) / itemsPerPage
   );
 
-  const handleNextPage = () => {
+  const handleNextPage = async () => {
     if (currentPage < totalPages) {
+      await triggerHapticFeedback(ImpactFeedbackStyle.Soft);
       setCurrentPage((prev) => prev + 1);
       scrollToTop();
     }
   };
 
-  const handlePrevPage = () => {
+  const handlePrevPage = async () => {
     if (currentPage > 1) {
+      await triggerHapticFeedback(ImpactFeedbackStyle.Soft);
       setCurrentPage((prev) => prev - 1);
       scrollToTop();
     }
@@ -176,6 +183,7 @@ export default function ManageUsersPage() {
     setQuantities({});
   }, []);
   const handleIncrease = useCallback((itemId: string) => {
+    triggerHapticFeedback(ImpactFeedbackStyle.Medium);
     setQuantities((prev) => {
       const currentQuantity = Number(prev[itemId]) || 0;
 
@@ -190,6 +198,7 @@ export default function ManageUsersPage() {
 
   const handleDecrease = useCallback(
     (itemId: string) => {
+      triggerHapticFeedback(ImpactFeedbackStyle.Medium);
       const item = stock?.find((item) => item.id === itemId);
 
       setQuantities((prev) => ({
@@ -355,6 +364,7 @@ export default function ManageUsersPage() {
             styles.deleteButton,
           ]}
           onPress={() => {
+            triggerHapticFeedback();
             handleDeleteStock(data.item);
             // Close the row after clicking the delete button
             if (rowMap[data.item.id]) {
@@ -377,6 +387,7 @@ export default function ManageUsersPage() {
             { backgroundColor: theme.accent },
           ]}
           onPress={() => {
+            triggerHapticFeedback();
             handleAddEditStockItem(data.item.id);
             // Close the row after clicking the edit button
             if (rowMap[data.item.id]) {
