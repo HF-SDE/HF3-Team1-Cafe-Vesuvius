@@ -23,9 +23,9 @@ const config: Config = configWithoutType as Config;
  * @param {(data: T[]) => T[]} [transform] - [Optional] - The function to transform the data.
  * @returns {ExpressFunction} The response object
  */
-export function getAll<T = unknown>(
+export function getAll<T = unknown, D = unknown>(
   model?: prismaModels,
-  transform?: (data: T[]) => T[],
+  transform?: (data: T[] & D[]) => T[],
 ): ExpressFunction {
   return async (req, res: Response | WSResponse) => {
     let ws: ExtendedWebSocket;
@@ -72,7 +72,7 @@ export function getAll<T = unknown>(
       }, 12000);
     } else {
       if (response.data && transform) {
-        response.data = transform(response.data as T[]);
+        response.data = transform(response.data as T[] & D[]);
       }
       res.status(getHttpStatusCode(response.status)).json(response).end();
     }
