@@ -20,6 +20,10 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import NewCategoryInput from "./NewCategoryInput";
 import QuantityInput from "./QuantityInput";
 import CheckPermission from "@/components/CheckPermission";
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 
 type CategoryIngredientTabsProps = {
   id: string | undefined;
@@ -95,7 +99,12 @@ const MenuTabView = React.memo(
                       id !== "new" ? "menu:update" : "menu:create",
                     ]}
                   >
-                    <TouchableOpacity onPress={() => onDeleteCategory(item)}>
+                    <TouchableOpacity
+                      onPress={() => {
+                        triggerHapticFeedback(ImpactFeedbackStyle.Medium);
+                        onDeleteCategory(item);
+                      }}
+                    >
                       <FontAwesome6
                         name="trash-alt"
                         size={18}
@@ -125,7 +134,10 @@ const MenuTabView = React.memo(
         >
           <TouchableOpacity
             style={styles.addIcon}
-            onPress={() => setIsModalVisible(true)}
+            onPress={() => {
+              triggerHapticFeedback(ImpactFeedbackStyle.Heavy);
+              setIsModalVisible(true);
+            }}
           >
             <FontAwesome6
               name="square-plus"
@@ -173,6 +185,7 @@ const MenuTabView = React.memo(
               >
                 <TouchableOpacity
                   onPress={() => {
+                    triggerHapticFeedback(ImpactFeedbackStyle.Medium);
                     onDeleteIngredient(item.RawMaterial.id as string);
                   }}
                 >

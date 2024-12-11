@@ -21,6 +21,7 @@ import SearchBar from "@/components/SearchBar";
 import LoadingPage from "@/components/LoadingPage";
 
 import { MenuModel } from "@/models/MenuModel";
+import { triggerHapticFeedback } from "@/utils/hapticFeedback";
 
 export default function ManageUsersPage() {
   const { menu, isLoading, error, refreshMenu } = useMenu();
@@ -52,20 +53,27 @@ export default function ManageUsersPage() {
 
   useEffect(() => {
     if (menu) {
-      const lowercasedQuery = searchQuery.toLowerCase();
-      if (lowercasedQuery.length > 0) {
-        const results = menu.filter((item) =>
-          (item.name as string).toLowerCase().includes(lowercasedQuery)
-        );
-        setFilteredMenu(results);
-      } else {
-        setFilteredMenu(menu);
-      }
+      filterMenus(searchQuery);
     }
   }, [menu, searchQuery]);
 
+  const filterMenus = (query: string) => {
+    const text = query.toLowerCase();
+    let filteredData = menu?.filter((item) =>
+      (item.name as string).toLowerCase().includes(text)
+    );
+
+    setFilteredMenu(filteredData || []);
+    setSearchQuery(query);
+  };
+
   const renderItem = ({ item }: { item: MenuModel }) => (
-    <TouchableOpacity onPress={() => handleUserPress(item.id as string)}>
+    <TouchableOpacity
+      onPress={() => {
+        triggerHapticFeedback();
+        handleUserPress(item.id as string);
+      }}
+    >
       <View style={[styles.userItem, { backgroundColor: theme.primary }]}>
         <View>
           <Text style={[styles.ItemName, { color: theme.background }]}>
@@ -105,7 +113,6 @@ export default function ManageUsersPage() {
         <AddButton
           onPress={handleAddUser}
           requiredPermission={["menu:create"]}
-          
         />
       </View>
     </TemplateLayout>

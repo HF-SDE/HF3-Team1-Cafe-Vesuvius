@@ -3,6 +3,10 @@ import { TouchableOpacity, StyleSheet } from "react-native";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import CheckPermission from "@/components/CheckPermission";
 import { useThemeColor } from "@/hooks/useThemeColor";
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 
 interface AddButtonProps {
   onPress?: () => void;
@@ -17,6 +21,11 @@ const AddButton: React.FC<AddButtonProps> = ({
 }) => {
   const theme = useThemeColor();
 
+  const handleAddPress = () => {
+    triggerHapticFeedback(ImpactFeedbackStyle.Heavy);
+    if (onPress) onPress();
+  };
+
   return (
     <CheckPermission requiredPermission={requiredPermission}>
       <TouchableOpacity
@@ -24,7 +33,7 @@ const AddButton: React.FC<AddButtonProps> = ({
           styles.addButton,
           { backgroundColor: theme.primary, borderColor: theme.secondary },
         ]}
-        onPress={onPress}
+        onPress={handleAddPress}
       >
         <FontAwesome6
           name={icon ? icon : "plus"}

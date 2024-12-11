@@ -130,3 +130,20 @@ export function deleteRecord(model?: prismaModels): ExpressFunction {
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
 }
+
+/**
+ * Controller to delete a record
+ * @param {prismaModels} model - The Prisma model to delete the record from.
+ * @returns {ExpressFunction} The response object
+ */
+export function softDeleteRecord(model?: prismaModels): ExpressFunction {
+  return async (req, res) => {
+    const id = (req.params.id || req.query.id) as string;
+
+    if (!model) model = getModel(req);
+
+    const response = await DefaultService.update(model, id, { active: false });
+
+    res.status(getHttpStatusCode(response.status)).json(response).end();
+  };
+}

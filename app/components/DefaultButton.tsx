@@ -1,7 +1,10 @@
 import React from "react";
 import { TouchableOpacity, Text, StyleSheet, ColorValue } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
-
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 interface ButtonProps {
   onPress?: () => void;
   title: string;
@@ -20,6 +23,15 @@ const SubmitButton: React.FC<ButtonProps> = ({
   isHighlighted,
 }) => {
   const theme = useThemeColor();
+  const handlePress = async () => {
+    // Trigger haptic feedback
+    await triggerHapticFeedback(ImpactFeedbackStyle.Light);
+
+    // Call the passed `onPress` function if defined
+    if (onPress) {
+      onPress();
+    }
+  };
 
   return (
     <TouchableOpacity
@@ -31,7 +43,7 @@ const SubmitButton: React.FC<ButtonProps> = ({
           borderColor: isHighlighted ? "red" : undefined,
         },
       ]}
-      onPress={onPress}
+      onPress={handlePress}
       disabled={disabled}
     >
       <Text

@@ -10,7 +10,10 @@ import {
 import { BarChart } from "react-native-gifted-charts";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useFonts } from "expo-font";
-import NavBackground from "./NavBackground";
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 
 interface DataPoint {
   value: number;
@@ -54,7 +57,10 @@ const AxesExample: React.FC<AxesExampleProps> = ({
     value: item.value,
     label: item.name,
     frontColor: theme.primary,
-    onPress: () => setSelectedData(item), // Show modal on press
+    onPress: () => {
+      setSelectedData(item);
+      triggerHapticFeedback();
+    }, // Show modal on press
   }));
 
   const containerPadding = 20;

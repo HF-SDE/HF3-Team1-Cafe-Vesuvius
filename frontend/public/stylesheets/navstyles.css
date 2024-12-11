@@ -2,15 +2,15 @@
   list-style-type: none;
   /* margin-left: auto; */
   display: flex;
-  gap: 10%;
-  justify-content: center;
+  /* gap: 10%; */
+  justify-content: space-evenly;
   width: 100%;
   z-index: 5;
   font-size: 2rem;
   /* @media (min-width: 640px) {
     display: flex;
   } */
-  margin-bottom: 10px;
+  margin: 10px 0;
 }
 nav ul li a {
   text-decoration: none;

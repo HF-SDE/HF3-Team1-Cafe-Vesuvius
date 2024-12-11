@@ -9,7 +9,7 @@ interface ReservationRequest extends Request {
     amount: number;
     tableIds?: string[];
     Tables: Prisma.ReservationCreateInput['Tables'];
-    reservationTime: string;
+    reservationTime?: string;
   };
 }
 
@@ -28,6 +28,7 @@ export async function manageTables(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
+  req.body.reservationTime ??= new Date().toISOString();
   const totalCapacity = await getTotalCapacity(req.body.reservationTime);
 
   if (totalCapacity < req.body.amount) {
@@ -103,7 +104,9 @@ export async function manageTables(
 export async function distributeTables(
   req: ReservationRequest,
 ): Promise<Table['id'][]> {
-  let tables = await getAvailableTables(req.body.reservationTime);
+  let tables = await getAvailableTables(
+    req.body.reservationTime ?? new Date().toISOString(),
+  );
   let partySize = req.body.amount;
 
   const tableToUse: Table[] = [];

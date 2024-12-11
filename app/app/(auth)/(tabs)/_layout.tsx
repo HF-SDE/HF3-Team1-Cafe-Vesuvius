@@ -5,6 +5,11 @@ import { Tabs } from "expo-router";
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
+
 import { useThemeColor } from "@/hooks/useThemeColor";
 
 import { PermissionManager } from "@/utils/permissionManager";
@@ -41,6 +46,11 @@ export default function TabLayout() {
     setIsLoading(false);
   };
 
+  const handleTabPress = async () => {
+    // Trigger haptic feedback
+    await triggerHapticFeedback(ImpactFeedbackStyle.Soft);
+  };
+
   useEffect(() => {
     checkPermissions();
   }, []);
@@ -67,6 +77,11 @@ export default function TabLayout() {
         tabBarIconStyle: {
           height: 50,
           width: 50,
+        },
+      }}
+      screenListeners={{
+        tabPress: async () => {
+          await handleTabPress(); // Ensure handleTabPress is a function and it returns a Promise.
         },
       }}
     >
