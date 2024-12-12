@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "100%",
     zIndex: 1,
-    marginTop: 5,
+    paddingTop: 10,
   },
   leftIcon: {
     left: 10,
