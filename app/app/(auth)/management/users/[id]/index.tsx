@@ -340,10 +340,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
   },
-  scrollViewContainer: {
-    flexGrow: 1,
-    paddingBottom: 100,
-  },
+
   input: {
     height: 40,
     marginBottom: 15,
