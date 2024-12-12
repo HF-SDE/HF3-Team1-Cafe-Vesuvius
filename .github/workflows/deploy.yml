@@ -7,7 +7,7 @@ on:
 
 jobs:
   deploy:
-    runs-on: [self-hosted, Linux, X64, ubuntu]
+    runs-on: [ubuntu-latest]
 
     steps:
       # Checkout code from the repo
@@ -19,7 +19,7 @@ jobs:
           cd ./config/environment-variables
 
           echo "Creating .env file for backend"
-          cat <<EOT > .env.backend.prod
+          cat << \EOT >> .env.backend.prod
           TZ=Europe/Copenhagen
           NODE_ENV=production
           DATABASE_URL=mongodb://${{ secrets.DATABASE_MONGO_USERNAME }}:${{ secrets.DATABASE_MONGO_PASSWORD }}@db:${{ secrets.DATABASE_MONGO_PORT }}/${{ secrets.DATABASE }}?authSource=admin
@@ -28,7 +28,7 @@ jobs:
           EOT
 
           echo "Creating .env file for db"
-          cat <<EOT > .env.db.prod
+          cat << \EOT >> .env.db.prod
           MONGO_INITDB_DATABASE=${{ secrets.DATABASE }}
           MONGO_INITDB_ROOT_USERNAME=${{ secrets.DATABASE_MONGO_USERNAME }}
           MONGO_INITDB_ROOT_PASSWORD=${{ secrets.DATABASE_MONGO_PASSWORD }}
@@ -39,14 +39,10 @@ jobs:
           EOT
 
           echo "Creating .env file for docker"
-          cat <<EOT > .env.docker.prod
-          NGROK_URL=${{ secrets.NGROK_URL }}
-          EOT
+          echo "NGROK_URL=${{ secrets.NGROK_URL }}" > .env.docker.prod
 
           echo "Creating .env file for ngrok"
-          cat <<EOT > .env.grok.prod
-          NGROK_AUTHTOKEN=${{ secrets.NGROK_AUTHTOKEN }}
-          EOT
+          echo "NGROK_AUTHTOKEN=${{ secrets.NGROK_AUTHTOKEN }}" > .env.grok.prod
 
       - name: Deploy with Docker Compose
         run: |
@@ -61,4 +57,4 @@ jobs:
           docker exec db ./docker-entrypoint-initdb.d/init.sh
 
           echo "Cleaning up old images"
-          docker image prune   
+          docker image prune -f
