@@ -28,12 +28,7 @@ import {
 } from "@/utils/hapticFeedback";
 
 export default function ReservationsOverview(): ReactElement {
-  const {
-    reservations,
-    isLoading: reservationsIsLoading,
-    error: reservationsError,
-    refresh,
-  } = useReservation();
+  const { reservations, refresh } = useReservation();
   const [reservationsLoading, setReservationsLoading] = useState<boolean>(true);
   const { table, isLoading: tableIsLoading, error: tableError } = useTable();
   const [isCreateModalVisible, setCreateModalVisible] = useState(false);
@@ -243,6 +238,7 @@ export default function ReservationsOverview(): ReactElement {
               >
                 <NewReservationModal
                   tables={table!}
+                  reservations={reservations || []}
                   onClose={() => setCreateModalVisible(false)}
                 />
               </View>

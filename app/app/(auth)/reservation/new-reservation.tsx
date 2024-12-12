@@ -24,6 +24,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 interface ModalScreenProps {
   onClose: () => void;
   tables: Table[];
+  reservations: Reservation[];
 }
 
 interface TextInputsProps {
@@ -45,11 +46,13 @@ interface TextInputs {
  * New reservation modal
  * @param {() => void} onClose - On close function
  * @param {Table[]} tables - Tables
+ * @param {Reservation[]} reservations - Reservations
  * @returns {ReactElement}
  */
 export default function NewReservationModal({
   onClose,
   tables,
+  reservations,
 }: ModalScreenProps): ReactElement {
   const [reservation, setReservations] = useState<Reservation>({
     email: "",
@@ -262,15 +265,42 @@ export default function NewReservationModal({
           }
           numColumns={4}
           data={tables}
-          renderItem={({ item }) => (
-            <Item
-              table={item}
-              setTableSelect={setTableSelect}
-              tableSelect={tableSelect}
-              tableSelectNeed={tableSelectNeed}
-              reservation={[reservation, setReservations]}
-            />
-          )}
+          renderItem={({ item }) => {
+            let isAvailable = true;
+
+            for (const res of reservations) {
+              const resStartTime = dayjs(res.reservationTime);
+              const resEndTime = dayjs(res.reservationTime).add(3, "hour");
+
+              const tableStartTime = dayjs(reservation.reservationTime);
+              const tableEndTime = dayjs(reservation.reservationTime).add(
+                3,
+                "hour"
+              );
+
+              if (
+                res.Tables &&
+                res.Tables.some((table) => table.id === item.id) &&
+                (resStartTime.isBetween(tableStartTime, tableEndTime) ||
+                  resEndTime.isBetween(tableStartTime, tableEndTime) ||
+                  tableStartTime.isBetween(resStartTime, resEndTime) ||
+                  tableEndTime.isBetween(resStartTime, resEndTime))
+              ) {
+                isAvailable = false;
+              }
+            }
+
+            return (
+              <Item
+                table={item}
+                setTableSelect={setTableSelect}
+                tableSelect={tableSelect}
+                tableSelectNeed={tableSelectNeed}
+                reservation={[reservation, setReservations]}
+                disabled={!isAvailable}
+              />
+            );
+          }}
           keyExtractor={(item) => item.number?.toString()}
           contentContainerStyle={styles.listContainer}
           style={styles.flatList}
@@ -407,6 +437,7 @@ interface TableProps {
   tableSelectNeed: number;
   setTableSelect: Dispatch<SetStateAction<number>>;
   reservation: [Reservation, Dispatch<SetStateAction<Reservation>>];
+  disabled: boolean;
 }
 
 /**
@@ -415,6 +446,7 @@ interface TableProps {
  */
 function Item(props: TableProps): ReactElement {
   const disabled = areItemDisabled(
+    props.disabled,
     props.table,
     props.tableSelect,
     props.tableSelectNeed,
@@ -489,11 +521,14 @@ function Item(props: TableProps): ReactElement {
  * @returns {boolean} - True if the item should be disabled, false otherwise
  */
 function areItemDisabled(
+  disabled: boolean,
   table: Table,
   tableSelect: number,
   tableSelectNeed: number,
   action: [Reservation, Dispatch<SetStateAction<Reservation>>]
 ): boolean {
+  if (disabled) return true;
+
   if (action[0].Tables) {
     for (const key in action[0].Tables) {
       if (action[0].Tables[key].id === table.id) {
