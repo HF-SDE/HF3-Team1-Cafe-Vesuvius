@@ -13,7 +13,7 @@ services:
     env_file:
       - ../config/environment-variables/.env.backend.prod
     volumes:
-      - ../schemas:/usr/src/app/schemas
+      - ../schemas:/usr/src/app/dist/schemas
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost:3001/health"]
       interval: 30s
@@ -100,9 +100,11 @@ services:
       - 80:80
     depends_on:
       - backend
-    configs:
-      - source: nginx_config
-        target: /etc/nginx/nginx.conf
+    # configs:
+    #   - source: nginx_config
+    #     target: /etc/nginx/nginx.conf
+    volumes:
+      - C:\Users\HFGF\Documents\HF3-Team1-Cafe-Vesuvius\config\nginx.conf:/etc/nginx/nginx.conf
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost/health"]
       interval: 30s
@@ -136,6 +138,6 @@ volumes:
   mongo1_config: {}
   postgres_data: {}
 
-configs:
-  nginx_config:
-    file: ../config/nginx.conf
+# configs:
+#   nginx_config:
+#     file: ../config/nginx.conf
