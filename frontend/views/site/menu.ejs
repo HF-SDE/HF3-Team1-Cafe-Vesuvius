@@ -10,19 +10,46 @@
   <meta name="description" content="Vesuvius menu card.">
 </head>
 
+<script>
+  function updateUrlParameter(param, value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(param, value);
+    window
+      .history
+      .pushState({ path: url.href }, '', url.href);
+  }
+</script>
+
 <body>
+  <style>
+    <% categories.forEach(category => { %>
+      .menu-container:has(input[value="<%= category %>"]:checked) .menu-item.<%= category %> {
+        display: flex !important;
+      }
+    <% }); %>
+  </style>
+
   <%- include('../partials/topNav'); %>
-  <div class="menu-container">
+
+  <main class="menu-container">
     <h1><%= title %></h1>
 
     <!-- Filter Buttons -->
     <div class="filter-container">
       <form action="/menu" method="get">
-        <button type="submit" name="category" value="" <%=!category ? 'class="active"' : '' %>>All</button>
+        <input type="radio" id="All" name="category" value="All" checked="true" <%= "All" === category ? 'class="active"' : '' %>>
+        <label for="All">All</label>
+
         <% categories.forEach(categoryOption => { %>
-          <button type="submit" name="category" value="<%= categoryOption %>" <%= categoryOption === category ? 'class="active"' : '' %>>
-            <%= categoryOption %>
-          </button>
+          <input
+            type="radio"
+            name="category"
+            id="<%= categoryOption %>"
+            value="<%= categoryOption %>"
+            <%= categoryOption === category ? 'checked="true"' : '' %>
+            <%= categoryOption === category ? 'class="active"' : '' %>
+          >
+          <label for="<%= categoryOption %>" onclick="updateUrlParameter('category', '<%= categoryOption %>')"><%= categoryOption %></label>
         <% }); %>
       </form>
     </div>
@@ -30,7 +57,7 @@
     <!-- Menu Items -->
     <div class="menu-grid">
       <% items.map((item) => { %>
-        <div class="menu-item">
+        <div class="menu-item <%= item.category.join(" ") %>">
           <div class="menu-header">
             <h2><%= item.name %></h2>
             <h3 class="price"><%= item.price %>,-</h3>

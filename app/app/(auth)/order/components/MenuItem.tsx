@@ -2,8 +2,9 @@ import { useThemeColor } from "@/hooks/useThemeColor";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MenuItemEdit from "./MenuItemEdit";
 import { useState } from "react";
-import { CartItem, ICartActions } from "@/types/cartReducer.types";
+import { ICartActions } from "@/types/cartReducer.types";
 import { Menu } from "../new-order";
+import { canBeMade, updateStock, useStockContext } from "@/utils/menu";
 
 interface IMenuItem {
   menuItem: Menu;
@@ -12,6 +13,8 @@ interface IMenuItem {
 
 export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
   const theme = useThemeColor();
+
+  const { stock, setStock } = useStockContext();
 
   const [showModal, setShowModal] = useState(false);
 
@@ -35,19 +38,32 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
   const image = getImage();
 
-  const cartItem = cartActions.getCartItems(menuItem.id)[0];
+  const cantBeMade = !canBeMade(menuItem, stock);
+
+  function handleAddItem() {
+    if (cantBeMade) return;
+
+    const cartItem = cartActions.getCartItems(menuItem.id)[0];
+
+    const itemToAdd = {
+      cartItemId: cartItem?.cartItemId,
+      item: menuItem,
+      id: menuItem.id,
+      quantity: 1,
+    };
+
+    cartActions.addItem(itemToAdd);
+
+    updateStock(itemToAdd, stock, setStock);
+  }
 
   return (
     <TouchableOpacity
-      onPress={() =>
-        cartActions.addItem({
-          cartItemId: cartItem?.cartItemId,
-          item: menuItem,
-          id: menuItem.id,
-        })
-      }
+      onPress={handleAddItem}
       onLongPress={() => addNote()}
+      style={{ opacity: cantBeMade ? 0.5 : 1 }}
     >
+      {cantBeMade && <View></View>}
       <Image source={image} style={[styles.image]} />
 
       <Text

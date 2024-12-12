@@ -4,6 +4,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Menu } from "../../../new-order";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
 import TextWithNote from "@/components/TextWithNote";
+import { canBeMade, updateStock, useStockContext } from "@/utils/menu";
 
 interface ISwipeRow {
   cartItem: CartItem<Menu>;
@@ -12,6 +13,24 @@ interface ISwipeRow {
 
 export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
   const theme = useThemeColor();
+
+  const { stock, setStock } = useStockContext();
+
+  const cantBeMade = !canBeMade(cartItem.item, stock);
+
+  function handleAddItem() {
+    if (cantBeMade) return;
+
+    cartActions.addItem({ cartItemId: cartItem.cartItemId });
+
+    updateStock(cartItem, stock, setStock);
+  }
+
+  function handleRemoveItem() {
+    cartActions.removeItem({ cartItemId: cartItem.cartItemId });
+
+    updateStock(cartItem, stock, setStock, false);
+  }
 
   function handleNoteChange(note: string) {
     cartActions.updateItem({
@@ -51,21 +70,18 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
 
       <View style={[styles.buttonContainer]}>
         <Pressable
-          onPress={() => {
-            cartActions.removeItem({
-              cartItemId: cartItem.cartItemId,
-            });
-          }}
+          onPress={handleRemoveItem}
           style={[styles.button, { backgroundColor: theme.accent }]}
         >
           <FontAwesome6 name="minus" size={24} color={theme.text} />
         </Pressable>
 
         <Pressable
-          onPress={() => {
-            cartActions.addItem({ cartItemId: cartItem.cartItemId });
-          }}
-          style={[styles.button, { backgroundColor: theme.accent }]}
+          onPress={handleAddItem}
+          style={[
+            styles.button,
+            { backgroundColor: theme.accent, opacity: cantBeMade ? 0.5 : 1 },
+          ]}
         >
           <FontAwesome6 name="plus" size={24} color={theme.text} />
         </Pressable>

@@ -6,6 +6,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import SwipeRow from "./components/SwipeRow";
 import SwipeIcons from "./components/SwipeIcons";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
+import { canBeMade, updateStock, useStockContext } from "@/utils/menu";
 
 interface INoteModal {
   show: boolean;
@@ -23,6 +24,20 @@ export default function MenuItemEditModal({
   cartActions,
 }: INoteModal) {
   const theme = useThemeColor();
+
+  const { stock, setStock } = useStockContext();
+
+  const cantBeMade = !canBeMade(menuItem, stock);
+
+  function handleAddInstance() {
+    if (cantBeMade) return;
+
+    const addItem = { id: menuItem.id, item: menuItem, quantity: 1 };
+
+    cartActions.addInstance(addItem);
+
+    updateStock(addItem, stock, setStock);
+  }
 
   function handleCancel() {
     setShow(false);
@@ -89,10 +104,10 @@ export default function MenuItemEditModal({
             marginTop: 20,
             position: "absolute",
             bottom: 110,
+            opacity: cantBeMade ? 0.5 : 1,
           }}
-          onPress={() => {
-            cartActions.addInstance({ id: menuItem.id, item: menuItem });
-          }}
+          onPress={handleAddInstance}
+          disabled={cantBeMade}
         >
           <Text
             style={{
