@@ -41,18 +41,6 @@ const NewCategoryInput = ({
         onIconPress={handleAddCategory}
         clearTextOnFocus={false}
       />
-      <TouchableOpacity
-        onPress={() => {
-          handleAddCategory();
-          triggerHapticFeedback(ImpactFeedbackStyle.Medium); // Trigger haptic feedback
-        }}
-      >
-        <FontAwesome6
-          name="plus-circle"
-          size={24}
-          color={themeColors.primary}
-        />
-      </TouchableOpacity>
     </View>
   );
 };
