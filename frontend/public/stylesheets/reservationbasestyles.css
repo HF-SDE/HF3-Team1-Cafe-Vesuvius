@@ -28,7 +28,7 @@ main {
         rgba(51, 33, 29, 0.85) 0%,
         rgba(51, 33, 29, 0.85) 100%
       ),
-      url(../images/reservation/bg.jpg);
+      url(../images/reservation/bg.webp);
     margin: 50px 15px;
   }
 }
