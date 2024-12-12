@@ -21,9 +21,9 @@ router.get("/menu", async (req, res, next) => {
   );
 
   // Filter items by category if category query parameter is present
-  if (category) {
-    items = items.filter((item) => item.category.includes(category));
-  }
+  // if (category) {
+  //   items = items.filter((item) => item.category.includes(category));
+  // }
 
   res.render("site/menu", {
     title: "Menu",

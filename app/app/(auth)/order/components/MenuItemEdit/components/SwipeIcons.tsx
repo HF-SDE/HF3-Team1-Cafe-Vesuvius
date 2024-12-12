@@ -3,6 +3,7 @@ import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
 import { Alert, Pressable, StyleSheet, View } from "react-native";
 import { Menu } from "../../../new-order";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
+import { updateStock, useStockContext } from "@/utils/menu";
 
 interface ISwipeIcons {
   cartActions: ICartActions<Menu>;
@@ -16,6 +17,16 @@ export default function SwipeIcons({
   cartItem,
 }: ISwipeIcons) {
   const theme = useThemeColor();
+
+  const { stock, setStock } = useStockContext();
+
+  function handleDeleteInstance() {
+    cartActions.deleteInstance(cartItem);
+
+    rowMap[cartItem.cartItemId!].closeRow();
+
+    updateStock(cartItem, stock, setStock, false, cartItem.quantity);
+  }
 
   function handleNoteChange(note: string) {
     cartActions.updateItem({
@@ -66,13 +77,7 @@ export default function SwipeIcons({
       </Pressable>
 
       <Pressable
-        onPress={() => {
-          cartActions.deleteInstance({
-            cartItemId: cartItem.cartItemId,
-          });
-
-          rowMap[cartItem.cartItemId!].closeRow();
-        }}
+        onPress={handleDeleteInstance}
         style={[
           styles.button,
           {
