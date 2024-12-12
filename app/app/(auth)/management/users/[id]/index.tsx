@@ -277,7 +277,7 @@ export default function EditCreateUserPage() {
             >
               Permissions
             </Text>
-            <View style={{ maxHeight: "43%" }}>
+            <View>
               <PermissionsTabView
                 id={id}
                 permissions={permissions ? permissions : []}
