@@ -124,7 +124,12 @@ export default function StatsPage() {
             ]}
           >
             <View style={styles.sectionContainerText}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.text, borderColor: theme.primary },
+                ]}
+              >
                 Sales
               </Text>
               <View
@@ -164,7 +169,12 @@ export default function StatsPage() {
             ]}
           >
             <View style={styles.sectionContainerText}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.text, borderColor: theme.primary },
+                ]}
+              >
                 Orders
               </Text>
               <View
@@ -210,7 +220,12 @@ export default function StatsPage() {
             ]}
           >
             <View style={styles.sectionContainerText}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.text, borderColor: theme.primary },
+                ]}
+              >
                 Reservation
               </Text>
               <View
@@ -251,7 +266,12 @@ export default function StatsPage() {
             ]}
           >
             <View style={styles.sectionContainerText}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.text, borderColor: theme.primary },
+                ]}
+              >
                 Ordered
               </Text>
             </View>
@@ -282,7 +302,12 @@ export default function StatsPage() {
             ]}
           >
             <View style={styles.sectionContainerText}>
-              <Text style={[styles.sectionTitle, { color: theme.text }]}>
+              <Text
+                style={[
+                  styles.sectionTitle,
+                  { color: theme.text, borderColor: theme.primary },
+                ]}
+              >
                 Low storage
               </Text>
               {stats?.rawMaterials?.lowStock?.length &&
@@ -350,6 +375,9 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   sectionTitle: {
+    fontWeight: "bold",
+    borderBottomWidth: 5,
+    marginBottom: 20,
     fontSize: 30,
     textAlign: "center",
   },
