@@ -160,7 +160,6 @@ const styles = StyleSheet.create({
   },
   permissionsContainer: {
     flex: 1,
-    paddingHorizontal: 10,
     marginTop: 10,
   },
   permissionItem: {
