@@ -271,7 +271,7 @@ export default function EditCreateUserPage() {
               </CheckPermission>
             </View>
 
-            <View style={{ minHeight: "70%" }}>{memoizedMenuTabView}</View>
+            <View style={{ minHeight: "63%" }}>{memoizedMenuTabView}</View>
           </View>
 
           <View

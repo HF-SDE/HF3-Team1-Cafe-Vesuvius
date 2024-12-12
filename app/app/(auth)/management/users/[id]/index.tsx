@@ -247,26 +247,12 @@ export default function EditCreateUserPage() {
             </View>
           </CheckPermission>
 
-          <CheckPermission
-            requiredPermission={["administrator:permission:view"]}
-            showIfNotPermitted
+          <View
+            style={[
+              styles.buttonContainer2,
+              { backgroundColor: theme.background },
+            ]}
           >
-            <Text
-              style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}
-            >
-              Permissions
-            </Text>
-            <PermissionsTabView
-              id={id}
-              permissions={permissions ? permissions : []}
-              userPermissions={user.UserPermissions ? user.UserPermissions : []}
-              onPermissionToggle={handlePermissionToggle}
-            />
-          </CheckPermission>
-        </View>
-
-        <View>
-          <View style={styles.buttonContainer}>
             <CheckPermission
               requiredPermission={[
                 id !== "new"
@@ -282,7 +268,30 @@ export default function EditCreateUserPage() {
             </CheckPermission>
           </View>
 
-          <View style={styles.buttonContainer}>
+          <CheckPermission
+            requiredPermission={["administrator:permission:view"]}
+            showIfNotPermitted
+          >
+            <Text
+              style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}
+            >
+              Permissions
+            </Text>
+            <View style={{}}>
+              <PermissionsTabView
+                id={id}
+                permissions={permissions ? permissions : []}
+                userPermissions={
+                  user.UserPermissions ? user.UserPermissions : []
+                }
+                onPermissionToggle={handlePermissionToggle}
+              />
+            </View>
+          </CheckPermission>
+        </View>
+
+        <View style={styles.buttonContainer}>
+          <View style={styles.buttonContainer2}>
             <Button title="Cancel" onPress={() => navigation.goBack()} />
 
             <CheckPermission
@@ -368,6 +377,14 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
   buttonContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    position: "absolute",
+    width: "100%",
+    bottom: 0,
+    alignSelf: "center",
+  },
+  buttonContainer2: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
