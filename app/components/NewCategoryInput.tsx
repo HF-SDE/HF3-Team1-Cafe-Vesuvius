@@ -25,6 +25,7 @@ const NewCategoryInput = ({
     if (newCategory.trim()) {
       onAddCategory(newCategory.trim());
       setNewCategory(""); // Reset input after adding
+      triggerHapticFeedback(ImpactFeedbackStyle.Heavy); // Trigger haptic feedback
     }
   };
 
@@ -37,13 +38,15 @@ const NewCategoryInput = ({
         label={"New category"}
         icon="plus"
         iconColor={themeColors.primary}
-        onIconPress={() => {
-          triggerHapticFeedback();
-          handleAddCategory;
-        }}
+        onIconPress={handleAddCategory}
         clearTextOnFocus={false}
       />
-      <TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          handleAddCategory();
+          triggerHapticFeedback(ImpactFeedbackStyle.Medium); // Trigger haptic feedback
+        }}
+      >
         <FontAwesome6
           name="plus-circle"
           size={24}
