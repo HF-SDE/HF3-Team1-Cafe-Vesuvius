@@ -112,6 +112,8 @@ const MenuTabView = React.memo(
               </Text>
             }
             style={styles.listContainer}
+            showsVerticalScrollIndicator={false}
+            showsHorizontalScrollIndicator={false}
           />
         </View>
       </KeyboardAvoidingView>
@@ -201,6 +203,8 @@ const MenuTabView = React.memo(
             </Text>
           }
           style={styles.listContainer}
+          showsVerticalScrollIndicator={false}
+          showsHorizontalScrollIndicator={false}
         />
       </View>
     );
