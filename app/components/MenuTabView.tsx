@@ -6,12 +6,9 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
-  TextInput as RNTextInput,
   Modal,
-  TextInput,
   KeyboardAvoidingView,
 } from "react-native";
-import { TabView, SceneMap, TabBar } from "react-native-tab-view";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { RawMaterial_MenuItems } from "../models/MenuModel";
 import AddIngredientModal from "../app/(auth)/management/menu/[id]/add-ingredient";
@@ -54,76 +51,69 @@ const MenuTabView = React.memo(
     onUpdateIngredientQuantity,
     themeColors,
   }: CategoryIngredientTabsProps) => {
-    const [index, setIndex] = React.useState(0);
+    const [activeTab, setActiveTab] = useState<"ingredients" | "categories">(
+      "ingredients"
+    );
     const [isModalVisible, setIsModalVisible] = useState(false);
 
     const theme = useThemeColor();
 
-    const routes = [
-      { key: "ingredients", title: "Ingredients" },
-      { key: "categories", title: "Categories" },
-    ];
-
     const CategoriesTab = () => (
       <KeyboardAvoidingView>
-        <SafeAreaView>
-          <View style={styles.section}>
-            <CheckPermission
-              requiredPermission={[
-                id !== "new" ? "menu:update" : "menu:create",
-              ]}
-            >
-              <NewCategoryInput
-                onAddCategory={onAddCategory}
-                themeColors={themeColors}
-              />
-            </CheckPermission>
+        <View style={styles.section}>
+          <CheckPermission
+            requiredPermission={[id !== "new" ? "menu:update" : "menu:create"]}
+          >
+            <NewCategoryInput
+              onAddCategory={onAddCategory}
+              themeColors={themeColors}
+            />
+          </CheckPermission>
 
-            <FlatList
-              data={categories}
-              keyExtractor={(item) => item}
-              renderItem={({ item }) => (
-                <View
-                  style={[
-                    styles.categoryItem,
-                    { backgroundColor: theme.primary },
+          <FlatList
+            data={categories}
+            keyExtractor={(item) => item}
+            renderItem={({ item }) => (
+              <View
+                style={[
+                  styles.categoryItem,
+                  { backgroundColor: theme.primary },
+                ]}
+              >
+                <Text
+                  style={[styles.categoryText, { color: theme.background }]}
+                >
+                  {item}
+                </Text>
+                <CheckPermission
+                  requiredPermission={[
+                    id !== "new" ? "menu:update" : "menu:create",
                   ]}
                 >
-                  <Text
-                    style={[styles.categoryText, { color: theme.background }]}
+                  <TouchableOpacity
+                    onPress={() => {
+                      triggerHapticFeedback(ImpactFeedbackStyle.Medium);
+                      onDeleteCategory(item);
+                    }}
                   >
-                    {item}
-                  </Text>
-                  <CheckPermission
-                    requiredPermission={[
-                      id !== "new" ? "menu:update" : "menu:create",
-                    ]}
-                  >
-                    <TouchableOpacity
-                      onPress={() => {
-                        triggerHapticFeedback(ImpactFeedbackStyle.Medium);
-                        onDeleteCategory(item);
-                      }}
-                    >
-                      <FontAwesome6
-                        name="trash-alt"
-                        size={18}
-                        color={theme.secondary}
-                      />
-                    </TouchableOpacity>
-                  </CheckPermission>
-                </View>
-              )}
-              ListEmptyComponent={
-                <Text style={styles.emptyText}>
-                  No categories added yet. Type the category you want to add,
-                  and tap the '+' icon to add it.
-                </Text>
-              }
-              style={styles.listContainer}
-            />
-          </View>
-        </SafeAreaView>
+                    <FontAwesome6
+                      name="trash-alt"
+                      size={18}
+                      color={theme.secondary}
+                    />
+                  </TouchableOpacity>
+                </CheckPermission>
+              </View>
+            )}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>
+                No categories added yet. Type the category you want to add, and
+                tap the '+' icon to add it.
+              </Text>
+            }
+            style={styles.listContainer}
+          />
+        </View>
       </KeyboardAvoidingView>
     );
 
@@ -215,37 +205,55 @@ const MenuTabView = React.memo(
       </View>
     );
 
-    const renderScene = SceneMap({
-      categories: CategoriesTab,
-      ingredients: IngredientsTab,
-    });
-
     return (
       <View style={{ flex: 1 }}>
-        <TabView
-          navigationState={{ index, routes }}
-          renderScene={renderScene}
-          onIndexChange={setIndex}
-          initialLayout={{ width: Dimensions.get("window").width }}
-          renderTabBar={(props) => (
-            <TabBar
-              {...props}
-              indicatorStyle={[
-                styles.tabIndicator,
-                { backgroundColor: theme.primary },
+        <View style={[styles.tabBarContainer, { borderColor: theme.primary }]}>
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              { borderColor: theme.primary },
+              activeTab === "ingredients" && { backgroundColor: theme.primary },
+            ]}
+            onPress={() => setActiveTab("ingredients")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                { color: theme.text },
+                activeTab === "ingredients" && { color: theme.background },
               ]}
-              style={[styles.tabBar, { backgroundColor: theme.accent }]}
-              labelStyle={[styles.tabLabel, { color: theme.text }]}
-              activeColor={theme.text}
-              inactiveColor={theme.primary}
-            />
-          )}
-        />
+            >
+              Ingredients
+            </Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[
+              styles.tabButton,
+              { borderColor: theme.primary },
+              activeTab === "categories" && { backgroundColor: theme.primary },
+            ]}
+            onPress={() => setActiveTab("categories")}
+          >
+            <Text
+              style={[
+                styles.tabText,
+                { color: theme.text },
+                activeTab === "categories" && { color: theme.background },
+              ]}
+            >
+              Categories
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {activeTab === "ingredients" && <IngredientsTab />}
+        {activeTab === "categories" && <CategoriesTab />}
+
         <Modal
           animationType="none"
           transparent={true}
           visible={isModalVisible}
-          onRequestClose={() => setIsModalVisible(false)} // Close modal on Android back button
+          onRequestClose={() => setIsModalVisible(false)}
         >
           <View style={styles.modalOverlay}>
             <View
@@ -268,7 +276,6 @@ const MenuTabView = React.memo(
     );
   }
 );
-
 const styles = StyleSheet.create({
   section: {
     marginBottom: 20,
@@ -337,6 +344,23 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: "#888",
     marginTop: 20,
+  },
+
+  tabBarContainer: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+    borderWidth: 3,
+    borderRadius: 10,
+  },
+  tabButton: {
+    flex: 1,
+    alignItems: "center",
+    padding: 10,
+    borderWidth: 0,
+  },
+
+  tabText: {
+    fontSize: 16,
   },
 });
 
