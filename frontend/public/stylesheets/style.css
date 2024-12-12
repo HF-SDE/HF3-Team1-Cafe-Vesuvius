@@ -21,10 +21,6 @@ body {
   grid-template-rows: 55px 1fr;
 }
 
-/* .nav-flex {
-  display: flex;
-} */
-
 .links-container {
   display: flex;
   gap: 10px;
