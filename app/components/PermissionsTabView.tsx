@@ -53,7 +53,7 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     );
 
     return (
-      <View>
+      <View style={{ maxHeight: "100%" }}>
         <FlatList
           data={filteredPermissions}
           keyExtractor={(item) => item.permissionId}
