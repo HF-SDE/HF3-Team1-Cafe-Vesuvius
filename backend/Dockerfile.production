@@ -23,6 +23,7 @@ COPY . .
 
 # Generate prisma types
 RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/psql.prisma
 
 # Create a new step
 FROM base AS prod
@@ -31,7 +32,6 @@ FROM base AS prod
 ENV NODE_PATH=./dist
 
 # Build the production version of the application.
-RUN npm run build:tsc
 
 
 # Deploy Prisma changes to prod
