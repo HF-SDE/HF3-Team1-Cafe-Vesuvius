@@ -14,8 +14,9 @@
   --accent-dark: #622a04;
 }
 
+/* Used to prevent justify-content: space-evenly; from messing with header speacing on pages without scrollbar in chromium based browsers */
 html {
-  scrollbar-gutter: stable;
+  scrollbar-width: none;
 }
 
 /* Reset & base styles */
