@@ -78,7 +78,7 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
               fontWeight: "bold",
             }}
           >
-            No more:
+            Not enough:
           </Text>
 
           {missingItems.map((item) => (

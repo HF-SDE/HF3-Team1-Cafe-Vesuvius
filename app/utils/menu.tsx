@@ -2,7 +2,13 @@ import { Menu } from "@/app/(auth)/order/new-order";
 import { useData } from "@/hooks/useData";
 import { StockItemModel } from "@/models/StorageModel";
 import { CartItem } from "@/types/cartReducer.types";
-import { createContext, Dispatch, SetStateAction, useContext } from "react";
+import {
+  createContext,
+  Dispatch,
+  SetStateAction,
+  useContext,
+  useEffect,
+} from "react";
 
 type Stock = Required<StockItemModel> & { newQuantity: number };
 
@@ -15,6 +21,14 @@ const StockContext = createContext<StockContextProps>({} as StockContextProps);
 
 export function StockProvider({ children }: { children: React.ReactNode }) {
   const [stock, setStock] = useData<Stock>("/stock");
+
+  useEffect(() => {
+    if (!stock) return;
+
+    for (const item of stock) {
+      item.newQuantity ??= item.quantity;
+    }
+  }, [stock]);
 
   return (
     <StockContext.Provider value={{ stock, setStock }}>
