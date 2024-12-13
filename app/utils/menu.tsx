@@ -27,20 +27,25 @@ export function useStockContext() {
   return useContext(StockContext);
 }
 
-export function canBeMade(menuItem: Menu, stock: Stock[]) {
+export function getMissingItems(menuItem: Menu, stock: Stock[]): string[] {
+  const missingItems: string[] = [];
+
   for (const RawMaterialMenuItem of menuItem.RawMaterial_MenuItems) {
     const stockItem = stock.find(
       ({ id }) => id === RawMaterialMenuItem.RawMaterial.id
     );
 
-    if (!stockItem) return false;
+    if (!stockItem) {
+      missingItems.push(RawMaterialMenuItem.RawMaterial.name);
+      continue;
+    }
 
     if (stockItem.newQuantity < RawMaterialMenuItem.quantity) {
-      return false;
+      missingItems.push(RawMaterialMenuItem.RawMaterial.name);
     }
   }
 
-  return true;
+  return missingItems;
 }
 
 export function updateStock(
