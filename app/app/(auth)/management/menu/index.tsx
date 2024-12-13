@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
   },
   userList: {
     flexGrow: 1,
+    paddingBottom: 100,
   },
   userItem: {
     padding: 15,
