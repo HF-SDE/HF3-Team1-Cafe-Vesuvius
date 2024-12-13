@@ -78,8 +78,9 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <KeyboardAvoidingView>
-        <View style={[styles.modalContent]}>
+      <KeyboardAvoidingView style={styles.contentContainer}>
+        {/* Field Above the FlatList */}
+        <View>
           <Text style={[styles.title, { color: theme.text }]}>
             Add New Ingredient
           </Text>
@@ -88,27 +89,20 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
             onChangeText={setSearchQuery}
             placeholder="Search for menu"
           />
-          <FlatList
-            data={filteredStock}
-            renderItem={renderItem}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            style={styles.ingredientList}
-          />
+        </View>
 
-          <View style={styles.modalButtonContainer}>
-            {/* <TouchableOpacity
-              style={[styles.modalButton, { backgroundColor: theme.primary }]}
-              onPress={onClose}
-            >
-              <Text
-                style={[styles.modalButtonText, { color: theme.background }]}
-              >
-                Cancel
-              </Text>
-            </TouchableOpacity> */}
-            <Button title="Cancel" onPress={onClose} />
-          </View>
+        {/* FlatList Section */}
+        <FlatList
+          data={filteredStock}
+          renderItem={renderItem}
+          showsHorizontalScrollIndicator={false}
+          showsVerticalScrollIndicator={false}
+          style={styles.ingredientList}
+        />
+
+        {/* Field Below the FlatList */}
+        <View style={styles.footer}>
+          <Button title="Cancel" onPress={onClose} noMargin />
         </View>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -117,12 +111,12 @@ const AddIngredientModal: React.FC<AddIngredientModalProps> = ({
 
 const styles = StyleSheet.create({
   container: {
+    padding: 20,
     flex: 1,
-    alignItems: "center",
-    padding: 10,
-    gap: 10,
-    height: "100%",
-    borderRadius: 10,
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: "space-between",
   },
   modalContent: {
     width: "100%",
@@ -166,8 +160,11 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontWeight: "bold",
   },
-  ingredientList: {
-    minHeight: "100%",
+  ingredientList: {},
+  footer: {
+    display: "flex",
+    flexDirection: "row",
+    paddingTop: 10,
   },
 });
 
