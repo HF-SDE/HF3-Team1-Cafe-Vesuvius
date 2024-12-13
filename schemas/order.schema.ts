@@ -1,17 +1,16 @@
 import Joi from "./joi";
-import { Prisma, Order_Menu } from "../backend/node_modules/.prisma/client";
 import { UuidSchema } from "./general.schemas";
 
 interface OrderSchema {
   tableId: string;
-  Order_Menus: Order_Menu[];
+  Order_Menus: [];
 }
 
-export default Joi.object<OrderSchema>({
+export default Joi.object({
   tableId: UuidSchema.required(),
-  Order_Menus: Joi.array<Order_Menu[]>()
+  Order_Menus: Joi.array()
     .items(
-      Joi.object<Order_Menu>({
+      Joi.object({
         menuItemId: UuidSchema.required(),
         quantity: Joi.number().positive().optional(),
         note: Joi.string().optional(),
@@ -21,14 +20,7 @@ export default Joi.object<OrderSchema>({
     .required(),
 });
 
-interface AdditionalSearchQuery {
-  tableNumber?: number;
-  status?: string;
-}
-
-export const search = Joi.object<
-  Prisma.OrderWhereInput & AdditionalSearchQuery
->({
+export const search = Joi.object({
   id: UuidSchema.optional(),
   tableNumber: Joi.number().optional(),
   status: Joi.string().valid("toPrepare", "completed", "deliver").optional(),
