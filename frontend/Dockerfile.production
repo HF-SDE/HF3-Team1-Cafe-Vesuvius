@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1.4
 # "base" is targeted if we run docker compose on our "default" docker compose file, it's defined in the "target" value.
 # "production" is targeted if we run docker-componse on our prod version of the file.
 # That means all the steps are individual depending on the environment running them.
@@ -13,6 +13,9 @@ COPY package.json ./
 
 # Run NPM install
 RUN npm install
+
+# Clean up the working directory
+RUN npm prune --production
 
 # Copy all files from our local machine to the virtual machine (uses .dockerignore!)
 COPY . .
