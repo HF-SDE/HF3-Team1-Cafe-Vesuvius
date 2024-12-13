@@ -23,12 +23,14 @@ interface DataPoint {
 
 interface AxesExampleProps {
   data: Array<DataPoint>;
+  valuta?: string;
   width: number;
   height?: number;
 }
 
 const AxesExample: React.FC<AxesExampleProps> = ({
   data,
+  valuta,
   width,
   height = 300,
 }) => {
@@ -159,7 +161,7 @@ const AxesExample: React.FC<AxesExampleProps> = ({
                     fontFamily: "SpaceMono-Regular",
                   }}
                 >
-                  {items[0].value}
+                  {items[0].value} {valuta}
                 </Text>
               </View>
             );
@@ -185,7 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   yearButton: {
-    marginHorizontal: 8,
+    margin: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 4,

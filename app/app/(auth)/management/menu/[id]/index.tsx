@@ -12,6 +12,7 @@ import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import { router } from "expo-router";
 import LoadingPage from "@/components/LoadingPage";
 import CheckPermission from "@/components/CheckPermission";
+import Alert from "@/components/Alert";
 
 import { MenuModel } from "@/models/MenuModel";
 
@@ -70,10 +71,28 @@ export default function EditCreateUserPage() {
               size={24}
               color={theme.secondary}
               onPress={async () => {
+                await triggerHapticFeedback();
+
                 if (id && id !== "new") {
-                  await triggerHapticFeedback();
-                  await deleteMenu(id);
-                  navigation.goBack();
+                  Alert(
+                    "Confirm Deletion",
+                    `Are you sure you want to delete ${menuItem.name}?`,
+                    [
+                      {
+                        text: "Cancel",
+                        style: "cancel",
+                        onPress: () => {},
+                      },
+                      {
+                        text: "Delete",
+                        style: "destructive",
+                        onPress: async () => {
+                          await deleteMenu(id);
+                          navigation.goBack();
+                        },
+                      },
+                    ]
+                  );
                 }
               }}
               style={{ marginRight: 16 }}

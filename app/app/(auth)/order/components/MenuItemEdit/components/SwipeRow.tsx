@@ -4,7 +4,7 @@ import { Alert, Pressable, StyleSheet, Text, View } from "react-native";
 import { Menu } from "../../../new-order";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
 import TextWithNote from "@/components/TextWithNote";
-import { canBeMade, updateStock, useStockContext } from "@/utils/menu";
+import { getMissingItems, updateStock, useStockContext } from "@/utils/menu";
 
 interface ISwipeRow {
   cartItem: CartItem<Menu>;
@@ -16,7 +16,7 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
 
   const { stock, setStock } = useStockContext();
 
-  const cantBeMade = !canBeMade(cartItem.item, stock);
+  const cantBeMade = getMissingItems(cartItem.item, stock).length > 0;
 
   function handleAddItem() {
     if (cantBeMade) return;
@@ -62,7 +62,7 @@ export default function SwipeRow({ cartItem, cartActions }: ISwipeRow) {
     >
       <View style={{ display: "flex", justifyContent: "center" }}>
         <TextWithNote
-          text={`${cartItem.item?.name} x ${cartItem.quantity}`}
+          text={`Quantity: ${cartItem.quantity}`}
           note={cartItem?.note}
           color={theme.accent}
         />

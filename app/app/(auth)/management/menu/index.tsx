@@ -83,7 +83,7 @@ export default function ManageUsersPage() {
             {item.price},-
           </Text>
         </View>
-        <FontAwesome6 name="edit" size={48} color={theme.secondary} />
+        {/* <FontAwesome6 name="edit" size={48} color={theme.secondary} /> */}
       </View>
     </TouchableOpacity>
   );
@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
   },
   userList: {
     flexGrow: 1,
+    paddingBottom: 100,
   },
   userItem: {
     padding: 15,

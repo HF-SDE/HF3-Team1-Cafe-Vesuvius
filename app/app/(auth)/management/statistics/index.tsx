@@ -123,15 +123,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Sales
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Sales
-              </Text>
               <View
                 style={[
                   styles.sectionSpacer,
@@ -156,6 +156,7 @@ export default function StatsPage() {
               <LineChartCustom
                 data={lineChartData}
                 width={safeAreaWidth - chartOffset}
+                valuta={stats?.economy.valuta}
               />
             </View>
           </View>
@@ -168,15 +169,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Orders
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Orders
-              </Text>
               <View
                 style={[
                   styles.sectionSpacer,
@@ -201,11 +202,11 @@ export default function StatsPage() {
               >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   <Text style={{ fontWeight: "bold" }}>Avg total: </Text>
-                  {stats?.orders.avgOrderValueTotal}
+                  {stats?.orders.avgOrderValueTotal} {stats?.economy.valuta}
                 </Text>
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   <Text style={{ fontWeight: "bold" }}>Avg today: </Text>
-                  {stats?.orders.avgOrderValueToday}
+                  {stats?.orders.avgOrderValueToday} {stats?.economy.valuta}
                 </Text>
               </View>
             </View>
@@ -219,15 +220,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Reservation
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Reservation
-              </Text>
               <View
                 style={[
                   styles.sectionSpacer,
@@ -265,16 +266,14 @@ export default function StatsPage() {
               },
             ]}
           >
-            <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Ordered
-              </Text>
-            </View>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Ordered
+            </Text>
 
             <View style={styles.statItem}>
               <BarChartCustom
@@ -301,15 +300,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Low storage
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Low storage
-              </Text>
               {stats?.rawMaterials?.lowStock?.length &&
               stats?.rawMaterials.lowStock.length > 0 ? (
                 stats.rawMaterials.lowStock.map((item, index) => (
@@ -334,7 +333,7 @@ export default function StatsPage() {
                         { color: theme.primary },
                       ]}
                     >
-                      Quantity: {item.quantity} {item.unit} ⚠️
+                      Quantity: {item.quantity} ({item.unit}) ⚠️
                     </Text>
                   </View>
                 ))
@@ -373,10 +372,11 @@ const styles = StyleSheet.create({
   },
   sectionContainerText: {
     padding: 20,
+    gap: 5,
   },
   sectionTitle: {
     fontWeight: "bold",
-    borderBottomWidth: 5,
+    borderBottomWidth: 2,
     marginBottom: 20,
     fontSize: 30,
     textAlign: "center",
