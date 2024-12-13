@@ -156,6 +156,7 @@ export default function StatsPage() {
               <LineChartCustom
                 data={lineChartData}
                 width={safeAreaWidth - chartOffset}
+                valuta={stats?.economy.valuta}
               />
             </View>
           </View>
@@ -201,11 +202,11 @@ export default function StatsPage() {
               >
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   <Text style={{ fontWeight: "bold" }}>Avg total: </Text>
-                  {stats?.orders.avgOrderValueTotal}
+                  {stats?.orders.avgOrderValueTotal} {stats?.economy.valuta}
                 </Text>
                 <Text style={[styles.sectionText, { color: theme.primary }]}>
                   <Text style={{ fontWeight: "bold" }}>Avg today: </Text>
-                  {stats?.orders.avgOrderValueToday}
+                  {stats?.orders.avgOrderValueToday} {stats?.economy.valuta}
                 </Text>
               </View>
             </View>
@@ -332,7 +333,7 @@ export default function StatsPage() {
                         { color: theme.primary },
                       ]}
                     >
-                      Quantity: {item.quantity} {item.unit} ⚠️
+                      Quantity: {item.quantity} ({item.unit}) ⚠️
                     </Text>
                   </View>
                 ))
@@ -371,6 +372,7 @@ const styles = StyleSheet.create({
   },
   sectionContainerText: {
     padding: 20,
+    gap: 5,
   },
   sectionTitle: {
     fontWeight: "bold",
