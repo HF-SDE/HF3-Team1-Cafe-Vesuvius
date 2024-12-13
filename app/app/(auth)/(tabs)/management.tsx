@@ -1,5 +1,11 @@
 import React from "react";
-import { Text, StyleSheet, View, TouchableOpacity } from "react-native";
+import {
+  Text,
+  StyleSheet,
+  View,
+  TouchableOpacity,
+  useWindowDimensions,
+} from "react-native";
 
 import TemplateLayout from "@/components/TemplateLayout";
 import CheckPageAccess from "@/components/CheckPageAccess";
@@ -49,12 +55,21 @@ const buttonList = [
 
 export default function ManagementScreen() {
   const router = useRouter();
-
   const theme = useThemeColor();
+  const { width, height } = useWindowDimensions();
+  const isLandscape = width > height;
 
   return (
     <TemplateLayout pageName="ManagementPage">
-      <View style={styles.content}>
+      <View
+        style={[
+          styles.content,
+          {
+            flexDirection: isLandscape ? "row" : "column",
+            flexWrap: isLandscape ? "wrap" : "nowrap",
+          },
+        ]}
+      >
         {buttonList.map((button, index) => (
           <CheckPageAccess pageName={button.pageName} key={button.pageName}>
             <TouchableOpacity
@@ -102,6 +117,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     borderRadius: 8,
     flex: 1,
+    minWidth: "45%", // Adjust to fit buttons properly in landscape mode
   },
   buttonContent: {
     flexDirection: "row",
