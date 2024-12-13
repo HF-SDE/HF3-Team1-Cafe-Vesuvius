@@ -140,7 +140,7 @@ export default function ManageUsersPage() {
             />
           )}
 
-          <FontAwesome6 name="edit" size={48} color={theme.secondary} />
+          {/* <FontAwesome6 name="edit" size={48} color={theme.secondary} /> */}
         </View>
       </View>
     </TouchableOpacity>
