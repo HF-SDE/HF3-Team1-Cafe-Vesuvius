@@ -129,6 +129,51 @@ export default function NewReservationModal({
     }
   }
 
+  
+  /**
+   * Load the item
+   * @param {Table} item - The table to load
+   * @returns {ReactElement}
+   */
+  function loadItem(item: Table): ReactElement {
+    {
+      let isAvailable = true;
+
+      for (const res of reservations) {
+        const resStartTime = dayjs(res.reservationTime);
+        const resEndTime = dayjs(res.reservationTime).add(3, "hour");
+
+        const tableStartTime = dayjs(reservation.reservationTime);
+        const tableEndTime = dayjs(reservation.reservationTime).add(
+          3,
+          "hour"
+        );
+
+        if (
+          res.Tables &&
+          res.Tables.some((table) => table.id === item.id) &&
+          (resStartTime.isBetween(tableStartTime, tableEndTime) ||
+            resEndTime.isBetween(tableStartTime, tableEndTime) ||
+            tableStartTime.isBetween(resStartTime, resEndTime) ||
+            tableEndTime.isBetween(resStartTime, resEndTime))
+        ) {
+          isAvailable = false;
+        }
+      }
+
+      return (
+        <NewReservationsItem
+          table={item}
+          setTableSelect={setTableSelect}
+          tableSelect={tableSelect}
+          tableSelectNeed={tableSelectNeed}
+          reservation={[reservation, setReservations]}
+          disabled={!isAvailable}
+        />
+      );
+    }
+  }
+
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
@@ -264,42 +309,7 @@ export default function NewReservationModal({
           }
           numColumns={4}
           data={tables}
-          renderItem={({ item }) => {
-            let isAvailable = true;
-
-            for (const res of reservations) {
-              const resStartTime = dayjs(res.reservationTime);
-              const resEndTime = dayjs(res.reservationTime).add(3, "hour");
-
-              const tableStartTime = dayjs(reservation.reservationTime);
-              const tableEndTime = dayjs(reservation.reservationTime).add(
-                3,
-                "hour"
-              );
-
-              if (
-                res.Tables &&
-                res.Tables.some((table) => table.id === item.id) &&
-                (resStartTime.isBetween(tableStartTime, tableEndTime) ||
-                  resEndTime.isBetween(tableStartTime, tableEndTime) ||
-                  tableStartTime.isBetween(resStartTime, resEndTime) ||
-                  tableEndTime.isBetween(resStartTime, resEndTime))
-              ) {
-                isAvailable = false;
-              }
-            }
-
-            return (
-              <NewReservationsItem
-                table={item}
-                setTableSelect={setTableSelect}
-                tableSelect={tableSelect}
-                tableSelectNeed={tableSelectNeed}
-                reservation={[reservation, setReservations]}
-                disabled={!isAvailable}
-              />
-            );
-          }}
+          renderItem={({ item }) => loadItem(item)}
           keyExtractor={(item) => item.number?.toString()}
           contentContainerStyle={styles.listContainer}
           style={styles.flatList}
