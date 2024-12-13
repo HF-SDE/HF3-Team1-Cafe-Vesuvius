@@ -199,7 +199,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   yearButton: {
-    marginHorizontal: 8,
+    margin: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 4,

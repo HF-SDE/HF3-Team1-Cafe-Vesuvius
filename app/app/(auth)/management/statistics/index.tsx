@@ -123,15 +123,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Sales
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Sales
-              </Text>
               <View
                 style={[
                   styles.sectionSpacer,
@@ -168,15 +168,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Orders
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Orders
-              </Text>
               <View
                 style={[
                   styles.sectionSpacer,
@@ -219,15 +219,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Reservation
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Reservation
-              </Text>
               <View
                 style={[
                   styles.sectionSpacer,
@@ -265,16 +265,14 @@ export default function StatsPage() {
               },
             ]}
           >
-            <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Ordered
-              </Text>
-            </View>
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Ordered
+            </Text>
 
             <View style={styles.statItem}>
               <BarChartCustom
@@ -301,15 +299,15 @@ export default function StatsPage() {
               },
             ]}
           >
+            <Text
+              style={[
+                styles.sectionTitle,
+                { color: theme.text, borderColor: theme.primary },
+              ]}
+            >
+              Low storage
+            </Text>
             <View style={styles.sectionContainerText}>
-              <Text
-                style={[
-                  styles.sectionTitle,
-                  { color: theme.text, borderColor: theme.primary },
-                ]}
-              >
-                Low storage
-              </Text>
               {stats?.rawMaterials?.lowStock?.length &&
               stats?.rawMaterials.lowStock.length > 0 ? (
                 stats.rawMaterials.lowStock.map((item, index) => (
@@ -376,7 +374,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontWeight: "bold",
-    borderBottomWidth: 5,
+    borderBottomWidth: 2,
     marginBottom: 20,
     fontSize: 30,
     textAlign: "center",
