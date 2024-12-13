@@ -1,23 +1,37 @@
-import React, { useState } from "react";
-import { StyleSheet, View, Text, TouchableOpacity, Modal } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  StyleSheet,
+  View,
+  Text,
+  TouchableOpacity,
+  Modal,
+  Dimensions,
+} from "react-native";
 import { useSession } from "../../ctx";
 import ResetPasswordModal from "../profile/reset-password";
-
 import TemplateLayout from "@/components/TemplateLayout";
 import LoadingPage from "@/components/LoadingPage";
-
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { useUserProfile } from "@/hooks/useUserProfile";
-
 import Button from "@/components/DefaultButton";
 
 export default function UserProfileScreen() {
   const { userProfile, isLoading, error } = useUserProfile();
   const [isModalVisible, setIsModalVisible] = useState(false); // State to control modal visibility
-
   const theme = useThemeColor();
-
   const { signOut, session } = useSession();
+
+  const [isLandscape, setIsLandscape] = useState(false);
+
+  useEffect(() => {
+    const onChange = ({ window }: { window: any }) => {
+      setIsLandscape(window.height < 600);
+    };
+    Dimensions.addEventListener("change", onChange);
+    return () => {
+      // Dimensions.removeEventListener("change", onChange);
+    };
+  }, []);
 
   if (isLoading) {
     return <LoadingPage />;
@@ -25,9 +39,21 @@ export default function UserProfileScreen() {
 
   return (
     <TemplateLayout pageName="ProfilePage">
-      <View style={[styles.container]}>
-        <View style={styles.contentContainer}>
-          <View style={styles.topContainer}>
+      <View
+        style={[styles.container, isLandscape && styles.containerLandscape]}
+      >
+        <View
+          style={[
+            styles.contentContainer,
+            isLandscape && styles.contentContainerLandscape,
+          ]}
+        >
+          <View
+            style={[
+              styles.topContainer,
+              isLandscape && styles.topContainerLandscape,
+            ]}
+          >
             <View
               style={[
                 styles.avatar,
@@ -35,21 +61,29 @@ export default function UserProfileScreen() {
                   backgroundColor: theme.accent,
                   borderColor: theme.primary,
                 },
+                isLandscape && styles.avatarLandscape,
               ]}
             >
               <Text style={[styles.avatarText, { color: theme.text }]}>
                 {userProfile?.initials || "?"}
               </Text>
             </View>
-            <Text style={[styles.nameText, { color: theme.text }]}>
-              Hi, {userProfile?.name || "N/A"}
-            </Text>
-            <Text style={[styles.infoText, { color: theme.text }]}>
-              Email: {userProfile?.email || "N/A"}
-            </Text>
+            <View style={styles.textContainer}>
+              <Text style={[styles.nameText, { color: theme.text }]}>
+                Hi, {userProfile?.name || "N/A"}
+              </Text>
+              <Text style={[styles.infoText, { color: theme.text }]}>
+                Email: {userProfile?.email || "N/A"}
+              </Text>
+            </View>
           </View>
 
-          <View style={styles.buttonContainer}>
+          <View
+            style={[
+              styles.buttonContainer,
+              isLandscape && styles.buttonContainerLandscape,
+            ]}
+          >
             <Button
               title="Reset Password"
               onPress={() => setIsModalVisible(true)}
@@ -82,6 +116,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "space-between",
     alignItems: "center",
+    paddingHorizontal: 20,
+  },
+  containerLandscape: {
+    flexDirection: "row",
+    justifyContent: "flex-start",
+    alignItems: "flex-start",
   },
   contentContainer: {
     flex: 1,
@@ -90,41 +130,58 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 20,
   },
+  contentContainerLandscape: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   topContainer: {
     alignItems: "center",
     paddingTop: 40,
   },
+  topContainerLandscape: {
+    flexDirection: "row",
+    paddingRight: 50,
+  },
   avatar: {
-    width: 200,
-    height: 200,
-    borderRadius: 100,
+    width: 150,
+    height: 150,
+    borderRadius: 75,
     alignItems: "center",
     justifyContent: "center",
     marginBottom: 20,
     borderWidth: 8,
   },
+  avatarLandscape: {
+    marginBottom: 0,
+    marginRight: 20,
+  },
   avatarText: {
-    fontSize: 52,
+    fontSize: 40,
     fontWeight: "bold",
   },
   nameText: {
-    fontSize: 30,
+    fontSize: 24,
     fontWeight: "bold",
     textAlign: "left",
     width: "100%",
   },
   infoText: {
-    fontSize: 20,
+    fontSize: 16,
     textAlign: "left",
     width: "100%",
     marginBottom: 5,
   },
   buttonContainer: {
+    justifyContent: "center",
+    paddingTop: 40,
+
     paddingBottom: 20,
-    minHeight: 140,
+    minHeight: 180,
   },
-  spacer: {
-    height: 10,
+  buttonContainerLandscape: {
+    paddingBottom: 0,
+    minWidth: 230,
   },
   button: {
     paddingVertical: 10,
@@ -150,5 +207,8 @@ const styles = StyleSheet.create({
     minHeight: 400,
     padding: 10,
     borderRadius: 10,
+  },
+  textContainer: {
+    width: "100%",
   },
 });
