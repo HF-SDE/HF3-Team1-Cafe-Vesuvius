@@ -1,15 +1,14 @@
 import Joi from "./joi";
-import { MenuItem, Prisma } from "../backend/node_modules/.prisma/client";
 import { UuidSchema } from "./general.schemas";
 
-const schema = Joi.object<MenuItem>({
+const schema = Joi.object({
   category: Joi.array().items(Joi.string()).optional(),
   name: Joi.string().min(1).required(),
   price: Joi.number().positive().required(),
   active: Joi.boolean().optional(),
 });
 
-export default schema.append<Prisma.MenuItemCreateInput>({
+export default schema.append({
   RawMaterial_MenuItems: Joi.object({
     createMany: Joi.object({
       data: Joi.array().items(
@@ -25,7 +24,7 @@ export default schema.append<Prisma.MenuItemCreateInput>({
 const keys = Object.keys(schema.describe().keys);
 export const optional = schema.fork(keys, (schema) => schema.optional());
 
-export const patch = schema.append<Prisma.MenuItemUpdateInput>({
+export const patch = schema.append({
   RawMaterial_MenuItems: Joi.object({
     deleteMany: Joi.object(),
     createMany: Joi.object({

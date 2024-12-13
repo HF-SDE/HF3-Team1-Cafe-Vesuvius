@@ -1,9 +1,8 @@
 import Joi from "./joi";
 
 import { UuidSchema } from "./general.schemas";
-import { Order_Menu } from "../backend/node_modules/.prisma/client";
 
-const Order_MenuSchema = Joi.object<Order_Menu>({
+const Order_MenuSchema = Joi.object({
   id: UuidSchema.required(),
   status: Joi.string()
     .valid("toPrepare", "completed", "deliver")
@@ -17,7 +16,7 @@ const Order_MenuSchema = Joi.object<Order_Menu>({
 
 export default Order_MenuSchema;
 
-export const Order_MenusSchema = Joi.array<Order_Menu[]>()
+export const Order_MenusSchema = Joi.array()
   .items(Order_MenuSchema)
   .min(1)
   .required();

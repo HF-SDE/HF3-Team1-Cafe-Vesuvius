@@ -1,9 +1,8 @@
 import Joi from "./joi";
 
 import { UuidSchema } from "./general.schemas";
-import { Reservation, Prisma } from "../backend/node_modules/.prisma/client";
 
-const schema = Joi.object<Prisma.ReservationCreateInput>({
+const schema = Joi.object({
   reservationTime: Joi.date()
     .greater(new Date().setHours(0, 0, 0, 0))
     .message("{#label} should be in the future")
@@ -26,7 +25,7 @@ export default schema.or("email", "phone").messages({
 const keys = Object.keys(schema.describe().keys);
 export const optional = schema.fork(keys, (schema) => schema.optional());
 
-export const where = Joi.object<Prisma.ReservationWhereInput>({
+export const where = Joi.object({
   id: UuidSchema.optional(),
   name: Joi.string().optional(),
   email: Joi.string().email().optional(),
