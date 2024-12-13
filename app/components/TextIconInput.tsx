@@ -22,7 +22,7 @@ interface TextIconInputProps extends CustomTextInputProps {
    *
    * See Icon Explorer app https://expo.github.io/vector-icons/
    */
-  icon: ComponentProps<typeof MaterialCommunityIcons>["name"];
+  icon: ComponentProps<typeof MaterialCommunityIcons>["name"] | undefined;
 
   /**
    * Position of the icon
