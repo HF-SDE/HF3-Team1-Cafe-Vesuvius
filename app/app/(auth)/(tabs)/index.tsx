@@ -24,7 +24,7 @@ export default function UserProfileScreen() {
   const [isLandscape, setIsLandscape] = useState(false);
 
   useEffect(() => {
-    const onChange = ({ window }) => {
+    const onChange = ({ window }: { window: any }) => {
       setIsLandscape(window.height < 600);
     };
     Dimensions.addEventListener("change", onChange);
