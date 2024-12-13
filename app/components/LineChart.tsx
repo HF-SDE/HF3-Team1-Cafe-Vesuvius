@@ -34,11 +34,6 @@ const AxesExample: React.FC<AxesExampleProps> = ({
 }) => {
   const theme = useThemeColor();
 
-  // Load custom font
-  const [fontsLoaded] = useFonts({
-    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
   // Extract unique years and find the newest year
   const uniqueYears = Array.from(new Set(data.map((item) => item.year))).sort(
     (a, b) => Number(b) - Number(a)
@@ -46,15 +41,6 @@ const AxesExample: React.FC<AxesExampleProps> = ({
   const newestYear = uniqueYears[0];
 
   const [selectedYear, setSelectedYear] = useState<string>(newestYear);
-
-  // Display a loading indicator while the font is loading
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.text} />
-      </View>
-    );
-  }
 
   // Filter data for the selected year
   const filteredData = data
@@ -199,7 +185,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   yearButton: {
-    marginHorizontal: 8,
+    margin: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 4,

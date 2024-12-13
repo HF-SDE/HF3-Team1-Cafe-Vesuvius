@@ -29,20 +29,6 @@ const PieChartComponent: React.FC<PieChartProps> = ({
 }) => {
   const theme = useThemeColor();
 
-  // Load the font
-  const [fontsLoaded] = useFonts({
-    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  // Show a loading indicator until the font is loaded
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.text} />
-      </View>
-    );
-  }
-
   // Calculate the total value of all data points
   const totalValue = data.reduce((sum, item) => sum + item.value, 0);
 

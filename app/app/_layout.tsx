@@ -8,6 +8,9 @@ import isBetween from "dayjs/plugin/isBetween";
 import isToday from "dayjs/plugin/isToday";
 import isSameOrBefore from "dayjs/plugin/isSameOrBefore";
 import isTomorrow from "dayjs/plugin/isTomorrow";
+import { Slot } from "expo-router";
+import dayjs from "dayjs";
+import ReservationComponent from "@/context/ReservationContext";
 dayjs.extend(isBetween);
 dayjs.extend(isSameOrBefore);
 dayjs.extend(isToday);
@@ -27,31 +30,20 @@ export const unstable_settings = {
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const [loaded, error] = useFonts({
-    SpaceMono: require("../assets/fonts/SpaceMono-Regular.ttf"),
-    ...FontAwesome.font,
-  });
+  const [loaded, error] = useFonts(FontAwesome.font);
 
-  // Expo Router uses Error Boundaries to catch errors in the navigation tree.
   useEffect(() => {
     if (error) throw error;
   }, [error]);
 
   useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
+    if (loaded) SplashScreen.hideAsync();
   }, [loaded]);
 
-  if (!loaded) {
-    return null;
-  }
+  if (!loaded) return null;
 
   return <RootLayoutNav />;
 }
-import { Slot } from "expo-router";
-import dayjs from "dayjs";
-import ReservationComponent from "@/context/ReservationContext";
 
 function RootLayoutNav() {
   return (

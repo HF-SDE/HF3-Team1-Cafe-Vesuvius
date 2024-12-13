@@ -38,20 +38,6 @@ const AxesExample: React.FC<AxesExampleProps> = ({
   const theme = useThemeColor();
   const [selectedData, setSelectedData] = useState<DataPoint | null>(null);
 
-  // Load custom font
-  const [fontsLoaded] = useFonts({
-    "SpaceMono-Regular": require("../assets/fonts/SpaceMono-Regular.ttf"),
-  });
-
-  // Display a loading indicator while the font is loading
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color={theme.text} />
-      </View>
-    );
-  }
-
   // Map data for react-native-gifted-charts
   const chartData = data.map((item) => ({
     value: item.value,

@@ -36,7 +36,7 @@ const NewCategoryInput = ({
         value={newCategory}
         onChangeText={setNewCategory}
         label={"New category"}
-        icon="plus"
+        icon={newCategory.trim() ? "plus" : undefined}
         iconColor={themeColors.primary}
         onIconPress={handleAddCategory}
         clearTextOnFocus={false}
@@ -50,6 +50,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 10,
+    paddingTop: 5,
   },
 });
 

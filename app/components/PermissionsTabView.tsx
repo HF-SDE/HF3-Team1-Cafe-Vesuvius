@@ -131,6 +131,7 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
               </Text>
             </TouchableOpacity>
           )}
+          ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
           showsHorizontalScrollIndicator={false}
         />
       </View>
