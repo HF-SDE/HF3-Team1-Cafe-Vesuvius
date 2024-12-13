@@ -268,7 +268,7 @@ export default function EditCreateUserPage() {
               ]}
             >
               <Button
-                title="Set password"
+                title={id !== "new" ? "Reset password" : "Create password"}
                 onPress={() => setIsModalVisible(true)}
                 isHighlighted={errorMessages.includes("password")}
                 noMargin
