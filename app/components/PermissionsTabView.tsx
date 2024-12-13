@@ -11,6 +11,10 @@ import Switch from "@/components/Switch";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { Permission } from "@/models/PermissionModel";
 import CheckPermission from "@/components/CheckPermission";
+import {
+  triggerHapticFeedback,
+  ImpactFeedbackStyle,
+} from "@/utils/hapticFeedback";
 
 interface PermissionsTabViewProps {
   id: string | undefined;
@@ -120,11 +124,13 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
                   borderColor: theme.primary,
                 },
               ]}
-              onPress={() =>
+              onPress={() => {
+                triggerHapticFeedback(ImpactFeedbackStyle.Soft);
+
                 setSelectedCategory(
                   selectedCategory === item.key ? null : item.key
-                )
-              }
+                );
+              }}
             >
               <Text style={[styles.categoryTitle, { color: theme.text }]}>
                 {item.title}

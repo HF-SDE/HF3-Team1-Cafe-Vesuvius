@@ -218,7 +218,10 @@ const MenuTabView = React.memo(
               { borderColor: theme.primary },
               activeTab === "ingredients" && { backgroundColor: theme.primary },
             ]}
-            onPress={() => setActiveTab("ingredients")}
+            onPress={() => {
+              triggerHapticFeedback(ImpactFeedbackStyle.Soft);
+              setActiveTab("ingredients");
+            }}
           >
             <Text
               style={[
@@ -236,7 +239,10 @@ const MenuTabView = React.memo(
               { borderColor: theme.primary },
               activeTab === "categories" && { backgroundColor: theme.primary },
             ]}
-            onPress={() => setActiveTab("categories")}
+            onPress={() => {
+              triggerHapticFeedback(ImpactFeedbackStyle.Soft);
+              setActiveTab("categories");
+            }}
           >
             <Text
               style={[

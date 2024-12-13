@@ -71,6 +71,8 @@ export default function EditCreateUserPage() {
               size={24}
               color={theme.secondary}
               onPress={async () => {
+                await triggerHapticFeedback();
+
                 if (id && id !== "new") {
                   Alert(
                     "Confirm Deletion",
@@ -85,7 +87,6 @@ export default function EditCreateUserPage() {
                         text: "Delete",
                         style: "destructive",
                         onPress: async () => {
-                          await triggerHapticFeedback();
                           await deleteMenu(id);
                           navigation.goBack();
                         },
