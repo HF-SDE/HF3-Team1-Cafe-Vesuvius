@@ -5,7 +5,7 @@ import {
   Text,
   FlatList,
   TouchableOpacity,
-  SafeAreaView,
+  Dimensions,
 } from "react-native";
 import Switch from "@/components/Switch";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -26,10 +26,8 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
   onPermissionToggle,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-
   const theme = useThemeColor();
 
-  // Define categories based on permission prefixes
   const categories = Array.from(
     new Set(
       permissions.map((permission) => (permission.code as string).split(":")[0])
@@ -37,13 +35,13 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
   )
     .map((key) => ({
       key,
-      title: key.charAt(0).toUpperCase() + key.slice(1), // Capitalize category names
+      title: key.charAt(0).toUpperCase() + key.slice(1),
     }))
     .sort((a, b) => a.key.localeCompare(b.key));
 
   useEffect(() => {
     if (categories.length > 0 && selectedCategory === null) {
-      setSelectedCategory(categories[0].key); // Only set this if no category is selected
+      setSelectedCategory(categories[0].key);
     }
   }, [categories, selectedCategory]);
 
@@ -53,15 +51,16 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     );
 
     return (
-      <View style={{}}>
-        <FlatList
-          data={filteredPermissions}
-          keyExtractor={(item) => item.permissionId}
-          renderItem={renderPermissionItem}
-          showsHorizontalScrollIndicator={false}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
+      <FlatList
+        data={filteredPermissions}
+        keyExtractor={(item) => item.permissionId}
+        renderItem={renderPermissionItem}
+        showsHorizontalScrollIndicator={false}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{
+          paddingBottom: 20, // Reserve space for footer
+        }}
+      />
     );
   };
 
@@ -71,7 +70,12 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
     );
     return (
       <View
-        style={[styles.permissionItem, { borderBottomColor: theme.primary }]}
+        style={[
+          styles.permissionItem,
+          {
+            borderBottomColor: theme.primary,
+          },
+        ]}
       >
         <Text style={[styles.permissionDescription, { color: theme.text }]}>
           {item.description}
@@ -96,53 +100,58 @@ const PermissionsTabView: React.FC<PermissionsTabViewProps> = ({
   };
 
   if (!permissions || !userPermissions || permissions.length === 0) {
-    return <Text>Loading</Text>;
+    return <Text>Loading...</Text>;
   }
 
   return (
     <View style={styles.container}>
-      <FlatList
-        data={categories}
-        keyExtractor={(item) => item.key}
-        horizontal
-        renderItem={({ item }) => (
-          <TouchableOpacity
-            style={[
-              styles.categoryItem,
-              {
-                borderColor: theme.primary,
-                borderBottomWidth: selectedCategory === item.key ? 3 : 0,
-              },
-            ]}
-            onPress={() =>
-              setSelectedCategory(
-                selectedCategory === item.key ? null : item.key
-              )
-            }
-          >
-            <Text style={[styles.categoryTitle, { color: theme.text }]}>
-              {item.title}
-            </Text>
-          </TouchableOpacity>
-        )}
-        showsVerticalScrollIndicator={false}
-        showsHorizontalScrollIndicator={false}
-        ItemSeparatorComponent={() => <View style={{ width: 10 }} />}
-      />
-      {selectedCategory && (
-        <View style={styles.permissionsContainer}>
-          {renderPermissionsForCategory(selectedCategory)}
-        </View>
-      )}
+      {/* Fixed height category selector */}
+      <View style={styles.categorySelector}>
+        <FlatList
+          data={categories}
+          keyExtractor={(item) => item.key}
+          horizontal
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              style={[
+                styles.categoryItem,
+                {
+                  borderBottomWidth: selectedCategory === item.key ? 3 : 0,
+                  borderColor: theme.primary,
+                },
+              ]}
+              onPress={() =>
+                setSelectedCategory(
+                  selectedCategory === item.key ? null : item.key
+                )
+              }
+            >
+              <Text style={[styles.categoryTitle, { color: theme.text }]}>
+                {item.title}
+              </Text>
+            </TouchableOpacity>
+          )}
+          showsHorizontalScrollIndicator={false}
+        />
+      </View>
+      {/* List of permissions */}
+      <View style={styles.permissionsContainer}>
+        {selectedCategory && renderPermissionsForCategory(selectedCategory)}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    flex: 1,
+  },
+  categorySelector: {
+    height: 35, // Fixed height for category selector
+    borderBottomColor: "#ccc",
+    justifyContent: "center",
+  },
   categoryItem: {
-    marginVertical: 10,
-
     padding: 5,
   },
   categoryTitle: {
@@ -150,8 +159,8 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   permissionsContainer: {
-    paddingHorizontal: 10,
-    paddingTop: 10,
+    flex: 1,
+    marginTop: 10,
   },
   permissionItem: {
     padding: 10,
@@ -162,11 +171,6 @@ const styles = StyleSheet.create({
   },
   permissionDescription: {
     fontSize: 14,
-  },
-  headerText: {
-    fontSize: 18,
-    padding: 10,
-    fontWeight: "bold",
   },
 });
 

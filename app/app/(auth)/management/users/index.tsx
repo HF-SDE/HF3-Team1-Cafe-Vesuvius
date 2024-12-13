@@ -51,27 +51,33 @@ export default function ManageUsersPage() {
       navigation.setOptions({
         headerRight: () =>
           showInactive ? (
-            <FontAwesome5
-              name="user-alt"
-              size={24}
-              color={theme.secondary}
+            <TouchableOpacity
               onPress={() => {
                 triggerHapticFeedback();
                 setShowInactive(!showInactive);
               }}
-              style={{ marginRight: 16 }}
-            />
+            >
+              <FontAwesome5
+                name="user-alt"
+                size={24}
+                color={theme.secondary}
+                style={{ marginRight: 16 }}
+              />
+            </TouchableOpacity>
           ) : (
-            <FontAwesome5
-              name="user-alt-slash"
-              size={24}
-              color={theme.secondary}
+            <TouchableOpacity
               onPress={() => {
                 triggerHapticFeedback();
                 setShowInactive(!showInactive);
               }}
-              style={{ marginRight: 16 }}
-            />
+            >
+              <FontAwesome5
+                name="user-alt-slash"
+                size={24}
+                color={theme.secondary}
+                style={{ marginRight: 16 }}
+              />
+            </TouchableOpacity>
           ),
       });
     };

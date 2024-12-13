@@ -5,6 +5,7 @@ import {
   triggerHapticFeedback,
   ImpactFeedbackStyle,
 } from "@/utils/hapticFeedback";
+
 interface ButtonProps {
   onPress?: () => void;
   title: string;
@@ -12,6 +13,7 @@ interface ButtonProps {
   backgroundColor?: ColorValue | undefined;
   textColor?: ColorValue | undefined;
   isHighlighted?: boolean;
+  noMargin?: boolean; // New prop to control margin
 }
 
 const SubmitButton: React.FC<ButtonProps> = ({
@@ -21,6 +23,7 @@ const SubmitButton: React.FC<ButtonProps> = ({
   backgroundColor,
   textColor,
   isHighlighted,
+  noMargin, // Destructure the new prop
 }) => {
   const theme = useThemeColor();
   const handlePress = async () => {
@@ -42,6 +45,7 @@ const SubmitButton: React.FC<ButtonProps> = ({
           borderWidth: isHighlighted ? 3 : 0,
           borderColor: isHighlighted ? "red" : undefined,
         },
+        noMargin ? { margin: 0 } : {}, // Conditionally apply margin
       ]}
       onPress={handlePress}
       disabled={disabled}
@@ -61,7 +65,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 5,
-    margin: 5,
+    margin: 5, // Default margin
     maxHeight: 50,
   },
   buttonText: {

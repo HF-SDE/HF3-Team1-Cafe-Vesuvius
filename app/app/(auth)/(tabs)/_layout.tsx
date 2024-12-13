@@ -4,6 +4,7 @@ import { Tabs } from "expo-router";
 
 import Entypo from "@expo/vector-icons/Entypo";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 import {
   triggerHapticFeedback,
@@ -130,10 +131,10 @@ export default function TabLayout() {
             headerShown: true,
             tabBarItemStyle: { display: "flex" },
             tabBarIcon: ({ focused }) => (
-              <Entypo
-                name="info-with-circle"
+              <FontAwesome6
+                name="gear"
                 size={38}
-                style={{ color: focused ? theme.accent : theme.secondary }}
+                color={focused ? theme.accent : theme.secondary}
               />
             ),
           }}

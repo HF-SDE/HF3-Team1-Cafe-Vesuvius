@@ -1,5 +1,12 @@
 import { useState, useEffect } from "react";
-import { StyleSheet, View, Text, Modal } from "react-native";
+import {
+  StyleSheet,
+  View,
+  Text,
+  Modal,
+  KeyboardAvoidingView,
+  FlatList,
+} from "react-native";
 
 import { useLocalSearchParams } from "expo-router";
 import { useNavigation } from "@react-navigation/native";
@@ -189,7 +196,8 @@ export default function EditCreateUserPage() {
       buttonTitle="Cancel"
       error={error}
     >
-      <View style={styles.container}>
+      <KeyboardAvoidingView style={styles.container}>
+        {/* Field Above the FlatList */}
         <View>
           <CheckPermission
             requiredPermission={[
@@ -235,7 +243,7 @@ export default function EditCreateUserPage() {
                 isHighlighted={errorMessages.includes("initials")}
               />
               <View style={styles.activeSwitchContainer}>
-                <Text style={[styles.permissionsTitle, { color: theme.text }]}>
+                <Text style={[styles.activeLabel, { color: theme.text }]}>
                   Active
                 </Text>
 
@@ -246,10 +254,9 @@ export default function EditCreateUserPage() {
               </View>
             </View>
           </CheckPermission>
-
           <View
             style={[
-              styles.buttonContainer2,
+              styles.buttonContainer,
               { backgroundColor: theme.background },
             ]}
           >
@@ -264,51 +271,46 @@ export default function EditCreateUserPage() {
                 title="Set password"
                 onPress={() => setIsModalVisible(true)}
                 isHighlighted={errorMessages.includes("password")}
+                noMargin
               />
             </CheckPermission>
           </View>
+        </View>
+
+        {/* FlatList Section */}
+        <Text
+          style={[
+            styles.permissionsTitle,
+            { color: theme.text, borderBottomColor: theme.primary },
+          ]}
+        >
+          Permissions
+        </Text>
+        <PermissionsTabView
+          id={id}
+          permissions={permissions ? permissions : []}
+          userPermissions={user.UserPermissions ? user.UserPermissions : []}
+          onPermissionToggle={handlePermissionToggle}
+        />
+
+        {/* Field Below the FlatList */}
+        <View style={styles.footer}>
+          <Button title="Cancel" onPress={() => navigation.goBack()} />
 
           <CheckPermission
-            requiredPermission={["administrator:permission:view"]}
-            showIfNotPermitted
+            requiredPermission={[
+              id !== "new"
+                ? "administrator:users:update"
+                : "administrator:users:create",
+            ]}
           >
-            <Text
-              style={{ color: theme.text, fontSize: 18, fontWeight: "bold" }}
-            >
-              Permissions
-            </Text>
-            <View>
-              <PermissionsTabView
-                id={id}
-                permissions={permissions ? permissions : []}
-                userPermissions={
-                  user.UserPermissions ? user.UserPermissions : []
-                }
-                onPermissionToggle={handlePermissionToggle}
-              />
-            </View>
+            <Button
+              title={id !== "new" ? "Save" : "Create"}
+              onPress={handleSave}
+            />
           </CheckPermission>
         </View>
-
-        <View style={styles.buttonContainer}>
-          <View style={styles.buttonContainer2}>
-            <Button title="Cancel" onPress={() => navigation.goBack()} />
-
-            <CheckPermission
-              requiredPermission={[
-                id !== "new"
-                  ? "administrator:users:update"
-                  : "administrator:users:create",
-              ]}
-            >
-              <Button
-                title={id !== "new" ? "Save" : "Create"}
-                onPress={handleSave}
-              />
-            </CheckPermission>
-          </View>
-        </View>
-      </View>
+      </KeyboardAvoidingView>
       <Modal
         animationType="none"
         transparent={true}
@@ -341,47 +343,24 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
 
-  input: {
-    height: 40,
-    marginBottom: 15,
-  },
   initialsInput: {
     maxWidth: "50%",
   },
-  permissionsContainer: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
+
   permissionsTitle: {
-    fontSize: 18,
+    fontSize: 24,
     fontWeight: "bold",
-    marginBottom: 10,
-  },
-  permissionItem: {
-    padding: 10,
-    borderBottomWidth: 1,
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  permissionDescription: {
-    marginTop: 5,
-    fontSize: 14,
-    color: "#555",
-  },
-  errorText: {
-    color: "red",
+    marginTop: 15,
+    borderBottomWidth: 5,
     textAlign: "center",
   },
-  buttonContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    position: "absolute",
-    width: "100%",
-    bottom: 0,
-    alignSelf: "center",
+
+  activeLabel: {
+    fontSize: 16,
+    fontWeight: "bold",
   },
-  buttonContainer2: {
+
+  buttonContainer: {
     flexDirection: "row",
     justifyContent: "space-between",
     width: "100%",
@@ -410,5 +389,14 @@ const styles = StyleSheet.create({
     minHeight: 340,
     padding: 10,
     borderRadius: 10,
+  },
+
+  footer: {
+    display: "flex",
+    flexDirection: "row",
+  },
+  input: {
+    height: 40,
+    marginBottom: 15,
   },
 });
