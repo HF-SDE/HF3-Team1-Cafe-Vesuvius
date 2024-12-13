@@ -5,7 +5,6 @@ import {
   StyleSheet,
   Text,
   View,
-  Pressable,
   TouchableOpacity,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
@@ -20,6 +19,7 @@ import TextIconInput from "@/components/TextIconInput";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import Button from "@/components/DefaultButton";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import NewReservationsItem from "@/components/reservations/NewReservationsItem";
 
 interface ModalScreenProps {
   onClose: () => void;
@@ -84,7 +84,6 @@ export default function NewReservationModal({
     ["name", "phone", "email", "amount"],
     reservation
   );
-  const disabledCreateButton = tableSelect !== tableSelectNeed;
 
   /**
    * Handle the create reservation
@@ -291,7 +290,7 @@ export default function NewReservationModal({
             }
 
             return (
-              <Item
+              <NewReservationsItem
                 table={item}
                 setTableSelect={setTableSelect}
                 tableSelect={tableSelect}
@@ -307,12 +306,6 @@ export default function NewReservationModal({
         />
       )}
       <View style={styles.buttonContainer}>
-        {/* <Pressable
-          style={[styles.cancelButton, { backgroundColor: theme.accent }]}
-          onPress={onClose}
-        >
-          <Text style={[styles.buttonText, { color: theme.text }]}>Cancel</Text>
-        </Pressable> */}
         <Button
           title="Cancel"
           onPress={onClose}
@@ -320,20 +313,6 @@ export default function NewReservationModal({
           textColor={theme.text}
         />
         {page === 1 ? (
-          // <Pressable
-          //   style={[
-          //     styles.mainButton,
-          //     disabledButton
-          //       ? { backgroundColor: `${theme.primary}60` }
-          //       : { backgroundColor: theme.primary },
-          //   ]}
-          //   onPress={() => setPage(2)}
-          //   disabled={disabledButton}
-          // >
-          //   <Text style={[styles.buttonText, { color: theme.background }]}>
-          //     Next
-          //   </Text>
-          // </Pressable>
           <Button
             title={"Next"}
             onPress={() => setPage(2)}
@@ -343,20 +322,6 @@ export default function NewReservationModal({
             }
           />
         ) : (
-          // <Pressable
-          //   style={[
-          //     styles.mainButton,
-          //     disabledCreateButton
-          //       ? { backgroundColor: `${theme.primary}60` }
-          //       : { backgroundColor: theme.primary },
-          //   ]}
-          //   onPress={handleCreate}
-          //   disabled={disabledCreateButton}
-          // >
-          //   <Text style={[styles.buttonText, { color: theme.background }]}>
-          //     Create
-          //   </Text>
-          // </Pressable>
           <Button title={"Create"} onPress={handleCreate} />
         )}
       </View>
@@ -427,142 +392,6 @@ function validateTextInput(
 }
 
 /**
- * Table Props
- * @interface TableProps
- * @typedef {TableProps}
- */
-interface TableProps {
-  table: Table;
-  tableSelect: number;
-  tableSelectNeed: number;
-  setTableSelect: Dispatch<SetStateAction<number>>;
-  reservation: [Reservation, Dispatch<SetStateAction<Reservation>>];
-  disabled: boolean;
-}
-
-/**
- * The item component for the flatlist
- * @param {TableProps} props - The props for the item
- */
-function Item(props: TableProps): ReactElement {
-  const disabled = areItemDisabled(
-    props.disabled,
-    props.table,
-    props.tableSelect,
-    props.tableSelectNeed,
-    [props.reservation[0], props.reservation[1]]
-  );
-  const theme = useThemeColor();
-
-  const selected = areItemSelected(props.table, props.reservation[0]);
-
-  function onPress() {
-    if (selected) {
-      props.reservation[1]({
-        ...props.reservation[0],
-        Tables: [
-          ...props.reservation[0].Tables!.filter(
-            (table) => table.id !== props.table.id
-          ),
-        ],
-      });
-      props.setTableSelect(props.tableSelect - 1);
-    } else {
-      props.reservation[1]({
-        ...props.reservation[0],
-        Tables: [...props.reservation[0].Tables!, props.table],
-      });
-      props.setTableSelect(props.tableSelect + 1);
-    }
-  }
-
-  return (
-    <Pressable
-      style={
-        selected
-          ? { ...styles.item, backgroundColor: theme.accent }
-          : disabled
-          ? {
-              ...styles.item,
-              backgroundColor: `${theme.primary}60`,
-              borderColor: theme.background,
-            }
-          : {
-              ...styles.item,
-              backgroundColor: theme.primary,
-              borderColor: theme.background,
-            }
-      }
-      onPress={onPress}
-      disabled={disabled}
-    >
-      <Text
-        style={[
-          { fontWeight: "bold", fontSize: 18 },
-          selected
-            ? { color: theme.text }
-            : disabled
-            ? { color: theme.background }
-            : { color: theme.background },
-        ]}
-      >
-        {props.table.number}
-      </Text>
-    </Pressable>
-  );
-}
-
-/**
- * Check if the item need to be disabled
- * @param {Table} table - The table to check
- * @param {number} tableSelect - The number of tables selected
- * @param {number} tableSelectNeed - The number of tables needed
- * @param {[Reservation, Dispatch<SetStateAction<Reservation>>]} action - The action to update the reservation
- * @returns {boolean} - True if the item should be disabled, false otherwise
- */
-function areItemDisabled(
-  disabled: boolean,
-  table: Table,
-  tableSelect: number,
-  tableSelectNeed: number,
-  action: [Reservation, Dispatch<SetStateAction<Reservation>>]
-): boolean {
-  if (disabled) return true;
-
-  if (action[0].Tables) {
-    for (const key in action[0].Tables) {
-      if (action[0].Tables[key].id === table.id) {
-        return false;
-      }
-    }
-    if (tableSelect === tableSelectNeed) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-  return true;
-}
-
-/**
- * Check if the item is selected
- * @param {Table} table
- * @param {Reservation} reservation
- * @returns {boolean}
- */
-function areItemSelected(table: Table, reservation: Reservation): boolean {
-  if (reservation.Tables) {
-    for (const key in reservation.Tables) {
-      if (reservation.Tables[key].id === table.id) {
-        return true;
-      }
-    }
-    return false;
-  }
-  return true;
-}
-
-/**
  * Check if all keys are defined in the object
  * @template {Record<string, any>} T - The type of the object
  * @param {string[]} keys - The keys to check
@@ -588,16 +417,6 @@ const styles = StyleSheet.create({
     zIndex: 2,
     borderRadius: 20,
     padding: 10,
-  },
-  item: {
-    flex: 1,
-    maxWidth: "25%",
-    alignItems: "center",
-    width: "100%",
-
-    padding: 10,
-    borderWidth: 1.5,
-    borderRadius: 3,
   },
   itemDisabled: {
     flex: 1,
