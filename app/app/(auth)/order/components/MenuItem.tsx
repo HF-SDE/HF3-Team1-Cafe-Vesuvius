@@ -4,7 +4,7 @@ import MenuItemEdit from "./MenuItemEdit";
 import { useState } from "react";
 import { ICartActions } from "@/types/cartReducer.types";
 import { Menu } from "../new-order";
-import { canBeMade, updateStock, useStockContext } from "@/utils/menu";
+import { getMissingItems, updateStock, useStockContext } from "@/utils/menu";
 
 interface IMenuItem {
   menuItem: Menu;
@@ -17,12 +17,6 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
   const { stock, setStock } = useStockContext();
 
   const [showModal, setShowModal] = useState(false);
-
-  function addNote() {
-    if (!cartActions.getCartItemQuantity(menuItem)) return;
-
-    setShowModal(true);
-  }
 
   function getImage() {
     const images = require.context(
@@ -38,10 +32,10 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
   const image = getImage();
 
-  const cantBeMade = !canBeMade(menuItem, stock);
+  const missingItems = getMissingItems(menuItem, stock);
 
   function handleAddItem() {
-    if (cantBeMade) return;
+    if (missingItems.length > 0) return;
 
     const cartItem = cartActions.getCartItems(menuItem.id)[0];
 
@@ -60,10 +54,40 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
   return (
     <TouchableOpacity
       onPress={handleAddItem}
-      onLongPress={() => addNote()}
-      style={{ opacity: cantBeMade ? 0.5 : 1 }}
+      onLongPress={() => setShowModal(true)}
     >
-      {cantBeMade && <View></View>}
+      {missingItems.length > 0 && (
+        <View
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            justifyContent: "center",
+            alignItems: "center",
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            borderRadius: 10,
+            zIndex: 1,
+          }}
+        >
+          <Text
+            style={{
+              color: theme.background,
+              fontSize: 24,
+              fontWeight: "bold",
+            }}
+          >
+            No more:
+          </Text>
+
+          {missingItems.map((item) => (
+            <Text key={item} style={{ color: theme.background, fontSize: 20 }}>
+              {item}
+            </Text>
+          ))}
+        </View>
+      )}
       <Image source={image} style={[styles.image]} />
 
       <Text

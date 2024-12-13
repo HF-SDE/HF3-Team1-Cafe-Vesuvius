@@ -6,7 +6,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import SwipeRow from "./components/SwipeRow";
 import SwipeIcons from "./components/SwipeIcons";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
-import { canBeMade, updateStock, useStockContext } from "@/utils/menu";
+import { getMissingItems, updateStock, useStockContext } from "@/utils/menu";
 
 interface INoteModal {
   show: boolean;
@@ -27,7 +27,7 @@ export default function MenuItemEditModal({
 
   const { stock, setStock } = useStockContext();
 
-  const cantBeMade = !canBeMade(menuItem, stock);
+  const cantBeMade = getMissingItems(menuItem, stock).length > 0;
 
   function handleAddInstance() {
     if (cantBeMade) return;
@@ -92,38 +92,12 @@ export default function MenuItemEditModal({
           />
         </View>
 
-        <Pressable
-          style={{
-            height: 60,
-            width: "70%",
-            backgroundColor: theme.primary,
-            borderRadius: 10,
-            justifyContent: "center",
-            alignItems: "center",
-            alignSelf: "center",
-            marginTop: 20,
-            position: "absolute",
-            bottom: 110,
-            opacity: cantBeMade ? 0.5 : 1,
-          }}
-          onPress={handleAddInstance}
-          disabled={cantBeMade}
-        >
-          <Text
-            style={{
-              color: theme.background,
-              fontSize: 20,
-            }}
-          >
-            Add instance
-          </Text>
-        </Pressable>
-
         <FooterButtons
-          confirmText="Save"
+          confirmText="Add instance"
           cancelText="Close"
           onCancel={handleCancel}
-          onConfirm={handleConfirm}
+          onConfirm={handleAddInstance}
+          confirmDisabled={cantBeMade}
         />
       </View>
     </Modal>
