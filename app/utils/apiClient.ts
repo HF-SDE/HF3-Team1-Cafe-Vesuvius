@@ -36,10 +36,6 @@ apiClient.interceptors.request.use(
       }
     } catch (error) {
       await setStorageItemAsync("token", null);
-      console.error(
-        "Session expired or refresh failed. Logging out the user.",
-        error
-      );
       router.replace("/login");
     }
 
@@ -83,9 +79,6 @@ apiClient.interceptors.response.use(
 
         // If refresh failed, log out the user and clear the token
         await setStorageItemAsync("token", null);
-        console.error(
-          "Session expired or refresh failed. Logging out the user."
-        );
         router.replace("/login");
       }
     } catch (error) {
@@ -128,7 +121,6 @@ const isTokenExpired = (token: string): boolean => {
     const currentTime = Math.floor(Date.now() / 1000);
     return decodedPayload.exp < currentTime;
   } catch (error) {
-    console.error("Invalid token:", error);
     return true; // Treat as expired if token is invalid
   }
 };
@@ -147,7 +139,6 @@ const getNewAccessToken = async (
     // Check if the response contains the refresh token
     const refreshToken = refreshResponse.data?.data?.refreshToken?.token;
     if (!refreshToken) {
-      console.error("Failed to retrieve refresh token");
       throw new Error("Failed to retrieve refresh token");
     }
 
@@ -159,7 +150,6 @@ const getNewAccessToken = async (
     // Check if the response contains the access token
     const accessToken = accessResponse.data?.data?.accessToken?.token;
     if (!accessToken) {
-      console.error("Failed to retrieve access token");
       throw new Error("Failed to retrieve access token");
     }
 
@@ -169,7 +159,6 @@ const getNewAccessToken = async (
     // Step 4: Return the new access token
     return accessToken;
   } catch (error) {
-    console.error("Error while refreshing access token:", error);
     throw new Error("Error while refreshing access token");
   }
 };
