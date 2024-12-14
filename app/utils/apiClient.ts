@@ -63,19 +63,11 @@ apiClient.interceptors.response.use(
         if (!originalRequest._retry) {
           originalRequest._retry = true;
 
-          const currentAccessToken = await getStorageItemAsync("token");
-
-          if (currentAccessToken) {
-            // Attempt to get a new access token using the refresh token
-            const newAccessToken = await getNewAccessToken(currentAccessToken);
-
-            if (newAccessToken) {
-              originalRequest.headers["Authorization"] =
-                getAuthHeaderFormat(newAccessToken);
-              return localApiClient(originalRequest); // Retry the original request
-            }
+          const authHeader = await getAuthHeader();
+          if (authHeader) {
+            originalRequest.headers["Authorization"] = authHeader;
           }
-        }
+        } 
 
         // If refresh failed, log out the user and clear the token
         await setStorageItemAsync("token", null);

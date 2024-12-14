@@ -127,7 +127,7 @@ export default function Index() {
           disabled={isLoading}
         >
           <Text style={[styles.buttonText, { color: theme.background }]}>
-            Sign In
+            {isLoading ? "Signing in..." : "Sign In"}
           </Text>
         </TouchableOpacity>
       </KeyboardAvoidingView>
