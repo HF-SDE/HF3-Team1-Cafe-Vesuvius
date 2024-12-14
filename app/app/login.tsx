@@ -7,6 +7,7 @@ import {
   StyleSheet,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from "react-native";
 import LogoLight from "../components/icons/CaféVesuviusLogo2.svg";
 import LogoDark from "../components/icons/CaféVesuviusLogo3.svg";
@@ -29,11 +30,10 @@ export default function Index() {
   const [password, setPassword] = useState("");
   const [isUsernameEmpty, setIsUsernameEmpty] = useState(false);
   const [isPasswordEmpty, setIsPasswordEmpty] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
-  const colorScheme = useColorScheme(); // Detect light or dark mode
-  const Logo = colorScheme === "dark" ? LogoDark : LogoLight; // Choose logo based on theme
+  const colorScheme = useColorScheme();
+  const Logo = colorScheme === "dark" ? LogoDark : LogoLight;
 
   const handleLogin = async () => {
     const trimmedUsername = username.trim();
@@ -126,9 +126,23 @@ export default function Index() {
           onPress={handleLogin}
           disabled={isLoading}
         >
-          <Text style={[styles.buttonText, { color: theme.background }]}>
-            {isLoading ? "Signing in..." : "Sign In"}
-          </Text>
+          {isLoading ? (
+            <View style={styles.loadingContainer}>
+              <Text
+                style={[
+                  styles.buttonText,
+                  { color: theme.background, marginLeft: 8 },
+                ]}
+              >
+                Signing in
+              </Text>
+              <ActivityIndicator size="small" color={theme.background} />
+            </View>
+          ) : (
+            <Text style={[styles.buttonText, { color: theme.background }]}>
+              Sign In
+            </Text>
+          )}
         </TouchableOpacity>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -187,5 +201,10 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 16,
     textAlign: "center",
+  },
+  loadingContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
   },
 });

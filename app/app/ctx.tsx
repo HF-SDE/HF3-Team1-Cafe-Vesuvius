@@ -54,6 +54,7 @@ export default function SessionProvider(props: React.PropsWithChildren) {
               headers: {
                 "Content-Type": "application/json",
               },
+              timeout: 5000, // Timeout in milliseconds (e.g., 10 seconds)
               validateStatus: (status) => status < 500, // Only throw errors for 500+ status codes
             });
 
