@@ -36,21 +36,21 @@ export default function Index() {
   const Logo = colorScheme === "dark" ? LogoDark : LogoLight; // Choose logo based on theme
 
   const handleLogin = async () => {
-    const trimedUsername = username.trim();
-    const trimedPassword = password.trim();
+    const trimmedUsername = username.trim();
+    const trimmedPassword = password.trim();
 
-    setUsername(trimedUsername);
-    setPassword(trimedPassword);
+    setUsername(trimmedUsername);
+    setPassword(trimmedPassword);
 
-    const isUsernameValid = trimedUsername !== "";
-    const isPasswordValid = trimedPassword !== "";
+    const isUsernameValid = trimmedUsername !== "";
+    const isPasswordValid = trimmedPassword !== "";
 
     setIsUsernameEmpty(!isUsernameValid);
     setIsPasswordEmpty(!isPasswordValid);
 
     if (isUsernameValid && isPasswordValid) {
       setIsLoading(true);
-      const signInResult = await signIn(trimedUsername, trimedPassword);
+      const signInResult = await signIn(trimmedUsername, trimmedPassword);
 
       if (signInResult === "authenticated") {
         await triggerHapticFeedback(NotificationFeedbackType.Success);
