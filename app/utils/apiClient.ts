@@ -5,6 +5,7 @@ import {
 } from "../hooks/useStorageState";
 import { router } from "expo-router";
 
+// Set up the proxy agent
 const baseURL = process.env.EXPO_PUBLIC_API_URL;
 const apiClient = axios.create({
   baseURL: baseURL,
@@ -19,126 +20,162 @@ const localApiClient = axios.create({
   },
 });
 
-// Shared flag to track token refresh
-let isRefreshing = false;
-let refreshSubscribers: ((token: string) => void)[] = [];
-
-// Add request interceptor
+// Axios request interceptor
 apiClient.interceptors.request.use(
   async (config) => {
     try {
+      // Skip adding Authorization header for token refresh requests
       if (config.url === "/refreshToken" || config.url === "/accessToken") {
         return config;
       }
 
+      // Set the Authorization header before the request is sent
       const authHeader = await getAuthHeader();
       if (authHeader) {
         config.headers.Authorization = authHeader;
       }
-    } catch {
+    } catch (error) {
       await setStorageItemAsync("token", null);
+      console.error(
+        "Session expired or refresh failed. Logging out the user.",
+        error
+      );
       router.replace("/login");
     }
 
     return config;
   },
-  (error) => Promise.reject(error)
+  (error) => {
+    // Handle errors in request setup
+    return Promise.reject(error);
+  }
 );
 
-// Add response interceptor
 apiClient.interceptors.response.use(
-  async (response) => response,
+  async (response) => {
+    return response;
+  },
   async (error) => {
-    const originalRequest = error.config;
+    try {
+      if (
+        error.response &&
+        (error.response.status === 401 || error.response.status === 403)
+      ) {
+        const originalRequest = error.config; // The original request that caused the error
 
-    // Check for 401 or 403 errors
-    if (
-      error.response &&
-      (error.response.status === 401 || error.response.status === 403)
-    ) {
-      if (!originalRequest._retry) {
-        originalRequest._retry = true;
+        // If we haven't already tried to refresh the token
+        if (!originalRequest._retry) {
+          originalRequest._retry = true;
 
-        if (!isRefreshing) {
-          isRefreshing = true;
+          const currentAccessToken = await getStorageItemAsync("token");
 
-          try {
-            const newToken = await refreshAccessToken();
+          if (currentAccessToken) {
+            // Attempt to get a new access token using the refresh token
+            const newAccessToken = await getNewAccessToken(currentAccessToken);
 
-            // Notify all subscribers with the new token
-            refreshSubscribers.forEach((callback) => callback(newToken));
-            refreshSubscribers = []; // Clear the subscribers
-            isRefreshing = false;
-
-            // Retry the original request with the new token
-            originalRequest.headers.Authorization =
-              getAuthHeaderFormat(newToken);
-            return apiClient(originalRequest);
-          } catch {
-            isRefreshing = false;
-            await setStorageItemAsync("token", null);
-            router.replace("/login");
+            if (newAccessToken) {
+              originalRequest.headers["Authorization"] =
+                getAuthHeaderFormat(newAccessToken);
+              return localApiClient(originalRequest); // Retry the original request
+            }
           }
         }
 
-        // If a refresh is already in progress, queue the request
-        return new Promise((resolve, reject) => {
-          refreshSubscribers.push((newToken: string) => {
-            originalRequest.headers.Authorization =
-              getAuthHeaderFormat(newToken);
-            resolve(apiClient(originalRequest));
-          });
-        });
+        // If refresh failed, log out the user and clear the token
+        await setStorageItemAsync("token", null);
+        console.error(
+          "Session expired or refresh failed. Logging out the user."
+        );
+        router.replace("/login");
       }
+    } catch (error) {
+      console.error("Error during response handling:", error);
     }
 
     return Promise.reject(error);
   }
 );
 
-// Helper functions
+// Function to set the Authorization header
 async function getAuthHeader(): Promise<string | undefined> {
-  const token = await getStorageItemAsync("token");
-  if (token && !isTokenExpired(token)) {
-    return getAuthHeaderFormat(token);
-  }
+  let token = await getStorageItemAsync("token");
+
   if (token) {
-    return getAuthHeaderFormat(await refreshAccessToken());
+    if (isTokenExpired(token)) {
+      const newToken = await getNewAccessToken(token); // Await the token
+      return getAuthHeaderFormat(newToken);
+    } else {
+      return getAuthHeaderFormat(token);
+    }
+  } else {
+    return undefined;
   }
-  throw new Error("No token available");
 }
 
-async function refreshAccessToken(): Promise<string> {
-  const token = await getStorageItemAsync("token");
-  if (!token) throw new Error("No token available for refresh");
+// Function to check if the access token is expired
+const isTokenExpired = (token: string): boolean => {
+  try {
+    // Split the token to get the payload
+    const payloadBase64 = token.split(".")[1];
+    const decodedPayload = JSON.parse(atob(payloadBase64));
 
-  const refreshResponse = await localApiClient.get("/refreshToken", {
-    headers: {
-      Authorization: getAuthHeaderFormat(token),
-    },
-  });
-  const refreshToken = refreshResponse.data?.data?.refreshToken?.token;
-  if (!refreshToken) throw new Error("Failed to get refresh token");
+    // Check if the `exp` field exists
+    if (!decodedPayload.exp) {
+      throw new Error("Token does not have an exp field");
+    }
 
-  const accessResponse = await localApiClient.post("/accessToken", {
-    token: refreshToken,
-  });
-  const newAccessToken = accessResponse.data?.data?.accessToken?.token;
-  if (!newAccessToken) throw new Error("Failed to get access token");
+    // Compare `exp` with the current time (in seconds)
+    const currentTime = Math.floor(Date.now() / 1000);
+    return decodedPayload.exp < currentTime;
+  } catch (error) {
+    console.error("Invalid token:", error);
+    return true; // Treat as expired if token is invalid
+  }
+};
 
-  await setStorageItemAsync("token", newAccessToken);
-  return newAccessToken;
-}
+const getNewAccessToken = async (
+  expiredToken: string
+): Promise<string | undefined> => {
+  try {
+    // Step 1: Call /refreshToken with the expired token in the Authorization header
+    const refreshResponse = await localApiClient.get("/refreshToken", {
+      headers: {
+        Authorization: getAuthHeaderFormat(expiredToken),
+      },
+    });
+
+    // Check if the response contains the refresh token
+    const refreshToken = refreshResponse.data?.data?.refreshToken?.token;
+    if (!refreshToken) {
+      console.error("Failed to retrieve refresh token");
+      throw new Error("Failed to retrieve refresh token");
+    }
+
+    // Step 2: Call /accessToken with the refresh token in the body
+    const accessResponse = await localApiClient.post("/accessToken", {
+      token: refreshToken,
+    });
+
+    // Check if the response contains the access token
+    const accessToken = accessResponse.data?.data?.accessToken?.token;
+    if (!accessToken) {
+      console.error("Failed to retrieve access token");
+      throw new Error("Failed to retrieve access token");
+    }
+
+    // Step 3: Save the new access token using setStorageItemAsync
+    await setStorageItemAsync("token", accessToken);
+
+    // Step 4: Return the new access token
+    return accessToken;
+  } catch (error) {
+    console.error("Error while refreshing access token:", error);
+    throw new Error("Error while refreshing access token");
+  }
+};
 
 const getAuthHeaderFormat = (token: string | undefined): string | undefined => {
   return token ? `Bearer ${token}` : undefined;
-};
-
-const isTokenExpired = (token: string): boolean => {
-  const payloadBase64 = token.split(".")[1];
-  const decodedPayload = JSON.parse(atob(payloadBase64));
-  const currentTime = Math.floor(Date.now() / 1000);
-  return decodedPayload.exp < currentTime;
 };
 
 export default apiClient;
