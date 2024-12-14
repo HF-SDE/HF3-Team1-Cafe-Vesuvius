@@ -11,6 +11,10 @@ import { getHttpStatusCode } from '@utils/Utils';
 
 import * as AuthService from '../services/auth.service';
 
+// Utility function to get the client's IP address
+const getClientIp = (req: any): string =>
+  req.headers['x-forwarded-for'] as string;
+
 /**
  * Handles user login, authenticates with passport, and returns tokens on successful login.
  * @param {Request<unknown, APIResponse<AccessResult>, LoginRequestBody>} req - The request object containing `username` and `password` in the body.
@@ -26,7 +30,7 @@ export async function login(
   const userObject: LoginRequestBody = {
     username,
     password,
-    ip: req.headers['x-forwarded-for'] as string,
+    ip: getClientIp(req),
   };
 
   const response = await AuthService.login(userObject);
@@ -47,7 +51,7 @@ export async function logout(
   const { token } = req.body;
   const response = await AuthService.logout({
     token,
-    ip: req.headers['x-forwarded-for'] as string,
+    ip: getClientIp(req),
   });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
@@ -66,7 +70,7 @@ export async function getAccessToken(
   const { token } = req.body;
   const response = await AuthService.accessToken({
     token,
-    ip: req.headers['x-forwarded-for'] as string,
+    ip: getClientIp(req),
   });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
@@ -104,7 +108,7 @@ export async function getRefreshToken(
 
   const response = await AuthService.refreshToken({
     token,
-    ip: req.headers['x-forwarded-for'] as string,
+    ip: getClientIp(req),
   });
 
   res.status(getHttpStatusCode(response.status)).json(response).end();
