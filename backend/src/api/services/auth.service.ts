@@ -315,33 +315,24 @@ async function addFailedAttempt(
   ipAddress: string,
 ): Promise<void> {
   const key = getCacheKey(username, ipAddress);
+
   const now = new Date();
 
   await mutex.runExclusive(() => {
     // Initialize the array if it doesn't exist
-
-    if (
-      Object.prototype.hasOwnProperty.call(loginAttempts, key) &&
-      // eslint-disable-next-line security/detect-object-injection
-      !loginAttempts[key]
-    ) {
-      // eslint-disable-next-line security/detect-object-injection
-      loginAttempts[key] = [];
+    if (!Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
+      loginAttempts[key] = []; // Create a new array for the key
     }
 
-    // Remove old attempts outside the time window
-    if (Object.prototype.hasOwnProperty.call(loginAttempts, key)) {
-      // eslint-disable-next-line security/detect-object-injection
-      loginAttempts[key] = loginAttempts[key].filter(
-        (attemptTime) =>
-          now.getTime() - attemptTime.getTime() <
-          config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
-      );
+    // Filter out old attempts outside the time window
+    loginAttempts[key] = loginAttempts[key].filter(
+      (attemptTime) =>
+        now.getTime() - attemptTime.getTime() <
+        config.ATTEMPT_WINDOW_MINUTES * 60 * 1000,
+    );
 
-      // Add the new failed attempt
-      // eslint-disable-next-line security/detect-object-injection
-      loginAttempts[key].push(now);
-    }
+    // Add the new failed attempt
+    loginAttempts[key].push(now);
   });
 }
 

@@ -278,4 +278,25 @@ describe('Auth API Endpoints', () => {
       }
     }
   });
+  it('should make sure that the failed login cash is cleared if the user loges in', async () => {
+    const loginResponseWrong = await loginUser(
+      'tjener',
+      'd3JvbmdwYXNzd29yZA==',
+    );
+    expect(loginResponseWrong.status).toBe(401);
+    const loginResponseCorrect = await loginUser('tjener', 'ODc2NTQzMjE=');
+    expect(loginResponseCorrect.status).toBe(200);
+
+    const iterations = config.MAX_FAILED_LOGIN_ATTEMPTS + 5;
+    let count = 0;
+    for (let i = 0; i < iterations; i++) {
+      count++;
+      const loginResponse = await loginUser('tjener', 'd3JvbmdwYXNzd29yZA==');
+      if (count > config.MAX_FAILED_LOGIN_ATTEMPTS) {
+        expect(loginResponse.status).toBe(429);
+      } else {
+        expect(loginResponse.status).toBe(401);
+      }
+    }
+  });
 });
