@@ -1,6 +1,5 @@
 import { axiosInstance } from './axiosInstance';
 
-
 /**
  * Login the user.
  * @returns {Promise<string>} A promise that resolves to a token.
@@ -19,7 +18,6 @@ export async function login(): Promise<string> {
 
   return token;
 }
-
 
 /**
  * Logout the user.
@@ -45,8 +43,9 @@ export async function logout(): Promise<void> {
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function createRandomString(length: number): Promise<string> {
   // eslint-disable-next-line no-secrets/no-secrets
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  let result = "";
+  const chars =
+    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
   for (let i = 0; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }

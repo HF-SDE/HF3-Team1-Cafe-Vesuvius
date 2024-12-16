@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { Query } from "express-serve-static-core";
+import { Query } from 'express-serve-static-core';
 
 export enum Status {
   Unauthorized = 'Unauthorized',
@@ -20,11 +20,11 @@ export enum Status {
   InvalidCredentials = 'InvalidCredentials',
   TooManyRequests = 'TooManyRequests',
 
-  WsUnauthorized = "Unauthorized WebSocket",
-  WsClose = "Close WebSocket",
-  WsFailed = "Failed WebSocket",
-  WsForbidden = "Forbidden WebSocket",
-  wsInvalidDetails = "Invalid Details WebSocket",
+  WsUnauthorized = 'Unauthorized WebSocket',
+  WsClose = 'Close WebSocket',
+  WsFailed = 'Failed WebSocket',
+  WsForbidden = 'Forbidden WebSocket',
+  wsInvalidDetails = 'Invalid Details WebSocket',
 }
 export interface APIResponse<T = null | undefined> {
   status: Status;
@@ -36,7 +36,6 @@ export interface IAPIResponse {
   status: Status;
   message?: string;
 }
-
 
 export type ExpressFunction = (
   req: Request,

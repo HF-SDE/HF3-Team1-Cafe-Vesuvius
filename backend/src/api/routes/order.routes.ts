@@ -9,7 +9,6 @@ import { validateParams } from '@middlewares/validate.mw';
 
 const router = new Router();
 
-
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
 
