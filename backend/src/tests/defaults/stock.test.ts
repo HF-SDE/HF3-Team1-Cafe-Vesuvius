@@ -23,7 +23,7 @@ describe('API (Get stock)', () => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       data: expect.arrayContaining([]),
       status: Status.Found,
-      message: 'Stocks item(s) found',
+      message: 'RawMaterial(s) found',
     });
   });
 
@@ -69,15 +69,10 @@ describe('API (Create stock)', () => {
     expect(response.status).toBe(201);
     expect(response.data).toEqual({
       status: Status.Created,
-      message: 'Add new material to stock',
+      message: 'Created new rawMaterial',
     });
 
-    // Integration test
-    const created = await prisma.rawMaterial.findUnique({
-      where: {
-        name,
-      },
-    });
+    const created = await prisma.rawMaterial.findUnique({ where: { name } });
 
     expect(created).not.toBeNull();
   });
@@ -109,14 +104,7 @@ describe('API (Update stock)', () => {
     const response = await axios.put<{
       data: APIResponse<Prisma.RawMaterialUpdateManyMutationInput>;
     }>('/stock', {
-      items: [
-        {
-          id: data?.id,
-          quantity: 10,
-          unit: 'kg',
-          name,
-        },
-      ],
+      items: [{ id: data?.id, quantity: 10, unit: 'kg', name }],
     });
 
     expect(response.status).toBe(200);
@@ -125,26 +113,14 @@ describe('API (Update stock)', () => {
       message: 'Item(s) updated',
     });
 
-    // Integration test
-    const updated = await prisma.rawMaterial.findUnique({
-      where: {
-        name,
-      },
-    });
+    const updated = await prisma.rawMaterial.findUnique({ where: { name } });
 
     expect(updated).not.toBeNull();
   });
 
   it('should fail to update stock with error code 400', async () => {
     await axios
-      .put('/stock', {
-        items: [
-          {
-            quantity: 10,
-            unit: 'kg',
-          },
-        ],
-      })
+      .put('/stock', { items: [{ quantity: 10, unit: 'kg' }] })
       .catch((error: AxiosError) => {
         expect(error.status).toBe(400);
         expect(error.response?.data).toEqual({
