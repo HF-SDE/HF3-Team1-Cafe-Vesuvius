@@ -12,6 +12,12 @@ import { isAllowed } from '@middlewares/isAllowed.mw';
 import { transformPatch, transformPermissions } from '@middlewares/manage.mw';
 import { validateParams } from '@middlewares/validate.mw';
 import { User } from '@prisma/client';
+import { getPermissionSchema } from '@schemas/permission.schemas';
+import {
+  createUserSchema,
+  getUserSchema,
+  updateUserSchema,
+} from '@schemas/user.schemas';
 
 const router = Router();
 
@@ -20,31 +26,31 @@ router.use('/', verifyJWT);
 router.get(
   '/user',
   isAllowed(['administrator:users:view']),
-  getAll<TransformedUser, User>('user', transformUserData),
+  getAll<TransformedUser, User>(getUserSchema, 'user', transformUserData),
 );
 router.get(
   ['/permission', '/permission/:id'],
   isAllowed(['administrator:permission:view']),
   validateParams,
-  getAll('permission'),
+  getAll(getPermissionSchema, 'permission'),
 );
 
 router.post(
   '/user',
   isAllowed(['administrator:users:create']),
   transformPermissions,
-  createRecord('user'),
+  createRecord(createUserSchema, 'user'),
 );
 router.put(
   '/user/:id',
   isAllowed(['administrator:users:update']),
-  updateRecord('user'),
+  updateRecord(updateUserSchema, 'user'),
 );
 router.patch(
   '/user/:id',
   isAllowed(['administrator:users:update']),
   transformPatch,
-  updateRecord('user'),
+  updateRecord(createUserSchema, 'user'),
 );
 
 export default router;

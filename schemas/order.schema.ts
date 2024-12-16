@@ -20,6 +20,12 @@ export default Joi.object({
     .required(),
 });
 
+export const where = Joi.object({
+  id: UuidSchema.optional(),
+  tableId: UuidSchema.optional(),
+  status: Joi.string().valid("toPrepare", "completed", "deliver").optional(),
+});
+
 export const search = Joi.object({
   id: UuidSchema.optional(),
   tableNumber: Joi.number().optional(),

@@ -8,7 +8,7 @@ import Joi from 'joi';
 import { APIResponse, IAPIResponse, Status } from '@api-types/general.types';
 import prisma, { errorResponse, prismaModels } from '@prisma-instance';
 import { Prisma } from '@prisma/client';
-import { capitalize, getSchema } from '@utils/Utils';
+import { capitalize } from '@utils/Utils';
 
 /**
  * Service to get all records from a collection
@@ -20,9 +20,8 @@ import { capitalize, getSchema } from '@utils/Utils';
 export async function getAll(
   prismaModel: prismaModels,
   config: Record<string, unknown> = {},
+  schema: Joi.ObjectSchema,
 ): Promise<APIResponse<any>> {
-  const schema = getSchema(prismaModel, { type: 'where' });
-
   const { err, prismaType, validatedData } = Validate(
     prismaModel,
     config.where,
@@ -52,7 +51,7 @@ export async function getAll(
 export async function create(
   prismaModel: prismaModels,
   data: unknown,
-  schema: Joi.ObjectSchema | undefined = getSchema(prismaModel),
+  schema: Joi.ObjectSchema,
 ): Promise<IAPIResponse> {
   const { err, prismaType, validatedData } = Validate(
     prismaModel,
@@ -88,10 +87,7 @@ export async function update(
   prismaModel: prismaModels,
   id: string,
   data: unknown,
-  isPatch: boolean = false,
-  schema: Joi.ObjectSchema | undefined = getSchema(prismaModel, {
-    type: isPatch ? 'patch' : 'optional',
-  }),
+  schema: Joi.ObjectSchema,
 ): Promise<APIResponse> {
   const { err, prismaType, validatedData } = Validate(
     prismaModel,
