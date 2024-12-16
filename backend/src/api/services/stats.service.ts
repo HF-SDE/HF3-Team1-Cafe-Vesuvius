@@ -76,7 +76,9 @@ export async function stats(): Promise<APIResponse<StatsResponse>> {
       const dayKey = reservation.reservationTime.toISOString().split('T')[0]; // Extracts the date part (YYYY-MM-DD)
 
       // If the group for the day does not exist, create it
-      if (!Object.prototype.hasOwnProperty.call(reservationsGroupedByDays, dayKey)) {
+      if (
+        !Object.prototype.hasOwnProperty.call(reservationsGroupedByDays, dayKey)
+      ) {
         // eslint-disable-next-line security/detect-object-injection
         reservationsGroupedByDays[dayKey] = {
           date: new Date(reservation.reservationTime),

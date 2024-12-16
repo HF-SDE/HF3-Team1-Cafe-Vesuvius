@@ -1,4 +1,6 @@
 import jsdoc from 'eslint-plugin-jsdoc';
+import noSecrets from 'eslint-plugin-no-secrets';
+import pluginSecurity from 'eslint-plugin-security';
 import globals from 'globals';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -6,9 +8,7 @@ import { fileURLToPath } from 'node:url';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import noSecrets from 'eslint-plugin-no-secrets';
 import tsParser from '@typescript-eslint/parser';
-import pluginSecurity from 'eslint-plugin-security';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -44,7 +44,7 @@ export default [
     plugins: {
       jsdoc,
       '@typescript-eslint': typescriptEslint,
-      "no-secrets": noSecrets,
+      'no-secrets': noSecrets,
     },
 
     languageOptions: {
@@ -68,7 +68,7 @@ export default [
     },
 
     rules: {
-      "no-secrets/no-secrets": "error",
+      'no-secrets/no-secrets': 'error',
       'jsdoc/require-jsdoc': [
         'error',
         {
@@ -161,7 +161,10 @@ export default [
         },
       ],
 
-      '@typescript-eslint/promise-function-async': ['error', { allowAny: false }],
+      '@typescript-eslint/promise-function-async': [
+        'error',
+        { allowAny: false },
+      ],
       '@typescript-eslint/no-empty-function': 'error',
       '@typescript-eslint/no-empty-interface': 'error',
       '@typescript-eslint/no-explicit-any': 'off',
@@ -206,7 +209,6 @@ export default [
       'func-style': ['error', 'declaration', { allowArrowFunctions: false }],
       'require-await': 'off',
       'no-empty-function': 'off',
-
     },
   },
 ];

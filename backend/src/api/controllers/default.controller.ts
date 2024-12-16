@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import Joi from 'joi';
 import { ExtendedWebSocket, WSResponse, isWebSocket } from 'websocket-express';
 
 import { ExpressFunction, Status } from '@api-types/general.types';
@@ -24,6 +25,7 @@ const config: Config = configWithoutType as Config;
  * @returns {ExpressFunction} The response object
  */
 export function getAll<T = unknown, D = unknown>(
+  schema: Joi.ObjectSchema,
   model?: prismaModels,
   transform?: (data: T[] & D[]) => T[],
 ): ExpressFunction {
@@ -64,7 +66,8 @@ export function getAll<T = unknown, D = unknown>(
       where: Object.assign({}, req.query, config[model]?.where),
     };
 
-    const response = await DefaultService.getAll(model, modelConfig);
+    const response = await DefaultService.getAll(model, modelConfig, schema);
+
     if (isWebSocket(res)) {
       ws!.send(JSON.stringify(response));
       setInterval(() => {
@@ -84,11 +87,15 @@ export function getAll<T = unknown, D = unknown>(
  * @param {prismaModels} model - The Prisma model to create the record with.
  * @returns {ExpressFunction} The response object
  */
-export function createRecord(model?: prismaModels): ExpressFunction {
+export function createRecord(
+  schema: Joi.ObjectSchema,
+  model?: prismaModels,
+): ExpressFunction {
   return async (req: Request, res: Response): Promise<void> => {
     const response = await DefaultService.create(
       model ?? getModel(req),
       req.body,
+      schema,
     );
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
@@ -100,15 +107,16 @@ export function createRecord(model?: prismaModels): ExpressFunction {
  * @param {prismaModels} model - The Prisma model to update the record in.
  * @returns {ExpressFunction} The response object
  */
-export function updateRecord(model?: prismaModels): ExpressFunction {
+export function updateRecord(
+  schema: Joi.ObjectSchema,
+  model?: prismaModels,
+): ExpressFunction {
   return async (req, res) => {
     const id = (req.params.id || req.query.id) as string;
 
     if (!model) model = getModel(req);
 
-    const isPatch = req.method === 'PATCH';
-
-    const response = await DefaultService.update(model, id, req.body, isPatch);
+    const response = await DefaultService.update(model, id, req.body, schema);
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };
@@ -136,13 +144,21 @@ export function deleteRecord(model?: prismaModels): ExpressFunction {
  * @param {prismaModels} model - The Prisma model to delete the record from.
  * @returns {ExpressFunction} The response object
  */
-export function softDeleteRecord(model?: prismaModels): ExpressFunction {
+export function softDeleteRecord(
+  updateSchema: Joi.ObjectSchema,
+  model?: prismaModels,
+): ExpressFunction {
   return async (req, res) => {
     const id = (req.params.id || req.query.id) as string;
 
     if (!model) model = getModel(req);
 
-    const response = await DefaultService.update(model, id, { active: false });
+    const response = await DefaultService.update(
+      model,
+      id,
+      { active: false },
+      updateSchema,
+    );
 
     res.status(getHttpStatusCode(response.status)).json(response).end();
   };

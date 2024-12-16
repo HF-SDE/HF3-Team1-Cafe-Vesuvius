@@ -35,7 +35,6 @@ export interface GetAccessTokenRequestBody {
   token: string;
 }
 
-
 /**
  * The request body for the logout endpoint.
  */

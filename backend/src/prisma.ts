@@ -24,7 +24,6 @@ export async function errorResponse(
   model: prismaModels,
   operation: keyof typeof Status,
 ): Promise<IAPIResponse> {
-  console.error(err);
   if (err.name == 'PrismaClientValidationError') {
     return {
       status: Status.MissingDetails,
@@ -32,7 +31,10 @@ export async function errorResponse(
     };
   }
 
-  if (err instanceof Prisma.PrismaClientKnownRequestError && operation in Status) {
+  if (
+    err instanceof Prisma.PrismaClientKnownRequestError &&
+    operation in Status
+  ) {
     switch (err.code) {
       case 'P2002':
         return {

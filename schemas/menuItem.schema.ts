@@ -8,7 +8,7 @@ const schema = Joi.object({
   active: Joi.boolean().optional(),
 });
 
-export default schema.append({
+export const create = schema.append({
   RawMaterial_MenuItems: Joi.object({
     createMany: Joi.object({
       data: Joi.array().items(
@@ -22,6 +22,7 @@ export default schema.append({
 });
 
 const keys = Object.keys(schema.describe().keys);
+
 export const optional = schema.fork(keys, (schema) => schema.optional());
 
 export const patch = schema.append({
@@ -37,4 +38,12 @@ export const patch = schema.append({
       ),
     }),
   }),
+});
+
+export const where = Joi.object({
+  id: UuidSchema.optional(),
+  category: Joi.array().items(Joi.string()).optional(),
+  name: Joi.string().min(1).optional(),
+  price: Joi.number().positive().optional(),
+  active: Joi.boolean().optional(),
 });

@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 
 import { APIResponse } from '@api-types/general.types';
+import { StatsResponse } from '@api-types/stats.types';
 import * as StatsService from '@services/stats.service';
 import { getHttpStatusCode } from '@utils/Utils';
-import { StatsResponse } from '@api-types/stats.types';
 
 interface ChangePasswordRequestBody {
   oldPassword: string;
@@ -18,7 +18,14 @@ interface ChangePasswordRequestBody {
  * @param {Response<APIResponse<StatsResponse>>} res - The response object
  * @returns {Promise<void>} The response object
  */
-export async function getStats(req: Request<Record<string, any>, APIResponse<StatsResponse>, ChangePasswordRequestBody>, res: Response<APIResponse<StatsResponse>>): Promise<void> {
+export async function getStats(
+  req: Request<
+    Record<string, any>,
+    APIResponse<StatsResponse>,
+    ChangePasswordRequestBody
+  >,
+  res: Response<APIResponse<StatsResponse>>,
+): Promise<void> {
   const response = await StatsService.stats();
 
   res.status(getHttpStatusCode(response.status)).json(response).end();

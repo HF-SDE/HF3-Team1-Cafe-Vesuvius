@@ -1,7 +1,4 @@
-import Joi from 'joi';
-
-import { APIResponse, Status } from '@api-types/general.types';
-import { prismaModels } from '@prisma-instance';
+import { Status } from '@api-types/general.types';
 
 /**
  * Returns the HTTP status code for a given Status
@@ -55,51 +52,6 @@ export function getHttpStatusCode(status: Status): number {
       return 1013;
     case Status.wsInvalidDetails:
       return 4000;
-  }
-}
-
-/**
- * Returns the default response for a given response code
- * @param {number} code - Response code
- * @returns {APIResponse | undefined} The default response for the given code
- */
-export function defaultResponse(
-  code: number | string,
-): APIResponse | undefined {
-  switch (code) {
-    case Status.Unauthorized:
-    case getHttpStatusCode(Status.Unauthorized):
-      return {
-        status: Status.Unauthorized,
-        message: 'Unauthorized',
-      };
-  }
-}
-
-interface ISchemaOptions {
-  type?: 'default' | 'optional' | 'where' | 'patch';
-}
-
-/**
- * Returns the schema for a given model
- * @param {prismaModels} schemaName - The name of the schema to return
- * @param {ISchemaOptions} options - The options for the schema
- * @returns {Joi.ObjectSchema} The schema for the given model
- */
-export function getSchema(
-  schemaName: prismaModels,
-  { type = 'default' }: ISchemaOptions = {},
-): Joi.ObjectSchema | undefined {
-  // import schema file from schemas folder by schemaName
-  try {
-    const filePath = `../../../schemas/${schemaName}.schema.ts`;
-
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-var-requires, @typescript-eslint/no-unsafe-member-access, security/detect-object-injection, security/detect-non-literal-require
-    const schema = require(filePath)[type] as Joi.ObjectSchema;
-
-    return schema;
-  } catch {
-    return undefined;
   }
 }
 
