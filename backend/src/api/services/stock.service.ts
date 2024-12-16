@@ -3,7 +3,10 @@ import { StockResult, StockUpdate } from '@api-types/stock.types';
 import prisma from '@prisma-instance';
 import { Prisma } from '@prisma/client';
 import { UuidSchema } from '@schemas/general.schemas';
-import { StockCreateSchema, StockUpdateSchema } from '@schemas/stock.schemas';
+import {
+  StockCreateSchema,
+  StockUpdateSchema,
+} from '@schemas/rawMaterial.schema';
 
 /**
  * Service to get all stocks items
@@ -30,10 +33,10 @@ export async function get(id?: string): Promise<APIResponse<StockResult>> {
       omit: {
         createdAt: true,
         updatedAt: true,
-      }
+      },
     });
 
-    if (!result || result.length === 0 && id) {
+    if (!result || (result.length === 0 && id)) {
       return {
         status: Status.NotFound,
         message: 'Stocks item(s) not found',

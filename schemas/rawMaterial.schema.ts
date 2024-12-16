@@ -7,6 +7,8 @@ export const StockCreateSchema = Joi.object({
   unit: Joi.string().required(),
 });
 
+export default StockCreateSchema;
+
 export const StockUpdateSchema = Joi.array()
   .items(
     Joi.object({
