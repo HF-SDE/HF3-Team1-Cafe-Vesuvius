@@ -7,6 +7,7 @@ import {
 } from '@api-types/menu.types';
 import prisma from '@prisma-instance';
 import { MenuItem, Prisma, RawMaterial_MenuItem } from '@prisma/client';
+import { createInput } from '@schemas/menuItem.schema';
 import { getHttpStatusCode } from '@utils/Utils';
 
 interface RawMaterialMenuItem {
@@ -83,7 +84,7 @@ export async function transformMenusItems(
   res: Response,
   next: NextFunction,
 ): Promise<void> {
-  const RawMaterialMenuItems = req.body
+  let RawMaterialMenuItems = req.body
     .RawMaterial_MenuItems as (CustomRawMaterialMenuItem &
     RawMaterial_MenuItem)[];
 
@@ -95,6 +96,19 @@ export async function transformMenusItems(
 
     return;
   }
+
+  const validate = createInput.validate(req.body);
+
+  if (validate.error) {
+    res.status(getHttpStatusCode(Status.InvalidCredentials)).json({
+      status: Status.InvalidCredentials,
+      message: validate.error.message,
+    });
+
+    return;
+  }
+
+  RawMaterialMenuItems = validate.value.RawMaterial_MenuItems;
 
   for (const material of RawMaterialMenuItems) {
     if ('RawMaterial' in material) {

@@ -8,6 +8,20 @@ const schema = Joi.object({
   active: Joi.boolean().optional(),
 });
 
+export const createInput = schema.append({
+  RawMaterial_MenuItems: Joi.array().items(
+    Joi.object({
+      rawMaterialId: UuidSchema.optional(),
+      RawMaterial: Joi.object({
+        id: UuidSchema.optional(),
+      }).optional(),
+      quantity: Joi.number().required(),
+    })
+      .options({ stripUnknown: true })
+      .or("rawMaterialId", "RawMaterial")
+  ),
+});
+
 export const create = schema.append({
   RawMaterial_MenuItems: Joi.object({
     createMany: Joi.object({
