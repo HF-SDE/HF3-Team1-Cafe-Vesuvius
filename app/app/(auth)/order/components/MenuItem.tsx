@@ -126,7 +126,7 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
 const styles = StyleSheet.create({
   image: {
-    height: PixelRatio.getPixelSizeForLayoutSize(60),
+    height: PixelRatio.getPixelSizeForLayoutSize(52),
     aspectRatio: 1,
     borderWidth: 2,
     borderRadius: 10,
