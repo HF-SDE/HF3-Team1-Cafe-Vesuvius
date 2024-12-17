@@ -21,8 +21,8 @@ Before you begin, ensure you have the following installed:
 Pull the latest version of this repository to your local machine:
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/HF-SDE/HF3-Team1-Cafe-Vesuvius.git
+cd HF3-Team1-Cafe-Vesuvius
 ```
 
 ### 2. Create and fill out the .env files
@@ -31,7 +31,7 @@ Please create and fill out all the .env files in the project. Both for the front
 
 ### 3. Install the packages
 
-Install the latest version of the requiered packages:
+Install the latest version of the required packages:
 
 ```bash
 npm install
@@ -62,6 +62,8 @@ Inserts the data from the seed file into the database:
 ```bash
 npm run seed
 ```
+
+---
 
 ## App guide
 
@@ -191,6 +193,39 @@ To delete a stock item swipe from left to right on it and then press the delete 
 ### Reservation Page:
 
 The **Reservation Page** allows users to make and manage reservations. You can view available time slots, reserve a table, and modify or cancel existing reservations.
+<br/>
+<img src="/image/Pages/Reservation/Reservation.png" alt="This is the reservation screen" title="This is the reservation screen" height="400px" />
+
+#### Reservation Info
+
+When you press on a reservation in the overview page a form will pop up with more information about the reservation.
+<br/>
+<img src="/image/Pages/Reservation/ReservationInfo.png" alt="This is the reservation info form" title="This is the reservation info form" height="400px" />
+
+#### Reservation Create
+
+To **create a new reservation**, press the **plus icon**. You will need to fill out the following information:
+
+1. **Reservation Details:**
+
+   - Set the reservation time by clicking the calendar icon.
+   - Choose a date and adjust the time at the top of the day selector beside the selected date.
+
+2. **Table Selection:**
+
+   - Press **Next** after filling out the details.
+   - Select tables for the reservation.
+   - The required number of tables depends on the number of people entered earlier.
+   - At the top, you can see how many tables you need to select and how many have already been selected.
+
+3. **Finalize the Reservation:**
+   - Once the table selection is complete, press the **Create** button to finish creating the reservation.
+
+<br/>
+<img src="/image/Pages/Reservation/ReservationCreate1.png" alt="This is the reservation create 1 form" title="This is the reservation create 1 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate2.png" alt="This is the reservation create 2 form" title="This is the reservation create 2 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate3.png" alt="This is the reservation create 3 form" title="This is the reservation create 3 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate4.png" alt="This is the reservation create 4 form" title="This is the reservation create 4 form" height="400px" />
 
 ### Order Page:
 
