@@ -21,8 +21,8 @@ Before you begin, ensure you have the following installed:
 Pull the latest version of this repository to your local machine:
 
 ```bash
-git clone <repository-url>
-cd <repository-folder>
+git clone https://github.com/HF-SDE/HF3-Team1-Cafe-Vesuvius.git
+cd HF3-Team1-Cafe-Vesuvius
 ```
 
 ### 2. Create and fill out the .env files
