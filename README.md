@@ -83,6 +83,7 @@ To navigate between the different pages in the app, use the nav bar at the botto
 ### Profile Page:
 
 After you have logged in to the app, you will see the profile page. From here, it is possible to see who is logged in to the system, and it also provides a way to log out and to access the form to change your password (this is recommended if it is your first time logging in with the password from your administrator).
+<br/>
 <img src="/image/Profile.png" alt="This is the profile screen" title="This is the profile screen" height="400px" />
 
 #### Change Password Form
