@@ -24,6 +24,7 @@ export default function SwipeIcons({
   const { stock, setStock } = useStockContext();
 
   const [visible, setVisible] = useState(false);
+  const [note, setNote] = useState(cartItem.note || "");
 
   function handleDeleteInstance() {
     cartActions.deleteInstance(cartItem);
@@ -66,10 +67,10 @@ export default function SwipeIcons({
           <Dialog.Input
             placeholder="Enter note"
             defaultValue={cartItem?.note}
-            onChangeText={handleNoteChange}
+            onChangeText={setNote}
           />
           <Dialog.Button label="Cancel" onPress={() => setVisible(false)} />
-          <Dialog.Button label="Delete" onPress={() => {}} />
+          <Dialog.Button label="OK" onPress={() => handleNoteChange(note)} />
         </Dialog.Container>
       )}
       <View
