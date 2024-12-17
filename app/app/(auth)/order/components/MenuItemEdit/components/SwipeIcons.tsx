@@ -52,6 +52,8 @@ export default function SwipeIcons({
   }
 
   function handleNoteChange(note: string) {
+    setVisible(false);
+
     cartActions.updateItem({
       cartItemId: cartItem.cartItemId,
       note: note,
