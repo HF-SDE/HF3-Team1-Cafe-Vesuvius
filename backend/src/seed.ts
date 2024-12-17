@@ -381,6 +381,7 @@ async function generateMongo() {
         { code: { equals: 'order:status:update:completed' } },
         { code: { equals: 'order:create' } },
         { code: { equals: 'table:view' } },
+        { code: { equals: 'stock:view' } },
         { code: { startsWith: 'reservation' } },
       ],
     },
@@ -1793,7 +1794,7 @@ async function generateMongo() {
               data: {
                 orderId: newOrder.id, // Use the 12-byte hex orderId
                 menuItemId: menuItemId.id,
-                status: ['pending', 'completed', 'delivered'][
+                status: ['toPrepare', 'deliver', 'completed'][
                   Math.floor(Math.random() * 3)
                 ], // Random status
                 quantity: Math.floor(Math.random() * 3) + 1, // Random quantity (1-3)
