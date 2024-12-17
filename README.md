@@ -27,7 +27,7 @@ cd HF3-Team1-Cafe-Vesuvius
 
 ### 2. Create and fill out the .env files
 
-Please create and fill out all the .env files in the project. Both for the frontend and backend. Theire is an example file for every file that needs to be created just replace example with dev in the .env file nam.
+Please create and fill out all the .env files in the project. Both for the frontend and backend. Their is an example file for every file that needs to be created just replace example with dev in the .env file name.
 
 ### 3. Install the packages
 
@@ -55,7 +55,7 @@ npm run dev
 
 If it gives an replication error please wait a bit before running the command again this should resolve the problem
 
-### 6. Inizialise data
+### 6. Initialise data
 
 Inserts the data from the seed file into the database:
 
