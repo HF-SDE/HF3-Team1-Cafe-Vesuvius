@@ -1,12 +1,11 @@
-config/environment-variables/*prod.env
-config/environment-variables/*test.env
-config/environment-variables/*dev.env
+config/environment-variables/.env.*.dev*
+config/environment-variables/.env.*.prod*
 
-packages/*/dist
+*/dist
 **/node_modules
-packages/*/.env
-# packages/*/.env.production -- This is allowed as it does not contain any actual data.
-packages/*/.env.local
+**/package-lock.json
+*/.env
+*/.env.local
 .vs
 
 *.zip
@@ -20,6 +19,10 @@ app/*.key
 app/*.mobileprovision
 app/*.orig.*
 app/web-build/
+# app android build 
+app/android/
 
 # macOS
 app/.DS_Store
+
+dbml

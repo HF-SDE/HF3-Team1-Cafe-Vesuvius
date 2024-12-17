@@ -1,0 +1,60 @@
+name: Docker Compose Deployment
+
+on:
+  push:
+    branches:
+      - main  # Change to your branch if needed
+
+jobs:
+  deploy:
+    runs-on: [ubuntu-latest]
+
+    steps:
+      # Checkout code from the repo
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Make environment files
+        run: |
+          cd ./config/environment-variables
+
+          echo "Creating .env file for backend"
+          cat << \EOT >> .env.backend.prod
+          TZ=Europe/Copenhagen
+          NODE_ENV=production
+          DATABASE_URL=mongodb://${{ secrets.DATABASE_MONGO_USERNAME }}:${{ secrets.DATABASE_MONGO_PASSWORD }}@db:${{ secrets.DATABASE_MONGO_PORT }}/${{ secrets.DATABASE }}?authSource=admin
+          ACCESS_TOKEN_SECRET=${{ secrets.ACCESS_TOKEN_SECRET }}
+          REFRESH_TOKEN_SECRET=${{ secrets.REFRESH_TOKEN_SECRET }}
+          EOT
+
+          echo "Creating .env file for db"
+          cat << \EOT >> .env.db.prod
+          MONGO_INITDB_DATABASE=${{ secrets.DATABASE }}
+          MONGO_INITDB_ROOT_USERNAME=${{ secrets.DATABASE_MONGO_USERNAME }}
+          MONGO_INITDB_ROOT_PASSWORD=${{ secrets.DATABASE_MONGO_PASSWORD }}
+          MONGO_PORT=${{ secrets.DATABASE_MONGO_PORT }}
+          POSTGRES_DB=${{ secrets.DATABASE }}
+          POSTGRES_USER=${{ secrets.DATABASE_POSTGRES_USERNAME }}
+          POSTGRES_PASSWORD=${{ secrets.DATABASE_POSTGRES_PASSWORD }}
+          EOT
+
+          echo "Creating .env file for docker"
+          echo "NGROK_URL=${{ secrets.NGROK_URL }}" > .env.docker.prod
+
+          echo "Creating .env file for ngrok"
+          echo "NGROK_AUTHTOKEN=${{ secrets.NGROK_AUTHTOKEN }}" > .env.grok.prod
+
+      - name: Deploy with Docker Compose
+        run: |
+          echo "Build Containers"
+          docker compose -f ./docker/docker-compose.prod.yml build
+            
+          echo "Deploying Containers"
+          docker compose --env-file ./config/environment-variables/.env.docker.prod -f ./docker/docker-compose.prod.yml up -d
+
+          echo "Initializing the database"
+          echo "Creating the replica set"
+          docker exec db ./docker-entrypoint-initdb.d/init.sh
+
+          echo "Cleaning up old images"
+          docker image prune -f

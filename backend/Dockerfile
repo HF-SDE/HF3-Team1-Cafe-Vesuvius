@@ -1,39 +1,29 @@
-# "base" is targeted if we run docker compose on our "default" docker compose file, it's defined in the "target" value.
-# "production" is targeted if we run docker-componse on our prod version of the file.
-# That means all the steps are individual depending on the environment running them.
-
-FROM node:22.9-alpine as base
+# syntax=docker/dockerfile:1.4
+FROM node:22.9-alpine AS base
 
 # Setting the timezone
 RUN apk add -U tzdata
 RUN cp /usr/share/zoneinfo/Europe/Copenhagen /etc/localtime
 
-# Set our working directory on the virutal machine
+# Set working directory
 WORKDIR /usr/src/app
 
-# Copy our package.json to the /usr/src/app
+# Copy package.json and install dependencies
 COPY package.json ./
-
-# Run NPM install
 RUN npm install
 
-# Copy all files from our local machine to the virutal machine (uses .dockerignore!)
+# Copy other application files
 COPY . .
 
-# Generate prisma types
+# Generate Prisma types
 RUN npx prisma generate
+RUN npx prisma generate --schema=./prisma/psql.prisma
 
-# Create a new step
-FROM base as dev
+# Ensure entrypoint.sh is executable
+RUN chmod +x ./entrypoint.sh
 
-# Remove everything besides the dist folder.
+# Expose port 3001 for HTTPS
+EXPOSE 3001
 
-
-# Set NODE_PATH (might not be nessecary)
-ENV NODE_PATH=./dist
-
-# Build the production version of the application.
-RUN npm run build:tsc
-
-# CMD ["node", "dist/index.js"]
-CMD ["npm", "run", "start"]
+# Command to start the application (using HTTPS on port 3001)
+ENTRYPOINT ["./entrypoint.sh"]

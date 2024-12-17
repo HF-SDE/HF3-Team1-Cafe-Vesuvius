@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/reservationbasestyles.css" />
+    <link rel="stylesheet" href="/stylesheets/reservationstyles.css" />
+
+    <link rel="stylesheet" href="/stylesheets/basestyles.css" />
+    <link rel="stylesheet" href="/stylesheets/navstyles.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Vesuvius menu card." />
+  </head>
+
+  <body>
+    <%- include('../partials/topNav'); %>
+    <main class="menu-container">
+      <div class="res container">
+        <h1 class="res-header">Online Reservation</h1>
+
+        <p class="text">
+          Skip the wait and secure your spot with our easy online table
+          reservations! Book anytime, get instant confirmation, and enjoy a
+          hassle-free dining experience. Your perfect table is just a click
+          away!
+        </p>
+        <ul class="res-list">
+          <li class="text">
+            <i class="fa fa-check"></i>Convenience: Book anytime, anywhere
+            without needing to call the restaurant
+          </li>
+          <li class="text">
+            <i class="fa fa-check"></i>Guaranteed Availability: Ensure a table
+            is ready, especially during peak hours or busy days.
+          </li>
+          <li class="text">
+            <i class="fa fa-check"></i>Plan Ahead: Coordinate with friends or
+            family knowing your reservation is secured.
+          </li>
+        </ul>
+      </div>
+      <div class="form container">
+        <h1 class="">Book Your Table</h1>
+
+        <form action="/reservation" method="post">
+          <input
+            type="text"
+            class="input"
+            placeholder="Name"
+            required
+            autocomplete="name"
+            minlength="2"
+            name="name"
+            pattern="^[A-Z][a-z]*(?:['-][A-Z][a-z]*)?(?:[A-Z][a-z]*(?:['-][A-Z][a-z]*)?)*$"
+            value="<%= name %>"
+          />
+          <input
+            type="email"
+            class="input"
+            placeholder="Email"
+            autocomplete="email"
+            name="email"
+            value="<%= email %>"
+          />
+          <input
+            type="tel"
+            class="input"
+            placeholder="Phone"
+            autocomplete="tel"
+            name="phone"
+            value="<%= phone %>"
+          />
+          <input
+            type="datetime-local"
+            class="input"
+            placeholder="Date"
+            required
+            name="date"
+            autocomplete="off"
+            value="<%= toDay %>"
+            max="<%= maxDate %>"
+            min="<%= minDate %>"
+          />
+          <input
+            type="number"
+            class="input"
+            placeholder="Persons"
+            name="persons"
+            required
+            min="1"
+            max="10"
+            value="<%= persons %>"
+          />
+          <button class="form-button" type="submit">Book Now</button>
+        </form>
+        <% if (error) {%>
+        <div style="background-color: red">
+          <p>Error</p>
+          <p><%= errorMessage %></p>
+        </div>
+        <% }%>
+      </div>
+    </main>
+    <!-- 
+    <div class="container-fluid py-5">
+      <div class="container">
+        <div class="reservation position-relative overlay-top overlay-bottom">
+          <div class="row align-items-center">
+            <div class="col-lg-6 my-5 my-lg-0">
+              <div class="p-5">
+                <div class="mb-4">
+                  <h1 class="display-3">Online Reservation</h1>
+                </div>
+                <p class="text-secondary">
+                  Skip the wait and secure your spot with our easy online table
+                  reservations! Book anytime, get instant confirmation, and
+                  enjoy a hassle-free dining experience. Your perfect table is
+                  just a click away!
+                </p>
+                <ul class="list-inline text-secondary m-0">
+                  <li class="py-2">
+                    <i class="fa fa-check mr-3"></i>Convenience: Book anytime,
+                    anywhere without needing to call the restaurant
+                  </li>
+                  <li class="py-2">
+                    <i class="fa fa-check mr-3"></i>Guaranteed Availability:
+                    Ensure a table is ready, especially during peak hours or
+                    busy days.
+                  </li>
+                  <li class="py-2">
+                    <i class="fa fa-check mr-3"></i>Plan Ahead: Coordinate with
+                    friends or family knowing your reservation is secured.
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div
+                class="text-center p-5"
+                style="background: rgba(51, 33, 29, 0.8)"
+              >
+                <h1 class="text-secondary mb-4 mt-5">Book Your Table</h1>
+                <form action="/reservation" method="post">
+                  <input
+                    type="text"
+                    class="form-control"
+                    placeholder="Name"
+                    required
+                    autocomplete="name"
+                    minlength="2"
+                    name="name"
+                    pattern="^[A-Z][a-z]*(?:['-][A-Z][a-z]*)?(?:[A-Z][a-z]*(?:['-][A-Z][a-z]*)?)*$"
+                    value="<%= name %>"
+                  />
+                  <input
+                    type="email"
+                    class="form-control"
+                    placeholder="Email"
+                    autocomplete="email"
+                    name="email"
+                    value="<%= email %>"
+                  />
+                  <input
+                    type="tel"
+                    class="form-control"
+                    placeholder="Phone"
+                    autocomplete="tel"
+                    name="phone"
+                    value="<%= phone %>"
+                  />
+                  <input
+                    type="datetime-local"
+                    class="form-control"
+                    placeholder="Date"
+                    required
+                    name="date"
+                    autocomplete="off"
+                    value="<%= toDay %>"
+                    max="<%= maxDate %>"
+                    min="<%= minDate %>"
+                  />
+                  <input
+                    type="number"
+                    class="form-control"
+                    placeholder="Persons"
+                    name="persons"
+                    required
+                    min="1"
+                    max="10"
+                    value="<%= persons %>"
+                  />
+                  <button
+                    class="btn btn-primary btn-block font-weight-bold py-3"
+                    type="submit"
+                  >
+                    Book Now
+                  </button>
+                </form>
+                <% if (error) {%>
+                <div style="background-color: red">
+                  <p>Error</p>
+                  <p><%= errorMessage %></p>
+                </div>
+                <% }%>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> -->
+  </body>
+</html>

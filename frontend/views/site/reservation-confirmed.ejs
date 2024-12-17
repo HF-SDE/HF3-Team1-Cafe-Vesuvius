@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/reservationbasestyles.css" />
+    <link rel="stylesheet" href="/stylesheets/reservationconfirmedstyles.css" />
+
+    <link rel="stylesheet" href="/stylesheets/basestyles.css" />
+    <link rel="stylesheet" href="/stylesheets/navstyles.css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Vesuvius menu card." />
+    <!-- Font Awesome -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css"
+      rel="stylesheet"
+    />
+  </head>
+
+  <body>
+    <%- include('../partials/topNav'); %>
+    <main class="menu-container">
+      <!-- <h1><%= title %></h1> -->
+      <div class="res container">
+        <h1 class="res-header">Online Reservation</h1>
+
+        <p class="text">
+          Skip the wait and secure your spot with our easy online table
+          reservations! Book anytime, get instant confirmation, and enjoy a
+          hassle-free dining experience. Your perfect table is just a click
+          away!
+        </p>
+        <ul class="res-list">
+          <li class="text">
+            <i class="fa fa-check"></i>Convenience: Book anytime, anywhere
+            without needing to call the restaurant
+          </li>
+          <li class="text">
+            <i class="fa fa-check"></i>Guaranteed Availability: Ensure a table
+            is ready, especially during peak hours or busy days.
+          </li>
+          <li class="text">
+            <i class="fa fa-check"></i>Plan Ahead: Coordinate with friends or
+            family knowing your reservation is secured.
+          </li>
+        </ul>
+      </div>
+      <div class="form container">
+        <h1 class="">Reservation confirmed</h1>
+        <section>
+          <div>
+            <p>Name:</p>
+            <span><%= name %></span>
+          </div>
+          <div>
+            <p>Email:</p>
+            <span><%= email %></span>
+          </div>
+          <div>
+            <p>Phone:</p>
+            <span><%= phone %></span>
+          </div>
+          <div>
+            <p>Date:</p>
+            <span><%= date %></span>
+          </div>
+          <div>
+            <p>Guests:</p>
+            <span><%= persons %></span>
+          </div>
+        </section>
+      </div>
+
+      <!-- <div class="container-fluid py-5">
+        <div class="container">
+          <div class="reservation position-relative overlay-top overlay-bottom">
+            <div class="row align-items-center">
+              <div class="col-lg-6 my-5 my-lg-0">
+                <div class="p-5">
+                  <div class="mb-4">
+                    <h1 class="display-3 ">Online Reservation</h1>
+                  </div>
+                  <p class="text-secondary">
+                    Skip the wait and secure your spot with our easy online
+                    table reservations! Book anytime, get instant confirmation,
+                    and enjoy a hassle-free dining experience. Your perfect
+                    table is just a click away!
+                  </p>
+                  <ul class="list-inline text-secondary m-0">
+                    <li class="py-2">
+                      <i class="fa fa-check  mr-3"></i>Convenience:
+                      Book anytime, anywhere without needing to call the
+                      restaurant
+                    </li>
+                    <li class="py-2">
+                      <i class="fa fa-check  mr-3"></i>Guaranteed
+                      Availability: Ensure a table is ready, especially during
+                      peak hours or busy days.
+                    </li>
+                    <li class="py-2">
+                      <i class="fa fa-check  mr-3"></i>Plan Ahead:
+                      Coordinate with friends or family knowing your reservation
+                      is secured.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div
+                  class="text-center p-5"
+                  style="background: rgba(51, 33, 29, 0.8)"
+                >
+                  <h1 class="text-secondary mb-4 mt-5">Your reservation is confirmed</h1>
+                      <p class="">Name: <p class="text-secondary"><%= name %></p></p>
+                      <p class="">Mail: <p class="text-secondary"><%= email %></p></p>
+                      <p class="">Phone: <p class="text-secondary"><%= phone %> </p></p>
+                      <p class="">Date: <p class="text-secondary"><%= date %></p></p>
+                      <p class="">Guest: <p class="text-secondary"><%= persons %></p></p>
+
+                      <a href="/" class="btn btn-primary btn-block font-weight-bold py-3">
+                      Home
+                      </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div> -->
+    </main>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title><%= title %></title>
+  <link rel="stylesheet" href="/stylesheets/menustyles.css" />
+  <link rel="stylesheet" href="/stylesheets/basestyles.css" />
+  <link rel="stylesheet" href="/stylesheets/navstyles.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Vesuvius menu card.">
+</head>
+
+<script>
+  function updateUrlParameter(param, value) {
+    const url = new URL(window.location.href);
+    url.searchParams.set(param, value);
+    window
+      .history
+      .pushState({ path: url.href }, '', url.href);
+  }
+</script>
+
+<body>
+  <style>
+    <% categories.forEach(category => { %>
+      .menu-container:has(input[value="<%= category %>"]:checked) .menu-item.<%= category %> {
+        display: flex !important;
+      }
+    <% }); %>
+  </style>
+
+  <%- include('../partials/topNav'); %>
+
+  <main class="menu-container">
+    <!-- <h1><%= title %></h1> -->
+
+    <!-- Filter Buttons -->
+    <div class="filter-container">
+      <form action="/menu" method="get">
+        <input type="radio" id="All" name="category" value="All" checked="true" <%= "All" === category ? 'class="active"' : '' %>>
+        <label for="All">All</label>
+
+        <% categories.forEach(categoryOption => { %>
+          <input
+            type="radio"
+            name="category"
+            id="<%= categoryOption %>"
+            value="<%= categoryOption %>"
+            <%= categoryOption === category ? 'checked="true"' : '' %>
+            <%= categoryOption === category ? 'class="active"' : '' %>
+          >
+          <label for="<%= categoryOption %>" onclick="updateUrlParameter('category', '<%= categoryOption %>')"><%= categoryOption %></label>
+        <% }); %>
+      </form>
+    </div>
+
+    <!-- Menu Items -->
+    <div class="menu-grid">
+      <% items.map((item) => { %>
+        <div class="menu-item <%= item.category.join(" ") %>">
+          <div class="menu-header">
+            <h2><%= item.name %></h2>
+            <h3 class="price"><%= item.price %>,-</h3>
+          </div>
+
+
+
+          <div>
+            <img src="/images/menu/<%= item.name %>.webp" alt="<%= item.name %>" width="250" height="250" style="border-radius: 2rem;" />
+          </div>
+          <span>
+            <%= item.RawMaterial_MenuItems.map(rawMaterialMenuItem => rawMaterialMenuItem.RawMaterial.name).join(", ") %>
+          </span>
+        </div>
+      <% }) %>
+    </div>
+  </main>
+</body>
+
+</html>

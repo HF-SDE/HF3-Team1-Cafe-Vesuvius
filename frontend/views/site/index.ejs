@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/stylesheets/style.css" />
+    <link rel="stylesheet" href="/stylesheets/basestyles.css" />
+    <link rel="stylesheet" href="/stylesheets/navstyles.css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Vesuvius menu card." />
+  </head>
+
+  <body>
+    <main class="home-container">
+      <%- include('../partials/topNav'); %>
+      <div class="screen">
+        <div class="screen-image"></div>
+        <div class="screen-overlay"></div>
+        <div class="screen-content">
+          <div class="theme-logo"></div>
+          <!-- Your logo -->
+          <div class="screen-user">
+            <span class="name">Café Vesuvius</span>
+            <!-- Your text -->
+            <p class="tagline">A taste of Italy in every sip.</p>
+            <div class="links-container">
+              <a href="tel:+0000000000">Call us</a>
+              <p>-</p>
+              <a href="mailto:example@example.com">Contact us</a>
+              <p>-</p>
+              <a href="https://maps.app.goo.gl/CtxDv2PSLgxggDVT9">Find us</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- <h1><%= title %></h1>
+
+      <div class="theme-logo"></div> -->
+    </main>
+  </body>
+</html>

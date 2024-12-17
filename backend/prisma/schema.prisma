@@ -1,0 +1,180 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["omitApi"]
+}
+
+generator dbml {
+  provider = "prisma-dbml-generator"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  initials  String
+  name      String
+  email     String   @unique
+  username  String   @unique
+  password  String
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessions        Session[]
+  UserPermissions UserPermissions[]
+}
+
+model Session {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     Token[]
+  expiresAt DateTime
+}
+
+model Token {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  sessionId    String   @db.ObjectId
+  session      Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  accessToken  String   @unique
+  refreshToken String   @unique
+  createdAt    DateTime @default(now())
+}
+
+model UserPermissions {
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId       String   @db.ObjectId
+  permissionId String   @db.ObjectId
+  assignedAt   DateTime @default(now())
+  assignedBy   String
+
+  Permission Permission @relation(fields: [permissionId], references: [id])
+  User       User       @relation(fields: [userId], references: [id])
+}
+
+model PermissionGroup {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Permissions Permission[]
+}
+
+model Permission {
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  code              String
+  description       String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  permissionGroupId String   @db.ObjectId
+
+  UserPermissions UserPermissions[]
+
+  PermissionGroup PermissionGroup @relation(fields: [permissionGroupId], references: [id])
+}
+
+model Reservation {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  reservationTime DateTime
+  name            String?
+  email           String?
+  phone           String?
+  amount          Int      @default(2)
+  tableIds        String[] @db.ObjectId
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  Tables Table[] @relation(fields: [tableIds], references: [id])
+}
+
+model Table {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  number         Int      @unique
+  location       String?
+  capacity       Int      @default(2)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  reservationIds String[] @db.ObjectId
+
+  Orders       Order[]
+  Reservations Reservation[] @relation(fields: [reservationIds], references: [id])
+}
+
+model Order {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  tableId   String   @db.ObjectId
+
+  Order_Menus Order_Menu[]
+
+  Table Table @relation(fields: [tableId], references: [id])
+}
+
+model Order_Menu {
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  status        String  @default("toPrepare")
+  quantity      Int     @default(1)
+  note          String?
+  menuItemPrice Float   @default(1)
+  orderId       String  @db.ObjectId
+  menuItemId    String  @db.ObjectId
+
+  Order Order    @relation(fields: [orderId], references: [id])
+  Menu  MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model MenuItem {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  category  String[]
+  name      String
+  price     Float
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  active    Boolean @default(true)
+
+  Orders                Order_Menu[]
+  PendingMenuItems      PendingMenuItem[]
+  RawMaterial_MenuItems RawMaterial_MenuItem[]
+
+  @@index([name])
+}
+
+model PendingMenuItem {
+  id         String @id @default(auto()) @map("_id") @db.ObjectId
+  quantity   Int
+  menuItemId String @db.ObjectId
+
+  Menu MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+model RawMaterial_MenuItem {
+  id            String @id @default(auto()) @map("_id") @db.ObjectId
+  quantity      Float  @default(1)
+  rawMaterialId String @db.ObjectId
+  menuItemId    String @db.ObjectId
+
+  RawMaterial RawMaterial @relation(fields: [rawMaterialId], references: [id], onDelete: Cascade)
+  MenuItem    MenuItem    @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+}
+
+model RawMaterial {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  name      String   @unique
+  quantity  Float    @default(0)
+  unit      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  RawMaterial_MenuItems RawMaterial_MenuItem[]
+}

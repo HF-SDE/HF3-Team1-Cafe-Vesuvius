@@ -1,0 +1,28 @@
+# Development artifacts
+node_modules/
+npm-debug.log
+*.log
+*.bak
+package-lock.json
+nodemon.json
+
+# Build output
+dist/
+build/
+
+# OS generated files
+.DS_Store
+
+# Test files
+test/
+__tests__/
+*.test.js
+./src/tests/**
+
+# Configuration files that shouldn't be in the image
+.env
+.env.*
+
+# Docker files
+Dockerfile
+Dockerfile.production

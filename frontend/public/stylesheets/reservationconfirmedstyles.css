@@ -1,0 +1,35 @@
+@media (max-width: 800px) {
+  .form {
+    background: rgba(51, 33, 29, 0.8);
+  }
+}
+
+.form {
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 15px;
+  height: 100%;
+  width: 100%;
+
+  /* below is another thing for the philip thing */
+}
+
+section {
+  display: flex;
+
+  flex-direction: column;
+  gap: 10px;
+}
+
+section div {
+  font-size: 1.5rem;
+  display: flex;
+  gap: 40px;
+  justify-content: space-between;
+}
+
+span {
+  text-align: center;
+  color: var(--secondary-light);
+}
