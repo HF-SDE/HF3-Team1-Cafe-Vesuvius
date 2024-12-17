@@ -219,12 +219,13 @@ To **create a new reservation**, press the **plus icon**. You will need to fill 
    - At the top, you can see how many tables you need to select and how many have already been selected.
 
 3. **Finalize the Reservation:**
-   - Once the table selection is complete, press the **Create** button to finish creating the reservation.  
-     <br/>
-     <img src="/image/Pages/Reservation/ReservationCreate1.png" alt="This is the reservation create 1 form" title="This is the reservation create 1 form" height="400px" />
-     <img src="/image/Pages/Reservation/ReservationCreate2.png" alt="This is the reservation create 2 form" title="This is the reservation create 2 form" height="400px" />
-     <img src="/image/Pages/Reservation/ReservationCreate3.png" alt="This is the reservation create 3 form" title="This is the reservation create 3 form" height="400px" />
-     <img src="/image/Pages/Reservation/ReservationCreate4.png" alt="This is the reservation create 4 form" title="This is the reservation create 4 form" height="400px" />
+   - Once the table selection is complete, press the **Create** button to finish creating the reservation.
+
+<br/>
+<img src="/image/Pages/Reservation/ReservationCreate1.png" alt="This is the reservation create 1 form" title="This is the reservation create 1 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate2.png" alt="This is the reservation create 2 form" title="This is the reservation create 2 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate3.png" alt="This is the reservation create 3 form" title="This is the reservation create 3 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate4.png" alt="This is the reservation create 4 form" title="This is the reservation create 4 form" height="400px" />
 
 ### Order Page:
 
