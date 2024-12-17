@@ -63,6 +63,8 @@ Inserts the data from the seed file into the database:
 npm run seed
 ```
 
+---
+
 ## App guide
 
 The first page you are greeted with when opening the app is the login page. Please use the credentials provided to you by your system administrator.
