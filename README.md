@@ -138,10 +138,16 @@ To add a new menu item press the plus icon, fill in the necessary details, such 
 
 ##### Edit Menu
 
-On the **Edit Menu** page, you can update existing menu items. Search for the item you want to edit, modify the details, and save the changes. It is also possible from here to delete a menu.
+On the **Edit Menu** page, you can update existing menu items. Search for the item you want to edit, modify the details, and save the changes.
 <br/>
 <img src="/image/Pages/Management/Menu/MenuEditIngredients.png" alt="This is the menu edit ingredient screen" title="This is the menu edit ingredient screen" height="400px" />
 <img src="/image/Pages/Management/Menu/MenuEditCategories.png" alt="This is the menu edit category screen" title="This is the menu edit category screen" height="400px" />
+
+##### Delete Menu
+
+On the **Edit Menu** page, you can delete the menu. Search for the item you want to delete, and press the trashcan icon in the top right.
+<br/>
+<img src="/image/Pages/Management/Menu/MenuDelete.png" alt="This is the menu delete screen" title="This is the menu delete screen" height="400px" />
 
 #### Stats Page
 
