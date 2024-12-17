@@ -6,15 +6,20 @@ import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
 import { transformSearch } from '@middlewares/order.mw';
 import { validateParams } from '@middlewares/validate.mw';
+import { where } from '@schemas/order.schema';
 
 const router = new Router();
-
 
 router.use('/', verifyJWT);
 router.use('/:id', validateParams);
 
-router.get(['/', '/:id'], isAllowed(['order:view']), transformSearch, getAll());
-router.ws('/', isAllowed(['order:view']), getAll());
+router.get(
+  ['/', '/:id'],
+  isAllowed(['order:view']),
+  transformSearch,
+  getAll(where),
+);
+router.ws('/', isAllowed(['order:view']), getAll(where));
 
 router.post('/', isAllowed(['order:create']), createOrder);
 router.put(

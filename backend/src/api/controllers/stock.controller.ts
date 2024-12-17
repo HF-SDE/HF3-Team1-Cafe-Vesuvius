@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ParamsDictionary } from 'express-serve-static-core';
+import qs from 'qs';
 
 import { APIResponse } from '@api-types/general.types';
 import {
@@ -10,7 +11,6 @@ import {
 import { Prisma } from '@prisma/client';
 import * as StockService from '@services/stock.service';
 import { getHttpStatusCode } from '@utils/Utils';
-import qs from 'qs';
 
 /**
  * Controller to get stock items

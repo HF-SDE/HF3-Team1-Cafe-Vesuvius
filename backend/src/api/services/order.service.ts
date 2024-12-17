@@ -26,7 +26,7 @@ export async function createOrder(data: IData): Promise<APIResponse> {
 
   const stockUpdatePromises = [];
 
-  const OrderMenus = validation.value.Order_Menus;
+  const OrderMenus = validation.value.Order_Menus as Order_Menu[];
 
   const menuItems = await prisma.menuItem.findMany({
     where: { id: { in: OrderMenus.map((o) => o.menuItemId) } },

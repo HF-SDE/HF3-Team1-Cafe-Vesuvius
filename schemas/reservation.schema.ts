@@ -18,7 +18,7 @@ const schema = Joi.object({
   }).required(),
 });
 
-export default schema.or("email", "phone").messages({
+export const create = schema.or("email", "phone").messages({
   "object.missing": "Either email or phone is required",
 });
 

@@ -3,7 +3,7 @@ import passport from 'passport';
 import { WSResponse, isWebSocket } from 'websocket-express';
 
 import { Status } from '@api-types/general.types';
-import { defaultResponse, getHttpStatusCode } from '@utils/Utils';
+import { getHttpStatusCode } from '@utils/Utils';
 
 import '../passport';
 
@@ -24,9 +24,12 @@ export function verifyJWT(
     'jwt',
     { session: false },
     (err: number, user: Express.User) => {
-      const errResponse = defaultResponse(err);
+      const unauthorizedResponse = {
+        status: Status.Unauthorized,
+        message: 'Unauthorized',
+      };
 
-      if (errResponse) return res.status(err).json(errResponse);
+      if (err) return res.status(err).json(unauthorizedResponse);
 
       if (!user) {
         if (isWebSocket(res)) {
@@ -34,12 +37,12 @@ export function verifyJWT(
           return res.sendError(
             getHttpStatusCode(Status.Unauthorized),
             getHttpStatusCode(Status.WsUnauthorized),
-            JSON.stringify(defaultResponse(401)),
+            JSON.stringify(unauthorizedResponse),
           );
         }
         return res
           .status(getHttpStatusCode(Status.Unauthorized))
-          .json(defaultResponse(401));
+          .json(unauthorizedResponse);
       }
 
       req.user = user;

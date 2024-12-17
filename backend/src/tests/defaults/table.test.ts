@@ -6,101 +6,77 @@ import prisma from '@prisma-instance';
 import { Table } from '@prisma/client';
 
 import { Response, axiosInstance as axios } from './axiosInstance';
+import TestCases from './generateTest';
 import { login, logout } from './util';
 
 describe('API defaults (table)', () => {
-  const addedTables: string[] = [];
+  const testCases = new TestCases<Table>('/table', {
+    getAll: 'Table(s) found',
+    create: 'Created new table',
+  });
 
   beforeAll(login);
   afterAll(logout);
 
-  afterEach(async () => {
-    await prisma.table.deleteMany({
-      where: { id: { in: addedTables } },
-    });
-  });
-
-  it('should get tables', async () => {
-    const response = await axios.get<{ data: APIResponse<Table[]> }>('/table');
-
-    expect(response.status).toBe(200);
-  });
-
-  it('should get 1 or no table', async () => {
+  describe('Get cases', async () => {
     const { id: randomId } = await prisma.table.findFirstOrThrow({});
 
-    const response = await axios.get<{ data: APIResponse<Table[]> }>(
-      `/table/${randomId}`,
-    );
-
-    expect(response.status).toBe(200);
+    it('Get all tables', testCases.getAllTest());
+    it('Get 1 or no table', testCases.getOneTest(randomId));
   });
 
-  it('should create a new table', async () => {
+  describe('Create cases', async () => {
     await prisma.table.deleteMany({ where: { number: 46 } });
 
-    const response = await axios.post<{ data: APIResponse<Table> }>('/table', {
-      number: 46,
-    });
+    const createBody = { number: 46 };
+    it('Create a new table', testCases.createTest(createBody));
+  });
 
-    expect(response.status).toBe(201);
-    expect(response.data).toStrictEqual({
-      status: 'Created',
-      message: 'Created new table',
+  describe('Delete cases', async () => {
+    it('Delete a table', async () => {
+      const { id: newTableId } = await prisma.table.upsert({
+        where: { number: 46 },
+        update: {},
+        create: { number: 46 },
+      });
+
+      const response = await axios.delete(`/table/${newTableId}`);
+
+      expect(response.status).toBe(200);
     });
   });
 
-  it('should not create a new table if the table number already exists', async () => {
-    await prisma.table.upsert({
-      where: { number: 46 },
-      update: {},
-      create: { number: 46 },
+  describe('Errors', () => {
+    it('should not get a table', async () => {
+      const response = await axios.get<Response>(
+        '/table/0000a0a00a00a00a0aa00a00',
+      );
+
+      expect(response.data.data).toEqual([]);
     });
 
-    const promise = axios.post('/table', { number: 46 });
+    it('should not create a new table if the table number already exists', async () => {
+      await prisma.table.upsert({
+        where: { number: 46 },
+        update: {},
+        create: { number: 46 },
+      });
 
-    await expect(promise).rejects.toThrow();
+      const response = await axios.post('/table', { number: 46 });
 
-    const response = await promise.catch((error: AxiosError) => error.response);
-
-    expect(response?.data).toStrictEqual({
-      status: 'CreationFailed',
-      message: 'Table already exists',
-    });
-  });
-
-  it('should delete a table', async () => {
-    const { id: newTableId } = await prisma.table.upsert({
-      where: { number: 46 },
-      update: {},
-      create: { number: 46 },
+      expect(response?.data).toStrictEqual({
+        status: 'CreationFailed',
+        message: 'Table already exists',
+      });
     });
 
-    const response = await axios.delete(`/table/${newTableId}`);
+    it('should not delete a table', async () => {
+      const response = await axios.delete('/table/0000a0a00a00a00a0aa00a00');
 
-    addedTables.shift();
-
-    expect(response.status).toBe(200);
-  });
-
-  it('should not get a table', async () => {
-    const response = await axios.get<Response>(
-      '/table/0000a0a00a00a00a0aa00a00',
-    );
-
-    expect(response.data.data).toEqual([]);
-  });
-
-  it('should not delete a table', async () => {
-    const promise = axios.delete('/table/0000a0a00a00a00a0aa00a00');
-
-    await expect(promise).rejects.toThrow();
-
-    const response = await promise.catch((error: AxiosError) => error.response);
-
-    expect(response?.data).toStrictEqual({
-      status: 'DeletionFailed',
-      message: 'Table not found',
+      expect(response?.data).toStrictEqual({
+        status: 'DeletionFailed',
+        message: 'Table not found',
+      });
     });
   });
 });

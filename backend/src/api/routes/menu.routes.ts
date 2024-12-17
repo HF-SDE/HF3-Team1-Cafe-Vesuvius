@@ -6,35 +6,43 @@ import {
   softDeleteRecord,
   updateRecord,
 } from '@controllers/default.controller';
-import { transformMenusItems } from '@controllers/menu.controller';
 import { verifyJWT } from '@middlewares/authenticate.mw';
 import { isAllowed } from '@middlewares/isAllowed.mw';
-import { transformPatch } from '@middlewares/menu.mw';
+import { transformMenusItems, transformPatch } from '@middlewares/menu.mw';
 import { validateParams } from '@middlewares/validate.mw';
+import { create, optional, patch, where } from '@schemas/menuItem.schema';
 
 const router = new Router();
 
 router.use('/', validateParams);
 
-router.get(['/', '/:id'], getAll('menuItem'));
+router.get(['/', '/:id'], getAll(where, 'menuItem'));
 
 router.use('/', verifyJWT);
 
-router.ws('/', isAllowed(['menu:view']), getAll('menuItem'));
+router.ws('/', isAllowed(['menu:view']), getAll(where, 'menuItem'));
 
 router.post(
   '/',
   isAllowed(['menu:create']),
   transformMenusItems,
-  createRecord('menuItem'),
+  createRecord(create, 'menuItem'),
 );
-router.put('/:id', isAllowed(['menu:update']), updateRecord('menuItem'));
+router.put(
+  '/:id',
+  isAllowed(['menu:update']),
+  updateRecord(optional, 'menuItem'),
+);
 router.patch(
   '/:id',
   isAllowed(['menu:update']),
   transformPatch,
-  updateRecord('menuItem'),
+  updateRecord(patch, 'menuItem'),
 );
-router.delete('/:id', isAllowed(['menu:delete']), softDeleteRecord('menuItem'));
+router.delete(
+  '/:id',
+  isAllowed(['menu:delete']),
+  softDeleteRecord(optional, 'menuItem'),
+);
 
 export default router;

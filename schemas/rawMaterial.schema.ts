@@ -7,6 +7,8 @@ export const StockCreateSchema = Joi.object({
   unit: Joi.string().required(),
 });
 
+export const create = StockCreateSchema;
+
 export const StockUpdateSchema = Joi.array()
   .items(
     Joi.object({
@@ -19,3 +21,10 @@ export const StockUpdateSchema = Joi.array()
   .min(1)
   .unique("id")
   .required();
+
+export const where = Joi.object({
+  id: UuidSchema.optional(),
+  name: Joi.string().min(1).optional(),
+  quantity: Joi.number().positive().optional(),
+  unit: Joi.string().optional(),
+});

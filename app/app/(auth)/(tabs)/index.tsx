@@ -85,7 +85,7 @@ export default function UserProfileScreen() {
             ]}
           >
             <Button
-              title="Reset Password"
+              title="Change Password"
               onPress={() => setIsModalVisible(true)}
             />
             <Button title={"Log Out"} onPress={signOut} />
