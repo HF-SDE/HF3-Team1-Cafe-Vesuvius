@@ -381,6 +381,7 @@ async function generateMongo() {
         { code: { equals: 'order:status:update:completed' } },
         { code: { equals: 'order:create' } },
         { code: { equals: 'table:view' } },
+        { code: { equals: 'stock:view' } },
         { code: { startsWith: 'reservation' } },
       ],
     },

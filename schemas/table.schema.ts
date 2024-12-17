@@ -16,4 +16,12 @@ export const where = Joi.object({
   id: UuidSchema.optional(),
   number: Joi.number().positive().optional(),
   capacity: Joi.number().positive().optional(),
+  Reservations: Joi.object({
+    some: Joi.object({
+      reservationTime: Joi.object({
+        gt: Joi.date().optional(),
+        lt: Joi.date().optional(),
+      }).optional(),
+    }).optional(),
+  }).optional(),
 });
