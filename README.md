@@ -72,7 +72,7 @@ If you cannot login please contact the administrator to resolve the problem.
 
 To navigate between the different pages in the app, use the nav bar at the bottom of the screen. Down here there will be up to 4 icons depending on the access permissions that the administrator gave you.
 <br/>
-<img src="/image/Navbar.png" alt="This is the navbar" title="This is the navbar" height="400px" />
+<img src="/image/Navbar.png" alt="This is the navbar" title="This is the navbar" height="420px" />
 
 ### Available Main Pages:
 
