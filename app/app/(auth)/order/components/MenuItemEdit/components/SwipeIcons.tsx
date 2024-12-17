@@ -1,9 +1,12 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
 import { FontAwesome6, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Alert, Pressable, StyleSheet, View } from "react-native";
+import { Alert, Pressable, StyleSheet, View, Platform } from "react-native";
 import { Menu } from "../../../new-order";
 import type { CartItem, ICartActions } from "@/types/cartReducer.types";
 import { updateStock, useStockContext } from "@/utils/menu";
+import { useState } from "react";
+import Dialog from "react-native-dialog";
+import React from "react";
 
 interface ISwipeIcons {
   cartActions: ICartActions<Menu>;
@@ -20,12 +23,31 @@ export default function SwipeIcons({
 
   const { stock, setStock } = useStockContext();
 
+  const [visible, setVisible] = useState(false);
+
   function handleDeleteInstance() {
     cartActions.deleteInstance(cartItem);
 
     rowMap[cartItem.cartItemId!].closeRow();
 
     updateStock(cartItem, stock, setStock, false, cartItem.quantity);
+  }
+
+  const noteTitle = "Note";
+  const noteMessage = "Add a note to this item";
+
+  function addNote() {
+    if (Platform.OS === "ios") {
+      Alert.prompt(
+        noteTitle,
+        noteMessage,
+        handleNoteChange,
+        "plain-text",
+        cartItem?.note
+      );
+    } else {
+      setVisible(true);
+    }
   }
 
   function handleNoteChange(note: string) {
@@ -36,67 +58,74 @@ export default function SwipeIcons({
   }
 
   return (
-    <View
-      style={{
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-between",
-        borderRadius: 10,
-        width: "100%",
-        margin: 0,
-        height: "100%",
-      }}
-    >
-      <Pressable
-        onPress={() =>
-          Alert.prompt(
-            "Note",
-            "Add a note to this item",
-            handleNoteChange,
-            "plain-text",
-            cartItem?.note
-          )
-        }
-        style={[
-          styles.button,
-          {
-            margin: 0,
-            height: "100%",
-            width: "25%",
-            paddingHorizontal: 24,
-            backgroundColor: theme.green,
-          },
-        ]}
+    <>
+      {Platform.OS !== "ios" && (
+        <Dialog.Container visible={visible}>
+          <Dialog.Title>{noteTitle}</Dialog.Title>
+          <Dialog.Description>{noteMessage}</Dialog.Description>
+          <Dialog.Input
+            placeholder="Enter note"
+            defaultValue={cartItem?.note}
+            onChangeText={handleNoteChange}
+          />
+          <Dialog.Button label="Cancel" onPress={() => setVisible(false)} />
+          <Dialog.Button label="Delete" onPress={() => {}} />
+        </Dialog.Container>
+      )}
+      <View
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+          borderRadius: 10,
+          width: "100%",
+          margin: 0,
+          height: "100%",
+        }}
       >
-        <MaterialCommunityIcons
-          name={cartItem?.note ? "note-edit" : "note-plus"}
-          size={32}
-          color="white"
-          style={{ alignSelf: "flex-start" }}
-        />
-      </Pressable>
+        <Pressable
+          onPress={addNote}
+          style={[
+            styles.button,
+            {
+              margin: 0,
+              height: "100%",
+              width: "25%",
+              paddingHorizontal: 24,
+              backgroundColor: theme.green,
+            },
+          ]}
+        >
+          <MaterialCommunityIcons
+            name={cartItem?.note ? "note-edit" : "note-plus"}
+            size={32}
+            color="white"
+            style={{ alignSelf: "flex-start" }}
+          />
+        </Pressable>
 
-      <Pressable
-        onPress={handleDeleteInstance}
-        style={[
-          styles.button,
-          {
-            margin: 0,
-            height: "100%",
-            width: "25%",
-            backgroundColor: theme.red,
-            paddingHorizontal: 24,
-          },
-        ]}
-      >
-        <FontAwesome6
-          name="trash-alt"
-          size={28}
-          color="white"
-          style={{ alignSelf: "flex-end" }}
-        />
-      </Pressable>
-    </View>
+        <Pressable
+          onPress={handleDeleteInstance}
+          style={[
+            styles.button,
+            {
+              margin: 0,
+              height: "100%",
+              width: "25%",
+              backgroundColor: theme.red,
+              paddingHorizontal: 24,
+            },
+          ]}
+        >
+          <FontAwesome6
+            name="trash-alt"
+            size={28}
+            color="white"
+            style={{ alignSelf: "flex-end" }}
+          />
+        </Pressable>
+      </View>
+    </>
   );
 }
 
