@@ -233,11 +233,11 @@ The **Order Page** enables you to place and manage orders. You can view current 
 
 When entering the **Order Page**, you will see a list of all the orders that are currently in the system. You can view the status of each order, the table number, and the items that have been ordered.
 
-As a waiter, you can:
+As a **waiter**, you can:
 
 - Mark order items as **completed** (if the order status is **deliver** or if the item category includes **Drink**)
 
-As a chef, you can:
+As a **chef**, you can:
 
 - Mark order items as **deliver** (if the order status is **toPrepare**)
 
@@ -246,9 +246,12 @@ When an order is completed, it will be removed from the list of orders.
 <hr>
 
 On the **Order Page**, you can also create a **new order** by pressing the plus icon at the bottom right of the screen.
-This will redirect to a new page where you can select the table number and the items that the customer wants to order.
+This will redirect to a new page where you can select the table number and the menus, that the customer wants to order.<br>
+_Note: Only tables with active reservations, at the time of creating the order, can be selected._
 
-A details page can be opened by pressing and holding down on an item.
-From here, it is possible to change the quantity, add a note, or delete the item entirely from the order.
+An item-details page can be opened by pressing and holding down on an menu.
+From here, it is possible to change the quantity, add a note, or delete the menu entirely from the order.
 
-When you are done, press the **Confirm** button at the bottom of the screen, which opens a summary page of the order. Here you can see the total price and the items that have been ordered. Press **Submit** to place the order.
+When you are done, press the **Confirm** button at the bottom of the screen, which opens a summary page of the order.<br>
+Here you can see the total **price** and the **menus** that have been ordered.<br>
+Press **Submit** to place the order.

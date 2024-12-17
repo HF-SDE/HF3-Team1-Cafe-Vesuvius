@@ -6,7 +6,7 @@ type SetData<T> = React.Dispatch<React.SetStateAction<T[]>>;
 export function useData<T>(
   url: string,
   defaultData: T[] = []
-): [T[], SetData<T>, boolean] {
+): [T[], SetData<T>, boolean, () => void] {
   const [data, setData] = useState<T[]>(defaultData);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -21,9 +21,14 @@ export function useData<T>(
     }
   }
 
+  function refresh() {
+    setIsLoading(true);
+    getData();
+  }
+
   useEffect(() => {
     getData();
   }, []);
 
-  return [data, setData, isLoading];
+  return [data, setData, isLoading, refresh];
 }
