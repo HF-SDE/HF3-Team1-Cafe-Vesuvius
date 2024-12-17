@@ -1,5 +1,5 @@
 import { useThemeColor } from "@/hooks/useThemeColor";
-import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Image, PixelRatio, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import MenuItemEdit from "./MenuItemEdit";
 import { useState } from "react";
 import { ICartActions } from "@/types/cartReducer.types";
@@ -126,7 +126,7 @@ export default function MenuItem({ menuItem, cartActions }: IMenuItem) {
 
 const styles = StyleSheet.create({
   image: {
-    height: 180,
+    height: PixelRatio.getPixelSizeForLayoutSize(60),
     aspectRatio: 1,
     borderWidth: 2,
     borderRadius: 10,
