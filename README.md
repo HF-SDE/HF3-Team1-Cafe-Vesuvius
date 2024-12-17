@@ -71,6 +71,7 @@ The first page you are greeted with when opening the app is the login page. Plea
 If you cannot login please contact the administrator to resolve the problem.
 
 To navigate between the different pages in the app, use the nav bar at the bottom of the screen. Down here there will be up to 4 icons depending on the access permissions that the administrator gave you.
+<br/>
 <img src="/image/Navbar.png" alt="This is the navbar" title="This is the navbar" height="400px" />
 
 ### Available Main Pages:
@@ -89,11 +90,13 @@ After you have logged in to the app, you will see the profile page. From here, i
 #### Change Password Form
 
 Here you can change the password for your account. Simply enter the old password and the new one you would like. It will ask you to confirm the new password. If you press **Change**, your password has then been changed. In case of any error, please follow the on-screen instructions.
+<br/>
 <img src="/image/ProfileChangePassword.png" alt="This is the change password form" title="This is the change password form" height="400px" />
 
 ### Management Page:
 
 The Management page allows you to manage users, menus, stats, and storage. Depending on your permissions, you may have access to different sections of this page.
+<br/>
 <img src="/image/Management.png" alt="This is the management screen" title="This is the management screen" height="400px" />
 
 #### Users Page
@@ -101,6 +104,7 @@ The Management page allows you to manage users, menus, stats, and storage. Depen
 In the **Users** page, you can view and manage all the users of the system. You can add new users, edit existing users, or deactivate users.
 
 **IMPORTANT**: To set the password for a user, whether creating or editing, use the **Set Password** button. A form will pop up where you can set the password.
+<br/>
 <img src="/image/Users.png" alt="This is the users screen" title="This is the users screen" height="400px" />
 
 ##### Create User
