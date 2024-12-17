@@ -191,6 +191,23 @@ To delete a stock item swipe from left to right on it and then press the delete 
 ### Reservation Page:
 
 The **Reservation Page** allows users to make and manage reservations. You can view available time slots, reserve a table, and modify or cancel existing reservations.
+<br/>
+<img src="/image/Pages/Reservation/Reservation.png" alt="This is the reservation screen" title="This is the reservation screen" height="400px" />
+
+#### Reservation Info
+
+When you press on a reservation in the overview page a form will pop up with more information about the reservation.
+<br/>
+<img src="/image/Pages/Reservation/ReservationInfo.png" alt="This is the reservation info form" title="This is the reservation info form" height="400px" />
+
+#### Reservation Create
+
+To create a new reservation press the plus icon. You will now need to fill out the information about the reservation including the time of the reservation. This is done by clicking on the calendar icon and selecting a date you will also be able to set a time from here by pressing on the time at the top of the day selector right beside the date selected. After all information is filled out press Next and select the tables for the reservation. The number of tables is depending on the number you people you entered on the last page you can se at the top how many you need to select and how many you have already selected. After that is done simply press the create button to create the reservation.
+<br/>
+<img src="/image/Pages/Reservation/ReservationCreate1.png" alt="This is the reservation create 1 form" title="This is the reservation create 1 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate2.png" alt="This is the reservation create 2 form" title="This is the reservation create 2 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate3.png" alt="This is the reservation create 3 form" title="This is the reservation create 3 form" height="400px" />
+<img src="/image/Pages/Reservation/ReservationCreate4.png" alt="This is the reservation create 4 form" title="This is the reservation create 4 form" height="400px" />
 
 ### Order Page:
 
