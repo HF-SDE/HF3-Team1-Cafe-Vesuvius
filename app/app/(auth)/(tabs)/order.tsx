@@ -12,7 +12,7 @@ import LoadingPage from "@/components/LoadingPage";
 export default function OrderOverview() {
   const router = useRouter();
 
-  const [orders, setOrders, isLoading] = useData<OrderModel>("/order");
+  const [orders, setOrders, isLoading, refresh] = useData<OrderModel>("/order");
 
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -53,6 +53,8 @@ export default function OrderOverview() {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={{ gap: 22 }}
+            onRefresh={refresh}
+            refreshing={isLoading}
           />
         )}
         <AddButton
