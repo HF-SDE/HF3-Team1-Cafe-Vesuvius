@@ -243,9 +243,9 @@ As a chef, you can:
 
 When an order is completed, it will be removed from the list of orders.
 
-<br>
+<hr>
 
-On the **Order Page**, you can also create a new order by pressing the plus icon at the bottom right of the screen.
+On the **Order Page**, you can also create a **new order** by pressing the plus icon at the bottom right of the screen.
 This will redirect to a new page where you can select the table number and the items that the customer wants to order.
 
 A details page can be opened by pressing and holding down on an item.
