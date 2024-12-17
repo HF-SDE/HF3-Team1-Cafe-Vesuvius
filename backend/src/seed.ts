@@ -356,6 +356,7 @@ async function generateMongo() {
       OR: [
         { code: { startsWith: 'menu' } },
         { code: { startsWith: 'stock' } },
+        { code: { equals: 'order:view' } },
         { code: { equals: 'order:status:update:deliver' } },
       ],
     },
@@ -379,6 +380,7 @@ async function generateMongo() {
       OR: [
         { code: { equals: 'order:status:update:deliver' } },
         { code: { equals: 'order:status:update:completed' } },
+        { code: { equals: 'order:view' } },
         { code: { equals: 'order:create' } },
         { code: { equals: 'table:view' } },
         { code: { equals: 'stock:view' } },
