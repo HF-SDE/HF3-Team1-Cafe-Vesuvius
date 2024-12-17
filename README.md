@@ -66,11 +66,12 @@ npm run seed
 ## App guide
 
 The first page you are greeted with when opening the app is the login page. Please use the credentials provided to you by your system administrator.
-<img src="/image/login.png" alt="This is the login screen" title="This is the login screen" width="400px" />
+<img src="/image/Login.png" alt="This is the login screen" title="This is the login screen" height="400px" />
 
 If you cannot login please contact the administrator to resolve the problem.
 
 To navigate between the different pages in the app, use the nav bar at the bottom of the screen. Down here there will be up to 4 icons depending on the access permissions that the administrator gave you.
+<img src="/image/Navbar.png" alt="This is the navbar" title="This is the navbar" height="400px" />
 
 ### Available Main Pages:
 
@@ -82,20 +83,24 @@ To navigate between the different pages in the app, use the nav bar at the botto
 ### Profile Page:
 
 After you have logged in to the app, you will see the profile page. From here, it is possible to see who is logged in to the system, and it also provides a way to log out and to access the form to change your password (this is recommended if it is your first time logging in with the password from your administrator).
+<img src="/image/Profile.png" alt="This is the profile screen" title="This is the profile screen" height="400px" />
 
 #### Change Password Form
 
 Here you can change the password for your account. Simply enter the old password and the new one you would like. It will ask you to confirm the new password. If you press **Change**, your password has then been changed. In case of any error, please follow the on-screen instructions.
+<img src="/image/ProfileChangePassword.png" alt="This is the change password form" title="This is the change password form" height="400px" />
 
 ### Management Page:
 
 The Management page allows you to manage users, menus, stats, and storage. Depending on your permissions, you may have access to different sections of this page.
+<img src="/image/Management.png" alt="This is the management screen" title="This is the management screen" height="400px" />
 
 #### Users Page
 
 In the **Users** page, you can view and manage all the users of the system. You can add new users, edit existing users, or deactivate users.
 
 **IMPORTANT**: To set the password for a user, whether creating or editing, use the **Set Password** button. A form will pop up where you can set the password.
+<img src="/image/Users.png" alt="This is the users screen" title="This is the users screen" height="400px" />
 
 ##### Create User
 

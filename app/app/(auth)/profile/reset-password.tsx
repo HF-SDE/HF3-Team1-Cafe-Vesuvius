@@ -51,7 +51,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     } catch (error) {
       console.error(error);
 
-      setErrorMessage("An error occurred while resetting password.");
+      setErrorMessage("An error occurred while changing password.");
     }
   };
 
@@ -59,7 +59,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
     <SafeAreaView
       style={[styles.container, { backgroundColor: theme.background }]}
     >
-      <Text style={[styles.title, { color: theme.text }]}>Reset Password</Text>
+      <Text style={[styles.title, { color: theme.text }]}>Change Password</Text>
 
       <PasswordInput
         value={oldPassword}
@@ -99,7 +99,7 @@ export default function ResetPasswordModal({ onClose }: ModalScreenProps) {
           backgroundColor={theme.accent}
           textColor={theme.text}
         />
-        <Button title={"Reset"} onPress={handleReset} />
+        <Button title={"Change"} onPress={handleReset} />
       </View>
 
       <StatusBar style={Platform.OS === "ios" ? "light" : "auto"} />
