@@ -66,7 +66,9 @@ npm run seed
 ## App guide
 
 The first page you are greeted with when opening the app is the login page. Please use the credentials provided to you by your system administrator.
+<br/>
 <img src="/image/Login.png" alt="This is the login screen" title="This is the login screen" height="400px" />
+<img src="/image/LoginDark.png" alt="This is the login dark screen" title="This is the login dark screen" height="400px" />
 
 If you cannot login please contact the administrator to resolve the problem.
 
@@ -86,6 +88,7 @@ To navigate between the different pages in the app, use the nav bar at the botto
 After you have logged in to the app, you will see the profile page. From here, it is possible to see who is logged in to the system, and it also provides a way to log out and to access the form to change your password (this is recommended if it is your first time logging in with the password from your administrator).
 <br/>
 <img src="/image/Pages/Profile/Profile.png" alt="This is the profile screen" title="This is the profile screen" height="400px" />
+<img src="/image/Pages/Profile/ProfileDark.png" alt="This is the profile dark screen" title="This is the profile dark screen" height="400px" />
 
 #### Change Password Form
 
@@ -155,18 +158,29 @@ The **Stats** page displays important statistics related to the café’s perfor
 The **Storage** page allows you to manage the stock items and monitor inventory levels. You can add new stock items or, or delete users edit existing ones to keep track of the café's inventory.
 <br/>
 <img src="/image/Pages/Management/Storage/Storage.png" alt="This is the storage screen" title="This is the storage screen" height="400px" />
+<img src="/image/Pages/Management/Storage/StorageSave1.png" alt="This is the storage save 1 screen" title="This is the storage save 1 screen" height="400px" />
+<img src="/image/Pages/Management/Storage/StorageSave2.png" alt="This is the storage save 2 screen" title="This is the storage save 2 screen" height="400px" />
 
 ##### Create Stock Item
 
 To create a new stock item press the plus icon, enter the required details such as item name, unit, and quantity. Submit the form to add the new item to the inventory.
+<br/>
+<img src="/image/Pages/Management/Storage/StorageCreate.png" alt="This is the storage create screen" title="This is the storage create screen" height="400px" />
+<img src="/image/Pages/Management/Storage/StorageCreateData.png" alt="This is the storage create data screen" title="This is the storage create data screen" height="400px" />
 
 ##### Edit Stock Item
 
 On the **Edit Stock Item**, you can modify the details of an existing stock item. Search for the item you want to update and swipe from right to left on it and press the edit icon, make the necessary changes, and save the updated information.
+<br/>
+<img src="/image/Pages/Management/Storage/StorageEdit.png" alt="This is the storage edit screen" title="This is the storage edit screen" height="400px" />
+<img src="/image/Pages/Management/Storage/StorageEditForm.png" alt="This is the storage edit form" title="This is the storage edit form" height="400px" />
 
 ##### Delete Stock Item
 
 To delete a stock item swipe from left to right on it and then press the delete icon and confirm your action
+<br/>
+<img src="/image/Pages/Management/Storage/StorageDelete.png" alt="This is the storage delete edit screen" title="This is the storage delete screen" height="400px" />
+<img src="/image/Pages/Management/Storage/StorageDeleteConfirm.png" alt="This is the storage delete confirm" title="This is the storage delete confirm" height="400px" />
 
 ### Reservation Page:
 
