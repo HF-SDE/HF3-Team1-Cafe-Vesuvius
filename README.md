@@ -154,3 +154,25 @@ The **Reservation Page** allows users to make and manage reservations. You can v
 ### Order Page:
 
 The **Order Page** enables you to place and manage orders. You can view current orders, track their status, and update them as needed. This page is typically used by staff to handle customer orders efficiently.
+
+When entering the **Order Page**, you will see a list of all the orders that are currently in the system. You can view the status of each order, the table number, and the items that have been ordered.
+
+As a waiter, you can:
+
+- Mark order items as **completed** (if the order status is **deliver** or if the item category includes **Drink**)
+
+As a chef, you can:
+
+- Mark order items as **deliver** (if the order status is **toPrepare**)
+
+When an order is completed, it will be removed from the list of orders.
+
+<br>
+
+On the **Order Page**, you can also create a new order by pressing the plus icon at the bottom right of the screen.
+This will redirect to a new page where you can select the table number and the items that the customer wants to order.
+
+A details page can be opened by pressing and holding down on an item.
+From here, it is possible to change the quantity, add a note, or delete the item entirely from the order.
+
+When you are done, press the **Confirm** button at the bottom of the screen, which opens a summary page of the order. Here you can see the total price and the items that have been ordered. Press **Submit** to place the order.
