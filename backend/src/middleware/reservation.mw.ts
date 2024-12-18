@@ -3,6 +3,7 @@ import { NextFunction, Request, Response } from 'express';
 import { Status } from '@api-types/general.types';
 import prisma from '@prisma-instance';
 import { Prisma, Table } from '@prisma/client';
+import { getHttpStatusCode } from '@utils/Utils';
 
 interface ReservationRequest extends Request {
   body: {
@@ -32,7 +33,7 @@ export async function manageTables(
   const totalCapacity = await getTotalCapacity(req.body.reservationTime);
 
   if (totalCapacity < req.body.amount) {
-    res.status(409).json({
+    res.status(getHttpStatusCode(Status.CreationFailed)).json({
       status: Status.CreationFailed,
       message: 'Not enough tables available',
     });
@@ -46,7 +47,7 @@ export async function manageTables(
     const validTables = await checkValidSeatability(tableIds, req.body.amount);
 
     if (validTables.err) {
-      res.status(400).json({
+      res.status(getHttpStatusCode(Status.CreationFailed)).json({
         status: Status.CreationFailed,
         message: validTables.message,
       });
@@ -60,7 +61,7 @@ export async function manageTables(
   const startTime = new Date(req.body.reservationTime);
 
   if (typeof startTime == 'string') {
-    res.status(400).json({
+    res.status(getHttpStatusCode(Status.CreationFailed)).json({
       status: Status.CreationFailed,
       message: 'Invalid date',
     });
@@ -81,7 +82,7 @@ export async function manageTables(
   });
 
   if (reservedTables.length) {
-    res.status(400).json({
+    res.status(getHttpStatusCode(Status.CreationFailed)).json({
       status: Status.CreationFailed,
       message: 'Table(s) is already reserved',
     });
