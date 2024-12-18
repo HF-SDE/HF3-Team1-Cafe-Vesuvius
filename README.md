@@ -234,25 +234,48 @@ The **Order Page** enables you to place and manage orders. You can view current 
 
 When entering the **Order Page**, you will see a list of all the orders that are currently in the system. You can view the status of each order, the table number, and the items that have been ordered.
 
+<label for="chefOrderPage">Chef Order Page</label>
+<img id="chefOrderPage" src="/.github/image/Pages/Order/ChefOrderPage.png" alt="Order page (chef)" title="Order page (chef)" height="400px" />
+
+<label for="waiterOrderPage">Waiter Order Page</label>
+<img id="waiterOrderPage" src="/.github/image/Pages/Order/WaiterOrderPage.png"  alt="Order page (waiter)"  title="Order page (waiter)" height="400px" />
+<img id="waiterOrderPage" src="/.github/image/Pages/Order/OrderPageWithNote.png"  alt="Order page (waiter)"  title="Order page (waiter)" height="400px" />
+
 As a **waiter**, you can:
 
 - Mark order items as **completed** (if the order status is **deliver** or if the item category includes **Drink**)
+  <img id="waiterChangeItemStatus" src="/.github/image/Pages/Order/WaiterChangeItemStatus.png"  alt="Item status change (waiter)"  title="Item status change (waiter)" height="400px" />
 
 As a **chef**, you can:
 
 - Mark order items as **deliver** (if the order status is **toPrepare**)
+  <img id="chefChangeItemStatus" src="/.github/image/Pages/Order/ChefChangeItemStatus.png"  alt="Item status change (chef)"  title="Item status change (chef)" height="400px" />
 
 When an order is completed, it will be removed from the list of orders.
 
 <hr>
 
-On the **Order Page**, you can also create a **new order** by pressing the plus icon at the bottom right of the screen.
+On the **Order Page**, a waiter can also create a **new order** by pressing the plus icon at the bottom right of the screen.
 This will redirect to a new page where you can select the table number and the menus, that the customer wants to order.<br>
 _Note: Only tables with active reservations, at the time of creating the order, can be selected._
+
+<img src="/.github/image/Pages/Order/CreateOrderPage_1.png" alt="This is the order create screen" title="This is the order create screen" height="400px" />
+<img src="/.github/image/Pages/Order/CreateOrderPage_2.png" alt="This is the order create screen" title="This is the order create screen" height="400px" />
+<img src="/.github/image/Pages/Order/CreateOrderPage_3.png" alt="This is the order create screen" title="This is the order create screen" height="400px" />
 
 An item-details page can be opened by pressing and holding down on an menu.
 From here, it is possible to change the quantity, add a note, or delete the menu entirely from the order.
 
+<img src="/.github/image/Pages/Order/EditItemPage_1.png" alt="This is the order item details screen" title="This is the order item details screen" height="400px" />
+<img src="/.github/image/Pages/Order/EditItemPage_2.png" alt="This is the order item details screen" title="This is the order item details screen" height="400px" />
+<img src="/.github/image/Pages/Order/EditItemPageSwipeRight.png" alt="This is the order item details screen when adding a note" title="This is the order item details screen when adding a note" height="400px" />
+<img src="/.github/image/Pages/Order/EditItemPageSwipeLeft.png" alt="This is the order item details screen when deleting an item" title="This is the order item details screen when deleting an item" height="400px" />
+<img src="/.github/image/Pages/Order/EditItemPageWithNote.jpg" alt="This is the order item details screen" title="This is the order item details screen" height="400px" />
+
 When you are done, press the **Confirm** button at the bottom of the screen, which opens a summary page of the order.<br>
 Here you can see the total **price** and the **menus** that have been ordered.<br>
+
+<img src="/.github/image/Pages/Order/OrderSummary.png" alt="This is the order summary screen" title="This is the order summary screen" height="400px" />
+<img src="/.github/image/Pages/Order/OrderSummaryWithNote.png" alt="This is the order summary screen" title="This is the order summary screen with an item note" height="400px" />
+
 Press **Submit** to place the order.
