@@ -1,4 +1,4 @@
-import React, { Dispatch, ReactElement, SetStateAction, useState } from "react";
+import React, { Dispatch, ReactElement, SetStateAction, useMemo, useState } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Platform,
@@ -6,6 +6,7 @@ import {
   Text,
   View,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import { useThemeColor } from "@/hooks/useThemeColor";
 import apiClient from "../../../utils/apiClient";
@@ -16,7 +17,6 @@ import dayjs from "dayjs";
 import CustomTextInput from "@/components/TextInput";
 import { SafeAreaView } from "react-native-safe-area-context";
 import TextIconInput from "@/components/TextIconInput";
-import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import Button from "@/components/DefaultButton";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import NewReservationsItem from "@/components/reservations/NewReservationsItem";
@@ -131,38 +131,33 @@ export default function NewReservationModal({
 
 
   /**
-   * Load the item
-   * @param {Table} item - The table to load
+   * Load the table
+   * @param {Table} table - The table to load
    * @returns {ReactElement}
    */
-  function loadItem(item: Table): ReactElement {
-    let isAvailable = true;
-
-    for (const res of reservations) {
-      const resStartTime = dayjs(res.reservationTime);
-      const resEndTime = dayjs(res.reservationTime).add(3, "hour");
-
+  function loadTable(table: Table): ReactElement {
+    const isAvailable = useMemo(() => {
       const tableStartTime = dayjs(reservation.reservationTime);
-      const tableEndTime = dayjs(reservation.reservationTime).add(
-        3,
-        "hour"
+      const tableEndTime = dayjs(reservation.reservationTime).add(3, "hour");
+  
+      const filteredReservation = reservations.filter((res) => {
+        const currentResStartTime = dayjs(res.reservationTime);
+        const currentResEndTime = dayjs(res.reservationTime).add(3, "hour");
+  
+        return (
+          currentResStartTime.isBetween(tableStartTime, tableEndTime) ||
+          currentResEndTime.isBetween(tableStartTime, tableEndTime)
+        );
+      });
+  
+      return !filteredReservation.some((res) =>
+        res.Tables?.some((reservationTable) => reservationTable.id === table.id)
       );
-
-      if (
-        res.Tables &&
-        res.Tables.some((table) => table.id === item.id) &&
-        (resStartTime.isBetween(tableStartTime, tableEndTime) ||
-          resEndTime.isBetween(tableStartTime, tableEndTime) ||
-          tableStartTime.isBetween(resStartTime, resEndTime) ||
-          tableEndTime.isBetween(resStartTime, resEndTime))
-      ) {
-        isAvailable = false;
-      }
-    }
+    }, [reservation, reservations, table]);
 
     return (
       <NewReservationsItem
-        table={item}
+        table={table}
         setTableSelect={setTableSelect}
         tableSelect={tableSelect}
         tableSelectNeed={tableSelectNeed}
@@ -297,7 +292,7 @@ export default function NewReservationModal({
           ) : null}
         </>
       ) : (
-        <KeyboardAwareFlatList
+        <FlatList
           ListHeaderComponent={
             <Text
               style={[styles.reservationSelectorLabel, { color: theme.text }]}
@@ -307,7 +302,7 @@ export default function NewReservationModal({
           }
           numColumns={4}
           data={tables}
-          renderItem={({ item }) => loadItem(item)}
+          renderItem={({ item }) => loadTable(item)}
           keyExtractor={(item) => item.number?.toString()}
           contentContainerStyle={styles.listContainer}
           style={styles.flatList}
