@@ -1,10 +1,8 @@
-<img src="/.github/image/CaféVesuviusLogo.svg" alt="Company Logo" title="Company Logo" width="200px" />
-
 # Café Vesuvius Project
 
 Welcome to the Café Vesuvius project! This repository contains everything you need to get the backend, website, and app server running for the project. Follow the steps below to get started.
 
----
+## <img src="/.github/image/CaféVesuviusLogo.svg" alt="Company Logo" title="Company Logo" width="200px" />
 
 ## Prerequisites
 
