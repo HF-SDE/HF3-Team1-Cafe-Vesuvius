@@ -28,7 +28,7 @@ interface TableProps {
  * @param {TableProps} props - The props for the item
  */
 export default function NewReservationsItem(props: TableProps): ReactElement {
-    const disabled = areItemDisabled(
+    const disabled = isTableDisabled(
         props.disabled,
         props.table,
         props.tableSelect,
@@ -37,7 +37,7 @@ export default function NewReservationsItem(props: TableProps): ReactElement {
     );
     const theme = useThemeColor();
 
-    const selected = areItemSelected(props.table, props.reservation[0]);
+    const selected = isTableSelected(props.table, props.reservation[0]);
 
     function onPress() {
         if (selected) {
@@ -109,14 +109,14 @@ const styles = StyleSheet.create({
 });
 
 /**
- * Check if the item need to be disabled
+ * Check if the table need to be disabled
  * @param {Table} table - The table to check
  * @param {number} tableSelect - The number of tables selected
  * @param {number} tableSelectNeed - The number of tables needed
  * @param {[Reservation, Dispatch<SetStateAction<Reservation>>]} action - The action to update the reservation
  * @returns {boolean} - True if the item should be disabled, false otherwise
  */
-function areItemDisabled(
+function isTableDisabled(
     disabled: boolean,
     table: Table,
     tableSelect: number,
@@ -141,12 +141,12 @@ function areItemDisabled(
 }
 
 /**
- * Check if the item is selected
+ * Check if the table is selected
  * @param {Table} table
  * @param {Reservation} reservation
  * @returns {boolean}
  */
-function areItemSelected(table: Table, reservation: Reservation): boolean {
+function isTableSelected(table: Table, reservation: Reservation): boolean {
     if (reservation.Tables) {
         for (const key in reservation.Tables) {
             if (reservation.Tables[key].id === table.id) {
