@@ -215,7 +215,7 @@ To **create a new reservation**, press the **plus icon**. You will need to fill 
      <br/>
      <img src="/.github/image/Pages/Reservation/ReservationCreate1.png" alt="This is the reservation create 1 form" title="This is the reservation create 1 form" height="400px" />
      <img src="/.github/image/Pages/Reservation/ReservationCreate2.png" alt="This is the reservation create 2 form" title="This is the reservation create 2 form" height="400px" />
-     <img src="/.github/image/Pages/Reservation/ReservationCreate3.png" alt="This is the reservation create 3 form" title="This is the reservation create 3 form" height="400px" />
+
 
 2. **Table Selection:**
 

@@ -9,10 +9,6 @@ generator client {
   previewFeatures = ["omitApi"]
 }
 
-generator dbml {
-  provider = "prisma-dbml-generator"
-}
-
 datasource db {
   provider = "mongodb"
   url      = env("DATABASE_URL")
