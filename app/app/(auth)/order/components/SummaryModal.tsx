@@ -100,7 +100,7 @@ export default function SummaryModal({
                   </Text>
 
                   <Text style={{ fontSize: 16, color: theme.text }}>
-                    ${item.item?.price}
+                    {item.item?.price} kr.
                   </Text>
                 </View>
 
@@ -122,11 +122,12 @@ export default function SummaryModal({
             fontWeight: "bold",
           }}
         >
-          Total: $
+          Total:{" "}
           {selectedMenuItems.reduce(
             (acc, item) => acc + item.quantity * (item.item?.price ?? 1),
             0
-          )}
+          )}{" "}
+          kr.
         </Text>
 
         <FooterButtons
