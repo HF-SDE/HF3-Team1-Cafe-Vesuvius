@@ -136,20 +136,26 @@ export default function NewReservationModal({
    * @returns {ReactElement}
    */
   function loadTable(table: Table): ReactElement {
-    let isAvailable = true; 
-    for (const res of reservations) {
+    let isAvailable = true;
+    const tableStartTime = dayjs(reservation.reservationTime);
+    const tableEndTime = dayjs(reservation.reservationTime).add(3, "hour");
+
+    const filteredReservations = reservations.filter((res) => {
       const resStartTime = dayjs(res.reservationTime);
       const resEndTime = dayjs(res.reservationTime).add(3, "hour");
 
-      const tableStartTime = dayjs(reservation.reservationTime);
-      const tableEndTime = dayjs(reservation.reservationTime).add(
-        3,
-        "hour"
-      );
+      if (tableStartTime.isBetween(resStartTime, resEndTime) || tableEndTime.isBetween(resStartTime, resEndTime)) {
+        return res;
+      }
+    });
+    
+    for (const res of filteredReservations) {
+      const resStartTime = dayjs(res.reservationTime);
+      const resEndTime = dayjs(res.reservationTime).add(3, "hour");
 
       if (
         res.Tables &&
-        res.Tables.some((tableResvation) => tableResvation.id === table.id) &&
+        res.Tables.some((tableReservation) => tableReservation.id === table.id) &&
         (resStartTime.isBetween(tableStartTime, tableEndTime) ||
           resEndTime.isBetween(tableStartTime, tableEndTime) ||
           tableStartTime.isBetween(resStartTime, resEndTime) ||
