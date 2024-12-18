@@ -12,7 +12,9 @@ import LoadingPage from "@/components/LoadingPage";
 export default function OrderOverview() {
   const router = useRouter();
 
-  const [orders, setOrders, isLoading, refresh] = useData<OrderModel>("/order");
+  const [orders, setOrders, isLoading, refresh] = useData<OrderModel>(
+    "/order?fromDay=today"
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
 

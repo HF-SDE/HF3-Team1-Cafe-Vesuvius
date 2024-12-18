@@ -9,6 +9,7 @@ interface OrderRequest extends Request {
   query: {
     tableNumber?: string;
     tableId?: string;
+    fromDay?: string;
 
     status?: string;
   };
@@ -43,6 +44,7 @@ export async function transformSearch(
 
   delete req.query.tableNumber;
   delete req.query.status;
+  delete req.query.fromDay;
 
   if (value.tableNumber) {
     const table = await prisma.table.findFirst({
@@ -56,6 +58,18 @@ export async function transformSearch(
     }
 
     req.query.tableId = table.id;
+  }
+
+  if (value.fromDay) {
+    if (!req.config) req.config = { ...orderConfig };
+
+    const startDate = new Date(value.fromDay).setHours(0, 0, 0, 0);
+    const endDate = new Date(value.fromDay).setHours(23, 59, 59, 999);
+
+    req.config.where = {
+      ...req.config.where,
+      createdAt: { gte: new Date(startDate), lte: new Date(endDate) },
+    };
   }
 
   if (value.status) {

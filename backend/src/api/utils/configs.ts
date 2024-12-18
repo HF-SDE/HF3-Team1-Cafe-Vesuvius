@@ -33,6 +33,7 @@ export const order: Prisma.OrderFindManyArgs = {
     },
     Table: defaultTableInclude,
   },
+  orderBy: { createdAt: 'asc' },
 };
 
 export const reservation: Prisma.ReservationFindManyArgs = {
