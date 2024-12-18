@@ -136,24 +136,28 @@ export default function NewReservationModal({
    * @returns {ReactElement}
    */
   function loadTable(table: Table): ReactElement {
-    const isAvailable = useMemo(() => {
+    let isAvailable = true; 
+    for (const res of reservations) {
+      const resStartTime = dayjs(res.reservationTime);
+      const resEndTime = dayjs(res.reservationTime).add(3, "hour");
+
       const tableStartTime = dayjs(reservation.reservationTime);
-      const tableEndTime = dayjs(reservation.reservationTime).add(3, "hour");
-  
-      const filteredReservation = reservations.filter((res) => {
-        const currentResStartTime = dayjs(res.reservationTime);
-        const currentResEndTime = dayjs(res.reservationTime).add(3, "hour");
-  
-        return (
-          currentResStartTime.isBetween(tableStartTime, tableEndTime) ||
-          currentResEndTime.isBetween(tableStartTime, tableEndTime)
-        );
-      });
-  
-      return !filteredReservation.some((res) =>
-        res.Tables?.some((reservationTable) => reservationTable.id === table.id)
+      const tableEndTime = dayjs(reservation.reservationTime).add(
+        3,
+        "hour"
       );
-    }, [reservation, reservations, table]);
+
+      if (
+        res.Tables &&
+        res.Tables.some((tableResvation) => tableResvation.id === table.id) &&
+        (resStartTime.isBetween(tableStartTime, tableEndTime) ||
+          resEndTime.isBetween(tableStartTime, tableEndTime) ||
+          tableStartTime.isBetween(resStartTime, resEndTime) ||
+          tableEndTime.isBetween(resStartTime, resEndTime))
+      ) {
+        isAvailable = false;
+      }
+    }
 
     return (
       <NewReservationsItem
