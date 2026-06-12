@@ -16,7 +16,7 @@
   "author": "Vesuvius",
   "description": "World best Cafe management system",
   "dependencies": {
-    "joi": "^17.13.3"
+    "joi": "^18.2.1"
   },
   "devDependencies": {
     "terser": "^5.36.0"
